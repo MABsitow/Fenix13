@@ -2,3 +2,6 @@
 
 *.vbw
 *.exe
+*.chr
+*.log
+*.txt
