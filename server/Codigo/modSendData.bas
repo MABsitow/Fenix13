@@ -38,19 +38,19 @@ Public Enum SendTarget
     ToMapButIndex
     ToGM
     ToNPCArea
-    ToGuildMembers
+   ' ToGuildMembers
     ToAdmins
     ToPCAreaButIndex
     ToAdminsAreaButConsejeros
-    ToDiosesYclan
+    'ToDiosesYclan
     ToConsejo
-    ToClanArea
+    'ToClanArea
     ToConsejoCaos
     ToRolesMasters
     ToDeadArea
     ToCiudadanos
     ToCriminales
-    ToPartyArea
+    'ToPartyArea
     ToReal
     ToCaos
     ToCiudadanosYRMs
@@ -116,15 +116,15 @@ On Error Resume Next
             Call SendToMapButIndex(sndIndex, sndData)
             Exit Sub
         
-        Case SendTarget.ToGuildMembers
-            LoopC = modGuilds.m_Iterador_ProximoUserIndex(sndIndex)
-            While LoopC > 0
-                If (UserList(LoopC).ConnID <> -1) Then
-                    Call EnviarDatosASlot(LoopC, sndData)
-                End If
-                LoopC = modGuilds.m_Iterador_ProximoUserIndex(sndIndex)
-            Wend
-            Exit Sub
+        'Case SendTarget.ToGuildMembers
+        '    LoopC = modGuilds.m_Iterador_ProximoUserIndex(sndIndex)
+        '    While LoopC > 0
+        '        If (UserList(LoopC).ConnID <> -1) Then
+        '            Call EnviarDatosASlot(LoopC, sndData)
+        '        End If
+        '        LoopC = modGuilds.m_Iterador_ProximoUserIndex(sndIndex)
+        '    Wend
+        '    Exit Sub
         
         Case SendTarget.ToDeadArea
             Call SendToDeadUserArea(sndIndex, sndData)
@@ -134,13 +134,13 @@ On Error Resume Next
             Call SendToUserAreaButindex(sndIndex, sndData)
             Exit Sub
         
-        Case SendTarget.ToClanArea
-            Call SendToUserGuildArea(sndIndex, sndData)
-            Exit Sub
+        'Case SendTarget.ToClanArea
+        '    Call SendToUserGuildArea(sndIndex, sndData)
+        '    Exit Sub
         
-        Case SendTarget.ToPartyArea
-            Call SendToUserPartyArea(sndIndex, sndData)
-            Exit Sub
+      '  Case SendTarget.ToPartyArea
+       '     Call SendToUserPartyArea(sndIndex, sndData)
+       '     Exit Sub
         
         Case SendTarget.ToAdminsAreaButConsejeros
             Call SendToAdminsButConsejerosArea(sndIndex, sndData)
@@ -150,24 +150,24 @@ On Error Resume Next
             Call SendToNpcArea(sndIndex, sndData)
             Exit Sub
         
-        Case SendTarget.ToDiosesYclan
-            LoopC = modGuilds.m_Iterador_ProximoUserIndex(sndIndex)
-            While LoopC > 0
-                If (UserList(LoopC).ConnID <> -1) Then
-                    Call EnviarDatosASlot(LoopC, sndData)
-                End If
-                LoopC = modGuilds.m_Iterador_ProximoUserIndex(sndIndex)
-            Wend
+        'Case SendTarget.ToDiosesYclan
+        '    LoopC = modGuilds.m_Iterador_ProximoUserIndex(sndIndex)
+        '    While LoopC > 0
+        '        If (UserList(LoopC).ConnID <> -1) Then
+        '            Call EnviarDatosASlot(LoopC, sndData)
+        '        End If
+        '        LoopC = modGuilds.m_Iterador_ProximoUserIndex(sndIndex)
+        '    Wend
+        '
+        '    LoopC = modGuilds.Iterador_ProximoGM(sndIndex)
+        '    While LoopC > 0
+        '        If (UserList(LoopC).ConnID <> -1) Then
+        '            Call EnviarDatosASlot(LoopC, sndData)
+        '        End If
+        '        LoopC = modGuilds.Iterador_ProximoGM(sndIndex)
+        '    Wend
             
-            LoopC = modGuilds.Iterador_ProximoGM(sndIndex)
-            While LoopC > 0
-                If (UserList(LoopC).ConnID <> -1) Then
-                    Call EnviarDatosASlot(LoopC, sndData)
-                End If
-                LoopC = modGuilds.Iterador_ProximoGM(sndIndex)
-            Wend
-            
-            Exit Sub
+        '    Exit Sub
         
         Case SendTarget.ToConsejo
             For LoopC = 1 To LastUser
@@ -404,73 +404,73 @@ Private Sub SendToDeadUserArea(ByVal UserIndex As Integer, ByVal sdData As Strin
     Next LoopC
 End Sub
 
-Private Sub SendToUserGuildArea(ByVal UserIndex As Integer, ByVal sdData As String)
+'Private Sub SendToUserGuildArea(ByVal UserIndex As Integer, ByVal sdData As String)
 '**************************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modify Date: Unknow
 '
 '**************************************************************
-    Dim LoopC As Long
-    Dim tempIndex As Integer
+    'Dim LoopC As Long
+    'Dim tempIndex As Integer
     
-    Dim Map As Integer
-    Dim AreaX As Integer
-    Dim AreaY As Integer
+    'Dim Map As Integer
+    'Dim AreaX As Integer
+    'Dim AreaY As Integer
     
-    Map = UserList(UserIndex).Pos.Map
-    AreaX = UserList(UserIndex).AreasInfo.AreaPerteneceX
-    AreaY = UserList(UserIndex).AreasInfo.AreaPerteneceY
+   ' Map = UserList(UserIndex).Pos.Map
+   ' AreaX = UserList(UserIndex).AreasInfo.AreaPerteneceX
+    'AreaY = UserList(UserIndex).AreasInfo.AreaPerteneceY
     
-    If Not MapaValido(Map) Then Exit Sub
+    'If Not MapaValido(Map) Then Exit Sub
     
-    If UserList(UserIndex).GuildIndex = 0 Then Exit Sub
+   ' If UserList(UserIndex).GuildIndex = 0 Then Exit Sub
     
-    For LoopC = 1 To ConnGroups(Map).CountEntrys
-        tempIndex = ConnGroups(Map).UserEntrys(LoopC)
+  '  For LoopC = 1 To ConnGroups(Map).CountEntrys
+ '       tempIndex = ConnGroups(Map).UserEntrys(LoopC)
         
-        If UserList(tempIndex).AreasInfo.AreaReciveX And AreaX Then  'Esta en el area?
-            If UserList(tempIndex).AreasInfo.AreaReciveY And AreaY Then
-                If UserList(tempIndex).ConnIDValida And (UserList(tempIndex).GuildIndex = UserList(UserIndex).GuildIndex Or ((UserList(tempIndex).flags.Privilegios And PlayerType.Dios) And (UserList(tempIndex).flags.Privilegios And PlayerType.RoleMaster) = 0)) Then
-                    Call EnviarDatosASlot(tempIndex, sdData)
-                End If
-            End If
-        End If
-    Next LoopC
-End Sub
+ '       If UserList(tempIndex).AreasInfo.AreaReciveX And AreaX Then  'Esta en el area?
+ '           If UserList(tempIndex).AreasInfo.AreaReciveY And AreaY Then
+ '               If UserList(tempIndex).ConnIDValida And (UserList(tempIndex).GuildIndex = UserList(UserIndex).GuildIndex Or ((UserList(tempIndex).flags.Privilegios And PlayerType.Dios) And (UserList(tempIndex).flags.Privilegios And PlayerType.RoleMaster) = 0)) Then
+ '                   Call EnviarDatosASlot(tempIndex, sdData)
+ '               End If
+ '           End If
+ '       End If
+ '   Next LoopC
+'End Sub
 
-Private Sub SendToUserPartyArea(ByVal UserIndex As Integer, ByVal sdData As String)
+'Private Sub SendToUserPartyArea(ByVal UserIndex As Integer, ByVal sdData As String)
 '**************************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modify Date: Unknow
 '
 '**************************************************************
-    Dim LoopC As Long
-    Dim tempIndex As Integer
+'    Dim LoopC As Long
+'    Dim tempIndex As Integer
+'
+'    Dim Map As Integer
+'    Dim AreaX As Integer
+'    Dim AreaY As Integer
+'
+'    Map = UserList(UserIndex).Pos.Map
+'    AreaX = UserList(UserIndex).AreasInfo.AreaPerteneceX
+'    AreaY = UserList(UserIndex).AreasInfo.AreaPerteneceY
     
-    Dim Map As Integer
-    Dim AreaX As Integer
-    Dim AreaY As Integer
+'    If Not MapaValido(Map) Then Exit Sub
+'
+  '  If UserList(UserIndex).PartyIndex = 0 Then Exit Sub
     
-    Map = UserList(UserIndex).Pos.Map
-    AreaX = UserList(UserIndex).AreasInfo.AreaPerteneceX
-    AreaY = UserList(UserIndex).AreasInfo.AreaPerteneceY
-    
-    If Not MapaValido(Map) Then Exit Sub
-    
-    If UserList(UserIndex).PartyIndex = 0 Then Exit Sub
-    
-    For LoopC = 1 To ConnGroups(Map).CountEntrys
-        tempIndex = ConnGroups(Map).UserEntrys(LoopC)
+'    For LoopC = 1 To ConnGroups(Map).CountEntrys
+'        tempIndex = ConnGroups(Map).UserEntrys(LoopC)
         
-        If UserList(tempIndex).AreasInfo.AreaReciveX And AreaX Then  'Esta en el area?
-            If UserList(tempIndex).AreasInfo.AreaReciveY And AreaY Then
-                If UserList(tempIndex).ConnIDValida And UserList(tempIndex).PartyIndex = UserList(UserIndex).PartyIndex Then
-                    Call EnviarDatosASlot(tempIndex, sdData)
-                End If
-            End If
-        End If
-    Next LoopC
-End Sub
+ '       If UserList(tempIndex).AreasInfo.AreaReciveX And AreaX Then  'Esta en el area?
+ '           If UserList(tempIndex).AreasInfo.AreaReciveY And AreaY Then
+          '      If UserList(tempIndex).ConnIDValida And UserList(tempIndex).PartyIndex = UserList(UserIndex).PartyIndex Then
+          '          Call EnviarDatosASlot(tempIndex, sdData)
+          '      End If
+   '         End If
+  '      End If
+   ' Next LoopC
+'End Sub
 
 Private Sub SendToAdminsButConsejerosArea(ByVal UserIndex As Integer, ByVal sdData As String)
 '**************************************************************

@@ -116,7 +116,7 @@ Public Enum eKeyType
     mKeyUseObject
     mKeyAttack
     mKeyTalk
-    mKeyTalkWithGuild
+   ' mKeyTalkWithGuild
     mKeyTakeScreenShot
     mKeyShowOptions
     mKeyMeditate
@@ -362,7 +362,7 @@ Public Sub LoadDefaults()
     mappedKeys(eKeyType.mKeyUseObject) = KeyCodeConstants.vbKeyU
     mappedKeys(eKeyType.mKeyAttack) = KeyCodeConstants.vbKeyControl
     mappedKeys(eKeyType.mKeyTalk) = KeyCodeConstants.vbKeyReturn
-    mappedKeys(eKeyType.mKeyTalkWithGuild) = KeyCodeConstants.vbKeyDelete
+   ' mappedKeys(eKeyType.mKeyTalkWithGuild) = KeyCodeConstants.vbKeyDelete
     mappedKeys(eKeyType.mKeyTakeScreenShot) = KeyCodeConstants.vbKeyF2
     mappedKeys(eKeyType.mKeyShowOptions) = KeyCodeConstants.vbKeyF5
     mappedKeys(eKeyType.mKeyMeditate) = KeyCodeConstants.vbKeyF6

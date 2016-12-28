@@ -1590,7 +1590,7 @@ Public Function PuedeAtacarNPC(ByVal AttackerIndex As Integer, ByVal NpcIndex As
             End If
             
             ' Si son del mismo clan o party, pueden atacar (No renueva el timer)
-            If Not SameClan(OwnerUserIndex, AttackerIndex) And Not SameParty(OwnerUserIndex, AttackerIndex) Then
+           ' If Not SameClan(OwnerUserIndex, AttackerIndex) And Not SameParty(OwnerUserIndex, AttackerIndex) Then
             
                 ' Si se le agoto el tiempo
                 If IntervaloPerdioNpc(OwnerUserIndex) Then ' Se lo roba :P
@@ -1760,7 +1760,7 @@ Public Function PuedeAtacarNPC(ByVal AttackerIndex As Integer, ByVal NpcIndex As
                         End If
                     End If
                 End If
-            End If
+           ' End If
             
         ' Si no tiene dueño el npc, se lo apropia
         Else
@@ -1795,25 +1795,6 @@ Public Function PuedeAtacarNPC(ByVal AttackerIndex As Integer, ByVal NpcIndex As
     PuedeAtacarNPC = True
 End Function
 
-Private Function SameClan(ByVal UserIndex As Integer, ByVal OtherUserIndex As Integer) As Boolean
-'***************************************************
-'Autor: ZaMa
-'Returns True if both players belong to the same clan.
-'Last Modification: 16/11/2009
-'***************************************************
-    SameClan = (UserList(UserIndex).GuildIndex = UserList(OtherUserIndex).GuildIndex) And _
-                UserList(UserIndex).GuildIndex <> 0
-End Function
-
-Private Function SameParty(ByVal UserIndex As Integer, ByVal OtherUserIndex As Integer) As Boolean
-'***************************************************
-'Autor: ZaMa
-'Returns True if both players belong to the same party.
-'Last Modification: 16/11/2009
-'***************************************************
-    SameParty = UserList(UserIndex).PartyIndex = UserList(OtherUserIndex).PartyIndex And _
-                UserList(UserIndex).PartyIndex <> 0
-End Function
 
 Sub CalcularDarExp(ByVal UserIndex As Integer, ByVal NpcIndex As Integer, ByVal ElDaño As Long)
 '***************************************************
@@ -1845,9 +1826,6 @@ Sub CalcularDarExp(ByVal UserIndex As Integer, ByVal NpcIndex As Integer, ByVal 
     
     '[Nacho] Le damos la exp al user
     If ExpaDar > 0 Then
-        If UserList(UserIndex).PartyIndex > 0 Then
-            Call mdParty.ObtenerExito(UserIndex, ExpaDar, Npclist(NpcIndex).Pos.Map, Npclist(NpcIndex).Pos.X, Npclist(NpcIndex).Pos.Y)
-        Else
             UserList(UserIndex).Stats.Exp = UserList(UserIndex).Stats.Exp + ExpaDar
             If UserList(UserIndex).Stats.Exp > MAXEXP Then _
                 UserList(UserIndex).Stats.Exp = MAXEXP
@@ -1855,7 +1833,7 @@ Sub CalcularDarExp(ByVal UserIndex As Integer, ByVal NpcIndex As Integer, ByVal 
         End If
         
         Call CheckUserLevel(UserIndex)
-    End If
+
 End Sub
 
 Public Function TriggerZonaPelea(ByVal Origen As Integer, ByVal Destino As Integer) As eTrigger6

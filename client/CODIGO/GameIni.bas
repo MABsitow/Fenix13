@@ -65,7 +65,7 @@ Public Type tSetupMods
     bNoRes      As Boolean ' 24/06/2006 - ^[GS]^
     bNoSoundEffects As Boolean
     sGraficos   As String * 13
-    bGuildNews  As Boolean ' 11/19/09
+ '   bGuildNews  As Boolean ' 11/19/09
     bDie        As Boolean ' 11/23/09 - FragShooter
     bKill       As Boolean ' 11/23/09 - FragShooter
     byMurderedLevel As Byte ' 11/23/09 - FragShooter

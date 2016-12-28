@@ -814,18 +814,18 @@ With UserList(UserIndex)
                 With UserList(TempCharIndex)
                     If LenB(.DescRM) = 0 And .showName Then 'No tiene descRM y quiere que se vea su nombre.
                         If EsNewbie(TempCharIndex) Then
-                            Stat = " <NEWBIE>"
+                            Stat = " <Newbie>"
                         End If
                         
                         If .Faccion.ArmadaReal = 1 Then
-                            Stat = Stat & " <Ejército Real> " & "<" & TituloReal(TempCharIndex) & ">"
+                            Stat = Stat & " <Alianza del Fénix> " & "<" & TituloReal(TempCharIndex) & ">"
                         ElseIf .Faccion.FuerzasCaos = 1 Then
-                            Stat = Stat & " <Legión Oscura> " & "<" & TituloCaos(TempCharIndex) & ">"
+                            Stat = Stat & " <Ejército de Lord Thek> " & "<" & TituloCaos(TempCharIndex) & ">"
                         End If
                         
-                        If .GuildIndex > 0 Then
-                            Stat = Stat & " <" & modGuilds.GuildName(.GuildIndex) & ">"
-                        End If
+                       ' If .GuildIndex > 0 Then
+                       '     Stat = Stat & " <" & modGuilds.GuildName(.GuildIndex) & ">"
+                       ' End If
                         
                         If Len(.desc) > 0 Then
                             Stat = "Ves a " & .name & Stat & " - " & .desc
@@ -835,35 +835,37 @@ With UserList(UserIndex)
                         
                                         
                         If .flags.Privilegios And PlayerType.RoyalCouncil Then
-                            Stat = Stat & " [CONSEJO DE BANDERBILL]"
+                            Stat = Stat & " <Consejo de Banderbill>"
                             ft = FontTypeNames.FONTTYPE_CONSEJOVesA
                         ElseIf .flags.Privilegios And PlayerType.ChaosCouncil Then
-                            Stat = Stat & " [CONCILIO DE LAS SOMBRAS]"
+                            Stat = Stat & " <Concilio de Arghal>"
                             ft = FontTypeNames.FONTTYPE_CONSEJOCAOSVesA
                         Else
                             If Not .flags.Privilegios And PlayerType.User Then
-                                Stat = Stat & " <GAME MASTER>"
+                                Stat = Stat & " <Game Master>"
                                 
                                 ' Elijo el color segun el rango del GM:
+                                If .flags.Privilegios = PlayerType.Admin Then
+                                    ft = FontTypeNames.FONTTYPE_GM
                                 ' Dios
-                                If .flags.Privilegios = PlayerType.Dios Then
-                                    ft = FontTypeNames.FONTTYPE_DIOS
+                                ElseIf .flags.Privilegios = PlayerType.Dios Then
+                                    ft = FontTypeNames.FONTTYPE_GM
                                 ' Gm
                                 ElseIf .flags.Privilegios = PlayerType.SemiDios Then
                                     ft = FontTypeNames.FONTTYPE_GM
                                 ' Conse
                                 ElseIf .flags.Privilegios = PlayerType.Consejero Then
-                                    ft = FontTypeNames.FONTTYPE_CONSE
+                                    ft = FontTypeNames.FONTTYPE_GM
                                 ' Rm o Dsrm
                                 ElseIf .flags.Privilegios = (PlayerType.RoleMaster Or PlayerType.Consejero) Or .flags.Privilegios = (PlayerType.RoleMaster Or PlayerType.Dios) Then
-                                    ft = FontTypeNames.FONTTYPE_EJECUCION
+                                    ft = FontTypeNames.FONTTYPE_GM
                                 End If
                                 
                             ElseIf criminal(TempCharIndex) Then
-                                Stat = Stat & " <CRIMINAL>"
+                                Stat = Stat & " <Criminal>"
                                 ft = FontTypeNames.FONTTYPE_FIGHT
                             Else
-                                Stat = Stat & " <CIUDADANO>"
+                                Stat = Stat & " <Ciudadano>"
                                 ft = FontTypeNames.FONTTYPE_CITIZEN
                             End If
                         End If

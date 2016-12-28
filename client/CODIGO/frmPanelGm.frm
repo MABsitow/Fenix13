@@ -1,5 +1,5 @@
 VERSION 5.00
-Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "MSCOMCTL.ocx"
+Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.2#0"; "MSCOMCTL.OCX"
 Begin VB.Form frmPanelGm 
    BorderStyle     =   1  'Fixed Single
    Caption         =   "Panel GM"
@@ -938,15 +938,6 @@ Private Sub cmdBAN_Click()
     End If
 End Sub
 
-Private Sub cmdBANCLAN_Click()
-    '/BANCLAN
-    Dim tStr As String
-    
-    tStr = InputBox("Escriba el nombre del clan.", "Banear clan")
-    If LenB(tStr) <> 0 Then _
-        If MsgBox("¿Seguro desea banear al clan " & tStr & "?", vbYesNo, "Atencion!") = vbYes Then _
-            Call WriteGuildBan(tStr)
-End Sub
 
 Private Sub cmdBANIP_Click()
     '/BANIP
@@ -1260,14 +1251,14 @@ Private Sub cmdMASSDEST_Click()
         Call WriteDestroyAllItemsInArea
 End Sub
 
-Private Sub cmdMIEMBROSCLAN_Click()
+'Private Sub cmdMIEMBROSCLAN_Click()
     '/MIEMBROSCLAN
-    Dim tStr As String
-    
-    tStr = InputBox("Escriba el nombre del clan.", "Lista de miembros del clan")
-    If LenB(tStr) <> 0 Then _
-        Call WriteGuildMemberList(tStr)
-End Sub
+'    Dim tStr As String
+'
+'    tStr = InputBox("Escriba el nombre del clan.", "Lista de miembros del clan")
+'    If LenB(tStr) <> 0 Then _
+'        Call WriteGuildMemberList(tStr)
+'End Sub
 
 Private Sub cmdMOTDCAMBIA_Click()
     '/MOTDCAMBIA
@@ -1391,16 +1382,16 @@ Private Sub cmdRAJAR_Click()
             Call WriteResetFactions(Nick)
 End Sub
 
-Private Sub cmdRAJARCLAN_Click()
-    '/RAJARCLAN
-    Dim Nick As String
+'Private Sub cmdRAJARCLAN_Click()
+'    '/RAJARCLAN
+'    Dim Nick As String
 
-    Nick = cboListaUsus.Text
+ '   Nick = cboListaUsus.Text
     
-    If LenB(Nick) <> 0 Then _
-        If MsgBox("¿Seguro desea expulsar a " & Nick & " de su clan?", vbYesNo, "Atencion!") = vbYes Then _
-            Call WriteRemoveCharFromGuild(Nick)
-End Sub
+  '  If LenB(Nick) <> 0 Then _
+   '     If MsgBox("¿Seguro desea expulsar a " & Nick & " de su clan?", vbYesNo, "Atencion!") = vbYes Then _
+  '          Call WriteRemoveCharFromGuild(Nick)
+'End Sub
 
 Private Sub cmdREALMSG_Click()
     '/REALMSG
@@ -1453,14 +1444,14 @@ Private Sub cmdSHOW_SOS_Click()
     Call WriteSOSShowList
 End Sub
 
-Private Sub cmdSHOWCMSG_Click()
+'Private Sub cmdSHOWCMSG_Click()
     '/SHOWCMSG
-    Dim tStr As String
+'    Dim tStr As String
     
-    tStr = InputBox("Escriba el nombre del clan que desea escuchar.", "Escuchar los mensajes del clan")
-    If LenB(tStr) <> 0 Then _
-        Call WriteShowGuildMessages(tStr)
-End Sub
+'    tStr = InputBox("Escriba el nombre del clan que desea escuchar.", "Escuchar los mensajes del clan")
+'    If LenB(tStr) <> 0 Then _
+'        Call WriteShowGuildMessages(tStr)
+'End Sub
 
 Private Sub cmdSHOWNAME_Click()
     '/SHOWNAME

@@ -757,7 +757,7 @@ Public Function CurServerIp() As String
     If CurServer <> 0 Then
         CurServerIp = ServersLst(CurServer).Ip
     Else
-        CurServerIp = frmConnect.IPTxt
+        CurServerIp = "127.0.0.1"
     End If
 End Function
 
@@ -765,7 +765,7 @@ Public Function CurServerPort() As Integer
     If CurServer <> 0 Then
         CurServerPort = ServersLst(CurServer).Puerto
     Else
-        CurServerPort = Val(frmConnect.PortTxt)
+        CurServerPort = 7666
     End If
 End Function
 
@@ -939,7 +939,7 @@ UserMap = 1
     
     'Set the dialog's font
     Dialogos.font = frmMain.font
-    DialogosClanes.font = frmMain.font
+    'DialogosClanes.font = frmMain.font
     
     lFrameTimer = GetTickCount
     
@@ -1165,9 +1165,9 @@ Private Sub LoadClientSetup()
         GraphicsFile = "Graficos3.ind"
     End If
     
-    ClientSetup.bGuildNews = Not ClientSetup.bGuildNews
-    DialogosClanes.Activo = Not ClientSetup.bGldMsgConsole
-    DialogosClanes.CantidadDialogos = ClientSetup.bCantMsgs
+ '   ClientSetup.bGuildNews = Not ClientSetup.bGuildNews
+  '  DialogosClanes.Activo = Not ClientSetup.bGldMsgConsole
+  '  DialogosClanes.CantidadDialogos = ClientSetup.bCantMsgs
 End Sub
 
 Private Sub SaveClientSetup()
@@ -1183,9 +1183,9 @@ Private Sub SaveClientSetup()
     ClientSetup.bNoMusic = Not Audio.MusicActivated
     ClientSetup.bNoSound = Not Audio.SoundActivated
     ClientSetup.bNoSoundEffects = Not Audio.SoundEffectsActivated
-    ClientSetup.bGuildNews = Not ClientSetup.bGuildNews
-    ClientSetup.bGldMsgConsole = Not DialogosClanes.Activo
-    ClientSetup.bCantMsgs = DialogosClanes.CantidadDialogos
+   ' ClientSetup.bGuildNews = Not ClientSetup.bGuildNews
+  '  ClientSetup.bGldMsgConsole = Not DialogosClanes.Activo
+    'ClientSetup.bCantMsgs = DialogosClanes.CantidadDialogos
     
     Open App.path & "\init\ao.dat" For Binary As fHandle
         Put fHandle, , ClientSetup
@@ -1263,7 +1263,7 @@ Public Sub CleanDialogs()
     'Clean console and dialogs
     frmMain.RecTxt.Text = vbNullString
     
-    Call DialogosClanes.RemoveDialogs
+  '  Call DialogosClanes.RemoveDialogs
     
     Call Dialogos.RemoveAllDialogs
 End Sub
@@ -1293,7 +1293,7 @@ Public Sub CloseClient()
     Set CustomKeys = Nothing
     Set SurfaceDB = Nothing
     Set Dialogos = Nothing
-    Set DialogosClanes = Nothing
+  '  Set DialogosClanes = Nothing
     Set Audio = Nothing
     Set Inventario = Nothing
     Set MainTimer = Nothing

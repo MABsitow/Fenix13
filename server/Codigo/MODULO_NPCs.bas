@@ -149,14 +149,10 @@ On Error GoTo Errhandler
             
             '[KEVIN]
             If MiNPC.flags.ExpCount > 0 Then
-                If .PartyIndex > 0 Then
-                    Call mdParty.ObtenerExito(UserIndex, MiNPC.flags.ExpCount, MiNPC.Pos.Map, MiNPC.Pos.X, MiNPC.Pos.Y)
-                Else
                     .Stats.Exp = .Stats.Exp + MiNPC.flags.ExpCount
                     If .Stats.Exp > MAXEXP Then _
                         .Stats.Exp = MAXEXP
                     Call WriteConsoleMsg(UserIndex, "Has ganado " & MiNPC.flags.ExpCount & " puntos de experiencia.", FontTypeNames.FONTTYPE_FIGHT)
-                End If
                 MiNPC.flags.ExpCount = 0
             End If
             

@@ -22,31 +22,6 @@ Begin VB.Form frmConnect
    ScaleWidth      =   800
    StartUpPosition =   2  'CenterScreen
    Visible         =   0   'False
-   Begin SHDocVwCtl.WebBrowser webNoticias 
-      Height          =   4440
-      Left            =   435
-      TabIndex        =   5
-      Top             =   1680
-      Width           =   2850
-      ExtentX         =   5027
-      ExtentY         =   7832
-      ViewMode        =   0
-      Offline         =   0
-      Silent          =   0
-      RegisterAsBrowser=   0
-      RegisterAsDropTarget=   1
-      AutoArrange     =   0   'False
-      NoClientEdge    =   0   'False
-      AlignLeft       =   0   'False
-      NoWebView       =   0   'False
-      HideFileNames   =   0   'False
-      SingleClick     =   0   'False
-      SingleSelection =   0   'False
-      NoFolders       =   0   'False
-      Transparent     =   0   'False
-      ViewID          =   "{0057D0E0-3573-11CF-AE69-08002B2E1262}"
-      Location        =   "http:///"
-   End
    Begin VB.TextBox txtPasswd 
       BackColor       =   &H00000000&
       BorderStyle     =   0  'None
@@ -107,6 +82,7 @@ Begin VB.Form frmConnect
       TabIndex        =   2
       Text            =   "7666"
       Top             =   2760
+      Visible         =   0   'False
       Width           =   825
    End
    Begin VB.TextBox IPTxt 
@@ -127,14 +103,15 @@ Begin VB.Form frmConnect
       Height          =   195
       Left            =   5760
       TabIndex        =   4
-      Text            =   "localhost"
+      Text            =   "127.0.0.1"
       Top             =   2760
+      Visible         =   0   'False
       Width           =   1575
    End
    Begin SHDocVwCtl.WebBrowser WebAuxiliar 
       Height          =   360
       Left            =   960
-      TabIndex        =   6
+      TabIndex        =   5
       Top             =   0
       Visible         =   0   'False
       Width           =   330
@@ -155,7 +132,7 @@ Begin VB.Form frmConnect
       NoFolders       =   0   'False
       Transparent     =   0   'False
       ViewID          =   "{0057D0E0-3573-11CF-AE69-08002B2E1262}"
-      Location        =   "http:///"
+      Location        =   ""
    End
    Begin VB.Image imgTeclas 
       Height          =   375
@@ -353,7 +330,7 @@ Private Sub Form_Load()
     EngineRun = False
     '[END]
     
-    webNoticias.Navigate ("http://ao.alkon.com.ar/noticiascliente/noticias.php")
+   ' webNoticias.Navigate ("http://ao.alkon.com.ar/noticiascliente/noticias.php")
     
     PortTxt.Text = Config_Inicio.Puerto
  
@@ -624,16 +601,5 @@ Private Sub WebAuxiliar_BeforeNavigate2(ByVal pDisp As Object, URL As Variant, f
         Call ShellExecute(hWnd, "open", URL, vbNullString, vbNullString, SW_SHOWNORMAL)
         Cancel = True
     End If
-    
-End Sub
-
-Private Sub webNoticias_NavigateError(ByVal pDisp As Object, URL As Variant, Frame As Variant, StatusCode As Variant, Cancel As Boolean)
-    If StatusCode = 500 Then webNoticias.Visible = False
-End Sub
-
-Private Sub webNoticias_NewWindow2(ppDisp As Object, Cancel As Boolean)
-    
-    WebAuxiliar.RegisterAsBrowser = True
-    Set ppDisp = WebAuxiliar.Object
     
 End Sub

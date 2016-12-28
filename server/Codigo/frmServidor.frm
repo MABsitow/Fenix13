@@ -586,7 +586,6 @@ End Sub
 
 Private Sub Command18_Click()
 Me.MousePointer = 11
-Call mdParty.ActualizaExperiencias
 Call GuardarUsuarios
 Me.MousePointer = 0
 MsgBox "Grabado de personajes OK!"
@@ -667,9 +666,6 @@ If MsgBox("¿Está seguro que desea hacer WorldSave, guardar pjs y cerrar?", vbYes
    
     'WorldSave
     Call ES.DoBackUp
-
-    'commit experiencia
-    Call mdParty.ActualizaExperiencias
 
     'Guardar Pjs
     Call GuardarUsuarios
@@ -829,14 +825,14 @@ If picCont.Height > picFuera.ScaleHeight Then
 Else
     VS1.max = 0
 End If
-picCont.Top = -VS1.value
+picCont.Top = -VS1.Value
 
 End Sub
 
 Private Sub VS1_Change()
-picCont.Top = -VS1.value
+picCont.Top = -VS1.Value
 End Sub
 
 Private Sub VS1_Scroll()
-picCont.Top = -VS1.value
+picCont.Top = -VS1.Value
 End Sub

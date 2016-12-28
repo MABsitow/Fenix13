@@ -125,14 +125,14 @@ Enum eGenero
     Mujer
 End Enum
 
-Public Enum eClanType
-    ct_RoyalArmy
-    ct_Evil
-    ct_Neutral
-    ct_GM
-    ct_Legal
-    ct_Criminal
-End Enum
+'Public Enum eClanType
+'    ct_RoyalArmy
+'    ct_Evil
+'    ct_Neutral
+'    ct_GM
+'    ct_Legal
+'    ct_Criminal
+'End Enum
 
 Public Const LimiteNewbie As Byte = 12
 
@@ -690,12 +690,6 @@ Public Type Inventario
     NroItems As Integer
 End Type
 
-Public Type tPartyData
-    PIndex As Integer
-    RemXP As Double 'La exp. en el server se cuenta con Doubles
-    TargetUser As Integer 'Para las invitaciones
-End Type
-
 Public Type Position
     X As Integer
     Y As Integer
@@ -1241,12 +1235,12 @@ Public Type User
     
     ComUsu As tCOmercioUsuario
     
-    GuildIndex As Integer   'puntero al array global de guilds
-    FundandoGuildAlineacion As ALINEACION_GUILD     'esto esta aca hasta que se parchee el cliente y se pongan cadenas de datos distintas para cada alineacion
-    EscucheClan As Integer
+   ' GuildIndex As Integer   'puntero al array global de guilds
+   ' FundandoGuildAlineacion As ALINEACION_GUILD     'esto esta aca hasta que se parchee el cliente y se pongan cadenas de datos distintas para cada alineacion
+   ' EscucheClan As Integer
     
-    PartyIndex As Integer   'index a la party q es miembro
-    PartySolicitud As Integer   'index a la party q solicito
+   ' PartyIndex As Integer   'index a la party q es miembro
+   ' PartySolicitud As Integer   'index a la party q solicito
     
     KeyCrypt As Integer
     
@@ -1540,7 +1534,7 @@ Public ArmadurasHerrero() As Integer
 Public ObjCarpintero() As Integer
 Public MD5s() As String
 Public BanIps As New Collection
-Public Parties(1 To MAX_PARTIES) As clsParty
+'Public Parties(1 To MAX_PARTIES) As clsParty
 Public ModClase(1 To NUMCLASES) As ModClase
 Public ModRaza(1 To NUMRAZAS) As ModRaza
 Public ModVida(1 To NUMCLASES) As Double
@@ -1655,7 +1649,6 @@ Public Enum eGMCommands
     ServerMessage           '/RMSG
     NickToIP                '/NICK2IP
     IPToNick                '/IP2NICK
-    GuildOnlineMembers      '/ONCLAN
     TeleportCreate          '/CT
     TeleportDestroy         '/DT
     RainToggle              '/LLUVIA
@@ -1679,8 +1672,6 @@ Public Enum eGMCommands
     AskTrigger              '/TRIGGER with no args
     BannedIPList            '/BANIPLIST
     BannedIPReload          '/BANIPRELOAD
-    GuildMemberList         '/MIEMBROSCLAN
-    GuildBan                '/BANCLAN
     BanIP                   '/BANIP
     UnbanIP                 '/UNBANIP
     CreateItem              '/CI
@@ -1706,14 +1697,12 @@ Public Enum eGMCommands
     TurnOffServer           '/APAGAR
     TurnCriminal            '/CONDEN
     ResetFactions           '/RAJAR
-    RemoveCharFromGuild     '/RAJARCLAN
     RequestCharMail         '/LASTEMAIL
     AlterPassword           '/APASS
     AlterMail               '/AEMAIL
     AlterName               '/ANAME
     ToggleCentinelActivated '/CENTINELAACTIVADO
     DoBackUp                '/DOBACKUP
-    ShowGuildMessages       '/SHOWCMSG
     SaveMap                 '/GUARDAMAPA
     ChangeMapInfoPK         '/MODMAPINFO PK
     ChangeMapInfoBackup     '/MODMAPINFO BACKUP

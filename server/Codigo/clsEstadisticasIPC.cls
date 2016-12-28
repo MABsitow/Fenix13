@@ -50,7 +50,7 @@ Public Enum EstaNotificaciones
     RECORD_USUARIOS = 2
     UPTIME_SERVER = 3
     CANTIDAD_MAPAS = 4
-    EVENTO_NUEVO_CLAN = 5
+   ' EVENTO_NUEVO_CLAN = 5
     
     HANDLE_WND_SERVER = 100
 End Enum

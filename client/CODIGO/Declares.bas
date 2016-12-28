@@ -34,7 +34,7 @@ Attribute VB_Name = "Mod_Declaraciones"
 Option Explicit
 
 'Objetos públicos
-Public DialogosClanes As New clsGuildDlg
+'Public DialogosClanes As New clsGuildDlg
 Public Dialogos As New clsDialogs
 Public Audio As New clsAudio
 Public Inventario As New clsGrapchicalInventory
@@ -165,8 +165,8 @@ Public ServersRecibidos As Boolean
 
 Public CurServer As Integer
 
-Public CreandoClan As Boolean
-Public ClanName As String
+'Public CreandoClan As Boolean
+'Public ClanName As String
 Public Site As String
 
 Public UserCiego As Boolean
@@ -417,8 +417,7 @@ Public Enum eGMCommands
     ServerMessage           '/RMSG
     nickToIP                '/NICK2IP
     IPToNick                '/IP2NICK
-    GuildOnlineMembers      '/ONCLAN
-    TeleportCreate          '/CT
+       TeleportCreate          '/CT
     TeleportDestroy         '/DT
     RainToggle              '/LLUVIA
     SetCharDescription      '/SETDESC
@@ -441,8 +440,6 @@ Public Enum eGMCommands
     AskTrigger              '/TRIGGER with no args
     BannedIPList            '/BANIPLIST
     BannedIPReload          '/BANIPRELOAD
-    GuildMemberList         '/MIEMBROSCLAN
-    GuildBan                '/BANCLAN
     BanIP                   '/BANIP
     UnbanIP                 '/UNBANIP
     CreateItem              '/CI
@@ -468,14 +465,13 @@ Public Enum eGMCommands
     TurnOffServer           '/APAGAR
     TurnCriminal            '/CONDEN
     ResetFactions           '/RAJAR
-    RemoveCharFromGuild     '/RAJARCLAN
     RequestCharMail         '/LASTEMAIL
     AlterPassword           '/APASS
     AlterMail               '/AEMAIL
     AlterName               '/ANAME
     ToggleCentinelActivated '/CENTINELAACTIVADO
     DoBackUp                '/DOBACKUP
-    ShowGuildMessages       '/SHOWCMSG
+  '  ShowGuildMessages       '/SHOWCMSG
     SaveMap                 '/GUARDAMAPA
     ChangeMapInfoPK         '/MODMAPINFO PK
     ChangeMapInfoBackup     '/MODMAPINFO BACKUP
@@ -561,8 +557,8 @@ Public Const MENSAJE_TRABAJO_MINERIA As String = "Haz click sobre el yacimiento.
 Public Const MENSAJE_TRABAJO_FUNDIRMETAL As String = "Haz click sobre la fragua..."
 Public Const MENSAJE_TRABAJO_PROYECTILES As String = "Haz click sobre la victima..."
 
-Public Const MENSAJE_ENTRAR_PARTY_1 As String = "Si deseas entrar en una party con "
-Public Const MENSAJE_ENTRAR_PARTY_2 As String = ", escribe /entrarparty"
+'Public Const MENSAJE_ENTRAR_PARTY_1 As String = "Si deseas entrar en una party con "
+'Public Const MENSAJE_ENTRAR_PARTY_2 As String = ", escribe /entrarparty"
 
 Public Const MENSAJE_NENE As String = "Cantidad de NPCs: "
 
@@ -731,7 +727,7 @@ Public Comerciando As Boolean
 Public MirandoForo As Boolean
 Public MirandoAsignarSkills As Boolean
 Public MirandoEstadisticas As Boolean
-Public MirandoParty As Boolean
+'Public MirandoParty As Boolean
 '<-------------------------NUEVO-------------------------->
 
 Public UserClase As eClass
@@ -769,7 +765,7 @@ Public MD5HushYo As String * 16
 
 Public pingTime As Long
 
-Public EsPartyLeader As Boolean
+'Public EsPartyLeader As Boolean
 
 Public Enum E_MODO
     Normal = 1
@@ -787,14 +783,14 @@ Public Enum FxMeditar
     XXGRANDE = 34
 End Enum
 
-Public Enum eClanType
-    ct_RoyalArmy
-    ct_Evil
-    ct_Neutral
-    ct_GM
-    ct_Legal
-    ct_Criminal
-End Enum
+'Public Enum eClanType
+'    ct_RoyalArmy
+'    ct_Evil
+'    ct_Neutral
+'    ct_GM
+'    ct_Legal
+'    ct_Criminal
+'End Enum
 
 Public Enum eEditOptions
     eo_Gold = 1
@@ -937,8 +933,8 @@ Public clsForos As New clsForum
 Public isCapturePending As Boolean
 Public Traveling As Boolean
 
-Public GuildNames() As String
-Public GuildMembers() As String
+'Public GuildNames() As String
+'Public GuildMembers() As String
 
 Public Const OFFSET_HEAD As Integer = -34
 

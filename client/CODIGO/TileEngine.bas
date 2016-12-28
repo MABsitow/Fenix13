@@ -1879,7 +1879,7 @@ Sub ShowNextFrame(ByVal DisplayFormTop As Integer, ByVal DisplayFormLeft As Inte
         Call Dialogos.Render
         Call DibujarCartel
         
-        Call DialogosClanes.Draw
+       ' Call DialogosClanes.Draw
         
         'Display front-buffer!
         Call PrimarySurface.Blt(MainViewRect, BackBufferSurface, MainDestRect, DDBLT_WAIT)
@@ -2134,8 +2134,8 @@ Private Sub CharRender(ByVal CharIndex As Long, ByVal PixelOffsetX As Integer, B
                             Call RenderTextCentered(PixelOffsetX + TilePixelWidth \ 2 + 5, PixelOffsetY + 30, line, color, frmMain.font)
                             
                             'Clan
-                            line = mid$(.Nombre, Pos)
-                            Call RenderTextCentered(PixelOffsetX + TilePixelWidth \ 2 + 5, PixelOffsetY + 45, line, color, frmMain.font)
+                         '   line = mid$(.Nombre, Pos)
+                           ' Call RenderTextCentered(PixelOffsetX + TilePixelWidth \ 2 + 5, PixelOffsetY + 45, line, color, frmMain.font)
                         End If
                     End If
                 End If

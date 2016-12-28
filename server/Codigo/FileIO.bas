@@ -36,10 +36,10 @@ Public Sub CargarSpawnList()
 '
 '***************************************************
 
-    Dim N As Integer, LoopC As Integer
-    N = val(GetVar(App.Path & "\Dat\Invokar.dat", "INIT", "NumNPCs"))
-    ReDim SpawnList(N) As tCriaturasEntrenador
-    For LoopC = 1 To N
+    Dim n As Integer, LoopC As Integer
+    n = val(GetVar(App.Path & "\Dat\Invokar.dat", "INIT", "NumNPCs"))
+    ReDim SpawnList(n) As tCriaturasEntrenador
+    For LoopC = 1 To n
         SpawnList(LoopC).NpcIndex = val(GetVar(App.Path & "\Dat\Invokar.dat", "LIST", "NI" & LoopC))
         SpawnList(LoopC).NpcName = GetVar(App.Path & "\Dat\Invokar.dat", "LIST", "NN" & LoopC)
     Next LoopC
@@ -177,15 +177,15 @@ Public Function TxtDimension(ByVal name As String) As Long
 '
 '***************************************************
 
-    Dim N As Integer, cad As String, Tam As Long
-    N = FreeFile(1)
-    Open name For Input As #N
+    Dim n As Integer, cad As String, Tam As Long
+    n = FreeFile(1)
+    Open name For Input As #n
     Tam = 0
-    Do While Not EOF(N)
+    Do While Not EOF(n)
         Tam = Tam + 1
-        Line Input #N, cad
+        Line Input #n, cad
     Loop
-    Close N
+    Close n
     TxtDimension = Tam
 End Function
 
@@ -197,15 +197,15 @@ Public Sub CargarForbidenWords()
 '***************************************************
 
     ReDim ForbidenNames(1 To TxtDimension(DatPath & "NombresInvalidos.txt"))
-    Dim N As Integer, i As Integer
-    N = FreeFile(1)
-    Open DatPath & "NombresInvalidos.txt" For Input As #N
+    Dim n As Integer, i As Integer
+    n = FreeFile(1)
+    Open DatPath & "NombresInvalidos.txt" For Input As #n
     
     For i = 1 To UBound(ForbidenNames)
-        Line Input #N, ForbidenNames(i)
+        Line Input #n, ForbidenNames(i)
     Next i
     
-    Close N
+    Close n
 
 End Sub
 
@@ -400,7 +400,7 @@ Public Sub DoBackUp()
     
     Call LimpiarMundo
     Call WorldSave
-    Call modGuilds.v_RutinaElecciones
+  '  Call modGuilds.v_RutinaElecciones
     Call ResetCentinelaInfo     'Reseteamos al centinela
     
     
@@ -563,13 +563,13 @@ Sub LoadArmasHerreria()
 '
 '***************************************************
 
-    Dim N As Integer, lc As Integer
+    Dim n As Integer, lc As Integer
     
-    N = val(GetVar(DatPath & "ArmasHerrero.dat", "INIT", "NumArmas"))
+    n = val(GetVar(DatPath & "ArmasHerrero.dat", "INIT", "NumArmas"))
     
-    ReDim Preserve ArmasHerrero(1 To N) As Integer
+    ReDim Preserve ArmasHerrero(1 To n) As Integer
     
-    For lc = 1 To N
+    For lc = 1 To n
         ArmasHerrero(lc) = val(GetVar(DatPath & "ArmasHerrero.dat", "Arma" & lc, "Index"))
     Next lc
 
@@ -582,13 +582,13 @@ Sub LoadArmadurasHerreria()
 '
 '***************************************************
 
-    Dim N As Integer, lc As Integer
+    Dim n As Integer, lc As Integer
     
-    N = val(GetVar(DatPath & "ArmadurasHerrero.dat", "INIT", "NumArmaduras"))
+    n = val(GetVar(DatPath & "ArmadurasHerrero.dat", "INIT", "NumArmaduras"))
     
-    ReDim Preserve ArmadurasHerrero(1 To N) As Integer
+    ReDim Preserve ArmadurasHerrero(1 To n) As Integer
     
-    For lc = 1 To N
+    For lc = 1 To n
         ArmadurasHerrero(lc) = val(GetVar(DatPath & "ArmadurasHerrero.dat", "Armadura" & lc, "Index"))
     Next lc
 
@@ -643,10 +643,7 @@ Sub LoadBalance()
     
     'Extra
     PorcentajeRecuperoMana = val(GetVar(DatPath & "Balance.dat", "EXTRA", "PorcentajeRecuperoMana"))
-
-    'Party
-    ExponenteNivelParty = val(GetVar(DatPath & "Balance.dat", "PARTY", "ExponenteNivelParty"))
-    
+   
     ' Recompensas faccionarias
     For i = 1 To NUM_RANGOS_FACCION
         RecompensaFacciones(i - 1) = val(GetVar(DatPath & "Balance.dat", "RECOMPENSAFACCION", "Rango" & i))
@@ -661,13 +658,13 @@ Sub LoadObjCarpintero()
 '
 '***************************************************
 
-    Dim N As Integer, lc As Integer
+    Dim n As Integer, lc As Integer
     
-    N = val(GetVar(DatPath & "ObjCarpintero.dat", "INIT", "NumObjs"))
+    n = val(GetVar(DatPath & "ObjCarpintero.dat", "INIT", "NumObjs"))
     
-    ReDim Preserve ObjCarpintero(1 To N) As Integer
+    ReDim Preserve ObjCarpintero(1 To n) As Integer
     
-    For lc = 1 To N
+    For lc = 1 To n
         ObjCarpintero(lc) = val(GetVar(DatPath & "ObjCarpintero.dat", "Obj" & lc, "Index"))
     Next lc
 
@@ -891,15 +888,15 @@ On Error GoTo Errhandler
             
             'CHECK: !!! Esto es provisorio hasta que los de Dateo cambien los valores de string a numerico
             Dim i As Integer
-            Dim N As Integer
+            Dim n As Integer
             Dim S As String
             For i = 1 To NUMCLASES
                 S = UCase$(Leer.GetValue("OBJ" & Object, "CP" & i))
-                N = 1
-                Do While LenB(S) > 0 And UCase$(ListaClases(N)) <> S
-                    N = N + 1
+                n = 1
+                Do While LenB(S) > 0 And UCase$(ListaClases(n)) <> S
+                    n = n + 1
                 Loop
-                .ClaseProhibida(i) = IIf(LenB(S) > 0, N, 0)
+                .ClaseProhibida(i) = IIf(LenB(S) > 0, n, 0)
             Next i
             
             .DefensaMagicaMax = val(Leer.GetValue("OBJ" & Object, "DefensaMagicaMax"))
@@ -1196,12 +1193,12 @@ Sub LoadUserInit(ByVal UserIndex As Integer, ByRef UserFile As clsIniReader)
             .MascotasType(LoopC) = val(UserFile.GetValue("MASCOTAS", "MAS" & LoopC))
         Next LoopC
         
-        ln = UserFile.GetValue("Guild", "GUILDINDEX")
-        If IsNumeric(ln) Then
-            .GuildIndex = CInt(ln)
-        Else
-            .GuildIndex = 0
-        End If
+      '  ln = UserFile.GetValue("Guild", "GUILDINDEX")
+       ' If IsNumeric(ln) Then
+       '     .GuildIndex = CInt(ln)
+       ' Else
+       '     .GuildIndex = 0
+       ' End If
     End With
 
 End Sub

@@ -140,8 +140,7 @@ Public Sub ParseUserCommand(ByVal RawCommand As String)
                 If frmMain.macrotrabajo.Enabled Then Call frmMain.DesactivarMacroTrabajo
                 Call WriteQuit
                 
-            Case "/SALIRCLAN"
-                Call WriteGuildLeave
+
                 
             Case "/BALANCE"
                 If UserEstado = 1 Then 'Muerto
@@ -255,34 +254,10 @@ Public Sub ParseUserCommand(ByVal RawCommand As String)
                 
             Case "/RECOMPENSA"
                 Call WriteReward
-                
-            Case "/MOTD"
-                Call WriteRequestMOTD
-                
+                   
             Case "/UPTIME"
                 Call WriteUpTime
-                
-            Case "/SALIRPARTY"
-                Call WritePartyLeave
-                
-            Case "/CREARPARTY"
-                If UserEstado = 1 Then 'Muerto
-                    With FontTypes(FontTypeNames.FONTTYPE_INFO)
-                        Call ShowConsoleMsg("¡¡Estás muerto!!", .red, .green, .blue, .bold, .italic)
-                    End With
-                    Exit Sub
-                End If
-                Call WritePartyCreate
-                
-            Case "/PARTY"
-                If UserEstado = 1 Then 'Muerto
-                    With FontTypes(FontTypeNames.FONTTYPE_INFO)
-                        Call ShowConsoleMsg("¡¡Estás muerto!!", .red, .green, .blue, .bold, .italic)
-                    End With
-                    Exit Sub
-                End If
-                Call WritePartyJoin
-            
+         
             Case "/COMPARTIRNPC"
                 If UserEstado = 1 Then 'Muerto
                     With FontTypes(FontTypeNames.FONTTYPE_INFO)
@@ -317,24 +292,8 @@ Public Sub ParseUserCommand(ByVal RawCommand As String)
                     End If
                 End If
         
-            Case "/CMSG"
-                'Ojo, no usar notNullArguments porque se usa el string vacio para borrar cartel.
-                If CantidadArgumentos > 0 Then
-                    Call WriteGuildMessage(ArgumentosRaw)
-                Else
-                    'Avisar que falta el parametro
-                    Call ShowConsoleMsg("Escriba un mensaje.")
-                End If
-        
-            Case "/PMSG"
-                'Ojo, no usar notNullArguments porque se usa el string vacio para borrar cartel.
-                If CantidadArgumentos > 0 Then
-                    Call WritePartyMessage(ArgumentosRaw)
-                Else
-                    'Avisar que falta el parametro
-                    Call ShowConsoleMsg("Escriba un mensaje.")
-                End If
-            
+           
+                        
             Case "/CENTINELA"
                 If notNullArguments Then
                     If ValidNumber(ArgumentosRaw, eNumber_Types.ent_Integer) Then
@@ -348,12 +307,9 @@ Public Sub ParseUserCommand(ByVal RawCommand As String)
                     Call ShowConsoleMsg("Faltan parámetros. Utilice /centinela X, siendo X el código de verificación.")
                 End If
         
-            Case "/ONLINECLAN"
-                Call WriteGuildOnline
+           
                 
-            Case "/ONLINEPARTY"
-                Call WritePartyOnline
-                
+                        
             Case "/BMSG"
                 If notNullArguments Then
                     Call WriteCouncilMessage(ArgumentosRaw)
@@ -391,13 +347,7 @@ Public Sub ParseUserCommand(ByVal RawCommand As String)
                 
                 Call WriteChangeDescription(ArgumentosRaw)
             
-            Case "/VOTO"
-                If notNullArguments Then
-                    Call WriteGuildVote(ArgumentosRaw)
-                Else
-                    'Avisar que falta el parametro
-                    Call ShowConsoleMsg("Faltan parámetros. Utilice /voto NICKNAME.")
-                End If
+         
                
             Case "/PENAS"
                 If notNullArguments Then
@@ -485,41 +435,6 @@ Public Sub ParseUserCommand(ByVal RawCommand As String)
                     Call ShowConsoleMsg("Formule su denuncia.")
                 End If
                 
-            Case "/FUNDARCLAN"
-                If UserLvl >= 25 Then
-                    Call WriteGuildFundate
-                Else
-                    Call ShowConsoleMsg("Para fundar un clan tenés que ser nivel 25 y tener 90 skills en liderazgo.")
-                End If
-            
-            Case "/FUNDARCLANGM"
-                Call WriteGuildFundation(eClanType.ct_GM)
-            
-            Case "/ECHARPARTY"
-                If notNullArguments Then
-                    Call WritePartyKick(ArgumentosRaw)
-                Else
-                    'Avisar que falta el parametro
-                    Call ShowConsoleMsg("Faltan parámetros. Utilice /echarparty NICKNAME.")
-                End If
-                
-            Case "/PARTYLIDER"
-                If notNullArguments Then
-                    Call WritePartySetLeader(ArgumentosRaw)
-                Else
-                    'Avisar que falta el parametro
-                    Call ShowConsoleMsg("Faltan parámetros. Utilice /partylider NICKNAME.")
-                End If
-                
-            Case "/ACCEPTPARTY"
-                If notNullArguments Then
-                    Call WritePartyAcceptMember(ArgumentosRaw)
-                Else
-                    'Avisar que falta el parametro
-                    Call ShowConsoleMsg("Faltan parámetros. Utilice /acceptparty NICKNAME.")
-                End If
-
-            '
             ' BEGIN GM COMMANDS
             '
             
@@ -923,14 +838,7 @@ Public Sub ParseUserCommand(ByVal RawCommand As String)
                     Call ShowConsoleMsg("Faltan parámetros. Utilice /ip2nick IP.")
                 End If
                 
-            Case "/ONCLAN"
-                If notNullArguments Then
-                    Call WriteGuildOnlineMembers(ArgumentosRaw)
-                Else
-                    'Avisar sintaxis incorrecta
-                    Call ShowConsoleMsg("Utilice /onclan nombre del clan.")
-                End If
-                
+                           
             Case "/CT"
                 If notNullArguments And CantidadArgumentos >= 3 Then
                     If ValidNumber(ArgumentosAll(0), eNumber_Types.ent_Integer) And ValidNumber(ArgumentosAll(1), eNumber_Types.ent_Byte) And _
@@ -1123,21 +1031,9 @@ Public Sub ParseUserCommand(ByVal RawCommand As String)
             Case "/BANIPRELOAD"
                 Call WriteBannedIPReload
                 
-            Case "/MIEMBROSCLAN"
-                If notNullArguments Then
-                    Call WriteGuildMemberList(ArgumentosRaw)
-                Else
-                    'Avisar que falta el parametro
-                    Call ShowConsoleMsg("Faltan parámetros. Utilice /miembrosclan GUILDNAME.")
-                End If
+           
                 
-            Case "/BANCLAN"
-                If notNullArguments Then
-                    Call WriteGuildBan(ArgumentosRaw)
-                Else
-                    'Avisar que falta el parametro
-                    Call ShowConsoleMsg("Faltan parámetros. Utilice /banclan GUILDNAME.")
-                End If
+   
                 
             Case "/BANIP"
                 If CantidadArgumentos >= 2 Then
@@ -1342,13 +1238,7 @@ Public Sub ParseUserCommand(ByVal RawCommand As String)
                     Call ShowConsoleMsg("Faltan parámetros. Utilice /rajar NICKNAME.")
                 End If
                 
-            Case "/RAJARCLAN"
-                If notNullArguments Then
-                    Call WriteRemoveCharFromGuild(ArgumentosRaw)
-                Else
-                    'Avisar que falta el parametro
-                    Call ShowConsoleMsg("Faltan parámetros. Utilice /rajarclan NICKNAME.")
-                End If
+          
                 
             Case "/LASTEMAIL"
                 If notNullArguments Then
@@ -1425,13 +1315,7 @@ Public Sub ParseUserCommand(ByVal RawCommand As String)
             Case "/DOBACKUP"
                 Call WriteDoBackup
                 
-            Case "/SHOWCMSG"
-                If notNullArguments Then
-                    Call WriteShowGuildMessages(ArgumentosRaw)
-                Else
-                    'Avisar que falta el parametro
-                    Call ShowConsoleMsg("Faltan parámetros. Utilice /showcmsg GUILDNAME.")
-                End If
+           
                 
             Case "/GUARDAMAPA"
                 Call WriteSaveMap
@@ -1513,7 +1397,7 @@ Public Sub ParseUserCommand(ByVal RawCommand As String)
                         Call ShowConsoleMsg("Valor incorrecto. Utilice /chatcolor R G B.")
                     End If
                 ElseIf Not notNullArguments Then    'Go back to default!
-                    Call WriteChatColor(0, 255, 0)
+                    Call WriteChatColor(255, 128, 32)
                 Else
                     'Avisar que falta el parametro
                     Call ShowConsoleMsg("Faltan parámetros. Utilice /chatcolor R G B.")

@@ -238,13 +238,7 @@ With UserList(UserIndex)
         Exit Sub
     End If
     
-    If .GuildIndex > 0 Then
-        If modGuilds.GuildAlignment(.GuildIndex) = "Neutral" Then
-            Call WriteChatOverHead(UserIndex, "¡¡¡Perteneces a un clan neutro, sal de él si quieres unirte a nuestras fuerzas!!!", str(Npclist(.flags.TargetNPC).Char.CharIndex), vbWhite)
-            Exit Sub
-        End If
-    End If
-    
+       
     .Faccion.ArmadaReal = 1
     .Faccion.Reenlistadas = .Faccion.Reenlistadas + 1
     
@@ -582,12 +576,7 @@ With UserList(UserIndex)
         Exit Sub
     End If
     
-    If .GuildIndex > 0 Then
-        If modGuilds.GuildAlignment(.GuildIndex) = "Neutral" Then
-            Call WriteChatOverHead(UserIndex, "¡¡¡Perteneces a un clan neutro, sal de él si quieres unirte a nuestras fuerzas!!!", str(Npclist(.flags.TargetNPC).Char.CharIndex), vbWhite)
-            Exit Sub
-        End If
-    End If
+   
     
     
     If .Faccion.Reenlistadas > 4 Then

@@ -1,6 +1,6 @@
 VERSION 5.00
-Object = "{3B7C8863-D78F-101B-B9B5-04021C009402}#1.2#0"; "RICHTX32.ocx"
-Object = "{33101C00-75C3-11CF-A8A0-444553540000}#1.0#0"; "CSWSK32.ocx"
+Object = "{3B7C8863-D78F-101B-B9B5-04021C009402}#1.2#0"; "Richtx32.ocx"
+Object = "{33101C00-75C3-11CF-A8A0-444553540000}#1.0#0"; "CSWSK32.OCX"
 Object = "{248DD890-BB45-11CF-9ABC-0080C7E7B78D}#1.0#0"; "MSWINSCK.ocx"
 Begin VB.Form frmMain 
    BorderStyle     =   0  'None
@@ -254,7 +254,6 @@ Begin VB.Form frmMain
       _ExtentY        =   2619
       _Version        =   393217
       BackColor       =   0
-      Enabled         =   -1  'True
       ReadOnly        =   -1  'True
       ScrollBars      =   2
       DisableNoScroll =   -1  'True
@@ -1284,21 +1283,21 @@ Private Sub Form_KeyUp(KeyCode As Integer, Shift As Integer)
     End If
     
     Select Case KeyCode
-        Case CustomKeys.BindedKey(eKeyType.mKeyTalkWithGuild)
-            If SendTxt.Visible Then Exit Sub
-            
-            If (Not Comerciando) And (Not MirandoAsignarSkills) And _
-              (Not frmMSG.Visible) And (Not MirandoForo) And _
-              (Not frmEstadisticas.Visible) And (Not frmCantidad.Visible) Then
-                SendCMSTXT.Visible = True
-                SendCMSTXT.SetFocus
-            End If
+       ' Case CustomKeys.BindedKey(eKeyType.mKeyTalkWithGuild)
+       '     If SendTxt.Visible Then Exit Sub
+       '
+       '     If (Not Comerciando) And (Not MirandoAsignarSkills) And _
+       '       (Not frmMSG.Visible) And (Not MirandoForo) And _
+       '       (Not frmEstadisticas.Visible) And (Not frmCantidad.Visible) Then
+       '         SendCMSTXT.Visible = True
+       '         SendCMSTXT.SetFocus
+       '     End If
         
         Case CustomKeys.BindedKey(eKeyType.mKeyTakeScreenShot)
             Call ScreenCapture
                 
-        Case CustomKeys.BindedKey(eKeyType.mKeyShowOptions)
-            Call frmOpciones.Show(vbModeless, frmMain)
+      '  Case CustomKeys.BindedKey(eKeyType.mKeyShowOptions)
+       '     Call frmOpciones.Show(vbModeless, frmMain)
         
         Case CustomKeys.BindedKey(eKeyType.mKeyMeditate)
             If UserMinMAN = UserMaxMAN Then Exit Sub
@@ -1416,8 +1415,9 @@ Private Sub imgAsignarSkill_Click()
 End Sub
 
 Private Sub imgClanes_Click()
-    If frmGuildLeader.Visible Then Unload frmGuildLeader
-    Call WriteRequestGuildLeaderInfo
+Call MsgBox("Sistema deshabilitado.", vbInformation, "Argentum Online")
+'If frmGuildLeader.Visible Then Unload frmGuildLeader
+ '   Call WriteRequestGuildLeaderInfo
 End Sub
 
 Private Sub imgEstadisticas_Click()
@@ -1440,7 +1440,8 @@ Private Sub imgEstadisticas_Click()
 End Sub
 
 Private Sub imgGrupo_Click()
-    Call WriteRequestPartyForm
+Call MsgBox("Sistema deshabilitado.", vbInformation, "Argentum Online")
+'    Call WriteRequestPartyForm
 End Sub
 
 Private Sub imgInvScrollDown_Click()
@@ -1456,7 +1457,8 @@ Private Sub imgMapa_Click()
 End Sub
 
 Private Sub imgOpciones_Click()
-    Call frmOpciones.Show(vbModeless, frmMain)
+Call MsgBox("Funciones deshabilitadas.", vbInformation, "Argentum Online")
+'Call frmOpciones.Show(vbModeless, frmMain)
 End Sub
 
 Private Sub InvEqu_MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
@@ -1595,8 +1597,8 @@ Private Sub SendTxt_KeyUp(KeyCode As Integer, Shift As Integer)
         KeyCode = 0
         SendTxt.Visible = False
         
-        If PicInv.Visible Then
-            PicInv.SetFocus
+        If picInv.Visible Then
+            picInv.SetFocus
         Else
             hlst.SetFocus
         End If
@@ -1621,7 +1623,7 @@ If IPdelServidor <> ((IPMMSB - 15) & "." & (IPMSB - 15) & "." & (IPLSB - 15) _
 End Sub
 
 Private Sub Second_Timer()
-    If Not DialogosClanes Is Nothing Then DialogosClanes.PassTimer
+'    If Not DialogosClanes Is Nothing Then DialogosClanes.PassTimer
 End Sub
 
 '[END]'
@@ -1909,13 +1911,13 @@ Private Sub Label4_Click()
     InvEqu.Picture = LoadPicture(App.path & "\Graficos\Centroinventario.jpg")
 
     ' Activo controles de inventario
-    PicInv.Visible = True
+    picInv.Visible = True
     imgInvScrollUp.Visible = True
     imgInvScrollDown.Visible = True
 
     ' Desactivo controles de hechizo
     hlst.Visible = False
-    cmdINFO.Visible = False
+    cmdInfo.Visible = False
     CmdLanzar.Visible = False
     
     cmdMoverHechi(0).Visible = False
@@ -1930,14 +1932,14 @@ Private Sub Label7_Click()
     
     ' Activo controles de hechizos
     hlst.Visible = True
-    cmdINFO.Visible = True
+    cmdInfo.Visible = True
     CmdLanzar.Visible = True
     
     cmdMoverHechi(0).Visible = True
     cmdMoverHechi(1).Visible = True
     
     ' Desactivo controles de inventario
-    PicInv.Visible = False
+    picInv.Visible = False
     imgInvScrollUp.Visible = False
     imgInvScrollDown.Visible = False
 
@@ -1969,8 +1971,8 @@ On Error Resume Next  'el .SetFocus causaba errores al salir y volver a entrar
         (Not frmMSG.Visible) And (Not MirandoForo) And _
         (Not frmEstadisticas.Visible) And (Not frmCantidad.Visible) Then
          
-        If PicInv.Visible Then
-            PicInv.SetFocus
+        If picInv.Visible Then
+            picInv.SetFocus
         ElseIf hlst.Visible Then
             hlst.SetFocus
         End If
@@ -1978,8 +1980,8 @@ On Error Resume Next  'el .SetFocus causaba errores al salir y volver a entrar
 End Sub
 
 Private Sub RecTxt_KeyDown(KeyCode As Integer, Shift As Integer)
-    If PicInv.Visible Then
-        PicInv.SetFocus
+    If picInv.Visible Then
+        picInv.SetFocus
     Else
         hlst.SetFocus
     End If
@@ -2035,8 +2037,8 @@ Private Sub SendCMSTXT_KeyUp(KeyCode As Integer, Shift As Integer)
         KeyCode = 0
         Me.SendCMSTXT.Visible = False
         
-        If PicInv.Visible Then
-            PicInv.SetFocus
+        If picInv.Visible Then
+            picInv.SetFocus
         Else
             hlst.SetFocus
         End If

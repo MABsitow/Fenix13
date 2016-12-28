@@ -418,11 +418,11 @@ Call PurgarPenas
 Call CheckIdleUser
 
 '<<<<<-------- Log the number of users online ------>>>
-Dim N As Integer
-N = FreeFile()
-Open App.Path & "\logs\numusers.log" For Output Shared As N
-Print #N, NumUsers
-Close #N
+Dim n As Integer
+n = FreeFile()
+Open App.Path & "\logs\numusers.log" For Output Shared As n
+Print #n, NumUsers
+Close #n
 '<<<<<-------- Log the number of users online ------>>>
 
 Exit Sub
@@ -525,11 +525,11 @@ For LoopC = 1 To MaxUsers
 Next
 
 'Log
-Dim N As Integer
-N = FreeFile
-Open App.Path & "\logs\Main.log" For Append Shared As #N
-Print #N, Date & " " & time & " server cerrado."
-Close #N
+Dim n As Integer
+n = FreeFile
+Open App.Path & "\logs\Main.log" For Append Shared As #n
+Print #n, Date & " " & time & " server cerrado."
+Close #n
 
 End
 
@@ -961,22 +961,7 @@ On Error GoTo Errhandler
                 'todos los puntos en los cuales la alineacion puede cambiar es un dolor de
                 'huevos, asi que lo controlo aca, cada 6 segundos, lo cual es razonable
         
-                GI = .GuildIndex
-                If GI > 0 Then
-                    NuevaA = False
-                   ' NuevoL = False
-                    If Not modGuilds.m_ValidarPermanencia(i, True, NuevaA) Then
-                        Call WriteConsoleMsg(i, "Has sido expulsado del clan. ¡El clan ha sumado un punto de antifacción!", FontTypeNames.FONTTYPE_GUILD)
-                    End If
-                    If NuevaA Then
-                        Call SendData(SendTarget.ToGuildMembers, GI, PrepareMessageConsoleMsg("¡El clan ha pasado a tener alineación " & GuildAlignment(GI) & "!", FontTypeNames.FONTTYPE_GUILD))
-                        Call LogClanes("¡El clan cambio de alineación!")
-                    End If
-'                    If NuevoL Then
-'                        Call SendData(SendTarget.ToGuildMembers, GI, PrepareMessageConsoleMsg("¡El clan tiene un nuevo líder!", FontTypeNames.FONTTYPE_GUILD))
-'                        Call LogClanes("¡El clan tiene nuevo lider!")
-'                    End If
-                End If
+                
                 
                 Call FlushBuffer(i)
             End If

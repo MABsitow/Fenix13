@@ -979,7 +979,7 @@ Sub ConnectUser(ByVal UserIndex As Integer, ByRef name As String, ByRef Password
 '11/27/2009: Budi - Se envian los InvStats del personaje y su Fuerza y Agilidad
 '03/12/2009: Budi - Optimización del código
 '***************************************************
-Dim N As Integer
+Dim n As Integer
 Dim tStr As String
 
 With UserList(UserIndex)
@@ -1066,6 +1066,13 @@ With UserList(UserIndex)
         .flags.Privilegios = .flags.Privilegios Or PlayerType.User
         .flags.AdminPerseguible = True
     End If
+    
+    'Si es gm lo seteo en el mapa de gms
+  '  If (.flags.Privilegios And (PlayerType.Admin Or PlayerType.Dios Or PlayerType.SemiDios Or PlayerType.Consejero)) Then
+  '      .Pos.Map = 86
+  '      .Pos.X = 50
+  '      .Pos.Y = 50
+  '  End If
     
     'Add RM flag if needed
     If EsRolesMaster(name) Then
@@ -1245,10 +1252,9 @@ With UserList(UserIndex)
     Call WriteChangeMap(UserIndex, .Pos.Map, MapInfo(.Pos.Map).MapVersion) 'Carga el mapa
     Call WritePlayMidi(UserIndex, val(ReadField(1, MapInfo(.Pos.Map).Music, 45)))
     
-    If .flags.Privilegios = PlayerType.Dios Then
-        .flags.ChatColor = RGB(250, 250, 150)
-    ElseIf .flags.Privilegios <> PlayerType.User And .flags.Privilegios <> (PlayerType.User Or PlayerType.ChaosCouncil) And .flags.Privilegios <> (PlayerType.User Or PlayerType.RoyalCouncil) Then
-        .flags.ChatColor = RGB(0, 255, 0)
+    
+    If .flags.Privilegios <> PlayerType.User And .flags.Privilegios <> (PlayerType.User Or PlayerType.ChaosCouncil) And .flags.Privilegios <> (PlayerType.User Or PlayerType.RoyalCouncil) Then
+        .flags.ChatColor = RGB(255, 128, 32)
     ElseIf .flags.Privilegios = (PlayerType.User Or PlayerType.RoyalCouncil) Then
         .flags.ChatColor = RGB(0, 255, 255)
     ElseIf .flags.Privilegios = (PlayerType.User Or PlayerType.ChaosCouncil) Then
@@ -1275,7 +1281,7 @@ With UserList(UserIndex)
     Call WriteUpdateHungerAndThirst(UserIndex)
     Call WriteUpdateStrenghtAndDexterity(UserIndex)
         
-    Call SendMOTD(UserIndex)
+   ' Call SendMOTD(UserIndex)
     
     If haciendoBK Then
         Call WritePauseToggle(UserIndex)
@@ -1347,18 +1353,18 @@ With UserList(UserIndex)
         Call WriteMultiMessage(UserIndex, eMessages.SafeModeOn) 'Call WriteSafeModeOn(UserIndex)
     End If
     
-    If .GuildIndex > 0 Then
-        'welcome to the show baby...
-        If Not modGuilds.m_ConectarMiembroAClan(UserIndex, .GuildIndex) Then
-            Call WriteConsoleMsg(UserIndex, "Tu estado no te permite entrar al clan.", FontTypeNames.FONTTYPE_GUILD)
-        End If
-    End If
+   ' If .GuildIndex > 0 Then
+   '     'welcome to the show baby...
+    '    If Not modGuilds.m_ConectarMiembroAClan(UserIndex, .GuildIndex) Then
+    '        Call WriteConsoleMsg(UserIndex, "Tu estado no te permite entrar al clan.", FontTypeNames.FONTTYPE_GUILD)
+    '    End If
+    'End If
     
     Call SendData(SendTarget.ToPCArea, UserIndex, PrepareMessageCreateFX(.Char.CharIndex, FXIDs.FXWARP, 0))
     
     Call WriteLoggedMessage(UserIndex)
     
-    Call modGuilds.SendGuildNews(UserIndex)
+   ' Call modGuilds.SendGuildNews(UserIndex)
     
     ' Esta protegido del ataque de npcs por 5 segundos, si no realiza ninguna accion
     Call IntervaloPermiteSerAtacado(UserIndex, True)
@@ -1367,11 +1373,11 @@ With UserList(UserIndex)
         Call WriteRainToggle(UserIndex)
     End If
     
-    tStr = modGuilds.a_ObtenerRechazoDeChar(.name)
+  '  tStr = modGuilds.a_ObtenerRechazoDeChar(.name)
     
-    If LenB(tStr) <> 0 Then
-        Call WriteShowMessageBox(UserIndex, "Tu solicitud de ingreso al clan ha sido rechazada. El clan te explica que: " & tStr)
-    End If
+   ' If LenB(tStr) <> 0 Then
+   '     Call WriteShowMessageBox(UserIndex, "Tu solicitud de ingreso al clan ha sido rechazada. El clan te explica que: " & tStr)
+   ' End If
     
     'Load the user statistics
     Call Statistics.UserConnected(UserIndex)
@@ -1382,34 +1388,34 @@ With UserList(UserIndex)
         Call Security.UserConnected(UserIndex)
     #End If
 
-    N = FreeFile
-    Open App.Path & "\logs\numusers.log" For Output As N
-    Print #N, NumUsers
-    Close #N
+    n = FreeFile
+    Open App.Path & "\logs\numusers.log" For Output As n
+    Print #n, NumUsers
+    Close #n
     
-    N = FreeFile
+    n = FreeFile
     'Log
-    Open App.Path & "\logs\Connect.log" For Append Shared As #N
-    Print #N, .name & " ha entrado al juego. UserIndex:" & UserIndex & " " & time & " " & Date
-    Close #N
+    Open App.Path & "\logs\Connect.log" For Append Shared As #n
+    Print #n, .name & " ha entrado al juego. UserIndex:" & UserIndex & " " & time & " " & Date
+    Close #n
 
 End With
 End Sub
 
-Sub SendMOTD(ByVal UserIndex As Integer)
+'Sub SendMOTD(ByVal UserIndex As Integer)
 '***************************************************
 'Author: Unknown
 'Last Modification: -
 '
 '***************************************************
 
-    Dim j As Long
-    
-    Call WriteGuildChat(UserIndex, "Mensajes de entrada:")
-    For j = 1 To MaxLines
-        Call WriteGuildChat(UserIndex, MOTD(j).texto)
-    Next j
-End Sub
+'    Dim j As Long
+'
+'    Call WriteGuildChat(UserIndex, "Mensajes de entrada:")
+'    For j = 1 To MaxLines
+'        Call WriteGuildChat(UserIndex, MOTD(j).texto)
+'    Next j
+'End Sub
 
 Sub ResetFacciones(ByVal UserIndex As Integer)
 '*************************************************
@@ -1522,9 +1528,7 @@ Sub ResetBasicUserInfo(ByVal UserIndex As Integer)
         .Genero = 0
         .Hogar = 0
         .raza = 0
-        
-        .PartyIndex = 0
-        .PartySolicitud = 0
+    
         
         With .Stats
             .Banco = 0
@@ -1571,22 +1575,7 @@ Sub ResetReputacion(ByVal UserIndex As Integer)
     End With
 End Sub
 
-Sub ResetGuildInfo(ByVal UserIndex As Integer)
-'***************************************************
-'Author: Unknown
-'Last Modification: -
-'
-'***************************************************
 
-    If UserList(UserIndex).EscucheClan > 0 Then
-        Call modGuilds.GMDejaDeEscucharClan(UserIndex, UserList(UserIndex).EscucheClan)
-        UserList(UserIndex).EscucheClan = 0
-    End If
-    If UserList(UserIndex).GuildIndex > 0 Then
-        Call modGuilds.m_DesconectarMiembroDelClan(UserIndex, UserList(UserIndex).GuildIndex)
-    End If
-    UserList(UserIndex).GuildIndex = 0
-End Sub
 
 Sub ResetUserFlags(ByVal UserIndex As Integer)
 '*************************************************
@@ -1731,7 +1720,6 @@ UserList(UserIndex).ConnID = -1
 Call LimpiarComercioSeguro(UserIndex)
 Call ResetFacciones(UserIndex)
 Call ResetContadores(UserIndex)
-Call ResetGuildInfo(UserIndex)
 Call ResetCharInfo(UserIndex)
 Call ResetBasicUserInfo(UserIndex)
 Call ResetReputacion(UserIndex)
@@ -1764,7 +1752,7 @@ Sub CloseUser(ByVal UserIndex As Integer)
 
 On Error GoTo Errhandler
 
-Dim N As Integer
+Dim n As Integer
 Dim LoopC As Integer
 Dim Map As Integer
 Dim name As String
@@ -1800,9 +1788,6 @@ UserList(UserIndex).Counters.Saliendo = False
 
 'Le devolvemos el body y head originales
 If UserList(UserIndex).flags.AdminInvisible = 1 Then Call DoAdminInvisible(UserIndex)
-
-'si esta en party le devolvemos la experiencia
-If UserList(UserIndex).PartyIndex > 0 Then Call mdParty.SalirDeParty(UserIndex)
 
 'Save statistics
 Call Statistics.UserDisconnected(UserIndex)
@@ -1852,10 +1837,10 @@ Call ResetUserSlot(UserIndex)
 
 Call MostrarNumUsers
 
-N = FreeFile(1)
-Open App.Path & "\logs\Connect.log" For Append Shared As #N
-Print #N, name & " ha dejado el juego. " & "User Index:" & UserIndex & " " & time & " " & Date
-Close #N
+n = FreeFile(1)
+Open App.Path & "\logs\Connect.log" For Append Shared As #n
+Print #n, name & " ha dejado el juego. " & "User Index:" & UserIndex & " " & time & " " & Date
+Close #n
 
 Exit Sub
 
