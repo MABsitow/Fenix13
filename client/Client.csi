@@ -1,9 +1,0 @@
-[History]
-1=#P0#=mb	#P1#=Form_Click	#P2#=ARGENTUM/frmMain/Form_Click	#P3#=	#P4#=	#P5#=MembEventProcPrivate	#P6#=20161227211912	#P7#=0	#P8#=1	.
-2=#P0#=mb	#P1#=TirarItem	#P2#=ARGENTUM/frmMain/TirarItem	#P3#=	#P4#=	#P5#=MembMethodPublic	#P6#=20161227211757	#P7#=0	#P8#=-6	.
-3=#P0#=mb	#P1#=LoadButtons	#P2#=ARGENTUM/frmMain/LoadButtons	#P3#=	#P4#=	#P5#=MembMethodPublic	#P6#=20161227211637	#P7#=0	#P8#=33	.
-4=#P0#=mb	#P1#=Form_KeyUp	#P2#=ARGENTUM/frmMain/Form_KeyUp	#P3#=	#P4#=	#P5#=MembEventProcPrivate	#P6#=20161227211625	#P7#=0	#P8#=103	.
-5=#P0#=mb	#P1#=imgOpciones_Click	#P2#=ARGENTUM/frmMain/imgOpciones_Click	#P3#=	#P4#=	#P5#=MembEventProcPrivate	#P6#=20161227211505	#P7#=0	#P8#=1	.
-6=#P0#=mb	#P1#=imgClanes_Click	#P2#=ARGENTUM/frmMain/imgClanes_Click	#P3#=	#P4#=	#P5#=MembEventProcPrivate	#P6#=20161227211445	#P7#=0	#P8#=3	.
-7=#P0#=mb	#P1#=imgGrupo_Click	#P2#=ARGENTUM/frmMain/imgGrupo_Click	#P3#=	#P4#=	#P5#=MembEventProcPrivate	#P6#=20161227211419	#P7#=0	#P8#=1	.
-8=#P0#=mb	#P1#=CheckServers	#P2#=ARGENTUM/frmConnect/CheckServers	#P3#=	#P4#=	#P5#=MembMethodPublic	#P6#=20161227211338	#P7#=0	#P8#=3	.
