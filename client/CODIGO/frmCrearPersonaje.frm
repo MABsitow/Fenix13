@@ -1152,6 +1152,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
+
 'Argentum Online 0.11.6
 '
 'Copyright (C) 2002 Márquez Pablo Ignacio
@@ -1309,10 +1310,6 @@ Private Sub Form_Load()
     UserHogar = 0
     UserEmail = ""
     UserHead = 0
-    
-#If SeguridadAlkon Then
-    Call ProtectForm(Me)
-#End If
 
 End Sub
 
@@ -1604,13 +1601,8 @@ Private Sub imgCrear_Click()
     UserHogar = lstHogar.ListIndex + 1
     
     If Not CheckData Then Exit Sub
-    
-#If SeguridadAlkon Then
-    UserPassword = md5.GetMD5String(txtPasswd.Text)
-    Call md5.MD5Reset
-#Else
+
     UserPassword = txtPasswd.Text
-#End If
     
     For i = 1 To Len(UserPassword)
         CharAscii = Asc(mid$(UserPassword, i, 1))
@@ -1623,7 +1615,7 @@ Private Sub imgCrear_Click()
     UserEmail = txtMail.Text
     
 #If UsarWrench = 1 Then
-    frmMain.Socket1.HostName = CurServerIp
+    frmMain.Socket1.HostName = CurServerIP
     frmMain.Socket1.RemotePort = CurServerPort
 #End If
     
@@ -1993,7 +1985,7 @@ Private Sub DarCuerpoYCabeza()
     
     currentGrh = BodyData(UserBody).Walk(Dir).GrhIndex
     If currentGrh > 0 Then _
-        tAnimacion.Interval = Round(GrhData(currentGrh).Speed / GrhData(currentGrh).NumFrames)
+        tAnimacion.Interval = 56 'Round(GrhData(currentGrh).Speed / GrhData(currentGrh).NumFrames) 'el speed de fenix es una garcha
 End Sub
 
 Private Function CheckCabeza(ByVal Head As Integer) As Integer
@@ -2324,3 +2316,5 @@ Private Sub LoadCharInfo()
     Next i
 
 End Sub
+
+

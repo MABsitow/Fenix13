@@ -1334,13 +1334,7 @@ Public Sub ParseUserCommand(ByVal RawCommand As String)
                         
                         Case "MAGIASINEFECTO" '/MODMAPINFO MAGIASINEFECTO
                             Call WriteChangeMapInfoNoMagic(ArgumentosAll(1))
-                        
-                        Case "INVISINEFECTO" '/MODMAPINFO INVISINEFECTO
-                            Call WriteChangeMapInfoNoInvi(ArgumentosAll(1))
-                        
-                        Case "RESUSINEFECTO" '/MODMAPINFO RESUSINEFECTO
-                            Call WriteChangeMapInfoNoResu(ArgumentosAll(1))
-                        
+
                         Case "TERRENO" '/MODMAPINFO TERRENO
                             Call WriteChangeMapInfoLand(ArgumentosAll(1))
                         
@@ -1419,11 +1413,6 @@ Public Sub ParseUserCommand(ByVal RawCommand As String)
             
             Case "/HOGAR"
                 Call WriteHome
-                
-#If SeguridadAlkon Then
-            Case Else
-                Call ParseUserCommandEx(Comando, CantidadArgumentos, ArgumentosAll, ArgumentosRaw)
-#End If
         End Select
         
     ElseIf Left$(Comando, 1) = "\" Then

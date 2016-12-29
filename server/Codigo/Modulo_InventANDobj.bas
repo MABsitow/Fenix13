@@ -100,42 +100,56 @@ On Error Resume Next
             Exit Sub
         End If
         
-        Random = RandomNumber(1, 100)
+        If .Invent.NroItems > 0 Then
         
-        ' Tiene 10% de prob de no tirar nada
-        If Random <= 90 Then
-            NroDrop = 1
-            
-            If Random <= 10 Then
-                NroDrop = NroDrop + 1
-                 
-                For i = 1 To 3
-                    ' 10% de ir pasando de etapas
-                    If RandomNumber(1, 100) <= 10 Then
-                        NroDrop = NroDrop + 1
-                    Else
-                        Exit For
-                    End If
-                Next i
+            If .Probabilidad = 0 Then
                 
-            End If
-            
-
-            ObjIndex = .Drop(NroDrop).ObjIndex
-            If ObjIndex > 0 Then
-            
-                If ObjIndex = iORO Then
-                    Call TirarOroNpc(.Drop(NroDrop).Amount, npc.Pos)
-                Else
-                    MiObj.Amount = .Drop(NroDrop).Amount
-                    MiObj.ObjIndex = .Drop(NroDrop).ObjIndex
+                For i = 1 To MAX_INVENTORY_SLOTS
                     
-                    Call TirarItemAlPiso(.Pos, MiObj)
+                    If .Invent.Object(i).ObjIndex > 0 Then
+                        If .MaxRecom Then
+                            MiObj.Amount = RandomNumber(.MinRecom, .MaxRecom)
+                        Else
+                            MiObj.Amount = .Invent.Object(i).Amount
+                        End If
+                        
+                        MiObj.ObjIndex = .Invent.Object(i).ObjIndex
+                        
+                        'CHECK: le meto el item al ultimo que atacó?
+                        'CHECK: parecido a fénix, solo que acá si no puede meter el item en el inventario _
+                        lo tira en la pos del npc y no en la del user
+                        
+                        If Not MeterItemEnInventario(.flags.AttackedBy, MiObj) Then Call TirarItemAlPiso(.Pos, MiObj)
+                    End If
+                    
+                Next
+            Else
+                Random = RandomNumber(0, 100)
+                
+                If Random < .Probabilidad Then
+                    
+                    For i = 1 To MAX_INVENTORY_SLOTS
+                        
+                        If .Invent.Object(i).ObjIndex > 0 Then
+                            If .MaxRecom Then
+                                MiObj.Amount = RandomNumber(.MinRecom, .MaxRecom)
+                            Else
+                                MiObj.Amount = .Invent.Object(i).Amount
+                            End If
+                            
+                            MiObj.ObjIndex = .Invent.Object(i).ObjIndex
+                            
+                            If Not MeterItemEnInventario(.flags.AttackedBy, MiObj) Then Call TirarItemAlPiso(.Pos, MiObj)
+                            
+                            Call UpdateUserInv(True, .flags.AttackedBy, 0)
+                        End If
+                        
+                    Next
+                    
                 End If
             End If
-
+            
         End If
-
     End With
 
 End Sub

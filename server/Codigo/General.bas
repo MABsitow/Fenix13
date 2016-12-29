@@ -104,49 +104,6 @@ Sub Bloquear(ByVal toMap As Boolean, ByVal sndIndex As Integer, ByVal X As Integ
 
 End Sub
 
-
-Function HayAgua(ByVal Map As Integer, ByVal X As Integer, ByVal Y As Integer) As Boolean
-'***************************************************
-'Author: Unknown
-'Last Modification: -
-'
-'***************************************************
-
-    If Map > 0 And Map < NumMaps + 1 And X > 0 And X < 101 And Y > 0 And Y < 101 Then
-        With MapData(Map, X, Y)
-            If ((.Graphic(1) >= 1505 And .Graphic(1) <= 1520) Or _
-            (.Graphic(1) >= 5665 And .Graphic(1) <= 5680) Or _
-            (.Graphic(1) >= 13547 And .Graphic(1) <= 13562)) And _
-               .Graphic(2) = 0 Then
-                    HayAgua = True
-            Else
-                    HayAgua = False
-            End If
-        End With
-    Else
-      HayAgua = False
-    End If
-
-End Function
-
-Private Function HayLava(ByVal Map As Integer, ByVal X As Integer, ByVal Y As Integer) As Boolean
-'***************************************************
-'Autor: Nacho (Integer)
-'Last Modification: 03/12/07
-'***************************************************
-    If Map > 0 And Map < NumMaps + 1 And X > 0 And X < 101 And Y > 0 And Y < 101 Then
-        If MapData(Map, X, Y).Graphic(1) >= 5837 And MapData(Map, X, Y).Graphic(1) <= 5852 Then
-            HayLava = True
-        Else
-            HayLava = False
-        End If
-    Else
-      HayLava = False
-    End If
-
-End Function
-
-
 Sub LimpiarMundo()
 '***************************************************
 'Author: Unknow
@@ -227,8 +184,8 @@ Sub Main()
 On Error Resume Next
     Dim f As Date
     
-    ChDir App.Path
-    ChDrive App.Path
+    ChDir App.path
+    ChDrive App.path
     
     Call LoadMotd
     Call BanIpCargar
@@ -245,8 +202,8 @@ On Error Resume Next
     LastBackup = Format(Now, "Short Time")
     Minutos = Format(Now, "Short Time")
     
-    IniPath = App.Path & "\"
-    DatPath = App.Path & "\Dat\"
+    IniPath = App.path & "\"
+    DatPath = App.path & "\Dat\"
     
     
     
@@ -354,8 +311,8 @@ On Error Resume Next
     'Call PlayWaveAPI(App.Path & "\wav\harp3.wav")
     
     frmMain.Caption = frmMain.Caption & " V." & App.Major & "." & App.Minor & "." & App.Revision
-    IniPath = App.Path & "\"
-    CharPath = App.Path & "\Charfile\"
+    IniPath = App.path & "\"
+    CharPath = App.path & "\Charfile\"
     
     'Bordes del mapa
     MinXBorder = XMinMapSize + (XWindow \ 2)
@@ -445,10 +402,6 @@ On Error Resume Next
         .KillLog.Enabled = True
         .TIMER_AI.Enabled = True
         .npcataca.Enabled = True
-        
-#If SeguridadAlkon Then
-        .securityTimer.Enabled = True
-#End If
     End With
     
     '¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿
@@ -493,11 +446,11 @@ On Error Resume Next
     Unload frmCargando
     
     'Log
-    Dim n As Integer
-    n = FreeFile
-    Open App.Path & "\logs\Main.log" For Append Shared As #n
-    Print #n, Date & " " & time & " server iniciado " & App.Major & "."; App.Minor & "." & App.Revision
-    Close #n
+    Dim N As Integer
+    N = FreeFile
+    Open App.path & "\logs\Main.log" For Append Shared As #N
+    Print #N, Date & " " & time & " server iniciado " & App.Major & "."; App.Minor & "." & App.Revision
+    Close #N
     
     'Ocultar
     If HideMe = 1 Then
@@ -511,12 +464,12 @@ On Error Resume Next
 
 End Sub
 
-Function FileExist(ByVal file As String, Optional FileType As VbFileAttribute = vbNormal) As Boolean
+Function FileExist(ByVal File As String, Optional FileType As VbFileAttribute = vbNormal) As Boolean
 '*****************************************************************
 'Se fija si existe el archivo
 '*****************************************************************
 
-    FileExist = LenB(dir$(file, FileType)) <> 0
+    FileExist = LenB(dir$(File, FileType)) <> 0
 End Function
 
 Function ReadField(ByVal Pos As Integer, ByRef Text As String, ByVal SepASCII As Byte) As String
@@ -528,21 +481,21 @@ Function ReadField(ByVal Pos As Integer, ByRef Text As String, ByVal SepASCII As
 '*****************************************************************
 
     Dim i As Long
-    Dim LastPos As Long
+    Dim lastPos As Long
     Dim CurrentPos As Long
     Dim delimiter As String * 1
     
     delimiter = Chr$(SepASCII)
     
     For i = 1 To Pos
-        LastPos = CurrentPos
-        CurrentPos = InStr(LastPos + 1, Text, delimiter, vbBinaryCompare)
+        lastPos = CurrentPos
+        CurrentPos = InStr(lastPos + 1, Text, delimiter, vbBinaryCompare)
     Next i
     
     If CurrentPos = 0 Then
-        ReadField = mid$(Text, LastPos + 1, Len(Text) - LastPos)
+        ReadField = mid$(Text, lastPos + 1, Len(Text) - lastPos)
     Else
-        ReadField = mid$(Text, LastPos + 1, CurrentPos - LastPos - 1)
+        ReadField = mid$(Text, lastPos + 1, CurrentPos - lastPos - 1)
     End If
 End Function
 
@@ -579,7 +532,7 @@ On Error GoTo Errhandler
 
     Dim nfile As Integer
     nfile = FreeFile ' obtenemos un canal
-    Open App.Path & "\logs\Eventos.log" For Append Shared As #nfile
+    Open App.path & "\logs\Eventos.log" For Append Shared As #nfile
     Print #nfile, Date & " " & time & " " & desc
     Close #nfile
     
@@ -600,7 +553,7 @@ On Error GoTo Errhandler
 
     Dim nfile As Integer
     nfile = FreeFile ' obtenemos un canal
-    Open App.Path & "\logs\EjercitoReal.log" For Append Shared As #nfile
+    Open App.path & "\logs\EjercitoReal.log" For Append Shared As #nfile
     Print #nfile, desc
     Close #nfile
     
@@ -621,7 +574,7 @@ On Error GoTo Errhandler
 
     Dim nfile As Integer
     nfile = FreeFile ' obtenemos un canal
-    Open App.Path & "\logs\EjercitoCaos.log" For Append Shared As #nfile
+    Open App.path & "\logs\EjercitoCaos.log" For Append Shared As #nfile
     Print #nfile, desc
     Close #nfile
 
@@ -643,7 +596,7 @@ On Error GoTo Errhandler
 
     Dim nfile As Integer
     nfile = FreeFile ' obtenemos un canal
-    Open App.Path & "\logs\" & index & ".log" For Append Shared As #nfile
+    Open App.path & "\logs\" & index & ".log" For Append Shared As #nfile
     Print #nfile, Date & " " & time & " " & desc
     Close #nfile
     
@@ -665,7 +618,7 @@ On Error GoTo Errhandler
 
     Dim nfile As Integer
     nfile = FreeFile ' obtenemos un canal
-    Open App.Path & "\logs\errores.log" For Append Shared As #nfile
+    Open App.path & "\logs\errores.log" For Append Shared As #nfile
     Print #nfile, Date & " " & time & " " & desc
     Close #nfile
     
@@ -686,7 +639,7 @@ On Error GoTo Errhandler
 
     Dim nfile As Integer
     nfile = FreeFile ' obtenemos un canal
-    Open App.Path & "\logs\Stats.log" For Append Shared As #nfile
+    Open App.path & "\logs\Stats.log" For Append Shared As #nfile
     Print #nfile, Date & " " & time & " " & desc
     Close #nfile
 
@@ -707,7 +660,7 @@ On Error GoTo Errhandler
 
     Dim nfile As Integer
     nfile = FreeFile(1) ' obtenemos un canal
-    Open App.Path & "\logs\haciendo.log" For Append Shared As #nfile
+    Open App.path & "\logs\haciendo.log" For Append Shared As #nfile
     Print #nfile, Date & " " & time & " " & desc
     Close #nfile
 
@@ -728,7 +681,7 @@ Public Sub LogIP(ByVal str As String)
 
     Dim nfile As Integer
     nfile = FreeFile ' obtenemos un canal
-    Open App.Path & "\logs\IP.log" For Append Shared As #nfile
+    Open App.path & "\logs\IP.log" For Append Shared As #nfile
     Print #nfile, Date & " " & time & " " & str
     Close #nfile
 
@@ -744,7 +697,7 @@ Public Sub LogDesarrollo(ByVal str As String)
 
     Dim nfile As Integer
     nfile = FreeFile ' obtenemos un canal
-    Open App.Path & "\logs\desarrollo" & Month(Date) & Year(Date) & ".log" For Append Shared As #nfile
+    Open App.path & "\logs\desarrollo" & Month(Date) & Year(Date) & ".log" For Append Shared As #nfile
     Print #nfile, Date & " " & time & " " & str
     Close #nfile
 
@@ -762,7 +715,7 @@ On Error GoTo Errhandler
     Dim nfile As Integer
     nfile = FreeFile ' obtenemos un canal
     'Guardamos todo en el mismo lugar. Pablo (ToxicWaste) 18/05/07
-    Open App.Path & "\logs\" & Nombre & ".log" For Append Shared As #nfile
+    Open App.path & "\logs\" & Nombre & ".log" For Append Shared As #nfile
     Print #nfile, Date & " " & time & " " & texto
     Close #nfile
     
@@ -784,7 +737,7 @@ On Error GoTo Errhandler
     
     nfile = FreeFile ' obtenemos un canal
     
-    Open App.Path & "\logs\asesinatos.log" For Append Shared As #nfile
+    Open App.path & "\logs\asesinatos.log" For Append Shared As #nfile
     Print #nfile, Date & " " & time & " " & texto
     Close #nfile
     
@@ -805,7 +758,7 @@ On Error GoTo Errhandler
     Dim nfile As Integer
     nfile = FreeFile ' obtenemos un canal
     
-    Open App.Path & "\logs\propiedades.log" For Append Shared As #nfile
+    Open App.path & "\logs\propiedades.log" For Append Shared As #nfile
     Print #nfile, "----------------------------------------------------------"
     Print #nfile, Date & " " & time & " " & texto
     Print #nfile, "----------------------------------------------------------"
@@ -827,7 +780,7 @@ On Error GoTo Errhandler
 
     Dim nfile As Integer
     nfile = FreeFile ' obtenemos un canal
-    Open App.Path & "\logs\HackAttemps.log" For Append Shared As #nfile
+    Open App.path & "\logs\HackAttemps.log" For Append Shared As #nfile
     Print #nfile, "----------------------------------------------------------"
     Print #nfile, Date & " " & time & " " & texto
     Print #nfile, "----------------------------------------------------------"
@@ -850,7 +803,7 @@ On Error GoTo Errhandler
 
     Dim nfile As Integer
     nfile = FreeFile ' obtenemos un canal
-    Open App.Path & "\logs\CH.log" For Append Shared As #nfile
+    Open App.path & "\logs\CH.log" For Append Shared As #nfile
     Print #nfile, Date & " " & time & " " & texto
     Close #nfile
     
@@ -872,7 +825,7 @@ On Error GoTo Errhandler
 
     Dim nfile As Integer
     nfile = FreeFile ' obtenemos un canal
-    Open App.Path & "\logs\CriticalHackAttemps.log" For Append Shared As #nfile
+    Open App.path & "\logs\CriticalHackAttemps.log" For Append Shared As #nfile
     Print #nfile, "----------------------------------------------------------"
     Print #nfile, Date & " " & time & " " & texto
     Print #nfile, "----------------------------------------------------------"
@@ -895,7 +848,7 @@ On Error GoTo Errhandler
 
     Dim nfile As Integer
     nfile = FreeFile ' obtenemos un canal
-    Open App.Path & "\logs\AntiCheat.log" For Append Shared As #nfile
+    Open App.path & "\logs\AntiCheat.log" For Append Shared As #nfile
     Print #nfile, Date & " " & time & " " & texto
     Print #nfile, ""
     Close #nfile
@@ -1029,11 +982,11 @@ On Error Resume Next
     If frmMain.Visible Then frmMain.txStatus.Caption = "Escuchando conexiones entrantes ..."
     
     'Log it
-    Dim n As Integer
-    n = FreeFile
-    Open App.Path & "\logs\Main.log" For Append Shared As #n
-    Print #n, Date & " " & time & " servidor reiniciado."
-    Close #n
+    Dim N As Integer
+    N = FreeFile
+    Open App.path & "\logs\Main.log" For Append Shared As #N
+    Print #N, Date & " " & time & " servidor reiniciado."
+    Close #N
     
     'Ocultar
     
@@ -1145,36 +1098,6 @@ Public Sub EfectoFrio(ByVal UserIndex As Integer)
             End If
             
             .Counters.Frio = 0
-        End If
-    End With
-End Sub
-
-Public Sub EfectoLava(ByVal UserIndex As Integer)
-'***************************************************
-'Autor: Nacho (Integer)
-'Last Modification: 23/11/2009
-'If user is standing on lava, take health points from him
-'23/11/2009: ZaMa - Optimizacion de codigo.
-'***************************************************
-    With UserList(UserIndex)
-        If .Counters.Lava < IntervaloFrio Then 'Usamos el mismo intervalo que el del frio
-            .Counters.Lava = .Counters.Lava + 1
-        Else
-            If HayLava(.Pos.Map, .Pos.X, .Pos.Y) Then
-                Call WriteConsoleMsg(UserIndex, "¡¡Quitate de la lava, te estás quemando!!", FontTypeNames.FONTTYPE_INFO)
-                .Stats.MinHp = .Stats.MinHp - Porcentaje(.Stats.MaxHp, 5)
-                
-                If .Stats.MinHp < 1 Then
-                    Call WriteConsoleMsg(UserIndex, "¡¡Has muerto quemado!!", FontTypeNames.FONTTYPE_INFO)
-                    .Stats.MinHp = 0
-                    Call UserDie(UserIndex)
-                End If
-                
-                Call WriteUpdateHP(UserIndex)
-
-            End If
-            
-            .Counters.Lava = 0
         End If
     End With
 End Sub
@@ -1394,7 +1317,7 @@ Public Sub EfectoVeneno(ByVal UserIndex As Integer)
 '
 '***************************************************
 
-    Dim n As Integer
+    Dim N As Integer
     
     With UserList(UserIndex)
         If .Counters.Veneno < IntervaloVeneno Then
@@ -1402,8 +1325,8 @@ Public Sub EfectoVeneno(ByVal UserIndex As Integer)
         Else
           Call WriteConsoleMsg(UserIndex, "Estás envenenado, si no te curas morirás.", FontTypeNames.FONTTYPE_VENENO)
           .Counters.Veneno = 0
-          n = RandomNumber(1, 5)
-          .Stats.MinHp = .Stats.MinHp - n
+          N = RandomNumber(1, 5)
+          .Stats.MinHp = .Stats.MinHp - N
           If .Stats.MinHp < 1 Then Call UserDie(UserIndex)
           Call WriteUpdateHP(UserIndex)
         End If
@@ -1566,7 +1489,7 @@ Public Function ReiniciarAutoUpdate() As Double
 '
 '***************************************************
 
-    ReiniciarAutoUpdate = Shell(App.Path & "\autoupdater\aoau.exe", vbMinimizedNoFocus)
+    ReiniciarAutoUpdate = Shell(App.path & "\autoupdater\aoau.exe", vbMinimizedNoFocus)
 
 End Function
  
@@ -1583,7 +1506,7 @@ Public Sub ReiniciarServidor(Optional ByVal EjecutarLauncher As Boolean = True)
     'Guardar Pjs
     Call GuardarUsuarios
     
-    If EjecutarLauncher Then Shell (App.Path & "\launcher.exe")
+    If EjecutarLauncher Then Shell (App.path & "\launcher.exe")
 
     'Chauuu
     Unload frmMain
@@ -1606,7 +1529,7 @@ Sub GuardarUsuarios()
     Dim i As Integer
     For i = 1 To LastUser
         If UserList(i).flags.UserLogged Then
-            Call SaveUser(i, CharPath & UCase$(UserList(i).name) & ".chr")
+            Call SaveUser(i, CharPath & UCase$(UserList(i).Name) & ".chr")
         End If
     Next i
     

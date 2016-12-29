@@ -112,7 +112,7 @@ With UserList(UserIndex)
     
     '[Barrin 17-12-03] Si el usuario dejó de ser Newbie, y estaba en el Newbie Dungeon
     'es transportado a su hogar de origen ;)
-    If UCase$(MapInfo(.Pos.Map).Restringir) = "NEWBIE" Then
+    If MapInfo(.Pos.Map).Restringir Then
         
         Dim DeDonde As WorldPos
         
@@ -209,12 +209,12 @@ With UserList(UserIndex)
                     For k = .Pos.Y - 10 To .Pos.Y + 10
                         If InMapBounds(M, j, k) Then
                             If MapData(M, j, k).UserIndex > 0 Then
-                                Cercanos = Cercanos & UserList(MapData(M, j, k).UserIndex).name & ","
+                                Cercanos = Cercanos & UserList(MapData(M, j, k).UserIndex).Name & ","
                             End If
                         End If
                     Next k
                 Next j
-                Call LogDesarrollo(.name & " tira oro. Cercanos: " & Cercanos)
+                Call LogDesarrollo(.Name & " tira oro. Cercanos: " & Cercanos)
             End If
             '/Seguridad
             Dim Extra As Long
@@ -237,7 +237,7 @@ With UserList(UserIndex)
     
                 MiObj.ObjIndex = iORO
                 
-                If EsGM(UserIndex) Then Call LogGM(.name, "Tiró cantidad:" & MiObj.Amount & " Objeto:" & ObjData(MiObj.ObjIndex).name)
+                If EsGM(UserIndex) Then Call LogGM(.Name, "Tiró cantidad:" & MiObj.Amount & " Objeto:" & ObjData(MiObj.ObjIndex).Name)
                 Dim AuxPos As WorldPos
                 
                 If .clase = eClass.Pirat And .Invent.BarcoObjIndex = 476 Then
@@ -387,16 +387,16 @@ With UserList(UserIndex)
                 Call WriteConsoleMsg(UserIndex, "¡¡ATENCIÓN!! ¡ACABAS DE TIRAR TU BARCA!", FontTypeNames.FONTTYPE_TALK)
             End If
             
-            If Not .flags.Privilegios And PlayerType.User Then Call LogGM(.name, "Tiró cantidad:" & num & " Objeto:" & ObjData(Obj.ObjIndex).name)
+            If Not .flags.Privilegios And PlayerType.User Then Call LogGM(.Name, "Tiró cantidad:" & num & " Objeto:" & ObjData(Obj.ObjIndex).Name)
             
             'Log de Objetos que se tiran al piso. Pablo (ToxicWaste) 07/09/07
             'Es un Objeto que tenemos que loguear?
             If ObjData(Obj.ObjIndex).Log = 1 Then
-                Call LogDesarrollo(.name & " tiró al piso " & Obj.Amount & " " & ObjData(Obj.ObjIndex).name & " Mapa: " & Map & " X: " & X & " Y: " & Y)
+                Call LogDesarrollo(.Name & " tiró al piso " & Obj.Amount & " " & ObjData(Obj.ObjIndex).Name & " Mapa: " & Map & " X: " & X & " Y: " & Y)
             ElseIf Obj.Amount > 5000 Then 'Es mucha cantidad? > Subí a 5000 el minimo porque si no se llenaba el log de cosas al pedo. (NicoNZ)
                 'Si no es de los prohibidos de loguear, lo logueamos.
                 If ObjData(Obj.ObjIndex).NoLog <> 1 Then
-                    Call LogDesarrollo(.name & " tiró al piso " & Obj.Amount & " " & ObjData(Obj.ObjIndex).name & " Mapa: " & Map & " X: " & X & " Y: " & Y)
+                    Call LogDesarrollo(.Name & " tiró al piso " & Obj.Amount & " " & ObjData(Obj.ObjIndex).Name & " Mapa: " & Map & " X: " & X & " Y: " & Y)
                 End If
             End If
         Else
@@ -489,7 +489,7 @@ On Error GoTo Errhandler
     
         If Slot > MAX_NORMAL_INVENTORY_SLOTS And Slot < MAX_INVENTORY_SLOTS Then
             If Not ItemSeCae(MiObj.ObjIndex) Then
-                Call WriteConsoleMsg(UserIndex, "No puedes contener objetos especiales en tu " & ObjData(.Invent.MochilaEqpObjIndex).name & ".", FontTypeNames.FONTTYPE_FIGHT)
+                Call WriteConsoleMsg(UserIndex, "No puedes contener objetos especiales en tu " & ObjData(.Invent.MochilaEqpObjIndex).Name & ".", FontTypeNames.FONTTYPE_FIGHT)
                 MeterItemEnInventario = False
                 Exit Function
             End If
@@ -553,18 +553,18 @@ Sub GetObj(ByVal UserIndex As Integer)
                     
                         'Quitamos el objeto
                         Call EraseObj(MapData(.Pos.Map, X, Y).ObjInfo.Amount, .Pos.Map, .Pos.X, .Pos.Y)
-                        If Not .flags.Privilegios And PlayerType.User Then Call LogGM(.name, "Agarro:" & MiObj.Amount & " Objeto:" & ObjData(MiObj.ObjIndex).name)
+                        If Not .flags.Privilegios And PlayerType.User Then Call LogGM(.Name, "Agarro:" & MiObj.Amount & " Objeto:" & ObjData(MiObj.ObjIndex).Name)
         
                         'Log de Objetos que se agarran del piso. Pablo (ToxicWaste) 07/09/07
                         'Es un Objeto que tenemos que loguear?
                         If ObjData(MiObj.ObjIndex).Log = 1 Then
                             ObjPos = " Mapa: " & .Pos.Map & " X: " & .Pos.X & " Y: " & .Pos.Y
-                            Call LogDesarrollo(.name & " juntó del piso " & MiObj.Amount & " " & ObjData(MiObj.ObjIndex).name & ObjPos)
+                            Call LogDesarrollo(.Name & " juntó del piso " & MiObj.Amount & " " & ObjData(MiObj.ObjIndex).Name & ObjPos)
                         ElseIf MiObj.Amount > MAX_INVENTORY_OBJS - 1000 Then 'Es mucha cantidad?
                             'Si no es de los prohibidos de loguear, lo logueamos.
                             If ObjData(MiObj.ObjIndex).NoLog <> 1 Then
                                 ObjPos = " Mapa: " & .Pos.Map & " X: " & .Pos.X & " Y: " & .Pos.Y
-                                Call LogDesarrollo(.name & " juntó del piso " & MiObj.Amount & " " & ObjData(MiObj.ObjIndex).name & ObjPos)
+                                Call LogDesarrollo(.Name & " juntó del piso " & MiObj.Amount & " " & ObjData(MiObj.ObjIndex).Name & ObjPos)
                             End If
                         End If
                     End If
@@ -1381,7 +1381,8 @@ Sub UseInvItem(ByVal UserIndex As Integer, ByVal Slot As Byte)
                     Call WriteConsoleMsg(UserIndex, "¡¡Estás muerto!! Sólo puedes usar ítems cuando estás vivo.", FontTypeNames.FONTTYPE_INFO)
                     Exit Sub
                 End If
-                If Not HayAgua(.Pos.Map, .flags.TargetX, .flags.TargetY) Then
+                
+                If MapData(.Pos.Map, .flags.TargetX, .flags.TargetY).Agua <> 1 Then
                     Call WriteConsoleMsg(UserIndex, "No hay agua allí.", FontTypeNames.FONTTYPE_INFO)
                     Exit Sub
                 End If

@@ -47,12 +47,6 @@ Begin VB.Form frmMain
       Left            =   480
       Top             =   60
    End
-   Begin VB.Timer securityTimer 
-      Enabled         =   0   'False
-      Interval        =   10000
-      Left            =   960
-      Top             =   60
-   End
    Begin VB.CheckBox SUPERLOG 
       Caption         =   "log"
       Height          =   255
@@ -418,11 +412,11 @@ Call PurgarPenas
 Call CheckIdleUser
 
 '<<<<<-------- Log the number of users online ------>>>
-Dim n As Integer
-n = FreeFile()
-Open App.Path & "\logs\numusers.log" For Output Shared As n
-Print #n, NumUsers
-Close #n
+Dim N As Integer
+N = FreeFile()
+Open App.path & "\logs\numusers.log" For Output Shared As N
+Print #N, NumUsers
+Close #N
 '<<<<<-------- Log the number of users online ------>>>
 
 Exit Sub
@@ -436,7 +430,7 @@ On Error Resume Next
 
 Dim i As Integer
 For i = 1 To MaxUsers
-    Call LogCriticEvent(i & ") ConnID: " & UserList(i).ConnID & ". ConnidValida: " & UserList(i).ConnIDValida & " Name: " & UserList(i).name & " UserLogged: " & UserList(i).flags.UserLogged)
+    Call LogCriticEvent(i & ") ConnID: " & UserList(i).ConnID & ". ConnidValida: " & UserList(i).ConnIDValida & " Name: " & UserList(i).Name & " UserLogged: " & UserList(i).flags.UserLogged)
 Next i
 
 Call LogCriticEvent("Lastuser: " & LastUser & " NextOpenUser: " & NextOpenUser)
@@ -525,11 +519,11 @@ For LoopC = 1 To MaxUsers
 Next
 
 'Log
-Dim n As Integer
-n = FreeFile
-Open App.Path & "\logs\Main.log" For Append Shared As #n
-Print #n, Date & " " & time & " server cerrado."
-Close #n
+Dim N As Integer
+N = FreeFile
+Open App.path & "\logs\Main.log" For Append Shared As #N
+Print #N, Date & " " & time & " server cerrado."
+Close #N
 
 End
 
@@ -579,9 +573,6 @@ On Error GoTo hayerror
                     
                     
                     If .flags.Muerto = 0 Then
-                        
-                        '[Consejeros]
-                        If (.flags.Privilegios And PlayerType.User) Then Call EfectoLava(iUserIndex)
                         
                         If .flags.Desnudo <> 0 And (.flags.Privilegios And PlayerType.User) <> 0 Then Call EfectoFrio(iUserIndex)
                         
@@ -725,13 +716,13 @@ End Sub
 
 Private Sub KillLog_Timer()
 On Error Resume Next
-If FileExist(App.Path & "\logs\connect.log", vbNormal) Then Kill App.Path & "\logs\connect.log"
-If FileExist(App.Path & "\logs\haciendo.log", vbNormal) Then Kill App.Path & "\logs\haciendo.log"
-If FileExist(App.Path & "\logs\stats.log", vbNormal) Then Kill App.Path & "\logs\stats.log"
-If FileExist(App.Path & "\logs\Asesinatos.log", vbNormal) Then Kill App.Path & "\logs\Asesinatos.log"
-If FileExist(App.Path & "\logs\HackAttemps.log", vbNormal) Then Kill App.Path & "\logs\HackAttemps.log"
-If Not FileExist(App.Path & "\logs\nokillwsapi.txt") Then
-    If FileExist(App.Path & "\logs\wsapi.log", vbNormal) Then Kill App.Path & "\logs\wsapi.log"
+If FileExist(App.path & "\logs\connect.log", vbNormal) Then Kill App.path & "\logs\connect.log"
+If FileExist(App.path & "\logs\haciendo.log", vbNormal) Then Kill App.path & "\logs\haciendo.log"
+If FileExist(App.path & "\logs\stats.log", vbNormal) Then Kill App.path & "\logs\stats.log"
+If FileExist(App.path & "\logs\Asesinatos.log", vbNormal) Then Kill App.path & "\logs\Asesinatos.log"
+If FileExist(App.path & "\logs\HackAttemps.log", vbNormal) Then Kill App.path & "\logs\HackAttemps.log"
+If Not FileExist(App.path & "\logs\nokillwsapi.txt") Then
+    If FileExist(App.path & "\logs\wsapi.log", vbNormal) Then Kill App.path & "\logs\wsapi.log"
 End If
 
 End Sub
@@ -788,14 +779,6 @@ Exit Sub
 Errhandler:
     LogError ("Error en packetResend - Error: " & Err.Number & " - Desc: " & Err.description)
     Resume Next
-End Sub
-
-Private Sub securityTimer_Timer()
-
-#If SeguridadAlkon Then
-    Call Security.SecurityCheck
-#End If
-
 End Sub
 
 Private Sub TIMER_AI_Timer()
@@ -861,7 +844,7 @@ End If
 Exit Sub
 
 ErrorHandler:
-    Call LogError("Error en TIMER_AI_Timer " & Npclist(NpcIndex).name & " mapa:" & Npclist(NpcIndex).Pos.Map)
+    Call LogError("Error en TIMER_AI_Timer " & Npclist(NpcIndex).Name & " mapa:" & Npclist(NpcIndex).Pos.Map)
     Call MuereNpc(NpcIndex, 0)
 End Sub
 

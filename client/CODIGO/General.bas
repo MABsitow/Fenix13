@@ -146,26 +146,6 @@ On Error Resume Next
     ColoresPJ(48).b = CByte(GetVar(archivoC, "AT", "B"))
 End Sub
 
-#If SeguridadAlkon Then
-Sub InitMI()
-    Dim alternativos As Integer
-    Dim CualMITemp As Integer
-    
-    alternativos = RandomNumber(1, 7368)
-    CualMITemp = RandomNumber(1, 1233)
-    
-
-    Set MI(CualMITemp) = New clsManagerInvisibles
-    Call MI(CualMITemp).Inicializar(alternativos, 10000)
-    
-    If CualMI <> 0 Then
-        Call MI(CualMITemp).CopyFrom(MI(CualMI))
-        Set MI(CualMI) = Nothing
-    End If
-    CualMI = CualMITemp
-End Sub
-#End If
-
 Sub CargarAnimEscudos()
 On Error Resume Next
 
@@ -306,10 +286,6 @@ End Function
 Sub UnloadAllForms()
 On Error Resume Next
 
-#If SeguridadAlkon Then
-    Call UnprotectForm
-#End If
-
     Dim mifrm As Form
     
     For Each mifrm In Forms
@@ -354,11 +330,6 @@ Sub SetConnected()
     
     Call SaveGameini
     
-#If SeguridadAlkon Then
-    'Unprotect character creation form
-    Call UnprotectForm
-#End If
-    
     'Unload the connect form
     Unload frmCrearPersonaje
     Unload frmConnect
@@ -366,16 +337,8 @@ Sub SetConnected()
     frmMain.lblName.Caption = UserName
     'Load main form
     frmMain.Visible = True
-    
-    Call frmMain.ControlSM(eSMType.mSpells, False)
-    Call frmMain.ControlSM(eSMType.mWork, False)
-    
+        
     FPSFLAG = True
-#If SeguridadAlkon Then
-    'Protect the main form
-    Call ProtectForm(frmMain)
-#End If
-
 End Sub
 
 Sub CargarTip()
@@ -523,79 +486,66 @@ Private Sub CheckKeys()
     End If
 End Sub
 
-'TODO : Si bien nunca estuvo allí, el mapa es algo independiente o a lo sumo dependiente del engine, no va acá!!!
+'CSEH: ErrLog
 Sub SwitchMap(ByVal Map As Integer)
-'**************************************************************
-'Formato de mapas optimizado para reducir el espacio que ocupan.
-'Diseñado y creado por Juan Martín Sotuyo Dodero (Maraxus) (juansotuyo@hotmail.com)
-'**************************************************************
     Dim Y As Long
     Dim X As Long
     Dim tempint As Integer
-    Dim ByFlags As Byte
     Dim handle As Integer
-    
+    Dim reader As New clsByteBuffer
+    Dim data() As Byte
+    Dim ByFlags As Byte
+        
     handle = FreeFile()
     
-    Open DirMapas & "Mapa" & Map & ".map" For Binary As handle
-    Seek handle, 1
-            
-    'map Header
-    Get handle, , MapInfo.MapVersion
-    Get handle, , MiCabecera
-    Get handle, , tempint
-    Get handle, , tempint
-    Get handle, , tempint
-    Get handle, , tempint
+    Open DirMapas & "Mapa" & Map & ".mcl" For Binary As handle
+        Seek handle, 1
+        ReDim data(0 To LOF(handle) - 1) As Byte
+        
+        Get handle, , data
+    Close handle
+    
+    Call reader.initializeReader(data)
+    
+    'map :poop: Header
+    MapInfo.MapVersion = reader.getInteger
+    Dim i As Long
     
     'Load arrays
     For Y = YMinMapSize To YMaxMapSize
         For X = XMinMapSize To XMaxMapSize
-            Get handle, , ByFlags
-            
-            MapData(X, Y).Blocked = (ByFlags And 1)
-            
-            Get handle, , MapData(X, Y).Graphic(1).GrhIndex
-            InitGrh MapData(X, Y).Graphic(1), MapData(X, Y).Graphic(1).GrhIndex
-            
-            'Layer 2 used?
-            If ByFlags And 2 Then
-                Get handle, , MapData(X, Y).Graphic(2).GrhIndex
-                InitGrh MapData(X, Y).Graphic(2), MapData(X, Y).Graphic(2).GrhIndex
-            Else
-                MapData(X, Y).Graphic(2).GrhIndex = 0
-            End If
+        
+            With MapData(X, Y)
+                ByFlags = reader.getByte
+                    
+                .Blocked = ByFlags And 1
+                    
+                .Graphic(1).GrhIndex = reader.getInteger
+                    
+                For i = 2 To 4
+                    If ByFlags And (2 ^ (i - 1)) Then
+                        .Graphic(i).GrhIndex = reader.getInteger
+                        Call InitGrh(.Graphic(i), .Graphic(i).GrhIndex)
+                    Else
+                        .Graphic(i).GrhIndex = 0
+                    End If
+                Next
                 
-            'Layer 3 used?
-            If ByFlags And 4 Then
-                Get handle, , MapData(X, Y).Graphic(3).GrhIndex
-                InitGrh MapData(X, Y).Graphic(3), MapData(X, Y).Graphic(3).GrhIndex
-            Else
-                MapData(X, Y).Graphic(3).GrhIndex = 0
-            End If
+                For i = 4 To 6
+                    If (ByFlags And 2 ^ i) Then .Trigger = .Trigger Or 2 ^ (i - 4)
+                Next
                 
-            'Layer 4 used?
-            If ByFlags And 8 Then
-                Get handle, , MapData(X, Y).Graphic(4).GrhIndex
-                InitGrh MapData(X, Y).Graphic(4), MapData(X, Y).Graphic(4).GrhIndex
-            Else
-                MapData(X, Y).Graphic(4).GrhIndex = 0
-            End If
-            
-            'Trigger used?
-            If ByFlags And 16 Then
-                Get handle, , MapData(X, Y).Trigger
-            Else
-                MapData(X, Y).Trigger = 0
-            End If
-            
-            'Erase NPCs
-            If MapData(X, Y).CharIndex > 0 Then
-                Call EraseChar(MapData(X, Y).CharIndex)
-            End If
-            
-            'Erase OBJs
-            MapData(X, Y).ObjGrh.GrhIndex = 0
+                Call InitGrh(.Graphic(1), .Graphic(1).GrhIndex)
+                
+                'Erase NPCs
+                If MapData(X, Y).CharIndex > 0 Then
+                    Call EraseChar(MapData(X, Y).CharIndex)
+                End If
+                
+                'Erase OBJs
+                MapData(X, Y).ObjGrh.GrhIndex = 0
+                
+            End With
         Next X
     Next Y
     
@@ -704,7 +654,7 @@ On Error GoTo errorH
     
     ReDim ServersLst(1 To c) As tServerInfo
     For i = 1 To c
-        ServersLst(i).Desc = GetVar(f, "S" & i, "Desc")
+        ServersLst(i).desc = GetVar(f, "S" & i, "Desc")
         ServersLst(i).Ip = Trim$(GetVar(f, "S" & i, "Ip"))
         ServersLst(i).PassRecPort = CInt(GetVar(f, "S" & i, "P2"))
         ServersLst(i).Puerto = CInt(GetVar(f, "S" & i, "PJ"))
@@ -738,36 +688,12 @@ On Error Resume Next
         cur$ = ReadField(i, RawServersList, Asc(";"))
         ServersLst(i).Ip = ReadField(1, cur$, Asc(":"))
         ServersLst(i).Puerto = ReadField(2, cur$, Asc(":"))
-        ServersLst(i).Desc = ReadField(4, cur$, Asc(":"))
+        ServersLst(i).desc = ReadField(4, cur$, Asc(":"))
         ServersLst(i).PassRecPort = ReadField(3, cur$, Asc(":"))
     Next i
     
     CurServer = 1
 End Sub
-
-Public Function CurServerPasRecPort() As Integer
-    If CurServer <> 0 Then
-        CurServerPasRecPort = 7667
-    Else
-        CurServerPasRecPort = CInt(frmConnect.PortTxt)
-    End If
-End Function
-
-Public Function CurServerIp() As String
-    If CurServer <> 0 Then
-        CurServerIp = ServersLst(CurServer).Ip
-    Else
-        CurServerIp = "127.0.0.1"
-    End If
-End Function
-
-Public Function CurServerPort() As Integer
-    If CurServer <> 0 Then
-        CurServerPort = ServersLst(CurServer).Puerto
-    Else
-        CurServerPort = 7666
-    End If
-End Function
 
 Sub Main()
     Call WriteClientVer
@@ -777,6 +703,9 @@ Sub Main()
         Config_Inicio = LeerGameIni()
     End If
     
+    CurServerIP = "127.0.0.1"
+    CurServerPort = 7666
+    
     'Load ao.dat config file
     Call LoadClientSetup
     
@@ -784,11 +713,6 @@ Sub Main()
         Set SurfaceDB = New clsSurfaceManDyn
     Else
         Set SurfaceDB = New clsSurfaceManStatic
-    End If
-    
-    If FindPreviousInstance Then
-        Call MsgBox("Argentum Online ya esta corriendo! No es posible correr otra instancia del juego. Haga click en Aceptar para salir.", vbApplicationModal + vbInformation + vbOKOnly, "Error al ejecutar")
-        End
     End If
     
     'Read command line. Do it AFTER config file is loaded to prevent this from
@@ -801,23 +725,12 @@ Sub Main()
     ChDrive App.path
     ChDir App.path
 
-#If SeguridadAlkon Then
-    'Obtener el HushMD5
-    Dim fMD5HushYo As String * 32
-    
-    fMD5HushYo = md5.GetMD5File(App.path & "\" & App.EXEName & ".exe")
-    Call md5.MD5Reset
-    MD5HushYo = txtOffset(hexMd52Asc(fMD5HushYo), 55)
-    
-    Debug.Print fMD5HushYo
-#Else
     MD5HushYo = "0123456789abcdef"  'We aren't using a real MD5
-#End If
     
     tipf = Config_Inicio.tip
     
     'Set resolution BEFORE the loading form is displayed, therefore it will be centered.
-    Call Resolution.SetResolution
+    'Call Resolution.SetResolution
     
     ' Mouse Pointer (Loaded before opening any form with buttons in it)
     If FileExist(DirExtras & "Hand.ico", vbArchive) Then _
@@ -879,16 +792,11 @@ UserMap = 1
     Audio.SoundActivated = Not ClientSetup.bNoSound
     Audio.SoundEffectsActivated = Not ClientSetup.bNoSoundEffects
     'Inicializamos el inventario gráfico
-    Call Inventario.Initialize(DirectDraw, frmMain.PicInv, MAX_INVENTORY_SLOTS)
+    Call Inventario.Initialize(DirectDraw, frmMain.picInv, MAX_INVENTORY_SLOTS)
     
     Call Audio.MusicMP3Play(App.path & "\MP3\" & MP3_Inicio & ".mp3")
     
     Call AddtoRichTextBox(frmCargando.Status, "Hecho", 255, 0, 0, True, False, False)
-    
-#If SeguridadAlkon Then
-    CualMI = 0
-    Call InitMI
-#End If
     
     Call AddtoRichTextBox(frmCargando.Status, "                    ¡Bienvenido a Argentum Online!", 255, 255, 255, True, False, True)
     
@@ -963,10 +871,6 @@ UserMap = 1
             lFrameTimer = GetTickCount
         End If
         
-#If SeguridadAlkon Then
-        Call CheckSecurity
-#End If
-        
         ' If there is anything to be sent, we send it
         Call FlushBuffer
         
@@ -976,11 +880,11 @@ UserMap = 1
     Call CloseClient
 End Sub
 
-Sub WriteVar(ByVal file As String, ByVal Main As String, ByVal Var As String, ByVal value As String)
+Sub WriteVar(ByVal file As String, ByVal Main As String, ByVal Var As String, ByVal Value As String)
 '*****************************************************************
 'Writes a var to a text file
 '*****************************************************************
-    writeprivateprofilestring Main, Var, value, file
+    writeprivateprofilestring Main, Var, Value, file
 End Sub
 
 Function GetVar(ByVal file As String, ByVal Main As String, ByVal Var As String) As String
@@ -1300,10 +1204,6 @@ Public Sub CloseClient()
     Set incomingData = Nothing
     Set outgoingData = Nothing
     
-#If SeguridadAlkon Then
-    Set md5 = Nothing
-#End If
-    
     Call UnloadAllForms
     
     'Actualizar tip
@@ -1415,3 +1315,25 @@ Public Function ForumAlignment(ByVal yForumType As Byte) As Byte
     
 End Function
 
+
+
+Public Sub LogError(desc As String)
+'***************************************************
+'Author: Unknown
+'Last Modification: -
+'
+'***************************************************
+
+On Error GoTo Errhandler
+
+    Dim nfile As Integer
+    nfile = FreeFile ' obtenemos un canal
+    Open App.path & "\errores.log" For Append Shared As #nfile
+    Print #nfile, Date & " " & time & " " & desc
+    Close #nfile
+    
+    Exit Sub
+
+Errhandler:
+
+End Sub

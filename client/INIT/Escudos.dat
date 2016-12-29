@@ -1,58 +1,123 @@
-'Oso: NO USEN EL ESCUDO 2 (Es "No Animar" ^^)
-
 [INIT]
-NumEscudos=10
 
-[ESC1]
+NumEscudos=21
+
+[ESC1] ´Escudo imperial
 Dir1=4727 'norte
 Dir2=4729
 Dir3=4726
 Dir4=4728 'sur
 
-[ESC3]
-Dir3=902 'norte
-Dir1=903
-Dir4=904
-Dir2=905 'sur
+[ESC3] ´Escudo de León +1
+Dir1=5105 'norte
+Dir2=5107
+Dir3=5104
+Dir4=5106 'sur
 
-[ESC4]
-Dir3=928 'norte
-Dir1=929
-Dir4=930
-Dir2=931 'sur
+[ESC4] ´Ojos de druida
+Dir1=5131 'norte
+Dir2=5133
+Dir3=5130
+Dir4=5132 'sur
 
-[ESC5]
-Dir3=13278 'norte
-Dir1=13279
-Dir4=13280
-Dir2=13281 'sur
+[ESC5] Escudo de la noche
+Dir1=5161 'norte
+Dir2=5163
+Dir3=5160
+Dir4=5162 'sur
 
-[ESC6]
-Dir3=4856 'norte
-Dir1=4857
-Dir4=4858
-Dir2=4859 'sur
+[ESC6] ´Escudo de tortuga
+Dir1=5187 'norte
+Dir2=5189
+Dir3=5186
+Dir4=5188 'sur
 
-[ESC7]
-Dir3=22986
-Dir1=22987
-Dir4=22988
-Dir2=22989
+[ESC7] ´Escudo del águila
+Dir1=5213 'norte
+Dir2=5215
+Dir3=5212
+Dir4=5214 'sur
 
-[ESC8]
-Dir3=23012
-Dir1=23013
-Dir4=23014
-Dir2=23015
+[ESC8] ´EscudoDelHonor 
+Dir1=5625 'norte
+Dir2=5627
+Dir3=5624
+Dir4=5626 'sur
 
-[ESC9]
-Dir3=23038
-Dir1=23039
-Dir4=23040
-Dir2=23041
+[ESC9] ´Escudo Imperial +1
+Dir1=4779 'norte
+Dir2=4781
+Dir3=4778
+Dir4=4780 'sur
 
-[ESC10]
-Dir3=23064
-Dir1=23065
-Dir4=23066
-Dir2=23067
+[ESC10] ´Escudo redondo
+Dir1=5651 'norte
+Dir2=5653
+Dir3=5650
+Dir4=5652 'sur
+
+[ESC11] ´Escudo de madera
+Dir1=5677 'norte
+Dir2=5679
+Dir3=5676
+Dir4=5678 'sur
+
+[ESC12] ´Escudo escocés
+Dir1=5703 'norte
+Dir2=5705
+Dir3=5702
+Dir4=5704 'sur
+
+[ESC13] ´Escudo redondo metal
+Dir1=5729 'norte
+Dir2=5731
+Dir3=5728
+Dir4=5730 'sur
+
+[ESC14] ´Escudo del triunfador
+Dir1=5354 'norte
+Dir2=5356
+Dir3=5353
+Dir4=5355 'sur
+
+[ESC15] ´Escudo sagrado
+Dir1=5380 'norte
+Dir2=5382
+Dir3=5379
+Dir4=5381 'sur
+
+[ESC16] ´Escudo de roble
+Dir1=5406 'norte
+Dir2=5408
+Dir3=5405
+Dir4=5407 'sur
+
+[ESC17] ´Escudo de la Intolerancia
+Dir1=5432 'norte
+Dir2=5434
+Dir3=5431
+Dir4=5433 'sur
+
+[ESC18] ´Escudo de León
+Dir1=5458 'norte
+Dir2=5459
+Dir3=5457
+Dir4=5460 'sur
+
+[ESC19] ´Escudo Imperial +1
+Dir1=5079 'norte
+Dir2=5080
+Dir3=5078
+Dir4=5081 'sur
+
+[ESC20] ´Escudo magno
+Dir1=5484 'norte
+Dir2=5485
+Dir3=5483
+Dir4=5486 'sur
+
+[ESC21] 'Escudo de Hierro
+Dir1=7084
+Dir2=7086
+Dir3=7083
+Dir4=7085

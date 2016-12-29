@@ -31,8 +31,6 @@ Attribute VB_Name = "Mod_TileEngine"
 'Código Postal 1900
 'Pablo Ignacio Márquez
 
-
-
 Option Explicit
 
 'Map sizes in tiles
@@ -99,7 +97,7 @@ Public Type GrhData
     TileHeight As Single
     
     NumFrames As Integer
-    Frames() As Long
+    Frames(1 To 25) As Integer
     
     Speed As Single
 End Type
@@ -312,13 +310,6 @@ Private llTick      As Long  'Contador
 Private LTLluvia(4) As Integer
 
 Public charlist(1 To 10000) As Char
-
-#If SeguridadAlkon Then
-
-Public MI(1 To 1233) As clsManagerInvisibles
-Public CualMI As Integer
-
-#End If
 
 ' Used by GetTextExtentPoint32
 Private Type size
@@ -589,10 +580,6 @@ Sub ResetCharInfo(ByVal CharIndex As Integer)
         .FxIndex = 0
         .invisible = False
         
-#If SeguridadAlkon Then
-        Call MI(CualMI).ResetInvisible(CharIndex)
-#End If
-        
         .Moving = 0
         .muerto = False
         .Nombre = ""
@@ -629,33 +616,45 @@ On Error Resume Next
     NumChars = NumChars - 1
 End Sub
 
+'CSEH: ErrLog
 Public Sub InitGrh(ByRef Grh As Grh, ByVal GrhIndex As Integer, Optional ByVal Started As Byte = 2)
-'*****************************************************************
-'Sets up a grh. MUST be done before rendering
-'*****************************************************************
-    Grh.GrhIndex = GrhIndex
+    '*****************************************************************
+    'Sets up a grh. MUST be done before rendering
+    '*****************************************************************
+    '<EhHeader>
+    On Error GoTo InitGrh_Err
+    '</EhHeader>
+        If GrhIndex = 0 Then Exit Sub
+        
+100     Grh.GrhIndex = GrhIndex
     
-    If Started = 2 Then
-        If GrhData(Grh.GrhIndex).NumFrames > 1 Then
-            Grh.Started = 1
+105     If Started = 2 Then
+110         If GrhData(Grh.GrhIndex).NumFrames > 1 Then
+115             Grh.Started = 1
+            Else
+120             Grh.Started = 0
+            End If
         Else
-            Grh.Started = 0
+            'Make sure the graphic can be started
+125         If GrhData(Grh.GrhIndex).NumFrames = 1 Then Started = 0
+130         Grh.Started = Started
         End If
-    Else
-        'Make sure the graphic can be started
-        If GrhData(Grh.GrhIndex).NumFrames = 1 Then Started = 0
-        Grh.Started = Started
-    End If
     
     
-    If Grh.Started Then
-        Grh.Loops = INFINITE_LOOPS
-    Else
-        Grh.Loops = 0
-    End If
+135     If Grh.Started Then
+140         Grh.Loops = INFINITE_LOOPS
+        Else
+145         Grh.Loops = 0
+        End If
     
-    Grh.FrameCounter = 1
-    Grh.Speed = GrhData(Grh.GrhIndex).Speed
+150     Grh.FrameCounter = 1
+155     Grh.Speed = GrhData(Grh.GrhIndex).Speed
+    '<EhFooter>
+    Exit Sub
+
+InitGrh_Err:
+        Call LogError("Error en InitGrh: " & Erl & " - " & Err.Description)
+    '</EhFooter>
 End Sub
 
 Sub MoveCharbyHead(ByVal CharIndex As Integer, ByVal nHeading As E_Heading)
@@ -906,7 +905,7 @@ On Error GoTo ErrorHandler
     'Open files
     handle = FreeFile()
     
-    Open IniPath & GraphicsFile For Binary Access Read As handle
+    Open IniPath & "Graficos.ind" For Binary Access Read As handle
     Seek #1, 1
     
     'Get file version
@@ -918,15 +917,18 @@ On Error GoTo ErrorHandler
     'Resize arrays
     ReDim GrhData(1 To grhCount) As GrhData
     
-    While Not EOF(handle)
-        Get handle, , Grh
+    Get handle, , Grh
+    
+    Do Until Grh <= 0
+        
         
         With GrhData(Grh)
+
             'Get number of frames
             Get handle, , .NumFrames
             If .NumFrames <= 0 Then GoTo ErrorHandler
             
-            ReDim .Frames(1 To GrhData(Grh).NumFrames)
+            'ReDim .Frames(1 To GrhData(Grh).NumFrames)
             
             If .NumFrames > 1 Then
                 'Read a animation GRH set
@@ -977,7 +979,9 @@ On Error GoTo ErrorHandler
                 .Frames(1) = Grh
             End If
         End With
-    Wend
+        
+        Get handle, , Grh
+    Loop
     
     Close handle
     
@@ -1588,7 +1592,7 @@ Sub RenderScreen(ByVal tilex As Integer, ByVal tiley As Integer, ByVal PixelOffs
 
             For Y = 0 To 4
                 For X = 0 To 4
-                    Call BackBufferSurface.BltFast(LTLluvia(Y), LTLluvia(X), SurfaceDB.Surface(15168), RLluvia(iFrameIndex), DDBLTFAST_SRCCOLORKEY + DDBLTFAST_WAIT)
+                    Call BackBufferSurface.BltFast(LTLluvia(Y), LTLluvia(X), SurfaceDB.Surface(55562), RLluvia(iFrameIndex), DDBLTFAST_SRCCOLORKEY + DDBLTFAST_WAIT)
                 Next X
             Next Y
         End If

@@ -63,10 +63,6 @@ Public outgoingData As New clsByteQueue
 'The main timer of the game.
 Public MainTimer As New clsTimer
 
-#If SeguridadAlkon Then
-Public md5 As New clsMD5
-#End If
-
 'Sonidos
 Public Const SND_CLICK As String = "click.Wav"
 Public Const SND_PASOS1 As String = "23.Wav"
@@ -100,44 +96,45 @@ Public Const FRAGATA_FANTASMAL As Integer = 87
 Public Const NUMATRIBUTES As Byte = 5
 
 Public Const HUMANO_H_PRIMER_CABEZA As Integer = 1
-Public Const HUMANO_H_ULTIMA_CABEZA As Integer = 40 'En verdad es hasta la 51, pero como son muchas estas las dejamos no seleccionables
+Public Const HUMANO_H_ULTIMA_CABEZA As Integer = 23
 Public Const HUMANO_H_CUERPO_DESNUDO As Integer = 21
 
 Public Const ELFO_H_PRIMER_CABEZA As Integer = 101
-Public Const ELFO_H_ULTIMA_CABEZA As Integer = 122
-Public Const ELFO_H_CUERPO_DESNUDO As Integer = 210
+Public Const ELFO_H_ULTIMA_CABEZA As Integer = 107
+Public Const ELFO_H_CUERPO_DESNUDO As Integer = 21
 
 Public Const DROW_H_PRIMER_CABEZA As Integer = 201
-Public Const DROW_H_ULTIMA_CABEZA As Integer = 221
+Public Const DROW_H_ULTIMA_CABEZA As Integer = 204
 Public Const DROW_H_CUERPO_DESNUDO As Integer = 32
 
 Public Const ENANO_H_PRIMER_CABEZA As Integer = 301
-Public Const ENANO_H_ULTIMA_CABEZA As Integer = 319
+Public Const ENANO_H_ULTIMA_CABEZA As Integer = 304
 Public Const ENANO_H_CUERPO_DESNUDO As Integer = 53
 
 Public Const GNOMO_H_PRIMER_CABEZA As Integer = 401
-Public Const GNOMO_H_ULTIMA_CABEZA As Integer = 416
-Public Const GNOMO_H_CUERPO_DESNUDO As Integer = 222
+Public Const GNOMO_H_ULTIMA_CABEZA As Integer = 403
+Public Const GNOMO_H_CUERPO_DESNUDO As Integer = 53
 '**************************************************
 Public Const HUMANO_M_PRIMER_CABEZA As Integer = 70
-Public Const HUMANO_M_ULTIMA_CABEZA As Integer = 89
+Public Const HUMANO_M_ULTIMA_CABEZA As Integer = 73
 Public Const HUMANO_M_CUERPO_DESNUDO As Integer = 39
 
 Public Const ELFO_M_PRIMER_CABEZA As Integer = 170
-Public Const ELFO_M_ULTIMA_CABEZA As Integer = 188
-Public Const ELFO_M_CUERPO_DESNUDO As Integer = 259
+Public Const ELFO_M_ULTIMA_CABEZA As Integer = 174
+Public Const ELFO_M_CUERPO_DESNUDO As Integer = 39
 
 Public Const DROW_M_PRIMER_CABEZA As Integer = 270
-Public Const DROW_M_ULTIMA_CABEZA As Integer = 288
+Public Const DROW_M_ULTIMA_CABEZA As Integer = 274
 Public Const DROW_M_CUERPO_DESNUDO As Integer = 40
 
 Public Const ENANO_M_PRIMER_CABEZA As Integer = 370
-Public Const ENANO_M_ULTIMA_CABEZA As Integer = 384
+Public Const ENANO_M_ULTIMA_CABEZA As Integer = 372
 Public Const ENANO_M_CUERPO_DESNUDO As Integer = 60
 
 Public Const GNOMO_M_PRIMER_CABEZA As Integer = 470
-Public Const GNOMO_M_ULTIMA_CABEZA As Integer = 484
-Public Const GNOMO_M_CUERPO_DESNUDO As Integer = 260
+Public Const GNOMO_M_ULTIMA_CABEZA As Integer = 473
+Public Const GNOMO_M_CUERPO_DESNUDO As Integer = 60
+
 
 'Musica
 Public Const MP3_Inicio As Byte = 101
@@ -156,7 +153,7 @@ Public ColoresPJ(0 To 50) As tColor
 Public Type tServerInfo
     Ip As String
     Puerto As Integer
-    Desc As String
+    desc As String
     PassRecPort As Integer
 End Type
 
@@ -477,8 +474,6 @@ Public Enum eGMCommands
     ChangeMapInfoBackup     '/MODMAPINFO BACKUP
     ChangeMapInfoRestricted '/MODMAPINFO RESTRINGIR
     ChangeMapInfoNoMagic    '/MODMAPINFO MAGIASINEFECTO
-    ChangeMapInfoNoInvi     '/MODMAPINFO INVISINEFECTO
-    ChangeMapInfoNoResu     '/MODMAPINFO RESUSINEFECTO
     ChangeMapInfoLand       '/MODMAPINFO TERRENO
     ChangeMapInfoZone       '/MODMAPINFO ZONA
     SaveChars               '/GRABAR
@@ -843,8 +838,9 @@ Public UserMap As Integer
 'Control
 Public prgRun As Boolean 'When true the program ends
 
-Public IPdelServidor As String
-Public PuertoDelServidor As String
+Public CurServerIP As String
+Public CurServerPort As Integer
+
 
 '
 '********** FUNCIONES API ***********

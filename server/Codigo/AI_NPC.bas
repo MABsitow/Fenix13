@@ -99,7 +99,7 @@ Private Sub GuardiasAI(ByVal NpcIndex As Integer, ByVal DelCaos As Boolean)
                                         Call ChangeNPCChar(NpcIndex, .Char.body, .Char.Head, headingloop)
                                     End If
                                     Exit Sub
-                                ElseIf .flags.AttackedBy = UserList(UI).name And Not .flags.Follow Then
+                                ElseIf .flags.AttackedBy = UserList(UI).Name And Not .flags.Follow Then
                                     
                                     If NpcAtacaUser(NpcIndex, UI) Then
                                         Call ChangeNPCChar(NpcIndex, .Char.body, .Char.Head, headingloop)
@@ -112,7 +112,7 @@ Private Sub GuardiasAI(ByVal NpcIndex As Integer, ByVal DelCaos As Boolean)
                                         Call ChangeNPCChar(NpcIndex, .Char.body, .Char.Head, headingloop)
                                     End If
                                     Exit Sub
-                                ElseIf .flags.AttackedBy = UserList(UI).name And Not .flags.Follow Then
+                                ElseIf .flags.AttackedBy = UserList(UI).Name And Not .flags.Follow Then
                                       
                                     If NpcAtacaUser(NpcIndex, UI) Then
                                         Call ChangeNPCChar(NpcIndex, .Char.body, .Char.Head, headingloop)
@@ -173,14 +173,6 @@ Private Sub HostilMalvadoAI(ByVal NpcIndex As Integer)
                             
                             If atacoPJ Then
                                 If .flags.LanzaSpells Then
-                                    If .flags.AtacaDoble Then
-                                        If (RandomNumber(0, 1)) Then
-                                            If NpcAtacaUser(NpcIndex, UI) Then
-                                                Call ChangeNPCChar(NpcIndex, .Char.body, .Char.Head, headingloop)
-                                            End If
-                                            Exit Sub
-                                        End If
-                                    End If
                                     
                                     Call ChangeNPCChar(NpcIndex, .Char.body, .Char.Head, headingloop)
                                     Call NpcLanzaUnSpell(NpcIndex, UI)
@@ -227,7 +219,7 @@ Private Sub HostilBuenoAI(ByVal NpcIndex As Integer)
                 If InMapBounds(nPos.Map, nPos.X, nPos.Y) Then
                     UI = MapData(nPos.Map, nPos.X, nPos.Y).UserIndex
                     If UI > 0 Then
-                        If UserList(UI).name = .flags.AttackedBy Then
+                        If UserList(UI).Name = .flags.AttackedBy Then
                         
                             UserProtected = Not IntervaloPermiteSerAtacado(UI) And UserList(UI).flags.NoPuedeSerAtacado
                             UserProtected = UserProtected Or UserList(UI).flags.Ignorado Or UserList(UI).flags.EnConsulta
@@ -420,7 +412,7 @@ Private Sub SeguirAgresor(ByVal NpcIndex As Integer)
                 If Abs(UserList(UI).Pos.X - .Pos.X) <= RANGO_VISION_X And Sgn(UserList(UI).Pos.X - .Pos.X) = SignoEO Then
                     If Abs(UserList(UI).Pos.Y - .Pos.Y) <= RANGO_VISION_Y And Sgn(UserList(UI).Pos.Y - .Pos.Y) = SignoNS Then
 
-                        If UserList(UI).name = .flags.AttackedBy Then
+                        If UserList(UI).Name = .flags.AttackedBy Then
                             If .MaestroUser > 0 Then
                                 If Not criminal(.MaestroUser) And Not criminal(UI) And (UserList(.MaestroUser).flags.Seguro Or UserList(.MaestroUser).Faccion.ArmadaReal = 1) Then
                                     Call WriteConsoleMsg(.MaestroUser, "La mascota no atacará a ciudadanos si eres miembro del ejército real o tienes el seguro activado.", FontTypeNames.FONTTYPE_INFO)
@@ -457,7 +449,7 @@ Private Sub SeguirAgresor(ByVal NpcIndex As Integer)
                 If Abs(UserList(UI).Pos.X - .Pos.X) <= RANGO_VISION_X Then
                     If Abs(UserList(UI).Pos.Y - .Pos.Y) <= RANGO_VISION_Y Then
                         
-                        If UserList(UI).name = .flags.AttackedBy Then
+                        If UserList(UI).Name = .flags.AttackedBy Then
                             If .MaestroUser > 0 Then
                                 If Not criminal(.MaestroUser) And Not criminal(UI) And (UserList(.MaestroUser).flags.Seguro Or UserList(.MaestroUser).Faccion.ArmadaReal = 1) Then
                                     Call WriteConsoleMsg(.MaestroUser, "La mascota no atacará a ciudadanos si eres miembro del ejército real o tienes el seguro activado.", FontTypeNames.FONTTYPE_INFO)
@@ -933,7 +925,7 @@ On Error GoTo ErrorHandler
 Exit Sub
 
 ErrorHandler:
-    Call LogError("NPCAI " & Npclist(NpcIndex).name & " " & Npclist(NpcIndex).MaestroUser & " " & Npclist(NpcIndex).MaestroNpc & " mapa:" & Npclist(NpcIndex).Pos.Map & " x:" & Npclist(NpcIndex).Pos.X & " y:" & Npclist(NpcIndex).Pos.Y & " Mov:" & Npclist(NpcIndex).Movement & " TargU:" & Npclist(NpcIndex).Target & " TargN:" & Npclist(NpcIndex).TargetNPC)
+    Call LogError("NPCAI " & Npclist(NpcIndex).Name & " " & Npclist(NpcIndex).MaestroUser & " " & Npclist(NpcIndex).MaestroNpc & " mapa:" & Npclist(NpcIndex).Pos.Map & " x:" & Npclist(NpcIndex).Pos.X & " y:" & Npclist(NpcIndex).Pos.Y & " Mov:" & Npclist(NpcIndex).Movement & " TargU:" & Npclist(NpcIndex).Target & " TargN:" & Npclist(NpcIndex).TargetNPC)
     Dim MiNPC As npc
     MiNPC = Npclist(NpcIndex)
     Call QuitarNPC(NpcIndex)
@@ -987,8 +979,8 @@ Function FollowPath(ByVal NpcIndex As Integer) As Boolean
     
     With Npclist(NpcIndex)
         tmpPos.Map = .Pos.Map
-        tmpPos.X = .PFINFO.Path(.PFINFO.CurPos).Y ' invertï¿½ las coordenadas
-        tmpPos.Y = .PFINFO.Path(.PFINFO.CurPos).X
+        tmpPos.X = .PFINFO.path(.PFINFO.CurPos).Y ' invertï¿½ las coordenadas
+        tmpPos.Y = .PFINFO.path(.PFINFO.CurPos).X
         
         'Debug.Print "(" & tmpPos.X & "," & tmpPos.Y & ")"
         
@@ -1048,7 +1040,7 @@ Sub NpcLanzaUnSpell(ByVal NpcIndex As Integer, ByVal UserIndex As Integer)
 'Last Modify Date: -
 '**************************************************************
     With UserList(UserIndex)
-        If .flags.invisible = 1 Or .flags.Oculto = 1 Then Exit Sub
+        If (.flags.invisible = 1 Or .flags.Oculto = 1) And Npclist(NpcIndex).flags.verinvi = 0 Then Exit Sub
     End With
     
     Dim k As Integer

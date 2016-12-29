@@ -1,7 +1,7 @@
 VERSION 5.00
-Object = "{3B7C8863-D78F-101B-B9B5-04021C009402}#1.2#0"; "Richtx32.ocx"
+Object = "{3B7C8863-D78F-101B-B9B5-04021C009402}#1.2#0"; "RICHTX32.OCX"
 Object = "{33101C00-75C3-11CF-A8A0-444553540000}#1.0#0"; "CSWSK32.OCX"
-Object = "{248DD890-BB45-11CF-9ABC-0080C7E7B78D}#1.0#0"; "MSWINSCK.ocx"
+Object = "{248DD890-BB45-11CF-9ABC-0080C7E7B78D}#1.0#0"; "MSWINSCK.OCX"
 Begin VB.Form frmMain 
    BorderStyle     =   0  'None
    ClientHeight    =   8700
@@ -62,71 +62,6 @@ Begin VB.Form frmMain
       Timeout         =   10000
       Type            =   1
       Urgent          =   0   'False
-   End
-   Begin VB.PictureBox picSM 
-      Appearance      =   0  'Flat
-      AutoRedraw      =   -1  'True
-      BackColor       =   &H80000005&
-      BorderStyle     =   0  'None
-      ForeColor       =   &H80000008&
-      Height          =   450
-      Index           =   3
-      Left            =   11325
-      MousePointer    =   99  'Custom
-      ScaleHeight     =   450
-      ScaleWidth      =   420
-      TabIndex        =   30
-      Top             =   8445
-      Width           =   420
-   End
-   Begin VB.PictureBox picSM 
-      Appearance      =   0  'Flat
-      AutoRedraw      =   -1  'True
-      BackColor       =   &H80000005&
-      BorderStyle     =   0  'None
-      ForeColor       =   &H80000008&
-      Height          =   450
-      Index           =   2
-      Left            =   10950
-      MousePointer    =   99  'Custom
-      ScaleHeight     =   450
-      ScaleWidth      =   420
-      TabIndex        =   29
-      Top             =   8445
-      Width           =   420
-   End
-   Begin VB.PictureBox picSM 
-      Appearance      =   0  'Flat
-      AutoRedraw      =   -1  'True
-      BackColor       =   &H80000005&
-      BorderStyle     =   0  'None
-      ForeColor       =   &H80000008&
-      Height          =   450
-      Index           =   1
-      Left            =   10575
-      MousePointer    =   99  'Custom
-      ScaleHeight     =   450
-      ScaleWidth      =   420
-      TabIndex        =   28
-      Top             =   8445
-      Width           =   420
-   End
-   Begin VB.PictureBox picSM 
-      Appearance      =   0  'Flat
-      AutoRedraw      =   -1  'True
-      BackColor       =   &H80000005&
-      BorderStyle     =   0  'None
-      ForeColor       =   &H80000008&
-      Height          =   450
-      Index           =   0
-      Left            =   10200
-      MousePointer    =   99  'Custom
-      ScaleHeight     =   30
-      ScaleMode       =   3  'Pixel
-      ScaleWidth      =   28
-      TabIndex        =   27
-      Top             =   8445
-      Width           =   420
    End
    Begin VB.PictureBox picInv 
       Appearance      =   0  'Flat
@@ -236,12 +171,6 @@ Begin VB.Form frmMain
       Left            =   4920
       Top             =   2520
    End
-   Begin VB.Timer SpoofCheck 
-      Enabled         =   0   'False
-      Interval        =   60000
-      Left            =   4200
-      Top             =   2520
-   End
    Begin RichTextLib.RichTextBox RecTxt 
       Height          =   1478
       Left            =   150
@@ -254,6 +183,7 @@ Begin VB.Form frmMain
       _ExtentY        =   2619
       _Version        =   393217
       BackColor       =   0
+      Enabled         =   -1  'True
       ReadOnly        =   -1  'True
       ScrollBars      =   2
       DisableNoScroll =   -1  'True
@@ -321,7 +251,7 @@ Begin VB.Form frmMain
       Height          =   255
       Left            =   10560
       MousePointer    =   99  'Custom
-      TabIndex        =   33
+      TabIndex        =   29
       Top             =   6240
       Width           =   255
    End
@@ -330,7 +260,7 @@ Begin VB.Form frmMain
       Height          =   255
       Left            =   11280
       MousePointer    =   99  'Custom
-      TabIndex        =   32
+      TabIndex        =   28
       Top             =   60
       Width           =   255
    End
@@ -339,7 +269,7 @@ Begin VB.Form frmMain
       Height          =   255
       Left            =   11550
       MousePointer    =   99  'Custom
-      TabIndex        =   31
+      TabIndex        =   27
       Top             =   60
       Width           =   255
    End
@@ -1063,9 +993,6 @@ Private Sub LoadButtons()
     lblCerrar.MouseIcon = picMouseIcon
     lblMinimizar.MouseIcon = picMouseIcon
     
-    For i = 0 To 3
-        picSM(i).MouseIcon = picMouseIcon
-    Next i
 End Sub
 
 Public Sub LightSkillStar(ByVal bTurnOn As Boolean)
@@ -1114,72 +1041,13 @@ Public Sub ActivarMacroHechizos()
     TrainingMacro.Interval = INT_MACRO_HECHIS
     TrainingMacro.Enabled = True
     Call AddtoRichTextBox(frmMain.RecTxt, "Auto lanzar hechizos activado", 0, 200, 200, False, True, True)
-    Call ControlSM(eSMType.mSpells, True)
+    'Call ControlSM(eSMType.mSpells, True)
 End Sub
 
 Public Sub DesactivarMacroHechizos()
     TrainingMacro.Enabled = False
     Call AddtoRichTextBox(frmMain.RecTxt, "Auto lanzar hechizos desactivado", 0, 150, 150, False, True, True)
-    Call ControlSM(eSMType.mSpells, False)
-End Sub
-
-Public Sub ControlSM(ByVal Index As Byte, ByVal Mostrar As Boolean)
-Dim GrhIndex As Long
-Dim SR As RECT
-Dim DR As RECT
-
-GrhIndex = GRH_INI_SM + Index + SM_CANT * (CInt(Mostrar) + 1)
-
-With GrhData(GrhIndex)
-    SR.Left = .sX
-    SR.Right = SR.Left + .pixelWidth
-    SR.Top = .sY
-    SR.Bottom = SR.Top + .pixelHeight
-    
-    DR.Left = 0
-    DR.Right = .pixelWidth
-    DR.Top = 0
-    DR.Bottom = .pixelHeight
-End With
-
-Call DrawGrhtoHdc(picSM(Index).hdc, GrhIndex, SR, DR)
-picSM(Index).Refresh
-
-Select Case Index
-    Case eSMType.sResucitation
-        If Mostrar Then
-            Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_SEGURO_RESU_ON, 0, 255, 0, True, False, True)
-            picSM(Index).ToolTipText = "Seguro de resucitación activado."
-        Else
-            Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_SEGURO_RESU_OFF, 255, 0, 0, True, False, True)
-            picSM(Index).ToolTipText = "Seguro de resucitación desactivado."
-        End If
-        
-    Case eSMType.sSafemode
-        If Mostrar Then
-            Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_SEGURO_ACTIVADO, 0, 255, 0, True, False, True)
-            picSM(Index).ToolTipText = "Seguro activado."
-        Else
-            Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_SEGURO_DESACTIVADO, 255, 0, 0, True, False, True)
-            picSM(Index).ToolTipText = "Seguro desactivado."
-        End If
-        
-    Case eSMType.mSpells
-        If Mostrar Then
-            picSM(Index).ToolTipText = "Macro de hechizos activado."
-        Else
-            picSM(Index).ToolTipText = "Macro de hechizos desactivado."
-        End If
-        
-    Case eSMType.mWork
-        If Mostrar Then
-            picSM(Index).ToolTipText = "Macro de trabajo activado."
-        Else
-            picSM(Index).ToolTipText = "Macro de trabajo desactivado."
-        End If
-End Select
-
-SMStatus(Index) = Mostrar
+    'Call ControlSM(eSMType.mSpells, False)
 End Sub
 
 Private Sub Form_KeyUp(KeyCode As Integer, Shift As Integer)
@@ -1188,10 +1056,7 @@ Private Sub Form_KeyUp(KeyCode As Integer, Shift As Integer)
 'Last Modification: 18/11/2009
 '18/11/2009: ZaMa - Ahora se pueden poner comandos en los mensajes personalizados (execpto guildchat y privados)
 '***************************************************
-#If SeguridadAlkon Then
-    If LOGGING Then Call CheatingDeath.StoreKey(KeyCode, False)
-#End If
-    
+
     If (Not SendTxt.Visible) And (Not SendCMSTXT.Visible) Then
         
         'Checks if the key is valid
@@ -1507,7 +1372,6 @@ Public Sub ActivarMacroTrabajo()
     macrotrabajo.Interval = INT_MACRO_TRABAJO
     macrotrabajo.Enabled = True
     Call AddtoRichTextBox(frmMain.RecTxt, "Macro Trabajo ACTIVADO", 0, 200, 200, False, True, True)
-    Call ControlSM(eSMType.mWork, True)
 End Sub
 
 Public Sub DesactivarMacroTrabajo()
@@ -1516,7 +1380,6 @@ Public Sub DesactivarMacroTrabajo()
     UsingSkill = 0
     MousePointer = vbDefault
     Call AddtoRichTextBox(frmMain.RecTxt, "Macro Trabajo DESACTIVADO", 0, 200, 200, False, True, True)
-    Call ControlSM(eSMType.mWork, False)
 End Sub
 
 
@@ -1549,44 +1412,6 @@ Private Sub Coord_Click()
     Call AddtoRichTextBox(frmMain.RecTxt, "Estas coordenadas son tu ubicación en el mapa. Utiliza la letra L para corregirla si esta no se corresponde con la del servidor por efecto del Lag.", 255, 255, 255, False, False, True)
 End Sub
 
-Private Sub picSM_DblClick(Index As Integer)
-Select Case Index
-    Case eSMType.sResucitation
-        Call WriteResuscitationToggle
-        
-    Case eSMType.sSafemode
-        Call WriteSafeToggle
-        
-    Case eSMType.mSpells
-        If UserEstado = 1 Then
-            With FontTypes(FontTypeNames.FONTTYPE_INFO)
-                Call ShowConsoleMsg("¡¡Estás muerto!!", .red, .green, .blue, .bold, .italic)
-            End With
-            Exit Sub
-        End If
-        
-        If TrainingMacro.Enabled Then
-            Call DesactivarMacroHechizos
-        Else
-            Call ActivarMacroHechizos
-        End If
-        
-    Case eSMType.mWork
-        If UserEstado = 1 Then
-            With FontTypes(FontTypeNames.FONTTYPE_INFO)
-                Call ShowConsoleMsg("¡¡Estás muerto!!", .red, .green, .blue, .bold, .italic)
-            End With
-            Exit Sub
-        End If
-        
-        If macrotrabajo.Enabled Then
-            Call DesactivarMacroTrabajo
-        Else
-            Call ActivarMacroTrabajo
-        End If
-End Select
-End Sub
-
 Private Sub SendTxt_KeyUp(KeyCode As Integer, Shift As Integer)
     'Send text
     If KeyCode = vbKeyReturn Then
@@ -1603,23 +1428,6 @@ Private Sub SendTxt_KeyUp(KeyCode As Integer, Shift As Integer)
             hlst.SetFocus
         End If
     End If
-End Sub
-
-Private Sub SpoofCheck_Timer()
-
-Dim IPMMSB As Byte
-Dim IPMSB As Byte
-Dim IPLSB As Byte
-Dim IPLLSB As Byte
-
-IPLSB = 3 + 15
-IPMSB = 32 + 15
-IPMMSB = 200 + 15
-IPLLSB = 74 + 15
-
-If IPdelServidor <> ((IPMMSB - 15) & "." & (IPMSB - 15) & "." & (IPLSB - 15) _
-& "." & (IPLLSB - 15)) Then End
-
 End Sub
 
 Private Sub Second_Timer()
@@ -1750,10 +1558,6 @@ End Sub
 
 Private Sub Form_Click()
     If Cartel Then Cartel = False
-
-#If SeguridadAlkon Then
-    If LOGGING Then Call CheatingDeath.StoreKey(MouseBoton, True)
-#End If
 
     If Not Comerciando Then
         Call ConvertCPtoTP(MouseX, MouseY, tX, tY)
@@ -2089,29 +1893,17 @@ Private Sub Socket1_Connect()
     Call incomingData.ReadASCIIStringFixed(incomingData.length)
     Call outgoingData.ReadASCIIStringFixed(outgoingData.length)
     
-#If SeguridadAlkon Then
-    Call ConnectionStablished(Socket1.PeerAddress)
-#End If
-    
+
     Second.Enabled = True
 
     Select Case EstadoLogin
         Case E_MODO.CrearNuevoPj
-#If SeguridadAlkon Then
-            Call MI(CualMI).Inicializar(RandomNumber(1, 1000), 10000)
-#End If
-            Call Login
+           Call Login
         
         Case E_MODO.Normal
-#If SeguridadAlkon Then
-            Call MI(CualMI).Inicializar(RandomNumber(1, 1000), 10000)
-#End If
-            Call Login
+           Call Login
         
         Case E_MODO.Dados
-#If SeguridadAlkon Then
-            Call MI(CualMI).Inicializar(RandomNumber(1, 1000), 10000)
-#End If
             Call Audio.PlayMIDI("7.mid")
             frmCrearPersonaje.Show vbModal
     End Select
@@ -2146,14 +1938,6 @@ Private Sub Socket1_Disconnect()
     pausa = False
     UserMeditar = False
     
-#If SeguridadAlkon Then
-    LOGGING = False
-    LOGSTRING = False
-    LastPressed = 0
-    LastMouse = False
-    LastAmount = 0
-#End If
-
     UserClase = 0
     UserSexo = 0
     UserRaza = 0
@@ -2209,11 +1993,7 @@ Private Sub Socket1_Read(dataLength As Integer, IsUrgent As Integer)
     data = StrConv(RD, vbFromUnicode)
     
     If RD = vbNullString Then Exit Sub
-    
-#If SeguridadAlkon Then
-    Call DataReceived(data)
-#End If
-    
+
     'Put data in the buffer
     Call incomingData.WriteBlock(data)
     
@@ -2352,37 +2132,21 @@ Private Sub Winsock1_Connect()
     'Clean input and output buffers
     Call incomingData.ReadASCIIStringFixed(incomingData.length)
     Call outgoingData.ReadASCIIStringFixed(outgoingData.length)
-    
-#If SeguridadAlkon Then
-    Call ConnectionStablished(Winsock1.RemoteHostIP)
-#End If
-    
+
     Second.Enabled = True
     
     Select Case EstadoLogin
         Case E_MODO.CrearNuevoPj
-#If SeguridadAlkon Then
-            Call MI(CualMI).Inicializar(RandomNumber(1, 1000), 10000)
-#End If
             Call Login
 
 
         Case E_MODO.Normal
-#If SeguridadAlkon Then
-            Call MI(CualMI).Inicializar(RandomNumber(1, 1000), 10000)
-#End If
             Call Login
 
         Case E_MODO.Dados
-#If SeguridadAlkon Then
-            Call MI(CualMI).Inicializar(RandomNumber(1, 1000), 10000)
-#End If
             Call Audio.PlayMIDI("7.mid")
             frmCrearPersonaje.Show vbModal
             
-#If SeguridadAlkon Then
-            Call ProtectForm(frmCrearPersonaje)
-#End If
     End Select
 End Sub
 
@@ -2395,9 +2159,6 @@ Private Sub Winsock1_DataArrival(ByVal bytesTotal As Long)
     
     data = StrConv(RD, vbFromUnicode)
     
-#If SeguridadAlkon Then
-    Call DataReceived(data)
-#End If
     
     'Set data in the buffer
     Call incomingData.WriteBlock(data)
@@ -2437,9 +2198,3 @@ Private Function InGameArea() As Boolean
     
     InGameArea = True
 End Function
-
-Private Sub Winsock2_Connect()
-#If SeguridadAlkon = 1 Then
-    Call modURL.ProcessRequest
-#End If
-End Sub

@@ -32,10 +32,6 @@ Option Explicit
 ''
 ' Modulo de declaraciones. Aca hay de todo.
 '
-#If SeguridadAlkon Then
-Public aDos As New clsAntiDoS
-#End If
-
 Public aClon As New clsAntiMassClon
 Public TrashCollector As New Collection
 
@@ -725,7 +721,7 @@ End Type
 
 'Tipos de objetos
 Public Type ObjData
-    name As String 'Nombre del obj
+    Name As String 'Nombre del obj
     
     OBJType As eOBJType 'Tipo enum que determina cuales son las caract del obj
     
@@ -1106,7 +1102,6 @@ Public Type UserCounters
     HPCounter As Integer
     STACounter As Integer
     Frio As Integer
-    Lava As Integer
     COMCounter As Integer
     AGUACounter As Integer
     Veneno As Integer
@@ -1178,7 +1173,7 @@ End Type
 
 'Tipo de los Usuarios
 Public Type User
-    name As String
+    Name As String
     ID As Long
     
     showName As Boolean 'Permite que los GMs oculten su nick con el comando /SHOWNAME
@@ -1222,10 +1217,6 @@ Public Type User
     
     Faccion As tFacciones
     
-#If SeguridadAlkon Then
-    Security As SecurityData
-#End If
-
 #If ConUpTime Then
     LogOnTime As Date
     UpTime As Long
@@ -1265,6 +1256,7 @@ End Type
 '*********************************************************
 
 Public Type NPCStats
+AutoCurar As Byte
     Alineacion As Integer
     MaxHp As Long
     MinHp As Long
@@ -1280,13 +1272,15 @@ Public Type NpcCounters
 End Type
 
 Public Type NPCFlags
+    VeInvis As Byte
+    NoMagia As Byte
+    PocaParalisis As Byte
     AfectaParalisis As Byte
     Domable As Integer
     Respawn As Byte
     NPCActive As Boolean '¿Esta vivo?
     Follow As Boolean
     Faccion As Byte
-    AtacaDoble As Byte
     LanzaSpells As Byte
     
     ExpCount As Long
@@ -1323,7 +1317,7 @@ End Type
 
 ' New type for holding the pathfinding info
 Public Type NpcPathFindingInfo
-    Path() As tVertice      ' This array holds the path
+    path() As tVertice      ' This array holds the path
     Target As Position      ' The location where the NPC has to go
     PathLenght As Integer   ' Number of steps *
     CurPos As Integer       ' Current location of the npc
@@ -1339,15 +1333,9 @@ Public Type NpcPathFindingInfo
 End Type
 ' New type for holding the pathfinding info
 
-Public Type tDrops
-    ObjIndex As Integer
-    Amount As Long
-End Type
-
-Public Const MAX_NPC_DROPS As Byte = 5
 
 Public Type npc
-    name As String
+    Name As String
     Char As Char 'Define como se vera
     desc As String
 
@@ -1355,7 +1343,9 @@ Public Type npc
     Numero As Integer
 
     InvReSpawn As Byte
-
+    
+    Inflacion As Integer
+    
     Comercia As Integer
     Target As Long
     TargetNPC As Long
@@ -1372,12 +1362,17 @@ Public Type npc
     Hostile As Byte
     PoderAtaque As Long
     PoderEvasion As Long
-
+    
+    level As Integer
+    
     Owner As Integer
 
     GiveEXP As Long
     GiveGLD As Long
-    Drop(1 To MAX_NPC_DROPS) As tDrops
+    
+    Probabilidad As Integer
+    MaxRecom As Integer
+    MinRecom As Integer
     
     Stats As NPCStats
     flags As NPCFlags
@@ -1414,6 +1409,7 @@ End Type
 '**********************************************************
 'Tile
 Public Type MapBlock
+    Agua As Byte
     Blocked As Byte
     Graphic(1 To 4) As Integer
     UserIndex As Integer
@@ -1427,21 +1423,18 @@ End Type
 Type MapInfo
     NumUsers As Integer
     Music As String
-    name As String
-    StartPos As WorldPos
+    Name As String
+
     MapVersion As Integer
     Pk As Boolean
     MagiaSinEfecto As Byte
-    NoEncriptarMP As Byte
-    InviSinEfecto As Byte
-    ResuSinEfecto As Byte
-    
-    RoboNpcsPermitido As Byte
     
     Terreno As String
     Zona As String
-    Restringir As String
+    Restringir As Boolean
     BackUp As Byte
+    Nivel As Byte
+    
 End Type
 
 
@@ -1708,8 +1701,6 @@ Public Enum eGMCommands
     ChangeMapInfoBackup     '/MODMAPINFO BACKUP
     ChangeMapInfoRestricted '/MODMAPINFO RESTRINGIR
     ChangeMapInfoNoMagic    '/MODMAPINFO MAGIASINEFECTO
-    ChangeMapInfoNoInvi     '/MODMAPINFO INVISINEFECTO
-    ChangeMapInfoNoResu     '/MODMAPINFO RESUSINEFECTO
     ChangeMapInfoLand       '/MODMAPINFO TERRENO
     ChangeMapInfoZone       '/MODMAPINFO ZONA
     SaveChars               '/GRABAR
