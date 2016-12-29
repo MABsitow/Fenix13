@@ -7,3 +7,6 @@
 *.txt
 *.csi
 *.lvw
+
+## Thumbs.db file
+*.db
