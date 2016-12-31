@@ -226,7 +226,6 @@ Private Enum ClientPacketID
     BankDepositGold         '/DEPOSITAR
     Denounce                '/DENUNCIAR
     Ping                    '/PING
-    ItemUpgrade
     GMCommands
     InitCrafting
     Home
@@ -1147,7 +1146,7 @@ Private Sub HandleBankInit()
     
         BankGold = incomingData.ReadLong
     Call InvBanco(0).Initialize(DirectDraw, frmBancoObj.PicBancoInv, MAX_BANCOINVENTORY_SLOTS)
-    Call InvBanco(1).Initialize(DirectDraw, frmBancoObj.picInv, Inventario.MaxObjs)
+    Call InvBanco(1).Initialize(DirectDraw, frmBancoObj.PicInv, Inventario.MaxObjs)
     
     For i = 1 To Inventario.MaxObjs
         With Inventario
@@ -3247,7 +3246,6 @@ On Error GoTo Errhandler
             .LinP = Buffer.ReadInteger()        'The silver needed
             .LinO = Buffer.ReadInteger()        'The gold needed
             .OBJIndex = Buffer.ReadInteger()
-            .Upgrade = Buffer.ReadInteger()
         End With
     Next i
     
@@ -3261,31 +3259,6 @@ On Error GoTo Errhandler
         Call .HideExtraControls(Count)
         Call .RenderList(1, True)
     End With
-    
-    For i = 1 To Count
-        With ArmasHerrero(i)
-            If .Upgrade Then
-                For k = 1 To Count
-                    If .Upgrade = ArmasHerrero(k).OBJIndex Then
-                        j = j + 1
-                
-                        ReDim Preserve HerreroMejorar(j) As tItemsConstruibles
-                        
-                        HerreroMejorar(j).Name = .Name
-                        HerreroMejorar(j).GrhIndex = .GrhIndex
-                        HerreroMejorar(j).OBJIndex = .OBJIndex
-                        HerreroMejorar(j).UpgradeName = ArmasHerrero(k).Name
-                        HerreroMejorar(j).UpgradeGrhIndex = ArmasHerrero(k).GrhIndex
-                        HerreroMejorar(j).LinH = ArmasHerrero(k).LinH - .LinH * 0.85
-                        HerreroMejorar(j).LinP = ArmasHerrero(k).LinP - .LinP * 0.85
-                        HerreroMejorar(j).LinO = ArmasHerrero(k).LinO - .LinO * 0.85
-                        
-                        Exit For
-                    End If
-                Next k
-            End If
-        End With
-    Next i
     
     'If we got here then packet is complete, copy data back to original queue
     Call incomingData.CopyBuffer(Buffer)
@@ -3341,34 +3314,6 @@ On Error GoTo Errhandler
             .LinP = Buffer.ReadInteger()        'The silver needed
             .LinO = Buffer.ReadInteger()        'The gold needed
             .OBJIndex = Buffer.ReadInteger()
-            .Upgrade = Buffer.ReadInteger()
-        End With
-    Next i
-    
-    j = UBound(HerreroMejorar)
-    
-    For i = 1 To Count
-        With ArmadurasHerrero(i)
-            If .Upgrade Then
-                For k = 1 To Count
-                    If .Upgrade = ArmadurasHerrero(k).OBJIndex Then
-                        j = j + 1
-                
-                        ReDim Preserve HerreroMejorar(j) As tItemsConstruibles
-                        
-                        HerreroMejorar(j).Name = .Name
-                        HerreroMejorar(j).GrhIndex = .GrhIndex
-                        HerreroMejorar(j).OBJIndex = .OBJIndex
-                        HerreroMejorar(j).UpgradeName = ArmadurasHerrero(k).Name
-                        HerreroMejorar(j).UpgradeGrhIndex = ArmadurasHerrero(k).GrhIndex
-                        HerreroMejorar(j).LinH = ArmadurasHerrero(k).LinH - .LinH * 0.85
-                        HerreroMejorar(j).LinP = ArmadurasHerrero(k).LinP - .LinP * 0.85
-                        HerreroMejorar(j).LinO = ArmadurasHerrero(k).LinO - .LinO * 0.85
-                        
-                        Exit For
-                    End If
-                Next k
-            End If
         End With
     Next i
     
@@ -3426,7 +3371,6 @@ On Error GoTo Errhandler
             .Madera = Buffer.ReadInteger()          'The wood needed
             .MaderaElfica = Buffer.ReadInteger()    'The elfic wood needed
             .OBJIndex = Buffer.ReadInteger()
-            .Upgrade = Buffer.ReadInteger()
         End With
     Next i
     
@@ -3441,29 +3385,6 @@ On Error GoTo Errhandler
         Call .RenderList(1)
     End With
     
-    For i = 1 To Count
-        With ObjCarpintero(i)
-            If .Upgrade Then
-                For k = 1 To Count
-                    If .Upgrade = ObjCarpintero(k).OBJIndex Then
-                        j = j + 1
-                
-                        ReDim Preserve CarpinteroMejorar(j) As tItemsConstruibles
-                        
-                        CarpinteroMejorar(j).Name = .Name
-                        CarpinteroMejorar(j).GrhIndex = .GrhIndex
-                        CarpinteroMejorar(j).OBJIndex = .OBJIndex
-                        CarpinteroMejorar(j).UpgradeName = ObjCarpintero(k).Name
-                        CarpinteroMejorar(j).UpgradeGrhIndex = ObjCarpintero(k).GrhIndex
-                        CarpinteroMejorar(j).Madera = ObjCarpintero(k).Madera - .Madera * 0.85
-                        CarpinteroMejorar(j).MaderaElfica = ObjCarpintero(k).MaderaElfica - .MaderaElfica * 0.85
-                        
-                        Exit For
-                    End If
-                Next k
-            End If
-        End With
-    Next i
     
     'If we got here then packet is complete, copy data back to original queue
     Call incomingData.CopyBuffer(Buffer)
@@ -3993,7 +3914,6 @@ Private Sub HandleSendSkills()
     
     For i = 1 To NUMSKILLS
         UserSkills(i) = incomingData.ReadByte()
-        PorcentajeSkills(i) = incomingData.ReadByte()
     Next i
     LlegaronSkills = True
 End Sub
@@ -4766,24 +4686,6 @@ Public Sub WriteResuscitationToggle()
 'Writes the Resuscitation safe toggle packet to the outgoing data buffer.
 '**************************************************************
     Call outgoingData.WriteByte(ClientPacketID.ResuscitationSafeToggle)
-End Sub
-
-
-
-''
-' Writes the "ItemUpgrade" message to the outgoing data buffer.
-'
-' @param    ItemIndex The index to the item to upgrade.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
-
-Public Sub WriteItemUpgrade(ByVal ItemIndex As Integer)
-'***************************************************
-'Author: Torres Patricio (Pato)
-'Last Modification: 12/09/09
-'Writes the "ItemUpgrade" message to the outgoing data buffer
-'***************************************************
-    Call outgoingData.WriteByte(ClientPacketID.ItemUpgrade)
-    Call outgoingData.WriteInteger(ItemIndex)
 End Sub
 
 ''

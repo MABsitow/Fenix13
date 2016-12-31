@@ -289,6 +289,8 @@ Public Enum eSkill
     Proyectiles = 18
     Wrestling = 19
     Navegacion = 20
+    Sastreria = 21
+    Resis = 22
 End Enum
 
 Public Enum eAtributos
@@ -664,9 +666,6 @@ Type tItemsConstruibles
     LinO As Integer
     Madera As Integer
     MaderaElfica As Integer
-    Upgrade As Integer
-    UpgradeName As String
-    UpgradeGrhIndex As Integer
 End Type
 
 Public Nombres As Boolean
@@ -731,13 +730,12 @@ Public UserRaza As eRaza
 Public UserEmail As String
 
 Public Const NUMCIUDADES As Byte = 5
-Public Const NUMSKILLS As Byte = 20
+Public Const NUMSKILLS As Byte = 22
 Public Const NUMATRIBUTOS As Byte = 5
 Public Const NUMCLASES As Byte = 12
 Public Const NUMRAZAS As Byte = 5
 
 Public UserSkills(1 To NUMSKILLS) As Byte
-Public PorcentajeSkills(1 To NUMSKILLS) As Byte
 Public SkillsNames(1 To NUMSKILLS) As String
 
 Public UserAtributos(1 To NUMATRIBUTOS) As Byte

@@ -1035,9 +1035,6 @@ Next
 
 For i = 1 To NUMSKILLS
     Skills(i).Caption = UserSkills(i)
-    Ancho = IIf(PorcentajeSkills(i) = 0, ANCHO_BARRA, (100 - PorcentajeSkills(i)) / 100 * ANCHO_BARRA)
-    shpSkillsBar(i).Width = Ancho
-    shpSkillsBar(i).Left = BAR_LEFT_POS + ANCHO_BARRA - Ancho
 Next
 
 

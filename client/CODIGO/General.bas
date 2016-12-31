@@ -792,7 +792,7 @@ UserMap = 1
     Audio.SoundActivated = Not ClientSetup.bNoSound
     Audio.SoundEffectsActivated = Not ClientSetup.bNoSoundEffects
     'Inicializamos el inventario gráfico
-    Call Inventario.Initialize(DirectDraw, frmMain.picInv, MAX_INVENTORY_SLOTS)
+    Call Inventario.Initialize(DirectDraw, frmMain.PicInv, MAX_INVENTORY_SLOTS)
     
     Call Audio.MusicMP3Play(App.path & "\MP3\" & MP3_Inicio & ".mp3")
     
@@ -1147,7 +1147,9 @@ Private Sub InicializarNombres()
     SkillsNames(eSkill.Proyectiles) = "Combate a distancia"
     SkillsNames(eSkill.Wrestling) = "Combate sin armas"
     SkillsNames(eSkill.Navegacion) = "Navegacion"
-
+    SkillsNames(eSkill.Sastreria) = "Sastrería"
+    SkillsNames(eSkill.Resis) = "Resistencia Mágica"
+    
     AtributosNames(eAtributos.Fuerza) = "Fuerza"
     AtributosNames(eAtributos.Agilidad) = "Agilidad"
     AtributosNames(eAtributos.Inteligencia) = "Inteligencia"

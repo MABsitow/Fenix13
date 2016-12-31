@@ -67,14 +67,24 @@ With UserList(UserIndex)
         
             daño = RandomNumber(Hechizos(Spell).MinHp, Hechizos(Spell).MaxHp)
             
-            If .Invent.CascoEqpObjIndex > 0 Then
-                daño = daño - RandomNumber(ObjData(.Invent.CascoEqpObjIndex).DefensaMagicaMin, ObjData(.Invent.CascoEqpObjIndex).DefensaMagicaMax)
-            End If
+            'todo: que hacer con los anillos
+            'If .Invent.AnilloEqpObjIndex > 0 Then
+            '    daño = daño - RandomNumber(ObjData(.Invent.AnilloEqpObjIndex).DefensaMagicaMin, ObjData(.Invent.AnilloEqpObjIndex).DefensaMagicaMax)
+            'End If
             
-            If .Invent.AnilloEqpObjIndex > 0 Then
-                daño = daño - RandomNumber(ObjData(.Invent.AnilloEqpObjIndex).DefensaMagicaMin, ObjData(.Invent.AnilloEqpObjIndex).DefensaMagicaMax)
+            If Npclist(NpcIndex).MaestroUser = 0 Then daño = daño * (1 - .Stats.UserSkills(eSkill.Resis) / 200)
+            If .Invent.CascoEqpObjIndex Then
+                Dim Obj As ObjData
+                Obj = ObjData(.Invent.CascoEqpObjIndex)
+                If Obj.Gorro = 1 Then
+                    Dim absorbido As Integer
+                    absorbido = RandomNumber(Obj.MinDef, Obj.MaxDef)
+                    absorbido = absorbido
+                    
+                    daño = daño - absorbido
+               End If
             End If
-            
+    
             If daño < 0 Then daño = 0
             
             Call SendData(SendTarget.ToPCArea, UserIndex, PrepareMessagePlayWave(Hechizos(Spell).WAV, .Pos.X, .Pos.Y))
@@ -84,6 +94,7 @@ With UserList(UserIndex)
             
             Call WriteConsoleMsg(UserIndex, Npclist(NpcIndex).Name & " te ha quitado " & daño & " puntos de vida.", FontTypeNames.FONTTYPE_FIGHT)
             Call WriteUpdateUserStats(UserIndex)
+            Call SubirSkill(UserIndex, eSkill.Resis)
             
             'Muere
             If .Stats.MinHp < 1 Then
@@ -217,7 +228,7 @@ Dim hIndex As Integer
 Dim j As Integer
 
 With UserList(UserIndex)
-    hIndex = ObjData(.Invent.Object(Slot).ObjIndex).HechizoIndex
+    hIndex = ObjData(.Invent.Object(Slot).OBJIndex).HechizoIndex
     
     If Not TieneHechizo(hIndex, UserIndex) Then
         'Buscamos un slot vacio
@@ -289,11 +300,16 @@ Dim DruidManaBonus As Single
             Call WriteConsoleMsg(UserIndex, "No puedes lanzar hechizos estando muerto.", FontTypeNames.FONTTYPE_INFO)
             Exit Function
         End If
-            
-        If Hechizos(HechizoIndex).NeedStaff > 0 Then
-            If .clase = eClass.Mage Then
+        
+        If Hechizos(HechizoIndex).Nivel > .Stats.ELV Then
+            Call WriteConsoleMsg(UserIndex, "No tienes el nivel suficiente para lanzar este hechizo.", FontTypeNames.FONTTYPE_INFO)
+            Exit Function
+        End If
+        
+        If Hechizos(HechizoIndex).Baculo > 0 Then
+            If .clase = eClass.Mage Then 'Or .clase = eClass.druida Or .clase = eClass.nigromante Then
                 If .Invent.WeaponEqpObjIndex > 0 Then
-                    If ObjData(.Invent.WeaponEqpObjIndex).StaffPower < Hechizos(HechizoIndex).NeedStaff Then
+                    If ObjData(.Invent.WeaponEqpObjIndex).Baculo < Hechizos(HechizoIndex).Baculo Then
                         Call WriteConsoleMsg(UserIndex, "No posees un báculo lo suficientemente poderoso para poder lanzar el conjuro.", FontTypeNames.FONTTYPE_INFO)
                         Exit Function
                     End If
@@ -509,7 +525,7 @@ Sub HandleHechizoTerreno(ByVal UserIndex As Integer, ByVal SpellIndex As Integer
 
     If HechizoCasteado Then
         With UserList(UserIndex)
-            Call SubirSkill(UserIndex, eSkill.Magia, True)
+            Call SubirSkill(UserIndex, eSkill.Magia)
             
             ManaRequerida = Hechizos(SpellIndex).ManaRequerido
             
@@ -565,7 +581,7 @@ Sub HandleHechizoUsuario(ByVal UserIndex As Integer, ByVal SpellIndex As Integer
 
     If HechizoCasteado Then
         With UserList(UserIndex)
-            Call SubirSkill(UserIndex, eSkill.Magia, True)
+            Call SubirSkill(UserIndex, eSkill.Magia)
             
             ManaRequerida = Hechizos(SpellIndex).ManaRequerido
             
@@ -633,7 +649,7 @@ Sub HandleHechizoNPC(ByVal UserIndex As Integer, ByVal HechizoIndex As Integer)
         
         
         If HechizoCasteado Then
-            Call SubirSkill(UserIndex, eSkill.Magia, True)
+            Call SubirSkill(UserIndex, eSkill.Magia)
             
             ManaRequerida = Hechizos(HechizoIndex).ManaRequerido
             
@@ -1034,7 +1050,7 @@ With UserList(UserIndex)
             'revisamos si necesita vara
             If .clase = eClass.Mage Then
                 If .Invent.WeaponEqpObjIndex > 0 Then
-                    If ObjData(.Invent.WeaponEqpObjIndex).StaffPower < Hechizos(HechizoIndex).NeedStaff Then
+                    If ObjData(.Invent.WeaponEqpObjIndex).Baculo < Hechizos(HechizoIndex).Baculo Then
                         Call WriteConsoleMsg(UserIndex, "Necesitas un báculo mejor para lanzar este hechizo.", FontTypeNames.FONTTYPE_INFO)
                         HechizoCasteado = False
                         Exit Sub
@@ -1376,17 +1392,9 @@ With Npclist(NpcIndex)
         daño = RandomNumber(Hechizos(SpellIndex).MinHp, Hechizos(SpellIndex).MaxHp)
         daño = daño + Porcentaje(daño, 3 * UserList(UserIndex).Stats.ELV)
     
-        If Hechizos(SpellIndex).StaffAffected Then
-            If UserList(UserIndex).clase = eClass.Mage Then
-                If UserList(UserIndex).Invent.WeaponEqpObjIndex > 0 Then
-                    daño = (daño * (ObjData(UserList(UserIndex).Invent.WeaponEqpObjIndex).StaffDamageBonus + 70)) / 100
-                    'Aumenta daño segun el staff-
-                    'Daño = (Daño* (70 + BonifBáculo)) / 100
-                Else
-                    daño = daño * 0.7 'Baja daño a 70% del original
-                End If
-            End If
-        End If
+        'CHECK: por que es una disminución del 5% de daño?
+        If Hechizos(SpellIndex).Baculo = ObjData(.Invent.WeaponEqpObjIndex).Baculo Then daño = daño * 0.95
+        
         If UserList(UserIndex).Invent.AnilloEqpObjIndex = LAUDELFICO Or UserList(UserIndex).Invent.AnilloEqpObjIndex = FLAUTAELFICA Then
             daño = daño * 1.04  'laud magico de los bardos
         End If
@@ -1708,29 +1716,24 @@ With UserList(TargetIndex)
         
         daño = daño + Porcentaje(daño, 3 * UserList(UserIndex).Stats.ELV)
         
-        If Hechizos(SpellIndex).StaffAffected Then
-            If UserList(UserIndex).clase = eClass.Mage Then
-                If UserList(UserIndex).Invent.WeaponEqpObjIndex > 0 Then
-                    daño = (daño * (ObjData(UserList(UserIndex).Invent.WeaponEqpObjIndex).StaffDamageBonus + 70)) / 100
-                Else
-                    daño = daño * 0.7 'Baja daño a 70% del original
-                End If
-            End If
-        End If
+        If Hechizos(SpellIndex).Baculo = ObjData(.Invent.WeaponEqpObjIndex).Baculo Then daño = daño * 0.95
         
         If UserList(UserIndex).Invent.AnilloEqpObjIndex = LAUDELFICO Or UserList(UserIndex).Invent.AnilloEqpObjIndex = FLAUTAELFICA Then
             daño = daño * 1.04  'laud magico de los bardos
         End If
         
-        'cascos antimagia
-        If (.Invent.CascoEqpObjIndex > 0) Then
-            daño = daño - RandomNumber(ObjData(.Invent.CascoEqpObjIndex).DefensaMagicaMin, ObjData(.Invent.CascoEqpObjIndex).DefensaMagicaMax)
+        If .Invent.CascoEqpObjIndex Then
+            Dim Obj As ObjData
+            
+            Obj = ObjData(.Invent.CascoEqpObjIndex)
+            If Obj.Gorro = 1 Then daño = (1 - (RandomNumber(Obj.MinDef, Obj.MaxDef) / 100)) * daño
         End If
         
         'anillos
-        If (.Invent.AnilloEqpObjIndex > 0) Then
-            daño = daño - RandomNumber(ObjData(.Invent.AnilloEqpObjIndex).DefensaMagicaMin, ObjData(.Invent.AnilloEqpObjIndex).DefensaMagicaMax)
-        End If
+        'todo: anillos
+        'If (.Invent.AnilloEqpObjIndex > 0) Then
+       '     daño = daño - RandomNumber(ObjData(.Invent.AnilloEqpObjIndex).DefensaMagicaMin, ObjData(.Invent.AnilloEqpObjIndex).DefensaMagicaMax)
+       ' End If
         
         If daño < 0 Then daño = 0
         
@@ -1761,6 +1764,8 @@ With UserList(TargetIndex)
             .Stats.MinHp = 0
             Call ActStats(TargetIndex, UserIndex)
             Call UserDie(TargetIndex)
+        Else
+            Call SubirSkill(TargetIndex, eSkill.Resis)
         End If
         
     End If

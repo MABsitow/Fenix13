@@ -160,9 +160,6 @@ Public Const DESCARGA_SPELL_INDEX As Integer = 23
 
 Public Const SLOTS_POR_FILA As Byte = 5
 
-Public Const PROB_ACUCHILLAR As Byte = 20
-Public Const DAÑO_ACUCHILLAR As Single = 0.2
-
 Public Const MAXMASCOTASENTRENADOR As Byte = 7
 
 Public Enum FXIDs
@@ -250,8 +247,6 @@ Public Const EsfuerzoExcavarGeneral As Byte = 5
 
 Public Const FX_TELEPORT_INDEX As Integer = 1
 
-Public Const PORCENTAJE_MATERIALES_UPGRADE As Single = 0.85
-
 ' La utilidad de esto es casi nula, sólo se revisa si fue a la cabeza...
 Public Enum PartesCuerpo
     bCabeza = 1
@@ -318,6 +313,7 @@ Public Enum eNPCType
     ResucitadorNewbie = 9
     Pretoriano = 10
     Gobernador = 11
+    Pirata = 66
 End Enum
 
 Public Const MIN_APUÑALAR As Byte = 10
@@ -326,7 +322,7 @@ Public Const MIN_APUÑALAR As Byte = 10
 
 ''
 ' Cantidad de skills
-Public Const NUMSKILLS As Byte = 20
+Public Const NUMSKILLS As Byte = 22
 
 ''
 ' Cantidad de Atributos
@@ -414,6 +410,8 @@ Public Enum eSkill
     Proyectiles = 18
     Wrestling = 19
     Navegacion = 20
+    Sastreria = 21
+    Resis = 22
 End Enum
 
 Public Enum eMochilas
@@ -421,7 +419,7 @@ Public Enum eMochilas
     Grande = 2
 End Enum
 
-Public Const FundirMetal = 88
+Public Const FundirMetal As Byte = 88
 
 Public Enum eAtributos
     Fuerza = 1
@@ -528,7 +526,8 @@ Public Enum eOBJType
     otBotellaLlena = 34
     otManchas = 35          'No se usa
     otArbolElfico = 36
-    otMochilas = 37
+    otWarp = 37
+    otMochilas = 38
     otCualquiera = 1000
 End Enum
 
@@ -586,6 +585,8 @@ Public Type tHechizo
     FXgrh As Integer
     loops As Byte
     
+    Baculo As Byte
+    
     SubeHP As Byte
     MinHp As Integer
     MaxHp As Integer
@@ -635,6 +636,8 @@ Public Type tHechizo
     Mimetiza As Byte
     RemueveInvisibilidadParcial As Byte
     
+    Nivel As Byte
+    
     Warp As Byte
     Invoca As Byte
     NumNpc As Integer
@@ -650,9 +653,6 @@ Public Type tHechizo
     StaRequerido As Integer
 
     Target As TargetType
-    
-    NeedStaff As Integer
-    StaffAffected As Boolean
 End Type
 
 Public Type LevelSkill
@@ -660,7 +660,7 @@ Public Type LevelSkill
 End Type
 
 Public Type UserOBJ
-    ObjIndex As Integer
+    OBJIndex As Integer
     Amount As Integer
     Equipped As Byte
 End Type
@@ -725,14 +725,17 @@ Public Type ObjData
     
     OBJType As eOBJType 'Tipo enum que determina cuales son las caract del obj
     
+    NoComerciable As Boolean
+    
     GrhIndex As Integer ' Indice del grafico que representa el obj
     GrhSecundario As Integer
+    
+    Jerarquia As Byte 'todo
     
     'Solo contenedores
     MaxItems As Integer
     Conte As Inventario
     Apuñala As Byte
-    Acuchilla As Byte
     
     HechizoIndex As Integer
     
@@ -745,6 +748,12 @@ Public Type ObjData
     MineralIndex As Integer
     LingoteInex As Integer
     
+    WMapa As Integer
+    WX As Integer
+    WY As Integer
+    WI As Integer
+    
+    Baculo As Byte
     
     proyectil As Integer
     Municion As Integer
@@ -773,6 +782,8 @@ Public Type ObjData
     MinDef As Integer ' Armaduras
     MaxDef As Integer ' Armaduras
     
+    Gorro As Byte
+    
     Ropaje As Integer 'Indice del grafico del ropaje
     
     WeaponAnim As Integer ' Apunta a una anim de armas
@@ -797,16 +808,15 @@ Public Type ObjData
     IndexCerradaLlave As Integer
     
     RazaEnana As Byte
-    RazaDrow As Byte
-    RazaElfa As Byte
-    RazaGnoma As Byte
-    RazaHumana As Byte
-    
     Mujer As Byte
     Hombre As Byte
     
     Envenena As Byte
-    Paraliza As Byte
+    
+    SkillCombate As Byte
+    SkillTacticas As Byte
+    SkillProyectiles As Byte
+    SkillApuñalar As Byte
     
     Agarrable As Byte
     
@@ -818,11 +828,14 @@ Public Type ObjData
     
     SkHerreria As Integer
     SkCarpinteria As Integer
+    SkResistencia As Integer
+    SkDefensa As Integer
     
     texto As String
     
     'Clases que no tienen permitido usar este obj
     ClaseProhibida(1 To NUMCLASES) As eClass
+    RazaProhibida(1 To NUMRAZAS) As eRaza
     
     Snd1 As Integer
     Snd2 As Integer
@@ -832,21 +845,10 @@ Public Type ObjData
     Caos As Integer
     
     NoSeCae As Integer
-    
-    StaffPower As Integer
-    StaffDamageBonus As Integer
-    DefensaMagicaMax As Integer
-    DefensaMagicaMin As Integer
-    Refuerzo As Byte
-    
-    Log As Byte 'es un objeto que queremos loguear? Pablo (ToxicWaste) 07/09/07
-    NoLog As Byte 'es un objeto que esta prohibido loguear?
-    
-    Upgrade As Integer
 End Type
 
 Public Type Obj
-    ObjIndex As Integer
+    OBJIndex As Integer
     Amount As Integer
 End Type
 
@@ -984,10 +986,6 @@ Public Type UserStats
     NPCsMuertos As Integer
     
     SkillPts As Integer
-    
-    ExpSkills(1 To NUMSKILLS) As Long
-    EluSkills(1 To NUMSKILLS) As Long
-    
 End Type
 
 'Flags

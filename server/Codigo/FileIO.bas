@@ -334,11 +334,12 @@ On Error GoTo Errhandler
             'Barrin 30/9/03
             .StaRequerido = val(Leer.GetValue("Hechizo" & Hechizo, "StaRequerido"))
             
+            .Baculo = val(Leer.GetValue("Hechizo" & Hechizo, "Baculo"))
+            .Nivel = val(Leer.GetValue("Hechizo" & Hechizo, "Nivel"))
+            
             .Target = val(Leer.GetValue("Hechizo" & Hechizo, "Target"))
             frmCargando.cargar.value = frmCargando.cargar.value + 1
             
-            .NeedStaff = val(Leer.GetValue("Hechizo" & Hechizo, "NeedStaff"))
-            .StaffAffected = CBool(val(Leer.GetValue("Hechizo" & Hechizo, "StaffAffected")))
         End With
     Next Hechizo
     
@@ -496,16 +497,16 @@ On Error Resume Next
                 
                 ByFlags = 0
                 
-                If .ObjInfo.ObjIndex > 0 Then
-                   If ObjData(.ObjInfo.ObjIndex).OBJType = eOBJType.otFogata Then
-                        .ObjInfo.ObjIndex = 0
+                If .ObjInfo.OBJIndex > 0 Then
+                   If ObjData(.ObjInfo.OBJIndex).OBJType = eOBJType.otFogata Then
+                        .ObjInfo.OBJIndex = 0
                         .ObjInfo.Amount = 0
                     End If
                 End If
     
                 If .TileExit.Map Then ByFlags = ByFlags Or 1
                 If .NpcIndex Then ByFlags = ByFlags Or 2
-                If .ObjInfo.ObjIndex Then ByFlags = ByFlags Or 4
+                If .ObjInfo.OBJIndex Then ByFlags = ByFlags Or 4
                 
                 Put FreeFileInf, , ByFlags
                 
@@ -518,8 +519,8 @@ On Error Resume Next
                 If .NpcIndex Then _
                     Put FreeFileInf, , Npclist(.NpcIndex).Numero
                 
-                If .ObjInfo.ObjIndex Then
-                    Put FreeFileInf, , .ObjInfo.ObjIndex
+                If .ObjInfo.OBJIndex Then
+                    Put FreeFileInf, , .ObjInfo.OBJIndex
                     Put FreeFileInf, , .ObjInfo.Amount
                 End If
             End With
@@ -691,8 +692,6 @@ Sub LoadOBJData()
 
 'Call LogTarea("Sub LoadOBJData")
 
-On Error GoTo Errhandler
-
     If frmMain.Visible Then frmMain.txStatus.Caption = "Cargando base de datos de los objetos."
     
     '*****************************************************************
@@ -719,10 +718,7 @@ On Error GoTo Errhandler
         With ObjData(Object)
             .Name = Leer.GetValue("OBJ" & Object, "Name")
             
-            'Pablo (ToxicWaste) Log de Objetos.
-            .Log = val(Leer.GetValue("OBJ" & Object, "Log"))
-            .NoLog = val(Leer.GetValue("OBJ" & Object, "NoLog"))
-            '07/09/07
+            .NoComerciable = val(Leer.GetValue("OBJ" & Object, "NoComerciable"))
             
             .GrhIndex = val(Leer.GetValue("OBJ" & Object, "GrhIndex"))
             If .GrhIndex = 0 Then
@@ -741,7 +737,8 @@ On Error GoTo Errhandler
                     .LingP = val(Leer.GetValue("OBJ" & Object, "LingP"))
                     .LingO = val(Leer.GetValue("OBJ" & Object, "LingO"))
                     .SkHerreria = val(Leer.GetValue("OBJ" & Object, "SkHerreria"))
-                
+                    .Jerarquia = val(Leer.GetValue("OBJ" & Object, "Jerarquia"))
+                    
                 Case eOBJType.otESCUDO
                     .ShieldAnim = val(Leer.GetValue("OBJ" & Object, "Anim"))
                     .LingH = val(Leer.GetValue("OBJ" & Object, "LingH"))
@@ -759,7 +756,8 @@ On Error GoTo Errhandler
                     .SkHerreria = val(Leer.GetValue("OBJ" & Object, "SkHerreria"))
                     .Real = val(Leer.GetValue("OBJ" & Object, "Real"))
                     .Caos = val(Leer.GetValue("OBJ" & Object, "Caos"))
-                
+                    .Gorro = val(Leer.GetValue("OBJ" & Object, "Gorro"))
+                    
                 Case eOBJType.otWeapon
                     .WeaponAnim = val(Leer.GetValue("OBJ" & Object, "Anim"))
                     .Apuñala = val(Leer.GetValue("OBJ" & Object, "Apuñala"))
@@ -768,9 +766,7 @@ On Error GoTo Errhandler
                     .MinHIT = val(Leer.GetValue("OBJ" & Object, "MinHIT"))
                     .proyectil = val(Leer.GetValue("OBJ" & Object, "Proyectil"))
                     .Municion = val(Leer.GetValue("OBJ" & Object, "Municiones"))
-                    .StaffPower = val(Leer.GetValue("OBJ" & Object, "StaffPower"))
-                    .StaffDamageBonus = val(Leer.GetValue("OBJ" & Object, "StaffDamageBonus"))
-                    .Refuerzo = val(Leer.GetValue("OBJ" & Object, "Refuerzo"))
+                    .Baculo = val(Leer.GetValue("OBJ" & Object, "Baculo"))
                     
                     .LingH = val(Leer.GetValue("OBJ" & Object, "LingH"))
                     .LingP = val(Leer.GetValue("OBJ" & Object, "LingP"))
@@ -779,7 +775,6 @@ On Error GoTo Errhandler
                     .Real = val(Leer.GetValue("OBJ" & Object, "Real"))
                     .Caos = val(Leer.GetValue("OBJ" & Object, "Caos"))
                     
-                    .WeaponRazaEnanaAnim = val(Leer.GetValue("OBJ" & Object, "RazaEnanaAnim"))
                 
                 Case eOBJType.otInstrumentos
                     .Snd1 = val(Leer.GetValue("OBJ" & Object, "SND1"))
@@ -812,7 +807,6 @@ On Error GoTo Errhandler
                     .MaxHIT = val(Leer.GetValue("OBJ" & Object, "MaxHIT"))
                     .MinHIT = val(Leer.GetValue("OBJ" & Object, "MinHIT"))
                     .Envenena = val(Leer.GetValue("OBJ" & Object, "Envenena"))
-                    .Paraliza = val(Leer.GetValue("OBJ" & Object, "Paraliza"))
                     
                 Case eOBJType.otAnillo 'Pablo (ToxicWaste)
                     .LingH = val(Leer.GetValue("OBJ" & Object, "LingH"))
@@ -854,10 +848,6 @@ On Error GoTo Errhandler
             .def = (.MinDef + .MaxDef) / 2
             
             .RazaEnana = val(Leer.GetValue("OBJ" & Object, "RazaEnana"))
-            .RazaDrow = val(Leer.GetValue("OBJ" & Object, "RazaDrow"))
-            .RazaElfa = val(Leer.GetValue("OBJ" & Object, "RazaElfa"))
-            .RazaGnoma = val(Leer.GetValue("OBJ" & Object, "RazaGnoma"))
-            .RazaHumana = val(Leer.GetValue("OBJ" & Object, "RazaHumana"))
             
             .Valor = val(Leer.GetValue("OBJ" & Object, "Valor"))
             
@@ -869,6 +859,13 @@ On Error GoTo Errhandler
                 .clave = val(Leer.GetValue("OBJ" & Object, "Clave"))
             End If
             
+            If .OBJType = eOBJType.otWarp Then
+                .WMapa = val(Leer.GetValue("OBJ" & Object, "WMapa"))
+                .WX = val(Leer.GetValue("OBJ" & Object, "WX"))
+                .WY = val(Leer.GetValue("OBJ" & Object, "WY"))
+                .WI = val(Leer.GetValue("OBJ" & Object, "WI"))
+            End If
+            
             'Puertas y llaves
             .clave = val(Leer.GetValue("OBJ" & Object, "Clave"))
             
@@ -878,25 +875,24 @@ On Error GoTo Errhandler
             .Agarrable = val(Leer.GetValue("OBJ" & Object, "Agarrable"))
             .ForoID = Leer.GetValue("OBJ" & Object, "ID")
             
-            .Acuchilla = val(Leer.GetValue("OBJ" & Object, "Acuchilla"))
+            Dim Num As Integer
             
-            .Guante = val(Leer.GetValue("OBJ" & Object, "Guante"))
+            Num = val(Leer.GetValue("OBJ" & Object, "NumClases"))
             
-            'CHECK: !!! Esto es provisorio hasta que los de Dateo cambien los valores de string a numerico
+            'todo clases
+            If Num > NUMCLASES Then Num = NUMCLASES
+            
             Dim i As Integer
-            Dim N As Integer
-            Dim S As String
-            For i = 1 To NUMCLASES
-                S = UCase$(Leer.GetValue("OBJ" & Object, "CP" & i))
-                N = 1
-                Do While LenB(S) > 0 And UCase$(ListaClases(N)) <> S
-                    N = N + 1
-                Loop
-                .ClaseProhibida(i) = IIf(LenB(S) > 0, N, 0)
-            Next i
+            For i = 1 To Num
+                .ClaseProhibida(i) = val(Leer.GetValue("OBJ" & Object, "CP" & i))
+            Next
             
-            .DefensaMagicaMax = val(Leer.GetValue("OBJ" & Object, "DefensaMagicaMax"))
-            .DefensaMagicaMin = val(Leer.GetValue("OBJ" & Object, "DefensaMagicaMin"))
+            Num = val(Leer.GetValue("OBJ" & Object, "NumRazas"))
+             
+            For i = 1 To Num
+                .RazaProhibida(i) = val(Leer.GetValue("OBJ" & Object, "RP" & i))
+            Next
+            
             
             .SkCarpinteria = val(Leer.GetValue("OBJ" & Object, "SkCarpinteria"))
             
@@ -908,8 +904,6 @@ On Error GoTo Errhandler
             .MinSta = val(Leer.GetValue("OBJ" & Object, "MinST"))
             
             .NoSeCae = val(Leer.GetValue("OBJ" & Object, "NoSeCae"))
-            
-            .Upgrade = val(Leer.GetValue("OBJ" & Object, "Upgrade"))
             
             frmCargando.cargar.value = frmCargando.cargar.value + 1
         End With
@@ -934,7 +928,6 @@ Sub LoadUserStats(ByVal UserIndex As Integer, ByRef UserFile As clsIniReader)
 '*************************************************
 'Author: Unknown
 'Last modified: 11/19/2009
-'11/19/2009: Pato - Load the EluSkills and ExpSkills
 '*************************************************
 Dim LoopC As Long
 
@@ -947,8 +940,6 @@ With UserList(UserIndex)
         
         For LoopC = 1 To NUMSKILLS
             .UserSkills(LoopC) = CInt(UserFile.GetValue("SKILLS", "SK" & LoopC))
-            .EluSkills(LoopC) = CInt(UserFile.GetValue("SKILLS", "ELUSK" & LoopC))
-            .ExpSkills(LoopC) = CInt(UserFile.GetValue("SKILLS", "EXPSK" & LoopC))
         Next LoopC
         
         For LoopC = 1 To MAXUSERHECHIZOS
@@ -1117,7 +1108,7 @@ Sub LoadUserInit(ByVal UserIndex As Integer, ByRef UserFile As clsIniReader)
         'Lista de objetos del banco
         For LoopC = 1 To MAX_BANCOINVENTORY_SLOTS
             ln = UserFile.GetValue("BancoInventory", "Obj" & LoopC)
-            .BancoInvent.Object(LoopC).ObjIndex = CInt(ReadField(1, ln, 45))
+            .BancoInvent.Object(LoopC).OBJIndex = CInt(ReadField(1, ln, 45))
             .BancoInvent.Object(LoopC).Amount = CInt(ReadField(2, ln, 45))
         Next LoopC
         '------------------------------------------------------------------------------------
@@ -1127,7 +1118,7 @@ Sub LoadUserInit(ByVal UserIndex As Integer, ByRef UserFile As clsIniReader)
         'Lista de objetos
         For LoopC = 1 To MAX_INVENTORY_SLOTS
             ln = UserFile.GetValue("Inventory", "Obj" & LoopC)
-            .Invent.Object(LoopC).ObjIndex = CInt(ReadField(1, ln, 45))
+            .Invent.Object(LoopC).OBJIndex = CInt(ReadField(1, ln, 45))
             .Invent.Object(LoopC).Amount = CInt(ReadField(2, ln, 45))
             .Invent.Object(LoopC).Equipped = CByte(ReadField(3, ln, 45))
         Next LoopC
@@ -1135,13 +1126,13 @@ Sub LoadUserInit(ByVal UserIndex As Integer, ByRef UserFile As clsIniReader)
         'Obtiene el indice-objeto del arma
         .Invent.WeaponEqpSlot = CByte(UserFile.GetValue("Inventory", "WeaponEqpSlot"))
         If .Invent.WeaponEqpSlot > 0 Then
-            .Invent.WeaponEqpObjIndex = .Invent.Object(.Invent.WeaponEqpSlot).ObjIndex
+            .Invent.WeaponEqpObjIndex = .Invent.Object(.Invent.WeaponEqpSlot).OBJIndex
         End If
         
         'Obtiene el indice-objeto del armadura
         .Invent.ArmourEqpSlot = CByte(UserFile.GetValue("Inventory", "ArmourEqpSlot"))
         If .Invent.ArmourEqpSlot > 0 Then
-            .Invent.ArmourEqpObjIndex = .Invent.Object(.Invent.ArmourEqpSlot).ObjIndex
+            .Invent.ArmourEqpObjIndex = .Invent.Object(.Invent.ArmourEqpSlot).OBJIndex
             .flags.Desnudo = 0
         Else
             .flags.Desnudo = 1
@@ -1150,37 +1141,37 @@ Sub LoadUserInit(ByVal UserIndex As Integer, ByRef UserFile As clsIniReader)
         'Obtiene el indice-objeto del escudo
         .Invent.EscudoEqpSlot = CByte(UserFile.GetValue("Inventory", "EscudoEqpSlot"))
         If .Invent.EscudoEqpSlot > 0 Then
-            .Invent.EscudoEqpObjIndex = .Invent.Object(.Invent.EscudoEqpSlot).ObjIndex
+            .Invent.EscudoEqpObjIndex = .Invent.Object(.Invent.EscudoEqpSlot).OBJIndex
         End If
         
         'Obtiene el indice-objeto del casco
         .Invent.CascoEqpSlot = CByte(UserFile.GetValue("Inventory", "CascoEqpSlot"))
         If .Invent.CascoEqpSlot > 0 Then
-            .Invent.CascoEqpObjIndex = .Invent.Object(.Invent.CascoEqpSlot).ObjIndex
+            .Invent.CascoEqpObjIndex = .Invent.Object(.Invent.CascoEqpSlot).OBJIndex
         End If
         
         'Obtiene el indice-objeto barco
         .Invent.BarcoSlot = CByte(UserFile.GetValue("Inventory", "BarcoSlot"))
         If .Invent.BarcoSlot > 0 Then
-            .Invent.BarcoObjIndex = .Invent.Object(.Invent.BarcoSlot).ObjIndex
+            .Invent.BarcoObjIndex = .Invent.Object(.Invent.BarcoSlot).OBJIndex
         End If
         
         'Obtiene el indice-objeto municion
         .Invent.MunicionEqpSlot = CByte(UserFile.GetValue("Inventory", "MunicionSlot"))
         If .Invent.MunicionEqpSlot > 0 Then
-            .Invent.MunicionEqpObjIndex = .Invent.Object(.Invent.MunicionEqpSlot).ObjIndex
+            .Invent.MunicionEqpObjIndex = .Invent.Object(.Invent.MunicionEqpSlot).OBJIndex
         End If
         
         '[Alejo]
         'Obtiene el indice-objeto anilo
         .Invent.AnilloEqpSlot = CByte(UserFile.GetValue("Inventory", "AnilloSlot"))
         If .Invent.AnilloEqpSlot > 0 Then
-            .Invent.AnilloEqpObjIndex = .Invent.Object(.Invent.AnilloEqpSlot).ObjIndex
+            .Invent.AnilloEqpObjIndex = .Invent.Object(.Invent.AnilloEqpSlot).OBJIndex
         End If
         
         .Invent.MochilaEqpSlot = CByte(UserFile.GetValue("Inventory", "MochilaSlot"))
         If .Invent.MochilaEqpSlot > 0 Then
-            .Invent.MochilaEqpObjIndex = .Invent.Object(.Invent.MochilaEqpSlot).ObjIndex
+            .Invent.MochilaEqpObjIndex = .Invent.Object(.Invent.MochilaEqpSlot).OBJIndex
         End If
         
         .NroMascotas = CInt(UserFile.GetValue("MASCOTAS", "NroMascotas"))
@@ -1445,13 +1436,13 @@ Public Sub CargarMapa(ByVal Map As Long, ByVal MAPFl As String)
                     End If
                     
 255                 If ByFlags And 64 Then
-260                     .ObjInfo.ObjIndex = mapReader.getInteger
+260                     .ObjInfo.OBJIndex = mapReader.getInteger
 265                     .ObjInfo.Amount = mapReader.getInteger
                     End If
                 
                     'no se porqué fenix tiene estas cosas raras
-270                 If .ObjInfo.ObjIndex > UBound(ObjData) Then
-275                     .ObjInfo.ObjIndex = 0
+270                 If .ObjInfo.OBJIndex > UBound(ObjData) Then
+275                     .ObjInfo.OBJIndex = 0
 280                     .ObjInfo.Amount = 0
                     End If
                 
@@ -1673,7 +1664,6 @@ Sub SaveUser(ByVal UserIndex As Integer, ByVal UserFile As String)
 'Last modified: 12/01/2010 (ZaMa)
 'Saves the Users records
 '23/01/2007 Pablo (ToxicWaste) - Agrego NivelIngreso, FechaIngreso, MatadosIngreso y NextRecompensa.
-'11/19/2009: Pato - Save the EluSkills and ExpSkills
 '12/01/2010: ZaMa - Los druidas pierden la inmunidad de ser atacados cuando pierden el efecto del mimetismo.
 '*************************************************
 
@@ -1764,8 +1754,6 @@ With UserList(UserIndex)
     
     For LoopC = 1 To UBound(.Stats.UserSkills)
         Call WriteVar(UserFile, "SKILLS", "SK" & LoopC, CStr(.Stats.UserSkills(LoopC)))
-        Call WriteVar(UserFile, "SKILLS", "ELUSK" & LoopC, CStr(.Stats.EluSkills(LoopC)))
-        Call WriteVar(UserFile, "SKILLS", "EXPSK" & LoopC, CStr(.Stats.ExpSkills(LoopC)))
     Next LoopC
     
     
@@ -1855,7 +1843,7 @@ With UserList(UserIndex)
     Call WriteVar(UserFile, "BancoInventory", "CantidadItems", val(.BancoInvent.NroItems))
     Dim loopd As Integer
     For loopd = 1 To MAX_BANCOINVENTORY_SLOTS
-        Call WriteVar(UserFile, "BancoInventory", "Obj" & loopd, .BancoInvent.Object(loopd).ObjIndex & "-" & .BancoInvent.Object(loopd).Amount)
+        Call WriteVar(UserFile, "BancoInventory", "Obj" & loopd, .BancoInvent.Object(loopd).OBJIndex & "-" & .BancoInvent.Object(loopd).Amount)
     Next loopd
     '*******************************************************************************************
     '[/KEVIN]-----------
@@ -1864,7 +1852,7 @@ With UserList(UserIndex)
     Call WriteVar(UserFile, "Inventory", "CantidadItems", val(.Invent.NroItems))
     
     For LoopC = 1 To MAX_INVENTORY_SLOTS
-        Call WriteVar(UserFile, "Inventory", "Obj" & LoopC, .Invent.Object(LoopC).ObjIndex & "-" & .Invent.Object(LoopC).Amount & "-" & .Invent.Object(LoopC).Equipped)
+        Call WriteVar(UserFile, "Inventory", "Obj" & LoopC, .Invent.Object(LoopC).OBJIndex & "-" & .Invent.Object(LoopC).Amount & "-" & .Invent.Object(LoopC).Equipped)
     Next LoopC
     
     Call WriteVar(UserFile, "Inventory", "WeaponEqpSlot", CStr(.Invent.WeaponEqpSlot))
@@ -2021,7 +2009,7 @@ Sub BackUPnPc(NpcIndex As Integer)
         Call WriteVar(npcfile, "NPC" & NpcNumero, "NroItems", val(.Invent.NroItems))
         If .Invent.NroItems > 0 Then
            For LoopC = 1 To MAX_INVENTORY_SLOTS
-                Call WriteVar(npcfile, "NPC" & NpcNumero, "Obj" & LoopC, .Invent.Object(LoopC).ObjIndex & "-" & .Invent.Object(LoopC).Amount)
+                Call WriteVar(npcfile, "NPC" & NpcNumero, "Obj" & LoopC, .Invent.Object(LoopC).OBJIndex & "-" & .Invent.Object(LoopC).Amount)
            Next LoopC
         End If
     End With
@@ -2083,22 +2071,16 @@ Sub CargarNpcBackUp(NpcIndex As Integer, ByVal NpcNumber As Integer)
         If .Invent.NroItems > 0 Then
             For LoopC = 1 To MAX_INVENTORY_SLOTS
                 ln = GetVar(npcfile, "NPC" & NpcNumber, "Obj" & LoopC)
-                .Invent.Object(LoopC).ObjIndex = val(ReadField(1, ln, 45))
+                .Invent.Object(LoopC).OBJIndex = val(ReadField(1, ln, 45))
                 .Invent.Object(LoopC).Amount = val(ReadField(2, ln, 45))
                
             Next LoopC
         Else
             For LoopC = 1 To MAX_INVENTORY_SLOTS
-                .Invent.Object(LoopC).ObjIndex = 0
+                .Invent.Object(LoopC).OBJIndex = 0
                 .Invent.Object(LoopC).Amount = 0
             Next LoopC
         End If
-        
-        For LoopC = 1 To MAX_NPC_DROPS
-            ln = GetVar(npcfile, "NPC" & NpcNumber, "Drop" & LoopC)
-            .Drop(LoopC).ObjIndex = val(ReadField(1, ln, 45))
-            .Drop(LoopC).Amount = val(ReadField(2, ln, 45))
-        Next LoopC
         
         .flags.NPCActive = True
         .flags.Respawn = val(GetVar(npcfile, "NPC" & NpcNumber, "ReSpawn"))
@@ -2113,7 +2095,7 @@ Sub CargarNpcBackUp(NpcIndex As Integer, ByVal NpcNumber As Integer)
 End Sub
 
 
-Sub LogBan(ByVal BannedIndex As Integer, ByVal UserIndex As Integer, ByVal motivo As String)
+Sub LogBan(ByVal BannedIndex As Integer, ByVal UserIndex As Integer, ByVal Motivo As String)
 '***************************************************
 'Author: Unknown
 'Last Modification: -
@@ -2121,7 +2103,7 @@ Sub LogBan(ByVal BannedIndex As Integer, ByVal UserIndex As Integer, ByVal motiv
 '***************************************************
 
     Call WriteVar(App.path & "\logs\" & "BanDetail.log", UserList(BannedIndex).Name, "BannedBy", UserList(UserIndex).Name)
-    Call WriteVar(App.path & "\logs\" & "BanDetail.log", UserList(BannedIndex).Name, "Reason", motivo)
+    Call WriteVar(App.path & "\logs\" & "BanDetail.log", UserList(BannedIndex).Name, "Reason", Motivo)
     
     'Log interno del servidor, lo usa para hacer un UNBAN general de toda la gente banned
     Dim mifile As Integer
@@ -2133,7 +2115,7 @@ Sub LogBan(ByVal BannedIndex As Integer, ByVal UserIndex As Integer, ByVal motiv
 End Sub
 
 
-Sub LogBanFromName(ByVal BannedName As String, ByVal UserIndex As Integer, ByVal motivo As String)
+Sub LogBanFromName(ByVal BannedName As String, ByVal UserIndex As Integer, ByVal Motivo As String)
 '***************************************************
 'Author: Unknown
 'Last Modification: -
@@ -2141,7 +2123,7 @@ Sub LogBanFromName(ByVal BannedName As String, ByVal UserIndex As Integer, ByVal
 '***************************************************
 
     Call WriteVar(App.path & "\logs\" & "BanDetail.dat", BannedName, "BannedBy", UserList(UserIndex).Name)
-    Call WriteVar(App.path & "\logs\" & "BanDetail.dat", BannedName, "Reason", motivo)
+    Call WriteVar(App.path & "\logs\" & "BanDetail.dat", BannedName, "Reason", Motivo)
     
     'Log interno del servidor, lo usa para hacer un UNBAN general de toda la gente banned
     Dim mifile As Integer
@@ -2153,7 +2135,7 @@ Sub LogBanFromName(ByVal BannedName As String, ByVal UserIndex As Integer, ByVal
 End Sub
 
 
-Sub Ban(ByVal BannedName As String, ByVal Baneador As String, ByVal motivo As String)
+Sub Ban(ByVal BannedName As String, ByVal Baneador As String, ByVal Motivo As String)
 '***************************************************
 'Author: Unknown
 'Last Modification: -
@@ -2161,7 +2143,7 @@ Sub Ban(ByVal BannedName As String, ByVal Baneador As String, ByVal motivo As St
 '***************************************************
 
     Call WriteVar(App.path & "\logs\" & "BanDetail.dat", BannedName, "BannedBy", Baneador)
-    Call WriteVar(App.path & "\logs\" & "BanDetail.dat", BannedName, "Reason", motivo)
+    Call WriteVar(App.path & "\logs\" & "BanDetail.dat", BannedName, "Reason", Motivo)
     
     
     'Log interno del servidor, lo usa para hacer un UNBAN general de toda la gente banned

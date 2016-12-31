@@ -298,6 +298,8 @@ On Error Resume Next
     SkillsNames(eSkill.Proyectiles) = "Combate a distancia"
     SkillsNames(eSkill.Wrestling) = "Combate sin armas"
     SkillsNames(eSkill.Navegacion) = "Navegacion"
+    SkillsNames(eSkill.Sastreria) = "Sastreria" 'todo implementar sastre al trabajador (uff)
+    SkillsNames(eSkill.Resis) = "Resistencia Magica"
     
     ListaAtributos(eAtributos.Fuerza) = "Fuerza"
     ListaAtributos(eAtributos.Agilidad) = "Agilidad"
@@ -682,22 +684,6 @@ Public Sub LogIP(ByVal str As String)
     Dim nfile As Integer
     nfile = FreeFile ' obtenemos un canal
     Open App.path & "\logs\IP.log" For Append Shared As #nfile
-    Print #nfile, Date & " " & time & " " & str
-    Close #nfile
-
-End Sub
-
-
-Public Sub LogDesarrollo(ByVal str As String)
-'***************************************************
-'Author: Unknown
-'Last Modification: -
-'
-'***************************************************
-
-    Dim nfile As Integer
-    nfile = FreeFile ' obtenemos un canal
-    Open App.path & "\logs\desarrollo" & Month(Date) & Year(Date) & ".log" For Append Shared As #nfile
     Print #nfile, Date & " " & time & " " & str
     Close #nfile
 

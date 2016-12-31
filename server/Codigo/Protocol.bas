@@ -220,7 +220,6 @@ Private Enum ClientPacketID
     BankDepositGold         '/DEPOSITAR
     Denounce                '/DENUNCIAR
     Ping                    '/PING
-    ItemUpgrade
     GMCommands
     InitCrafting
     Home
@@ -564,9 +563,6 @@ On Error Resume Next
         Case ClientPacketID.Ping                    '/PING
             Call HandlePing(UserIndex)
           
-        Case ClientPacketID.ItemUpgrade
-            Call HandleItemUpgrade(UserIndex)
-        
         Case ClientPacketID.GMCommands              'GM Messages
             Call HandleGMCommands(UserIndex)
             
@@ -2203,7 +2199,7 @@ Private Sub HandleDrop(ByVal UserIndex As Integer)
         Else
             'Only drop valid slots
             If Slot <= MAX_INVENTORY_SLOTS And Slot > 0 Then
-                If .Invent.Object(Slot).ObjIndex = 0 Then
+                If .Invent.Object(Slot).OBJIndex = 0 Then
                     Exit Sub
                 End If
                 
@@ -2460,7 +2456,7 @@ Private Sub HandleUseItem(ByVal UserIndex As Integer)
         Slot = .incomingData.ReadByte()
         
         If Slot <= .CurrentInventorySlots And Slot > 0 Then
-            If .Invent.Object(Slot).ObjIndex = 0 Then Exit Sub
+            If .Invent.Object(Slot).OBJIndex = 0 Then Exit Sub
         End If
         
         If .flags.Meditando Then
@@ -2697,7 +2693,7 @@ Private Sub HandleWorkLeftClick(ByVal UserIndex As Integer)
                             If .Object(DummyInt).Amount > 0 Then
                                 'QuitarUserInvItem unequips the ammo, so we equip it again
                                 .MunicionEqpSlot = DummyInt
-                                .MunicionEqpObjIndex = .Object(DummyInt).ObjIndex
+                                .MunicionEqpObjIndex = .Object(DummyInt).OBJIndex
                                 .Object(DummyInt).Equipped = 1
                             Else
                                 .MunicionEqpSlot = 0
@@ -2713,7 +2709,7 @@ Private Sub HandleWorkLeftClick(ByVal UserIndex As Integer)
                             If .Object(DummyInt).Amount > 0 Then
                                 'QuitarUserInvItem unequips the weapon, so we equip it again
                                 .WeaponEqpSlot = DummyInt
-                                .WeaponEqpObjIndex = .Object(DummyInt).ObjIndex
+                                .WeaponEqpObjIndex = .Object(DummyInt).OBJIndex
                                 .Object(DummyInt).Equipped = 1
                             Else
                                 .WeaponEqpSlot = 0
@@ -2858,7 +2854,7 @@ Private Sub HandleWorkLeftClick(ByVal UserIndex As Integer)
                     Exit Sub
                 End If
                 
-                DummyInt = MapData(.Pos.Map, X, Y).ObjInfo.ObjIndex
+                DummyInt = MapData(.Pos.Map, X, Y).ObjInfo.OBJIndex
                 
                 If DummyInt > 0 Then
                     If Abs(.Pos.X - X) + Abs(.Pos.Y - Y) > 2 Then
@@ -2901,7 +2897,7 @@ Private Sub HandleWorkLeftClick(ByVal UserIndex As Integer)
                 'Target whatever is in the tile
                 Call LookatTile(UserIndex, .Pos.Map, X, Y)
                 
-                DummyInt = MapData(.Pos.Map, X, Y).ObjInfo.ObjIndex
+                DummyInt = MapData(.Pos.Map, X, Y).ObjInfo.OBJIndex
                 
                 If DummyInt > 0 Then
                     'Check distance
@@ -2910,7 +2906,7 @@ Private Sub HandleWorkLeftClick(ByVal UserIndex As Integer)
                         Exit Sub
                     End If
                     
-                    DummyInt = MapData(.Pos.Map, X, Y).ObjInfo.ObjIndex 'CHECK
+                    DummyInt = MapData(.Pos.Map, X, Y).ObjInfo.OBJIndex 'CHECK
                     '¿Hay un yacimiento donde clickeo?
                     If ObjData(DummyInt).OBJType = eOBJType.otYacimiento Then
                         Call DoMineria(UserIndex)
@@ -2963,8 +2959,8 @@ Private Sub HandleWorkLeftClick(ByVal UserIndex As Integer)
                         End If
                         
                         ''chequeamos que no se zarpe duplicando oro
-                        If .Invent.Object(.flags.TargetObjInvSlot).ObjIndex <> .flags.TargetObjInvIndex Then
-                            If .Invent.Object(.flags.TargetObjInvSlot).ObjIndex = 0 Or .Invent.Object(.flags.TargetObjInvSlot).Amount = 0 Then
+                        If .Invent.Object(.flags.TargetObjInvSlot).OBJIndex <> .flags.TargetObjInvIndex Then
+                            If .Invent.Object(.flags.TargetObjInvSlot).OBJIndex = 0 Or .Invent.Object(.flags.TargetObjInvSlot).Amount = 0 Then
                                 Call WriteConsoleMsg(UserIndex, "No tienes más minerales.", FontTypeNames.FONTTYPE_INFO)
                                 Exit Sub
                             End If
@@ -3086,7 +3082,7 @@ Private Sub HandleEquipItem(ByVal UserIndex As Integer)
         'Validate item slot
         If itemSlot > .CurrentInventorySlots Or itemSlot < 1 Then Exit Sub
         
-        If .Invent.Object(itemSlot).ObjIndex = 0 Then Exit Sub
+        If .Invent.Object(itemSlot).OBJIndex = 0 Then Exit Sub
         
         Call EquiparInvItem(UserIndex, itemSlot)
     End With
@@ -3204,8 +3200,6 @@ Private Sub HandleModifySkills(ByVal UserIndex As Integer)
                         .SkillPts = .SkillPts + .UserSkills(i) - 100
                         .UserSkills(i) = 100
                     End If
-                    
-                    Call CheckEluSkill(UserIndex, i, True)
                 End If
             Next i
         End With
@@ -3585,16 +3579,16 @@ Private Sub HandleMoveBank(ByVal UserIndex As Integer)
     End With
         
     With UserList(UserIndex)
-        TempItem.ObjIndex = .BancoInvent.Object(Slot).ObjIndex
+        TempItem.OBJIndex = .BancoInvent.Object(Slot).OBJIndex
         TempItem.Amount = .BancoInvent.Object(Slot).Amount
         
         If dir = 1 Then 'Mover arriba
             .BancoInvent.Object(Slot) = .BancoInvent.Object(Slot - 1)
-            .BancoInvent.Object(Slot - 1).ObjIndex = TempItem.ObjIndex
+            .BancoInvent.Object(Slot - 1).OBJIndex = TempItem.OBJIndex
             .BancoInvent.Object(Slot - 1).Amount = TempItem.Amount
         Else 'mover abajo
             .BancoInvent.Object(Slot) = .BancoInvent.Object(Slot + 1)
-            .BancoInvent.Object(Slot + 1).ObjIndex = TempItem.ObjIndex
+            .BancoInvent.Object(Slot + 1).OBJIndex = TempItem.OBJIndex
             .BancoInvent.Object(Slot + 1).Amount = TempItem.Amount
         End If
     End With
@@ -3630,7 +3624,7 @@ Private Sub HandleUserCommerceOffer(ByVal UserIndex As Integer)
         Dim Slot As Byte
         Dim tUser As Integer
         Dim OfferSlot As Byte
-        Dim ObjIndex As Integer
+        Dim OBJIndex As Integer
         
         Slot = .incomingData.ReadByte()
         Amount = .incomingData.ReadLong()
@@ -3671,16 +3665,16 @@ Private Sub HandleUserCommerceOffer(ByVal UserIndex As Integer)
             End If
         Else
             'If modifing a filled offerSlot, we already got the objIndex, then we don't need to know it
-            If Slot <> 0 Then ObjIndex = .Invent.Object(Slot).ObjIndex
+            If Slot <> 0 Then OBJIndex = .Invent.Object(Slot).OBJIndex
             ' Can't offer more than he has
-            If Not TieneObjetos(ObjIndex, _
-                TotalOfferItems(ObjIndex, UserIndex) + Amount, UserIndex) Then
+            If Not TieneObjetos(OBJIndex, _
+                TotalOfferItems(OBJIndex, UserIndex) + Amount, UserIndex) Then
                 
                 Call WriteCommerceChat(UserIndex, "No tienes esa cantidad.", FontTypeNames.FONTTYPE_TALK)
                 Exit Sub
             End If
             
-            If ItemNewbie(ObjIndex) Then
+            If ItemNewbie(OBJIndex) Then
                 Call WriteCancelOfferItem(UserIndex, OfferSlot)
                 Exit Sub
             End If
@@ -3703,7 +3697,7 @@ Private Sub HandleUserCommerceOffer(ByVal UserIndex As Integer)
         
         
                 
-        Call AgregarOferta(UserIndex, OfferSlot, ObjIndex, Amount, Slot = FLAGORO)
+        Call AgregarOferta(UserIndex, OfferSlot, OBJIndex, Amount, Slot = FLAGORO)
         
         Call EnviarOferta(tUser, OfferSlot)
     End With
@@ -6220,33 +6214,6 @@ Private Sub HandleSOSShowList(ByVal UserIndex As Integer)
     End With
 End Sub
 
-
-''
-' Handles the "ItemUpgrade" message.
-'
-' @param    UserIndex The index of the user sending the message.
-
-Private Sub HandleItemUpgrade(ByVal UserIndex As Integer)
-'***************************************************
-'Author: Torres Patricio
-'Last Modification: 12/09/09
-'
-'***************************************************
-    With UserList(UserIndex)
-        Dim ItemIndex As Integer
-        
-        'Remove packet ID
-        Call .incomingData.ReadByte
-        
-        ItemIndex = .incomingData.ReadInteger()
-        
-        If ItemIndex <= 0 Then Exit Sub
-        If Not TieneObjetos(ItemIndex, 1, UserIndex) Then Exit Sub
-        
-        Call DoUpgrade(UserIndex, ItemIndex)
-    End With
-End Sub
-
 ''
 ' Handles the "SOSRemove" message.
 '
@@ -6972,18 +6939,10 @@ On Error GoTo Errhandler
                         Else
                             If tUser <= 0 Then ' Offline
                                 Call WriteVar(UserCharPath, "Skills", "SK" & LoopC, Arg2)
-                                Call WriteVar(UserCharPath, "Skills", "EXPSK" & LoopC, 0)
                                 
-                                If Arg2 < MAXSKILLPOINTS Then
-                                    Call WriteVar(UserCharPath, "Skills", "ELUSK" & LoopC, ELU_SKILL_INICIAL * 1.05 ^ Arg2)
-                                Else
-                                    Call WriteVar(UserCharPath, "Skills", "ELUSK" & LoopC, 0)
-                                End If
-    
                                 Call WriteConsoleMsg(UserIndex, "Charfile Alterado: " & UserName, FontTypeNames.FONTTYPE_INFO)
                             Else ' Online
                                 UserList(tUser).Stats.UserSkills(LoopC) = val(Arg2)
-                                Call CheckEluSkill(tUser, LoopC, True)
                             End If
                         End If
                         
@@ -8412,13 +8371,13 @@ Private Sub HandleTeleportCreate(ByVal UserIndex As Integer)
         If Not MapaValido(mapa) Or Not InMapBounds(mapa, X, Y) Then _
             Exit Sub
         
-        If MapData(.Pos.Map, .Pos.X, .Pos.Y - 1).ObjInfo.ObjIndex > 0 Then _
+        If MapData(.Pos.Map, .Pos.X, .Pos.Y - 1).ObjInfo.OBJIndex > 0 Then _
             Exit Sub
         
         If MapData(.Pos.Map, .Pos.X, .Pos.Y - 1).TileExit.Map > 0 Then _
             Exit Sub
         
-        If MapData(mapa, X, Y).ObjInfo.ObjIndex > 0 Then
+        If MapData(mapa, X, Y).ObjInfo.OBJIndex > 0 Then
             Call WriteConsoleMsg(UserIndex, "Hay un objeto en el piso en ese lugar.", FontTypeNames.FONTTYPE_INFO)
             Exit Sub
         End If
@@ -8431,7 +8390,7 @@ Private Sub HandleTeleportCreate(ByVal UserIndex As Integer)
         Dim ET As Obj
         ET.Amount = 1
         ' Es el numero en el dat. El indice es el comienzo + el radio, todo harcodeado :(.
-        ET.ObjIndex = TELEP_OBJ_INDEX + Radio
+        ET.OBJIndex = TELEP_OBJ_INDEX + Radio
         
         With MapData(.Pos.Map, .Pos.X, .Pos.Y - 1)
             .TileExit.Map = mapa
@@ -8472,14 +8431,14 @@ Private Sub HandleTeleportDestroy(ByVal UserIndex As Integer)
         If Not InMapBounds(mapa, X, Y) Then Exit Sub
         
         With MapData(mapa, X, Y)
-            If .ObjInfo.ObjIndex = 0 Then Exit Sub
+            If .ObjInfo.OBJIndex = 0 Then Exit Sub
             
-            If ObjData(.ObjInfo.ObjIndex).OBJType = eOBJType.otTeleport And .TileExit.Map > 0 Then
+            If ObjData(.ObjInfo.OBJIndex).OBJType = eOBJType.otTeleport And .TileExit.Map > 0 Then
                 Call LogGM(UserList(UserIndex).Name, "/DT: " & mapa & "," & X & "," & Y)
                 
                 Call EraseObj(.ObjInfo.Amount, mapa, X, Y)
                 
-                If MapData(.TileExit.Map, .TileExit.X, .TileExit.Y).ObjInfo.ObjIndex = 651 Then
+                If MapData(.TileExit.Map, .TileExit.X, .TileExit.Y).ObjInfo.OBJIndex = 651 Then
                     Call EraseObj(1, .TileExit.Map, .TileExit.X, .TileExit.Y)
                 End If
                 
@@ -8933,9 +8892,9 @@ Private Sub HandleDestroyAllItemsInArea(ByVal UserIndex As Integer)
         For Y = .Pos.Y - MinYBorder + 1 To .Pos.Y + MinYBorder - 1
             For X = .Pos.X - MinXBorder + 1 To .Pos.X + MinXBorder - 1
                 If X > 0 And Y > 0 And X < 101 And Y < 101 Then
-                    If MapData(.Pos.Map, X, Y).ObjInfo.ObjIndex > 0 Then
+                    If MapData(.Pos.Map, X, Y).ObjInfo.OBJIndex > 0 Then
                         bIsExit = MapData(.Pos.Map, X, Y).TileExit.Map > 0
-                        If ItemNoEsDeMapa(MapData(.Pos.Map, X, Y).ObjInfo.ObjIndex, bIsExit) Then
+                        If ItemNoEsDeMapa(MapData(.Pos.Map, X, Y).ObjInfo.OBJIndex, bIsExit) Then
                             Call EraseObj(MAX_INVENTORY_OBJS, .Pos.Map, X, Y)
                         End If
                     End If
@@ -9096,7 +9055,7 @@ Private Sub HandleItemsInTheFloor(ByVal UserIndex As Integer)
         
         For X = 5 To 95
             For Y = 5 To 95
-                tObj = MapData(.Pos.Map, X, Y).ObjInfo.ObjIndex
+                tObj = MapData(.Pos.Map, X, Y).ObjInfo.OBJIndex
                 If tObj > 0 Then
                     If ObjData(tObj).OBJType <> eOBJType.otArboles Then
                         Call WriteConsoleMsg(UserIndex, "(" & X & "," & Y & ") " & ObjData(tObj).Name, FontTypeNames.FONTTYPE_INFO)
@@ -9591,7 +9550,7 @@ Private Sub HandleCreateItem(ByVal UserIndex As Integer)
             
         Call LogGM(.Name, "/CI: " & tObj)
         
-        If MapData(.Pos.Map, .Pos.X, .Pos.Y - 1).ObjInfo.ObjIndex > 0 Then _
+        If MapData(.Pos.Map, .Pos.X, .Pos.Y - 1).ObjInfo.OBJIndex > 0 Then _
             Exit Sub
         
         If MapData(.Pos.Map, .Pos.X, .Pos.Y - 1).TileExit.Map > 0 Then _
@@ -9607,7 +9566,7 @@ Private Sub HandleCreateItem(ByVal UserIndex As Integer)
         Call WriteConsoleMsg(UserIndex, "¡¡ATENCIÓN: FUERON CREADOS ***100*** ÍTEMS, TIRE Y /DEST LOS QUE NO NECESITE!!", FontTypeNames.FONTTYPE_GUILD)
         
         Objeto.Amount = 100
-        Objeto.ObjIndex = tObj
+        Objeto.OBJIndex = tObj
         Call MakeObj(Objeto, .Pos.Map, .Pos.X, .Pos.Y - 1)
     End With
 End Sub
@@ -9629,11 +9588,11 @@ Private Sub HandleDestroyItems(ByVal UserIndex As Integer)
         
         If .flags.Privilegios And (PlayerType.User Or PlayerType.Consejero Or PlayerType.SemiDios) Then Exit Sub
         
-        If MapData(.Pos.Map, .Pos.X, .Pos.Y).ObjInfo.ObjIndex = 0 Then Exit Sub
+        If MapData(.Pos.Map, .Pos.X, .Pos.Y).ObjInfo.OBJIndex = 0 Then Exit Sub
         
         Call LogGM(.Name, "/DEST")
         
-        If ObjData(MapData(.Pos.Map, .Pos.X, .Pos.Y).ObjInfo.ObjIndex).OBJType = eOBJType.otTeleport And _
+        If ObjData(MapData(.Pos.Map, .Pos.X, .Pos.Y).ObjInfo.OBJIndex).OBJType = eOBJType.otTeleport And _
             MapData(.Pos.Map, .Pos.X, .Pos.Y).TileExit.Map > 0 Then
             
             Call WriteConsoleMsg(UserIndex, "No puede destruir teleports así. Utilice /DT.", FontTypeNames.FONTTYPE_INFO)
@@ -10188,8 +10147,8 @@ On Error GoTo Errhandler
                
             If tIndex > 0 Then
                 If Slot > 0 And Slot <= UserList(tIndex).CurrentInventorySlots Then
-                    If UserList(tIndex).Invent.Object(Slot).ObjIndex > 0 Then
-                        Call WriteConsoleMsg(UserIndex, " Objeto " & Slot & ") " & ObjData(UserList(tIndex).Invent.Object(Slot).ObjIndex).Name & " Cantidad:" & UserList(tIndex).Invent.Object(Slot).Amount, FontTypeNames.FONTTYPE_INFO)
+                    If UserList(tIndex).Invent.Object(Slot).OBJIndex > 0 Then
+                        Call WriteConsoleMsg(UserIndex, " Objeto " & Slot & ") " & ObjData(UserList(tIndex).Invent.Object(Slot).OBJIndex).Name & " Cantidad:" & UserList(tIndex).Invent.Object(Slot).Amount, FontTypeNames.FONTTYPE_INFO)
                     Else
                         Call WriteConsoleMsg(UserIndex, "No hay ningún objeto en slot seleccionado.", FontTypeNames.FONTTYPE_INFO)
                     End If
@@ -11160,25 +11119,25 @@ Public Sub HandleImperialArmour(ByVal UserIndex As Integer)
         Call .incomingData.ReadByte
         
         Dim index As Byte
-        Dim ObjIndex As Integer
+        Dim OBJIndex As Integer
         
         index = .incomingData.ReadByte()
-        ObjIndex = .incomingData.ReadInteger()
+        OBJIndex = .incomingData.ReadInteger()
         
         If .flags.Privilegios And (PlayerType.User Or PlayerType.Consejero Or PlayerType.SemiDios Or PlayerType.RoleMaster) Then Exit Sub
         
         Select Case index
             Case 1
-                ArmaduraImperial1 = ObjIndex
+                ArmaduraImperial1 = OBJIndex
             
             Case 2
-                ArmaduraImperial2 = ObjIndex
+                ArmaduraImperial2 = OBJIndex
             
             Case 3
-                ArmaduraImperial3 = ObjIndex
+                ArmaduraImperial3 = OBJIndex
             
             Case 4
-                TunicaMagoImperial = ObjIndex
+                TunicaMagoImperial = OBJIndex
         End Select
     End With
 End Sub
@@ -11204,25 +11163,25 @@ Public Sub HandleChaosArmour(ByVal UserIndex As Integer)
         Call .incomingData.ReadByte
         
         Dim index As Byte
-        Dim ObjIndex As Integer
+        Dim OBJIndex As Integer
         
         index = .incomingData.ReadByte()
-        ObjIndex = .incomingData.ReadInteger()
+        OBJIndex = .incomingData.ReadInteger()
         
         If .flags.Privilegios And (PlayerType.User Or PlayerType.Consejero Or PlayerType.SemiDios Or PlayerType.RoleMaster) Then Exit Sub
         
         Select Case index
             Case 1
-                ArmaduraCaos1 = ObjIndex
+                ArmaduraCaos1 = OBJIndex
             
             Case 2
-                ArmaduraCaos2 = ObjIndex
+                ArmaduraCaos2 = OBJIndex
             
             Case 3
-                ArmaduraCaos3 = ObjIndex
+                ArmaduraCaos3 = OBJIndex
             
             Case 4
-                TunicaMagoCaos = ObjIndex
+                TunicaMagoCaos = OBJIndex
         End Select
     End With
 End Sub
@@ -12995,16 +12954,16 @@ On Error GoTo Errhandler
         Call .WriteByte(ServerPacketID.ChangeInventorySlot)
         Call .WriteByte(Slot)
         
-        Dim ObjIndex As Integer
+        Dim OBJIndex As Integer
         Dim obData As ObjData
         
-        ObjIndex = UserList(UserIndex).Invent.Object(Slot).ObjIndex
+        OBJIndex = UserList(UserIndex).Invent.Object(Slot).OBJIndex
         
-        If ObjIndex > 0 Then
-            obData = ObjData(ObjIndex)
+        If OBJIndex > 0 Then
+            obData = ObjData(OBJIndex)
         End If
         
-        Call .WriteInteger(ObjIndex)
+        Call .WriteInteger(OBJIndex)
         Call .WriteASCIIString(obData.Name)
         Call .WriteInteger(UserList(UserIndex).Invent.Object(Slot).Amount)
         Call .WriteBoolean(UserList(UserIndex).Invent.Object(Slot).Equipped)
@@ -13014,7 +12973,7 @@ On Error GoTo Errhandler
         Call .WriteInteger(obData.MinHIT)
         Call .WriteInteger(obData.MaxDef)
         Call .WriteInteger(obData.MinDef)
-        Call .WriteSingle(SalePrice(ObjIndex))
+        Call .WriteSingle(SalePrice(OBJIndex))
     End With
 Exit Sub
 
@@ -13057,15 +13016,15 @@ On Error GoTo Errhandler
         Call .WriteByte(ServerPacketID.ChangeBankSlot)
         Call .WriteByte(Slot)
         
-        Dim ObjIndex As Integer
+        Dim OBJIndex As Integer
         Dim obData As ObjData
         
-        ObjIndex = UserList(UserIndex).BancoInvent.Object(Slot).ObjIndex
+        OBJIndex = UserList(UserIndex).BancoInvent.Object(Slot).OBJIndex
         
-        Call .WriteInteger(ObjIndex)
+        Call .WriteInteger(OBJIndex)
         
-        If ObjIndex > 0 Then
-            obData = ObjData(ObjIndex)
+        If OBJIndex > 0 Then
+            obData = ObjData(OBJIndex)
         End If
         
         Call .WriteASCIIString(obData.Name)
@@ -13194,7 +13153,6 @@ On Error GoTo Errhandler
             Call .WriteInteger(Obj.LingP)
             Call .WriteInteger(Obj.LingO)
             Call .WriteInteger(ArmasHerrero(validIndexes(i)))
-            Call .WriteInteger(Obj.Upgrade)
         Next i
     End With
 Exit Sub
@@ -13249,7 +13207,6 @@ On Error GoTo Errhandler
             Call .WriteInteger(Obj.LingP)
             Call .WriteInteger(Obj.LingO)
             Call .WriteInteger(ArmadurasHerrero(validIndexes(i)))
-            Call .WriteInteger(Obj.Upgrade)
         Next i
     End With
 Exit Sub
@@ -13303,7 +13260,6 @@ On Error GoTo Errhandler
             Call .WriteInteger(Obj.Madera)
             Call .WriteInteger(Obj.MaderaElfica)
             Call .WriteInteger(ObjCarpintero(validIndexes(i)))
-            Call .WriteInteger(Obj.Upgrade)
         Next i
     End With
 Exit Sub
@@ -13415,7 +13371,7 @@ End Sub
 ' @param    objIndex Index of the signal to be displayed.
 ' @remarks  The data is not actually sent until the buffer is properly flushed.
 
-Public Sub WriteShowSignal(ByVal UserIndex As Integer, ByVal ObjIndex As Integer)
+Public Sub WriteShowSignal(ByVal UserIndex As Integer, ByVal OBJIndex As Integer)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
@@ -13424,8 +13380,8 @@ Public Sub WriteShowSignal(ByVal UserIndex As Integer, ByVal ObjIndex As Integer
 On Error GoTo Errhandler
     With UserList(UserIndex).outgoingData
         Call .WriteByte(ServerPacketID.ShowSignal)
-        Call .WriteASCIIString(ObjData(ObjIndex).texto)
-        Call .WriteInteger(ObjData(ObjIndex).GrhSecundario)
+        Call .WriteASCIIString(ObjData(OBJIndex).texto)
+        Call .WriteInteger(ObjData(OBJIndex).GrhSecundario)
     End With
 Exit Sub
 
@@ -13456,8 +13412,8 @@ Public Sub WriteChangeNPCInventorySlot(ByVal UserIndex As Integer, ByVal Slot As
 On Error GoTo Errhandler
     Dim ObjInfo As ObjData
     
-    If Obj.ObjIndex >= LBound(ObjData()) And Obj.ObjIndex <= UBound(ObjData()) Then
-        ObjInfo = ObjData(Obj.ObjIndex)
+    If Obj.OBJIndex >= LBound(ObjData()) And Obj.OBJIndex <= UBound(ObjData()) Then
+        ObjInfo = ObjData(Obj.OBJIndex)
     End If
     
     With UserList(UserIndex).outgoingData
@@ -13467,7 +13423,7 @@ On Error GoTo Errhandler
         Call .WriteInteger(Obj.Amount)
         Call .WriteSingle(price)
         Call .WriteInteger(ObjInfo.GrhIndex)
-        Call .WriteInteger(Obj.ObjIndex)
+        Call .WriteInteger(Obj.OBJIndex)
         Call .WriteByte(ObjInfo.OBJType)
         Call .WriteInteger(ObjInfo.MaxHIT)
         Call .WriteInteger(ObjInfo.MinHIT)
@@ -13838,11 +13794,6 @@ On Error GoTo Errhandler
         
         For i = 1 To NUMSKILLS
             Call .outgoingData.WriteByte(UserList(UserIndex).Stats.UserSkills(i))
-            If .Stats.UserSkills(i) < MAXSKILLPOINTS Then
-                Call .outgoingData.WriteByte(Int(.Stats.ExpSkills(i) * 100 / .Stats.EluSkills(i)))
-            Else
-                Call .outgoingData.WriteByte(0)
-            End If
         Next i
     End With
 Exit Sub
@@ -14000,7 +13951,7 @@ End Sub
 ' @param    amount The number of objects offered.
 ' @remarks  The data is not actually sent until the buffer is properly flushed.
 
-Public Sub WriteChangeUserTradeSlot(ByVal UserIndex As Integer, ByVal OfferSlot As Byte, ByVal ObjIndex As Integer, ByVal Amount As Long)
+Public Sub WriteChangeUserTradeSlot(ByVal UserIndex As Integer, ByVal OfferSlot As Byte, ByVal OBJIndex As Integer, ByVal Amount As Long)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 12/03/09
@@ -14013,18 +13964,18 @@ On Error GoTo Errhandler
         Call .WriteByte(ServerPacketID.ChangeUserTradeSlot)
         
         Call .WriteByte(OfferSlot)
-        Call .WriteInteger(ObjIndex)
+        Call .WriteInteger(OBJIndex)
         Call .WriteLong(Amount)
         
-        If ObjIndex > 0 Then
-            Call .WriteInteger(ObjData(ObjIndex).GrhIndex)
-            Call .WriteByte(ObjData(ObjIndex).OBJType)
-            Call .WriteInteger(ObjData(ObjIndex).MaxHIT)
-            Call .WriteInteger(ObjData(ObjIndex).MinHIT)
-            Call .WriteInteger(ObjData(ObjIndex).MaxDef)
-            Call .WriteInteger(ObjData(ObjIndex).MinDef)
-            Call .WriteLong(SalePrice(ObjIndex))
-            Call .WriteASCIIString(ObjData(ObjIndex).Name)
+        If OBJIndex > 0 Then
+            Call .WriteInteger(ObjData(OBJIndex).GrhIndex)
+            Call .WriteByte(ObjData(OBJIndex).OBJType)
+            Call .WriteInteger(ObjData(OBJIndex).MaxHIT)
+            Call .WriteInteger(ObjData(OBJIndex).MinHIT)
+            Call .WriteInteger(ObjData(OBJIndex).MaxDef)
+            Call .WriteInteger(ObjData(OBJIndex).MinDef)
+            Call .WriteLong(SalePrice(OBJIndex))
+            Call .WriteASCIIString(ObjData(OBJIndex).Name)
         Else ' Borra el item
             Call .WriteInteger(0)
             Call .WriteByte(0)

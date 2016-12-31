@@ -204,7 +204,7 @@ Public Sub ChangeUserChar(ByVal UserIndex As Integer, ByVal body As Integer, ByV
     End With
 End Sub
 
-Public Function GetWeaponAnim(ByVal UserIndex As Integer, ByVal ObjIndex As Integer) As Integer
+Public Function GetWeaponAnim(ByVal UserIndex As Integer, ByVal OBJIndex As Integer) As Integer
 '***************************************************
 'Author: Torres Patricio (Pato)
 'Last Modification: 03/29/10
@@ -213,7 +213,7 @@ Public Function GetWeaponAnim(ByVal UserIndex As Integer, ByVal ObjIndex As Inte
     Dim Tmp As Integer
 
     With UserList(UserIndex)
-        Tmp = ObjData(ObjIndex).WeaponRazaEnanaAnim
+        Tmp = ObjData(OBJIndex).WeaponRazaEnanaAnim
             
         If Tmp > 0 Then
             If .raza = eRaza.Enano Or .raza = eRaza.Gnomo Then
@@ -222,7 +222,7 @@ Public Function GetWeaponAnim(ByVal UserIndex As Integer, ByVal ObjIndex As Inte
             End If
         End If
         
-        GetWeaponAnim = ObjData(ObjIndex).WeaponAnim
+        GetWeaponAnim = ObjData(OBJIndex).WeaponAnim
     End With
 End Function
 
@@ -654,7 +654,6 @@ On Error GoTo Errhandler
                 Call WriteConsoleMsg(UserIndex, "Tu golpe mínimo aumentó en " & AumentoHIT & " puntos.", FontTypeNames.FONTTYPE_INFO)
             End If
             
-            Call LogDesarrollo(.Name & " paso a nivel " & .Stats.ELV & " gano HP: " & AumentoHP)
             
             .Stats.MinHp = .Stats.MaxHp
 
@@ -1059,8 +1058,8 @@ On Error Resume Next
         Call WriteConsoleMsg(sendIndex, "Tiene " & .Invent.NroItems & " objetos.", FontTypeNames.FONTTYPE_INFO)
         
         For j = 1 To .CurrentInventorySlots
-            If .Invent.Object(j).ObjIndex > 0 Then
-                Call WriteConsoleMsg(sendIndex, "Objeto " & j & " " & ObjData(.Invent.Object(j).ObjIndex).Name & " Cantidad:" & .Invent.Object(j).Amount, FontTypeNames.FONTTYPE_INFO)
+            If .Invent.Object(j).OBJIndex > 0 Then
+                Call WriteConsoleMsg(sendIndex, "Objeto " & j & " " & ObjData(.Invent.Object(j).OBJIndex).Name & " Cantidad:" & .Invent.Object(j).Amount, FontTypeNames.FONTTYPE_INFO)
             End If
         Next j
     End With
@@ -1223,70 +1222,46 @@ Public Function PuedeApuñalar(ByVal UserIndex As Integer) As Boolean
     End If
 End Function
 
-Public Function PuedeAcuchillar(ByVal UserIndex As Integer) As Boolean
-'***************************************************
-'Author: ZaMa
-'Last Modification: 25/01/2010 (ZaMa)
-'
-'***************************************************
-    
+Sub SubirSkill(ByVal UserIndex As Integer, _
+               ByVal Skill As Integer, _
+               Optional Prob As Integer)
+
+    '*************************************************
+    'Author: Unknown
+    'Last modified: 11/19/2009
+    '11/19/2009 Pato - Implement the new system to train the skills.
+    '*************************************************
     With UserList(UserIndex)
-        If .clase = eClass.Pirat Then
-            If .Invent.WeaponEqpObjIndex > 0 Then
-                PuedeAcuchillar = (ObjData(.Invent.WeaponEqpObjIndex).Acuchilla = 1)
+
+        If .flags.Hambre = 1 Or .flags.Sed = 1 Then Exit Sub
+                
+        If Prob = 0 Then
+            If .Stats.ELV <= 3 Then
+                Prob = 20
+            ElseIf .Stats.ELV > 3 And .Stats.ELV < 6 Then
+                Prob = 25
+            ElseIf .Stats.ELV >= 6 And .Stats.ELV < 10 Then
+                Prob = 30
+            ElseIf .Stats.ELV >= 10 And .Stats.ELV < 20 Then
+                Prob = 35
+            Else
+                Prob = 40
             End If
         End If
-    End With
-    
-End Function
-
-Sub SubirSkill(ByVal UserIndex As Integer, ByVal Skill As Integer, ByVal Acerto As Boolean)
-'*************************************************
-'Author: Unknown
-'Last modified: 11/19/2009
-'11/19/2009 Pato - Implement the new system to train the skills.
-'*************************************************
-    With UserList(UserIndex)
-        If .flags.Hambre = 0 And .flags.Sed = 0 Then
-            If .Counters.AsignedSkills < 10 Then
-                If Not .flags.UltimoMensaje = 7 Then
-                    Call WriteConsoleMsg(UserIndex, "Para poder entrenar un skill debes asignar los 10 skills iniciales.", FontTypeNames.FONTTYPE_INFO)
-                    .flags.UltimoMensaje = 7
-                End If
                 
-                Exit Sub
-            End If
+        If .Stats.UserSkills(Skill) = MAXSKILLPOINTS Then Exit Sub
                 
-            With .Stats
-                If .UserSkills(Skill) = MAXSKILLPOINTS Then Exit Sub
-                
-                Dim Lvl As Integer
-                Lvl = .ELV
-                
-                If Lvl > UBound(LevelSkill) Then Lvl = UBound(LevelSkill)
-                
-                If .UserSkills(Skill) >= LevelSkill(Lvl).LevelValue Then Exit Sub
-                
-                If Acerto Then
-                    .ExpSkills(Skill) = .ExpSkills(Skill) + EXP_ACIERTO_SKILL
-                Else
-                    .ExpSkills(Skill) = .ExpSkills(Skill) + EXP_FALLO_SKILL
-                End If
-                
-                If .ExpSkills(Skill) >= .EluSkills(Skill) Then
-                    .UserSkills(Skill) = .UserSkills(Skill) + 1
-                    Call WriteConsoleMsg(UserIndex, "¡Has mejorado tu skill " & SkillsNames(Skill) & " en un punto! Ahora tienes " & .UserSkills(Skill) & " pts.", FontTypeNames.FONTTYPE_INFO)
+        If Int(RandomNumber(1, Prob)) = 2 And .Stats.UserSkills(Skill) < LevelSkill(.Stats.ELV).LevelValue Then
+            .Stats.UserSkills(Skill) = .Stats.UserSkills(Skill) + 1
                     
-                    .Exp = .Exp + 50
-                    If .Exp > MAXEXP Then .Exp = MAXEXP
+            Call WriteConsoleMsg(UserIndex, "!Has mejorado tu skill en " & SkillsNames(Skill) & " en un punto! Ahora tienes " & .Stats.UserSkills(Skill) & " pts.", FontTypeNames.FONTTYPE_INFO)
                     
-                    Call WriteConsoleMsg(UserIndex, "¡Has ganado 50 puntos de experiencia!", FontTypeNames.FONTTYPE_FIGHT)
+            .Stats.Exp = .Stats.Exp
                     
-                    Call WriteUpdateExp(UserIndex)
-                    Call CheckUserLevel(UserIndex)
-                    Call CheckEluSkill(UserIndex, Skill, False)
-                End If
-            End With
+            Call WriteConsoleMsg(UserIndex, "¡Has ganado 50 puntos de experiencia!", FontTypeNames.FONTTYPE_FIGHT)
+                    
+            Call WriteUpdateExp(UserIndex)
+            Call CheckUserLevel(UserIndex)
         End If
     End With
 End Sub
@@ -1563,7 +1538,7 @@ Sub Tilelibre(ByRef Pos As WorldPos, ByRef nPos As WorldPos, ByRef Obj As Obj, B
                 
                 If LegalPos(nPos.Map, tX, tY, Agua, Tierra) Then
                     'We continue if: a - the item is different from 0 and the dropped item or b - the amount dropped + amount in map exceeds MAX_INVENTORY_OBJS
-                    hayobj = (MapData(nPos.Map, tX, tY).ObjInfo.ObjIndex > 0 And MapData(nPos.Map, tX, tY).ObjInfo.ObjIndex <> Obj.ObjIndex)
+                    hayobj = (MapData(nPos.Map, tX, tY).ObjInfo.OBJIndex > 0 And MapData(nPos.Map, tX, tY).ObjInfo.OBJIndex <> Obj.OBJIndex)
                     If Not hayobj Then _
                         hayobj = (MapData(nPos.Map, tX, tY).ObjInfo.Amount + Obj.Amount > MAX_INVENTORY_OBJS)
                     If Not hayobj And MapData(nPos.Map, tX, tY).TileExit.Map = 0 Then
@@ -1855,7 +1830,7 @@ Sub Cerrar_Usuario(ByVal UserIndex As Integer)
     With UserList(UserIndex)
         If .flags.UserLogged And Not .Counters.Saliendo Then
             .Counters.Saliendo = True
-            .Counters.Salir = IIf((.flags.Privilegios And PlayerType.User) And MapInfo(.Pos.Map).Pk, IntervaloCerrarConexion, 0)
+            .Counters.Salir = IIf((.flags.Privilegios And PlayerType.User) And Not MapInfo(.Pos.Map).Pk, IntervaloCerrarConexion, 0)
             
             isNotVisible = (.flags.Oculto Or .flags.invisible)
             If isNotVisible Then
@@ -2256,38 +2231,7 @@ Errhandler:
     Call LogError("Error en FarthestPet")
 End Function
 
-''
-' Set the EluSkill value at the skill.
-'
-' @param UserIndex  Specifies reference to user
-' @param Skill      Number of the skill to check
-' @param Allocation True If the motive of the modification is the allocation, False if the skill increase by training
-
-Public Sub CheckEluSkill(ByVal UserIndex As Integer, ByVal Skill As Byte, ByVal Allocation As Boolean)
-'*************************************************
-'Author: Torres Patricio (Pato)
-'Last modified: 11/20/2009
-'
-'*************************************************
-
-With UserList(UserIndex).Stats
-    If .UserSkills(Skill) < MAXSKILLPOINTS Then
-        If Allocation Then
-            .ExpSkills(Skill) = 0
-        Else
-            .ExpSkills(Skill) = .ExpSkills(Skill) - .EluSkills(Skill)
-        End If
-        
-        .EluSkills(Skill) = ELU_SKILL_INICIAL * 1.05 ^ .UserSkills(Skill)
-    Else
-        .ExpSkills(Skill) = 0
-        .EluSkills(Skill) = 0
-    End If
-End With
-
-End Sub
-
-Public Function HasEnoughItems(ByVal UserIndex As Integer, ByVal ObjIndex As Integer, ByVal Amount As Long) As Boolean
+Public Function HasEnoughItems(ByVal UserIndex As Integer, ByVal OBJIndex As Integer, ByVal Amount As Long) As Boolean
 '**************************************************************
 'Author: ZaMa
 'Last Modify Date: 25/11/2009
@@ -2299,7 +2243,7 @@ Public Function HasEnoughItems(ByVal UserIndex As Integer, ByVal ObjIndex As Int
     
     For Slot = 1 To UserList(UserIndex).CurrentInventorySlots
         ' Si es el item que busco
-        If UserList(UserIndex).Invent.Object(Slot).ObjIndex = ObjIndex Then
+        If UserList(UserIndex).Invent.Object(Slot).OBJIndex = OBJIndex Then
             ' Lo sumo a la cantidad total
             ItemInvAmount = ItemInvAmount + UserList(UserIndex).Invent.Object(Slot).Amount
         End If
@@ -2308,7 +2252,7 @@ Public Function HasEnoughItems(ByVal UserIndex As Integer, ByVal ObjIndex As Int
     HasEnoughItems = Amount <= ItemInvAmount
 End Function
 
-Public Function TotalOfferItems(ByVal ObjIndex As Integer, ByVal UserIndex As Integer) As Long
+Public Function TotalOfferItems(ByVal OBJIndex As Integer, ByVal UserIndex As Integer) As Long
 '**************************************************************
 'Author: ZaMa
 'Last Modify Date: 25/11/2009
@@ -2318,7 +2262,7 @@ Public Function TotalOfferItems(ByVal ObjIndex As Integer, ByVal UserIndex As In
     
     For Slot = 1 To MAX_OFFER_SLOTS
             ' Si es el item que busco
-        If UserList(UserIndex).ComUsu.Objeto(Slot) = ObjIndex Then
+        If UserList(UserIndex).ComUsu.Objeto(Slot) = OBJIndex Then
             ' Lo sumo a la cantidad total
             TotalOfferItems = TotalOfferItems + UserList(UserIndex).ComUsu.cant(Slot)
         End If

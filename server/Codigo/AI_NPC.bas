@@ -1040,7 +1040,7 @@ Sub NpcLanzaUnSpell(ByVal NpcIndex As Integer, ByVal UserIndex As Integer)
 'Last Modify Date: -
 '**************************************************************
     With UserList(UserIndex)
-        If (.flags.invisible = 1 Or .flags.Oculto = 1) And Npclist(NpcIndex).flags.verinvi = 0 Then Exit Sub
+        If (.flags.invisible = 1 Or .flags.Oculto = 1) And Npclist(NpcIndex).flags.VeInvis = 0 Then Exit Sub
     End With
     
     Dim k As Integer
