@@ -34,7 +34,7 @@ Begin VB.Form frmCrearPersonaje
       Left            =   6120
       List            =   "frmCrearPersonaje.frx":000A
       Style           =   2  'Dropdown List
-      TabIndex        =   8
+      TabIndex        =   7
       Top             =   5040
       Visible         =   0   'False
       Width           =   2625
@@ -104,7 +104,7 @@ Begin VB.Form frmCrearPersonaje
       Left            =   840
       Top             =   1080
    End
-   Begin VB.ComboBox lstProfesion 
+   Begin VB.ComboBox lstGenero 
       BackColor       =   &H00000000&
       BeginProperty Font 
          Name            =   "MS Sans Serif"
@@ -119,30 +119,9 @@ Begin VB.Form frmCrearPersonaje
       Height          =   315
       ItemData        =   "frmCrearPersonaje.frx":001D
       Left            =   6060
-      List            =   "frmCrearPersonaje.frx":001F
+      List            =   "frmCrearPersonaje.frx":0027
       Style           =   2  'Dropdown List
       TabIndex        =   6
-      Top             =   4035
-      Width           =   2625
-   End
-   Begin VB.ComboBox lstGenero 
-      BackColor       =   &H00000000&
-      BeginProperty Font 
-         Name            =   "MS Sans Serif"
-         Size            =   8.25
-         Charset         =   0
-         Weight          =   700
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      ForeColor       =   &H00FFFFFF&
-      Height          =   315
-      ItemData        =   "frmCrearPersonaje.frx":0021
-      Left            =   6060
-      List            =   "frmCrearPersonaje.frx":002B
-      Style           =   2  'Dropdown List
-      TabIndex        =   7
       Top             =   4560
       Width           =   2625
    End
@@ -159,9 +138,9 @@ Begin VB.Form frmCrearPersonaje
       EndProperty
       ForeColor       =   &H00FFFFFF&
       Height          =   315
-      ItemData        =   "frmCrearPersonaje.frx":003E
+      ItemData        =   "frmCrearPersonaje.frx":003A
       Left            =   6060
-      List            =   "frmCrearPersonaje.frx":0040
+      List            =   "frmCrearPersonaje.frx":003C
       Style           =   2  'Dropdown List
       TabIndex        =   5
       Top             =   3495
@@ -180,9 +159,9 @@ Begin VB.Form frmCrearPersonaje
       EndProperty
       ForeColor       =   &H00FFFFFF&
       Height          =   315
-      ItemData        =   "frmCrearPersonaje.frx":0042
+      ItemData        =   "frmCrearPersonaje.frx":003E
       Left            =   6060
-      List            =   "frmCrearPersonaje.frx":0044
+      List            =   "frmCrearPersonaje.frx":0040
       Style           =   2  'Dropdown List
       TabIndex        =   4
       Top             =   2985
@@ -219,7 +198,7 @@ Begin VB.Form frmCrearPersonaje
       ScaleHeight     =   65
       ScaleMode       =   3  'Pixel
       ScaleWidth      =   41
-      TabIndex        =   14
+      TabIndex        =   13
       Top             =   6360
       Width           =   615
    End
@@ -231,7 +210,7 @@ Begin VB.Form frmCrearPersonaje
       ScaleHeight     =   61
       ScaleMode       =   3  'Pixel
       ScaleWidth      =   37
-      TabIndex        =   15
+      TabIndex        =   14
       Top             =   6360
       Visible         =   0   'False
       Width           =   615
@@ -248,7 +227,7 @@ Begin VB.Form frmCrearPersonaje
       ScaleHeight     =   24
       ScaleMode       =   3  'Pixel
       ScaleWidth      =   24
-      TabIndex        =   28
+      TabIndex        =   27
       Top             =   5880
       Visible         =   0   'False
       Width           =   360
@@ -265,7 +244,7 @@ Begin VB.Form frmCrearPersonaje
       ScaleHeight     =   24
       ScaleMode       =   3  'Pixel
       ScaleWidth      =   24
-      TabIndex        =   29
+      TabIndex        =   28
       Top             =   5880
       Visible         =   0   'False
       Width           =   360
@@ -282,7 +261,7 @@ Begin VB.Form frmCrearPersonaje
       ScaleHeight     =   24
       ScaleMode       =   3  'Pixel
       ScaleWidth      =   24
-      TabIndex        =   30
+      TabIndex        =   29
       Top             =   5880
       Visible         =   0   'False
       Width           =   360
@@ -299,7 +278,7 @@ Begin VB.Form frmCrearPersonaje
       ScaleHeight     =   24
       ScaleMode       =   3  'Pixel
       ScaleWidth      =   24
-      TabIndex        =   31
+      TabIndex        =   30
       Top             =   5880
       Visible         =   0   'False
       Width           =   360
@@ -316,7 +295,7 @@ Begin VB.Form frmCrearPersonaje
       ScaleHeight     =   24
       ScaleMode       =   3  'Pixel
       ScaleWidth      =   24
-      TabIndex        =   27
+      TabIndex        =   26
       Top             =   5880
       Visible         =   0   'False
       Width           =   360
@@ -545,7 +524,7 @@ Begin VB.Form frmCrearPersonaje
       ForeColor       =   &H00FFFFFF&
       Height          =   375
       Left            =   4440
-      TabIndex        =   32
+      TabIndex        =   31
       Top             =   7395
       Width           =   1455
    End
@@ -605,7 +584,7 @@ Begin VB.Form frmCrearPersonaje
       Height          =   195
       Index           =   5
       Left            =   5445
-      TabIndex        =   26
+      TabIndex        =   25
       Top             =   4830
       Width           =   225
    End
@@ -625,7 +604,7 @@ Begin VB.Form frmCrearPersonaje
       Height          =   195
       Index           =   4
       Left            =   5445
-      TabIndex        =   25
+      TabIndex        =   24
       Top             =   4470
       Width           =   225
    End
@@ -645,7 +624,7 @@ Begin VB.Form frmCrearPersonaje
       Height          =   195
       Index           =   3
       Left            =   5445
-      TabIndex        =   24
+      TabIndex        =   23
       Top             =   4125
       Width           =   225
    End
@@ -665,7 +644,7 @@ Begin VB.Form frmCrearPersonaje
       Height          =   195
       Index           =   2
       Left            =   5445
-      TabIndex        =   23
+      TabIndex        =   22
       Top             =   3780
       Width           =   225
    End
@@ -685,7 +664,7 @@ Begin VB.Form frmCrearPersonaje
       Height          =   195
       Index           =   1
       Left            =   5445
-      TabIndex        =   22
+      TabIndex        =   21
       Top             =   3450
       Width           =   225
    End
@@ -706,7 +685,7 @@ Begin VB.Form frmCrearPersonaje
       Height          =   195
       Index           =   5
       Left            =   4950
-      TabIndex        =   21
+      TabIndex        =   20
       Top             =   4830
       Width           =   225
    End
@@ -727,7 +706,7 @@ Begin VB.Form frmCrearPersonaje
       Height          =   195
       Index           =   4
       Left            =   4950
-      TabIndex        =   20
+      TabIndex        =   19
       Top             =   4470
       Width           =   225
    End
@@ -748,7 +727,7 @@ Begin VB.Form frmCrearPersonaje
       Height          =   195
       Index           =   3
       Left            =   4950
-      TabIndex        =   19
+      TabIndex        =   18
       Top             =   4125
       Width           =   225
    End
@@ -769,7 +748,7 @@ Begin VB.Form frmCrearPersonaje
       Height          =   195
       Index           =   2
       Left            =   4950
-      TabIndex        =   18
+      TabIndex        =   17
       Top             =   3780
       Width           =   225
    End
@@ -790,7 +769,7 @@ Begin VB.Form frmCrearPersonaje
       Height          =   195
       Index           =   1
       Left            =   4950
-      TabIndex        =   17
+      TabIndex        =   16
       Top             =   3450
       Width           =   225
    End
@@ -814,7 +793,7 @@ Begin VB.Form frmCrearPersonaje
       ForeColor       =   &H00FFFFFF&
       Height          =   4935
       Left            =   9480
-      TabIndex        =   16
+      TabIndex        =   15
       Top             =   1800
       Width           =   1935
    End
@@ -985,7 +964,7 @@ Begin VB.Form frmCrearPersonaje
       Height          =   225
       Index           =   1
       Left            =   7455
-      Picture         =   "frmCrearPersonaje.frx":0046
+      Picture         =   "frmCrearPersonaje.frx":0042
       Top             =   7320
       Visible         =   0   'False
       Width           =   240
@@ -994,7 +973,7 @@ Begin VB.Form frmCrearPersonaje
       Height          =   225
       Index           =   0
       Left            =   7080
-      Picture         =   "frmCrearPersonaje.frx":0358
+      Picture         =   "frmCrearPersonaje.frx":0354
       Top             =   7320
       Visible         =   0   'False
       Width           =   240
@@ -1003,7 +982,7 @@ Begin VB.Form frmCrearPersonaje
       Height          =   225
       Index           =   1
       Left            =   8460
-      Picture         =   "frmCrearPersonaje.frx":066A
+      Picture         =   "frmCrearPersonaje.frx":0666
       Top             =   5925
       Visible         =   0   'False
       Width           =   240
@@ -1012,7 +991,7 @@ Begin VB.Form frmCrearPersonaje
       Height          =   225
       Index           =   0
       Left            =   6075
-      Picture         =   "frmCrearPersonaje.frx":097C
+      Picture         =   "frmCrearPersonaje.frx":0978
       Top             =   5925
       Visible         =   0   'False
       Width           =   240
@@ -1028,7 +1007,7 @@ Begin VB.Form frmCrearPersonaje
    Begin VB.Image imgDados 
       Height          =   885
       Left            =   195
-      MouseIcon       =   "frmCrearPersonaje.frx":0C8E
+      MouseIcon       =   "frmCrearPersonaje.frx":0C8A
       MousePointer    =   99  'Custom
       Top             =   2775
       Width           =   900
@@ -1036,7 +1015,7 @@ Begin VB.Form frmCrearPersonaje
    Begin VB.Image imgHogar 
       Height          =   2850
       Left            =   5640
-      Picture         =   "frmCrearPersonaje.frx":0DE0
+      Picture         =   "frmCrearPersonaje.frx":0DDC
       Top             =   9120
       Visible         =   0   'False
       Width           =   2985
@@ -1058,7 +1037,7 @@ Begin VB.Form frmCrearPersonaje
       Height          =   195
       Index           =   4
       Left            =   4500
-      TabIndex        =   13
+      TabIndex        =   12
       Top             =   4470
       Width           =   225
    End
@@ -1079,7 +1058,7 @@ Begin VB.Form frmCrearPersonaje
       Height          =   195
       Index           =   3
       Left            =   4500
-      TabIndex        =   12
+      TabIndex        =   11
       Top             =   4125
       Width           =   225
    End
@@ -1100,7 +1079,7 @@ Begin VB.Form frmCrearPersonaje
       Height          =   195
       Index           =   5
       Left            =   4500
-      TabIndex        =   11
+      TabIndex        =   10
       Top             =   4830
       Width           =   225
    End
@@ -1121,7 +1100,7 @@ Begin VB.Form frmCrearPersonaje
       Height          =   195
       Index           =   2
       Left            =   4500
-      TabIndex        =   10
+      TabIndex        =   9
       Top             =   3780
       Width           =   225
    End
@@ -1142,7 +1121,7 @@ Begin VB.Form frmCrearPersonaje
       Height          =   195
       Index           =   1
       Left            =   4500
-      TabIndex        =   9
+      TabIndex        =   8
       Top             =   3450
       Width           =   225
    End
@@ -1304,7 +1283,7 @@ Private Sub Form_Load()
     
     Cargando = False
     
-    'UserClase = 0
+    UserClase = eClass.Ciudadano
     UserSexo = 0
     UserRaza = 0
     UserHogar = 0
@@ -1317,13 +1296,13 @@ Private Sub CargarEspecialidades()
 
     ReDim vEspecialidades(1 To NroClases)
     
-    vEspecialidades(eClass.Hunter) = "Ocultarse"
-    vEspecialidades(eClass.Thief) = "Robar y Ocultarse"
-    vEspecialidades(eClass.Assasin) = "Apuñalar"
-    vEspecialidades(eClass.Bandit) = "Combate Sin Armas"
-    vEspecialidades(eClass.Druid) = "Domar"
-    vEspecialidades(eClass.Pirat) = "Navegar"
-    vEspecialidades(eClass.Worker) = "Extracción y Construcción"
+    vEspecialidades(eClass.Cazador) = "Ocultarse"
+    vEspecialidades(eClass.Ladron) = "Robar y Ocultarse"
+    vEspecialidades(eClass.Asesino) = "Apuñalar"
+    vEspecialidades(eClass.Bandido) = "Combate Sin Armas"
+    vEspecialidades(eClass.Druida) = "Domar"
+    vEspecialidades(eClass.Pirata) = "Navegar"
+    vEspecialidades(eClass.Trabajador) = "Extracción y Construcción"
 End Sub
 
 Private Sub IniciarGraficos()
@@ -1456,11 +1435,6 @@ End Sub
 Private Sub CargarCombos()
     Dim i As Integer
     
-    lstProfesion.Clear
-    
-    For i = LBound(ListaClases) To NroClases
-        lstProfesion.AddItem ListaClases(i)
-    Next i
     
     lstHogar.Clear
     
@@ -1474,7 +1448,6 @@ Private Sub CargarCombos()
         lstRaza.AddItem ListaRazas(i)
     Next i
     
-    lstProfesion.ListIndex = 1
 End Sub
 
 Function CheckData() As Boolean
@@ -1498,7 +1471,7 @@ Function CheckData() As Boolean
         Exit Function
     End If
     
-    If UserClase = 0 Then
+    If UserClase = 0 And UserClase <> eClass.Ciudadano Then
         MsgBox "Seleccione la clase del personaje."
         Exit Function
     End If
@@ -1592,7 +1565,6 @@ Private Sub imgCrear_Click()
     
     UserRaza = lstRaza.ListIndex + 1
     UserSexo = lstGenero.ListIndex + 1
-    UserClase = lstProfesion.ListIndex + 1
     
     For i = 1 To NUMATRIBUTES
         UserAtributos(i) = Val(lblAtributos(i).Caption)
@@ -1756,16 +1728,6 @@ End Sub
 Private Sub lstGenero_Click()
     UserSexo = lstGenero.ListIndex + 1
     Call DarCuerpoYCabeza
-End Sub
-
-Private Sub lstProfesion_Click()
-On Error Resume Next
-'    Image1.Picture = LoadPicture(App.path & "\graficos\" & lstProfesion.Text & ".jpg")
-'
-    UserClase = lstProfesion.ListIndex + 1
-    
-    Call UpdateStats
-    Call UpdateEspecialidad(UserClase)
 End Sub
 
 Private Sub UpdateEspecialidad(ByVal eClase As eClass)
@@ -2188,9 +2150,7 @@ End Sub
 
 Private Sub UpdateStars()
     Dim NumStars As Double
-    
-    If UserClase = 0 Then Exit Sub
-    
+        
     ' Estrellas de evasion
     NumStars = (2.454 + 0.073 * Val(lblAtributoFinal(eAtributos.Agilidad).Caption)) * ModClase(UserClase).Evasion
     Call SetStars(imgEvasionStar, NumStars * 2)

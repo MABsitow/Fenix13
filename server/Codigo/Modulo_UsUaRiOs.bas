@@ -204,7 +204,7 @@ Public Sub ChangeUserChar(ByVal UserIndex As Integer, ByVal body As Integer, ByV
     End With
 End Sub
 
-Public Function GetWeaponAnim(ByVal UserIndex As Integer, ByVal ObjIndex As Integer) As Integer
+Public Function GetWeaponAnim(ByVal UserIndex As Integer, ByVal OBJIndex As Integer) As Integer
 '***************************************************
 'Author: Torres Patricio (Pato)
 'Last Modification: 03/29/10
@@ -213,7 +213,7 @@ Public Function GetWeaponAnim(ByVal UserIndex As Integer, ByVal ObjIndex As Inte
     Dim Tmp As Integer
 
     With UserList(UserIndex)
-        Tmp = ObjData(ObjIndex).WeaponRazaEnanaAnim
+        Tmp = ObjData(OBJIndex).WeaponRazaEnanaAnim
             
         If Tmp > 0 Then
             If .raza = eRaza.Enano Or .raza = eRaza.Gnomo Then
@@ -222,7 +222,7 @@ Public Function GetWeaponAnim(ByVal UserIndex As Integer, ByVal ObjIndex As Inte
             End If
         End If
         
-        GetWeaponAnim = ObjData(ObjIndex).WeaponAnim
+        GetWeaponAnim = ObjData(OBJIndex).WeaponAnim
     End With
 End Function
 
@@ -431,24 +431,8 @@ End Sub
 ' @param UserIndex Specifies reference to user
 
 Public Sub CheckUserLevel(ByVal UserIndex As Integer)
-'*************************************************
-'Author: Unknown
-'Last modified: 11/19/2009
-'Chequea que el usuario no halla alcanzado el siguiente nivel,
-'de lo contrario le da la vida, mana, etc, correspodiente.
-'07/08/2006 Integer - Modificacion de los valores
-'01/10/2007 Tavo - Corregido el BUG de STAT_MAXELV
-'24/01/2007 Pablo (ToxicWaste) - Agrego modificaciones en ELU al subir de nivel.
-'24/01/2007 Pablo (ToxicWaste) - Agrego modificaciones de la subida de mana de los magos por lvl.
-'13/03/2007 Pablo (ToxicWaste) - Agrego diferencias entre el 18 y el 19 en Constitución.
-'09/01/2008 Pablo (ToxicWaste) - Ahora el incremento de vida por Consitución se controla desde Balance.dat
-'12/09/2008 Marco Vanotti (Marco) - Ahora si se llega a nivel 25 y está en un clan, se lo expulsa para no sumar antifacción
-'02/03/2009 ZaMa - Arreglada la validacion de expulsion para miembros de clanes faccionarios que llegan a 25.
-'11/19/2009 Pato - Modifico la nueva fórmula de maná ganada para el bandido y se la limito a 499
-'02/04/2010: ZaMa - Modifico la ganancia de hit por nivel del ladron.
-'*************************************************
     Dim Pts As Integer
-    Dim AumentoHIT As Integer
+    Dim SubeHit As Integer
     Dim AumentoMANA As Integer
     Dim AumentoSTA As Integer
     Dim AumentoHP As Integer
@@ -472,8 +456,12 @@ On Error GoTo Errhandler
                 Exit Sub
             End If
             
-            'Store it!
-            Call Statistics.UserLevelUp(UserIndex)
+            If .Stats.ELV >= 14 And ClaseBase(.Clase) Then
+                Call WriteConsoleMsg(UserIndex, "No podés pasar de nivel sin elegir tu clase final.", FontTypeNames.FONTTYPE_INFO)
+                .Stats.Exp = .Stats.ELU - 1
+                Call WriteUpdateExp(UserIndex)
+                Exit Sub
+            End If
             
             Call SendData(SendTarget.ToPCArea, UserIndex, PrepareMessagePlayWave(SND_NIVEL, .Pos.X, .Pos.Y))
             Call WriteConsoleMsg(UserIndex, "¡Has subido de nivel!", FontTypeNames.FONTTYPE_INFO)
@@ -488,122 +476,96 @@ On Error GoTo Errhandler
             .Stats.ELV = .Stats.ELV + 1
             
             .Stats.Exp = .Stats.Exp - .Stats.ELU
-            
-            'Nueva subida de exp x lvl. Pablo (ToxicWaste)
-            If .Stats.ELV < 15 Then
-                .Stats.ELU = .Stats.ELU * 1.4
-            ElseIf .Stats.ELV < 21 Then
-                .Stats.ELU = .Stats.ELU * 1.35
-            ElseIf .Stats.ELV < 33 Then
-                .Stats.ELU = .Stats.ELU * 1.3
-            ElseIf .Stats.ELV < 41 Then
-                .Stats.ELU = .Stats.ELU * 1.225
-            Else
-                .Stats.ELU = .Stats.ELU * 1.25
-            End If
+            .Stats.ELU = ELUs(.Stats.ELV)
             
             'Calculo subida de vida
-            Promedio = ModVida(.clase) - (21 - .Stats.UserAtributos(eAtributos.Constitucion)) * 0.5
-            aux = RandomNumber(0, 100)
+            'Promedio = ModVida(.clase) - (21 - .Stats.UserAtributos(eAtributos.Constitucion)) * 0.5
             
-        
-            If Promedio - Int(Promedio) = 0.5 Then
-                'Es promedio semientero
-                DistVida(1) = DistribucionSemienteraVida(1)
-                DistVida(2) = DistVida(1) + DistribucionSemienteraVida(2)
-                DistVida(3) = DistVida(2) + DistribucionSemienteraVida(3)
-                DistVida(4) = DistVida(3) + DistribucionSemienteraVida(4)
-                
-                If aux <= DistVida(1) Then
-                    AumentoHP = Promedio + 1.5
-                ElseIf aux <= DistVida(2) Then
-                    AumentoHP = Promedio + 0.5
-                ElseIf aux <= DistVida(3) Then
-                    AumentoHP = Promedio - 0.5
-                Else
-                    AumentoHP = Promedio - 1.5
-                End If
-            Else
-                'Es promedio entero
-                
-                DistVida(1) = DistribucionSemienteraVida(1)
-                DistVida(2) = DistVida(1) + DistribucionEnteraVida(2)
-                DistVida(3) = DistVida(2) + DistribucionEnteraVida(3)
-                DistVida(4) = DistVida(3) + DistribucionEnteraVida(4)
-                DistVida(5) = DistVida(4) + DistribucionEnteraVida(5)
-                
-                If aux <= DistVida(1) Then
-                    AumentoHP = Promedio + 2
-                ElseIf aux <= DistVida(2) Then
-                    AumentoHP = Promedio + 1
-                ElseIf aux <= DistVida(3) Then
-                    AumentoHP = Promedio
-                ElseIf aux <= DistVida(4) Then
-                    AumentoHP = Promedio - 1
-                Else
-                    AumentoHP = Promedio - 2
-                End If
-                
-            End If
-        
-            Select Case .clase
-                Case eClass.Warrior
-                    AumentoHIT = IIf(.Stats.ELV > 35, 2, 3)
+            'lo dejo editable desde el archivo, como en 13.0, pero con los valores de fénix
+            Promedio = .Stats.UserAtributos(eAtributos.Constitucion) * 0.5 - ModVida(.Clase)
+            SubeHit = AumentoHit(.Clase)
+            
+            Select Case .Clase
+                Case eClass.Ciudadano, eClass.Trabajador, eClass.Experto_Minerales, eClass.Herrero, eClass.Experto_Madera, _
+                    eClass.Carpintero, eClass.Sastre, eClass.Sin_Mana, eClass.Caballero, eClass.Bandido, eClass.Pirata
+                    
                     AumentoSTA = AumentoSTDef
                 
-                Case eClass.Hunter
-                    AumentoHIT = IIf(.Stats.ELV > 35, 2, 3)
+                Case eClass.Minero
+                    AumentoSTA = AumentoSTDef + AdicionalSTMinero
+                
+                Case eClass.Talador
+                    AumentoSTA = AumentoSTDef + AdicionalSTLeñador
+                
+                Case eClass.Pescador
+                    AumentoSTA = AumentoSTDef + AdicionalSTPescador
+                
+                Case eClass.Hechicero
                     AumentoSTA = AumentoSTDef
-                
-                Case eClass.Pirat
-                    AumentoHIT = 3
-                    AumentoSTA = AumentoSTDef
-                
-                Case eClass.Paladin
-                    AumentoHIT = IIf(.Stats.ELV > 35, 1, 3)
-                    AumentoMANA = .Stats.UserAtributos(eAtributos.Inteligencia)
-                    AumentoSTA = AumentoSTDef
-                
-                Case eClass.Thief
-                    AumentoHIT = 2
-                    AumentoSTA = AumentoSTLadron
-                
-                Case eClass.Mage
-                    AumentoHIT = 1
-                    AumentoMANA = 2.8 * .Stats.UserAtributos(eAtributos.Inteligencia)
+                    AumentoMANA = 2.2 * .Stats.UserAtributos(eAtributos.Inteligencia)
+                    
+                Case eClass.Mago
                     AumentoSTA = AumentoSTMago
-                
-                Case eClass.Worker
-                    AumentoHIT = 2
-                    AumentoSTA = AumentoSTTrabajador
-                
-                Case eClass.Cleric
-                    AumentoHIT = 2
-                    AumentoMANA = 2 * .Stats.UserAtributos(eAtributos.Inteligencia)
+                    
+                    If .Stats.ELV <= 45 Then
+                        Select Case .Stats.MaxMAN
+                            Case Is < 2300
+                                AumentoMANA = 3 * .Stats.UserAtributos(eAtributos.Inteligencia)
+                            Case Is < 2500
+                                AumentoMANA = 2 * .Stats.UserAtributos(eAtributos.Inteligencia)
+                            Case Else
+                                AumentoMANA = 1.5 * .Stats.UserAtributos(eAtributos.Inteligencia)
+                        End Select
+                    Else
+                        AumentoMANA = 0
+                    End If
+                    
+                Case eClass.Nigromante
+                    AumentoSTA = AumentoSTMago
+                    AumentoMANA = 2.2 * .Stats.UserAtributos(eAtributos.Inteligencia)
+                    
+                Case eClass.Orden_Sagrada
                     AumentoSTA = AumentoSTDef
-                
-                Case eClass.Druid
-                    AumentoHIT = 2
-                    AumentoMANA = 2 * .Stats.UserAtributos(eAtributos.Inteligencia)
-                    AumentoSTA = AumentoSTDef
-                
-                Case eClass.Assasin
-                    AumentoHIT = IIf(.Stats.ELV > 35, 1, 3)
+                    AumentoMANA = .Stats.UserAtributos(eAtributos.Inteligencia)
+                    
+                Case eClass.Paladin
                     AumentoMANA = .Stats.UserAtributos(eAtributos.Inteligencia)
                     AumentoSTA = AumentoSTDef
+                    
+                    If .Stats.MaxHIT > 99 Then SubeHit = 1
+                    
+                Case eClass.Clerigo
+                    AumentoMANA = 2 * .Stats.UserAtributos(eAtributos.Inteligencia)
+                    AumentoSTA = AumentoSTDef
                 
-                Case eClass.Bard
-                    AumentoHIT = 2
+                Case eClass.Naturalista
                     AumentoMANA = 2 * .Stats.UserAtributos(eAtributos.Inteligencia)
                     AumentoSTA = AumentoSTDef
                     
-                Case eClass.Bandit
-                    AumentoHIT = IIf(.Stats.ELV > 35, 1, 3)
-                    AumentoMANA = .Stats.UserAtributos(eAtributos.Inteligencia) / 3 * 2
-                    AumentoSTA = AumentoStBandido
-                
+                Case eClass.Bardo
+                    AumentoMANA = 2 * .Stats.UserAtributos(eAtributos.Inteligencia)
+                    AumentoSTA = AumentoSTDef
+
+                Case eClass.Druida
+                    AumentoMANA = 2.2 * .Stats.UserAtributos(eAtributos.Inteligencia)
+                    AumentoSTA = AumentoSTDef
+
+                Case eClass.Sigiloso
+                    AumentoMANA = .Stats.UserAtributos(eAtributos.Inteligencia)
+                    AumentoSTA = AumentoSTDef
+
+                Case eClass.Asesino, eClass.Cazador
+                    AumentoMANA = .Stats.UserAtributos(eAtributos.Inteligencia)
+                    AumentoSTA = AumentoSTDef
+                    
+                    If .Stats.MaxHIT > 99 Then SubeHit = 1
+                    
+                Case eClass.Arquero, eClass.Guerrero
+                    AumentoSTA = AumentoSTDef
+                    
+                    If .Stats.MaxHIT > 99 Then SubeHit = 2
                 Case Else
-                    AumentoHIT = 2
+                    SubeHit = 2
                     AumentoSTA = AumentoSTDef
             End Select
             
@@ -620,24 +582,10 @@ On Error GoTo Errhandler
             If .Stats.MaxMAN > STAT_MAXMAN Then .Stats.MaxMAN = STAT_MAXMAN
             
             'Actualizamos Golpe Máximo
-            .Stats.MaxHIT = .Stats.MaxHIT + AumentoHIT
-            If .Stats.ELV < 36 Then
-                If .Stats.MaxHIT > STAT_MAXHIT_UNDER36 Then _
-                    .Stats.MaxHIT = STAT_MAXHIT_UNDER36
-            Else
-                If .Stats.MaxHIT > STAT_MAXHIT_OVER36 Then _
-                    .Stats.MaxHIT = STAT_MAXHIT_OVER36
-            End If
+            .Stats.MaxHIT = .Stats.MaxHIT + SubeHit
             
             'Actualizamos Golpe Mínimo
-            .Stats.MinHIT = .Stats.MinHIT + AumentoHIT
-            If .Stats.ELV < 36 Then
-                If .Stats.MinHIT > STAT_MAXHIT_UNDER36 Then _
-                    .Stats.MinHIT = STAT_MAXHIT_UNDER36
-            Else
-                If .Stats.MinHIT > STAT_MAXHIT_OVER36 Then _
-                    .Stats.MinHIT = STAT_MAXHIT_OVER36
-            End If
+            .Stats.MinHIT = .Stats.MinHIT + SubeHit
             
             'Notificamos al user
             If AumentoHP > 0 Then
@@ -649,12 +597,11 @@ On Error GoTo Errhandler
             If AumentoMANA > 0 Then
                 Call WriteConsoleMsg(UserIndex, "Has ganado " & AumentoMANA & " puntos de maná.", FontTypeNames.FONTTYPE_INFO)
             End If
-            If AumentoHIT > 0 Then
-                Call WriteConsoleMsg(UserIndex, "Tu golpe máximo aumentó en " & AumentoHIT & " puntos.", FontTypeNames.FONTTYPE_INFO)
-                Call WriteConsoleMsg(UserIndex, "Tu golpe mínimo aumentó en " & AumentoHIT & " puntos.", FontTypeNames.FONTTYPE_INFO)
+            If SubeHit > 0 Then
+                Call WriteConsoleMsg(UserIndex, "Tu golpe máximo aumentó en " & SubeHit & " puntos.", FontTypeNames.FONTTYPE_INFO)
+                Call WriteConsoleMsg(UserIndex, "Tu golpe mínimo aumentó en " & SubeHit & " puntos.", FontTypeNames.FONTTYPE_INFO)
             End If
             
-            Call LogDesarrollo(.Name & " paso a nivel " & .Stats.ELV & " gano HP: " & AumentoHP)
             
             .Stats.MinHp = .Stats.MaxHp
 
@@ -672,7 +619,7 @@ On Error GoTo Errhandler
           '          End If
           '      End If
           '  End If
-
+            If PuedeSubirClase(UserIndex) Then Call WriteSubeClase(UserIndex, True)
         Loop
         
         'If it ceased to be a newbie, remove newbie items and get char away from newbie dungeon
@@ -953,7 +900,7 @@ Sub SendUserMiniStatsTxt(ByVal sendIndex As Integer, ByVal UserIndex As Integer)
         Call WriteConsoleMsg(sendIndex, "Pj: " & .Name, FontTypeNames.FONTTYPE_INFO)
         Call WriteConsoleMsg(sendIndex, "Ciudadanos matados: " & .Faccion.CiudadanosMatados & " Criminales matados: " & .Faccion.CriminalesMatados & " usuarios matados: " & .Stats.UsuariosMatados, FontTypeNames.FONTTYPE_INFO)
         Call WriteConsoleMsg(sendIndex, "NPCs muertos: " & .Stats.NPCsMuertos, FontTypeNames.FONTTYPE_INFO)
-        Call WriteConsoleMsg(sendIndex, "Clase: " & ListaClases(.clase), FontTypeNames.FONTTYPE_INFO)
+        Call WriteConsoleMsg(sendIndex, "Clase: " & ListaClases(.Clase), FontTypeNames.FONTTYPE_INFO)
         Call WriteConsoleMsg(sendIndex, "Pena: " & .Counters.Pena, FontTypeNames.FONTTYPE_INFO)
         
         If .Faccion.ArmadaReal = 1 Then
@@ -1059,8 +1006,8 @@ On Error Resume Next
         Call WriteConsoleMsg(sendIndex, "Tiene " & .Invent.NroItems & " objetos.", FontTypeNames.FONTTYPE_INFO)
         
         For j = 1 To .CurrentInventorySlots
-            If .Invent.Object(j).ObjIndex > 0 Then
-                Call WriteConsoleMsg(sendIndex, "Objeto " & j & " " & ObjData(.Invent.Object(j).ObjIndex).Name & " Cantidad:" & .Invent.Object(j).Amount, FontTypeNames.FONTTYPE_INFO)
+            If .Invent.Object(j).OBJIndex > 0 Then
+                Call WriteConsoleMsg(sendIndex, "Objeto " & j & " " & ObjData(.Invent.Object(j).OBJIndex).Name & " Cantidad:" & .Invent.Object(j).Amount, FontTypeNames.FONTTYPE_INFO)
             End If
         Next j
     End With
@@ -1218,75 +1165,51 @@ Public Function PuedeApuñalar(ByVal UserIndex As Integer) As Boolean
     If UserList(UserIndex).Invent.WeaponEqpObjIndex > 0 Then
         If ObjData(UserList(UserIndex).Invent.WeaponEqpObjIndex).Apuñala = 1 Then
             PuedeApuñalar = UserList(UserIndex).Stats.UserSkills(eSkill.Apuñalar) >= MIN_APUÑALAR _
-                        Or UserList(UserIndex).clase = eClass.Assasin
+                        Or UserList(UserIndex).Clase = eClass.Asesino
         End If
     End If
 End Function
 
-Public Function PuedeAcuchillar(ByVal UserIndex As Integer) As Boolean
-'***************************************************
-'Author: ZaMa
-'Last Modification: 25/01/2010 (ZaMa)
-'
-'***************************************************
-    
+Sub SubirSkill(ByVal UserIndex As Integer, _
+               ByVal Skill As Integer, _
+               Optional Prob As Integer)
+
+    '*************************************************
+    'Author: Unknown
+    'Last modified: 11/19/2009
+    '11/19/2009 Pato - Implement the new system to train the skills.
+    '*************************************************
     With UserList(UserIndex)
-        If .clase = eClass.Pirat Then
-            If .Invent.WeaponEqpObjIndex > 0 Then
-                PuedeAcuchillar = (ObjData(.Invent.WeaponEqpObjIndex).Acuchilla = 1)
+
+        If .flags.Hambre = 1 Or .flags.Sed = 1 Then Exit Sub
+                
+        If Prob = 0 Then
+            If .Stats.ELV <= 3 Then
+                Prob = 20
+            ElseIf .Stats.ELV > 3 And .Stats.ELV < 6 Then
+                Prob = 25
+            ElseIf .Stats.ELV >= 6 And .Stats.ELV < 10 Then
+                Prob = 30
+            ElseIf .Stats.ELV >= 10 And .Stats.ELV < 20 Then
+                Prob = 35
+            Else
+                Prob = 40
             End If
         End If
-    End With
-    
-End Function
-
-Sub SubirSkill(ByVal UserIndex As Integer, ByVal Skill As Integer, ByVal Acerto As Boolean)
-'*************************************************
-'Author: Unknown
-'Last modified: 11/19/2009
-'11/19/2009 Pato - Implement the new system to train the skills.
-'*************************************************
-    With UserList(UserIndex)
-        If .flags.Hambre = 0 And .flags.Sed = 0 Then
-            If .Counters.AsignedSkills < 10 Then
-                If Not .flags.UltimoMensaje = 7 Then
-                    Call WriteConsoleMsg(UserIndex, "Para poder entrenar un skill debes asignar los 10 skills iniciales.", FontTypeNames.FONTTYPE_INFO)
-                    .flags.UltimoMensaje = 7
-                End If
                 
-                Exit Sub
-            End If
+        If .Stats.UserSkills(Skill) = MAXSKILLPOINTS Then Exit Sub
                 
-            With .Stats
-                If .UserSkills(Skill) = MAXSKILLPOINTS Then Exit Sub
-                
-                Dim Lvl As Integer
-                Lvl = .ELV
-                
-                If Lvl > UBound(LevelSkill) Then Lvl = UBound(LevelSkill)
-                
-                If .UserSkills(Skill) >= LevelSkill(Lvl).LevelValue Then Exit Sub
-                
-                If Acerto Then
-                    .ExpSkills(Skill) = .ExpSkills(Skill) + EXP_ACIERTO_SKILL
-                Else
-                    .ExpSkills(Skill) = .ExpSkills(Skill) + EXP_FALLO_SKILL
-                End If
-                
-                If .ExpSkills(Skill) >= .EluSkills(Skill) Then
-                    .UserSkills(Skill) = .UserSkills(Skill) + 1
-                    Call WriteConsoleMsg(UserIndex, "¡Has mejorado tu skill " & SkillsNames(Skill) & " en un punto! Ahora tienes " & .UserSkills(Skill) & " pts.", FontTypeNames.FONTTYPE_INFO)
+        If Int(RandomNumber(1, Prob)) = 2 And .Stats.UserSkills(Skill) < LevelSkill(.Stats.ELV).LevelValue Then
+            .Stats.UserSkills(Skill) = .Stats.UserSkills(Skill) + 1
                     
-                    .Exp = .Exp + 50
-                    If .Exp > MAXEXP Then .Exp = MAXEXP
+            Call WriteConsoleMsg(UserIndex, "!Has mejorado tu skill en " & SkillsNames(Skill) & " en un punto! Ahora tienes " & .Stats.UserSkills(Skill) & " pts.", FontTypeNames.FONTTYPE_INFO)
                     
-                    Call WriteConsoleMsg(UserIndex, "¡Has ganado 50 puntos de experiencia!", FontTypeNames.FONTTYPE_FIGHT)
+            .Stats.Exp = .Stats.Exp
                     
-                    Call WriteUpdateExp(UserIndex)
-                    Call CheckUserLevel(UserIndex)
-                    Call CheckEluSkill(UserIndex, Skill, False)
-                End If
-            End With
+            Call WriteConsoleMsg(UserIndex, "¡Has ganado 50 puntos de experiencia!", FontTypeNames.FONTTYPE_FIGHT)
+                    
+            Call WriteUpdateExp(UserIndex)
+            Call CheckUserLevel(UserIndex)
         End If
     End With
 End Sub
@@ -1563,7 +1486,7 @@ Sub Tilelibre(ByRef Pos As WorldPos, ByRef nPos As WorldPos, ByRef Obj As Obj, B
                 
                 If LegalPos(nPos.Map, tX, tY, Agua, Tierra) Then
                     'We continue if: a - the item is different from 0 and the dropped item or b - the amount dropped + amount in map exceeds MAX_INVENTORY_OBJS
-                    hayobj = (MapData(nPos.Map, tX, tY).ObjInfo.ObjIndex > 0 And MapData(nPos.Map, tX, tY).ObjInfo.ObjIndex <> Obj.ObjIndex)
+                    hayobj = (MapData(nPos.Map, tX, tY).ObjInfo.OBJIndex > 0 And MapData(nPos.Map, tX, tY).ObjInfo.OBJIndex <> Obj.OBJIndex)
                     If Not hayobj Then _
                         hayobj = (MapData(nPos.Map, tX, tY).ObjInfo.Amount + Obj.Amount > MAX_INVENTORY_OBJS)
                     If Not hayobj And MapData(nPos.Map, tX, tY).TileExit.Map = 0 Then
@@ -1855,7 +1778,7 @@ Sub Cerrar_Usuario(ByVal UserIndex As Integer)
     With UserList(UserIndex)
         If .flags.UserLogged And Not .Counters.Saliendo Then
             .Counters.Saliendo = True
-            .Counters.Salir = IIf((.flags.Privilegios And PlayerType.User) And MapInfo(.Pos.Map).Pk, IntervaloCerrarConexion, 0)
+            .Counters.Salir = IIf((.flags.Privilegios And PlayerType.User) And Not MapInfo(.Pos.Map).Pk, IntervaloCerrarConexion, 0)
             
             isNotVisible = (.flags.Oculto Or .flags.invisible)
             If isNotVisible Then
@@ -1863,7 +1786,7 @@ Sub Cerrar_Usuario(ByVal UserIndex As Integer)
                 
                 If .flags.Oculto Then
                     If .flags.Navegando = 1 Then
-                        If .clase = eClass.Pirat Then
+                        If .Clase = eClass.Pirata Then
                             ' Pierde la apariencia de fragata fantasmal
                             Call ToogleBoatBody(UserIndex)
                             Call WriteConsoleMsg(UserIndex, "¡Has recuperado tu apariencia normal!", FontTypeNames.FONTTYPE_INFO)
@@ -2256,38 +2179,7 @@ Errhandler:
     Call LogError("Error en FarthestPet")
 End Function
 
-''
-' Set the EluSkill value at the skill.
-'
-' @param UserIndex  Specifies reference to user
-' @param Skill      Number of the skill to check
-' @param Allocation True If the motive of the modification is the allocation, False if the skill increase by training
-
-Public Sub CheckEluSkill(ByVal UserIndex As Integer, ByVal Skill As Byte, ByVal Allocation As Boolean)
-'*************************************************
-'Author: Torres Patricio (Pato)
-'Last modified: 11/20/2009
-'
-'*************************************************
-
-With UserList(UserIndex).Stats
-    If .UserSkills(Skill) < MAXSKILLPOINTS Then
-        If Allocation Then
-            .ExpSkills(Skill) = 0
-        Else
-            .ExpSkills(Skill) = .ExpSkills(Skill) - .EluSkills(Skill)
-        End If
-        
-        .EluSkills(Skill) = ELU_SKILL_INICIAL * 1.05 ^ .UserSkills(Skill)
-    Else
-        .ExpSkills(Skill) = 0
-        .EluSkills(Skill) = 0
-    End If
-End With
-
-End Sub
-
-Public Function HasEnoughItems(ByVal UserIndex As Integer, ByVal ObjIndex As Integer, ByVal Amount As Long) As Boolean
+Public Function HasEnoughItems(ByVal UserIndex As Integer, ByVal OBJIndex As Integer, ByVal Amount As Long) As Boolean
 '**************************************************************
 'Author: ZaMa
 'Last Modify Date: 25/11/2009
@@ -2299,7 +2191,7 @@ Public Function HasEnoughItems(ByVal UserIndex As Integer, ByVal ObjIndex As Int
     
     For Slot = 1 To UserList(UserIndex).CurrentInventorySlots
         ' Si es el item que busco
-        If UserList(UserIndex).Invent.Object(Slot).ObjIndex = ObjIndex Then
+        If UserList(UserIndex).Invent.Object(Slot).OBJIndex = OBJIndex Then
             ' Lo sumo a la cantidad total
             ItemInvAmount = ItemInvAmount + UserList(UserIndex).Invent.Object(Slot).Amount
         End If
@@ -2308,7 +2200,7 @@ Public Function HasEnoughItems(ByVal UserIndex As Integer, ByVal ObjIndex As Int
     HasEnoughItems = Amount <= ItemInvAmount
 End Function
 
-Public Function TotalOfferItems(ByVal ObjIndex As Integer, ByVal UserIndex As Integer) As Long
+Public Function TotalOfferItems(ByVal OBJIndex As Integer, ByVal UserIndex As Integer) As Long
 '**************************************************************
 'Author: ZaMa
 'Last Modify Date: 25/11/2009
@@ -2318,7 +2210,7 @@ Public Function TotalOfferItems(ByVal ObjIndex As Integer, ByVal UserIndex As In
     
     For Slot = 1 To MAX_OFFER_SLOTS
             ' Si es el item que busco
-        If UserList(UserIndex).ComUsu.Objeto(Slot) = ObjIndex Then
+        If UserList(UserIndex).ComUsu.Objeto(Slot) = OBJIndex Then
             ' Lo sumo a la cantidad total
             TotalOfferItems = TotalOfferItems + UserList(UserIndex).ComUsu.cant(Slot)
         End If
@@ -2419,4 +2311,63 @@ Public Sub setHome(ByVal UserIndex As Integer, ByVal newHome As eCiudad, ByVal N
     UserList(UserIndex).Hogar = newHome
     
     Call WriteChatOverHead(UserIndex, "¡¡¡Bienvenido a nuestra humilde comunidad, este es ahora tu nuevo hogar!!!", Npclist(NpcIndex).Char.CharIndex, vbWhite)
+End Sub
+
+Public Sub CalcularValores(ByVal UserIndex As Integer)
+Dim SubePromedio As Single
+Dim HPReal As Integer
+Dim HitReal As Integer
+
+    With UserList(UserIndex)
+        
+        HPReal = 15 + RandomNumber(1, .Stats.UserAtributos(eAtributos.Constitucion) \ 3)
+        HitReal = AumentoHit(.Clase) * .Stats.ELV
+        SubePromedio = .Stats.UserAtributos(eAtributos.Constitucion) * 0.5 - ModVida(.Clase)
+        
+        Dim i As Long
+        
+        For i = 1 To .Stats.ELV - 1
+            HPReal = HPReal + RandomNumber(SubePromedio - 2, Fix(SubePromedio + 2))
+        Next
+        
+        Call CalcularMana(UserIndex)
+        
+        .Stats.MinHIT = HitReal
+        .Stats.MaxHIT = HitReal + 1
+        
+        .Stats.MaxHp = HPReal
+        .Stats.MinHp = .Stats.MaxHp
+        
+    End With
+End Sub
+
+Private Sub CalcularMana(ByVal UserIndex As Integer)
+Dim ManaReal As Integer
+
+With UserList(UserIndex)
+    
+    Select Case .Clase
+    
+        Case eClass.Hechicero
+            ManaReal = 100 + 2.2 * .Stats.UserAtributos(eAtributos.Inteligencia) * (.Stats.ELV - 1)
+        Case eClass.Mago
+            ManaReal = 100 + 3 * .Stats.UserAtributos(eAtributos.Inteligencia) * (.Stats.ELV - 1)
+        Case eClass.Orden_Sagrada
+            ManaReal = .Stats.UserAtributos(eAtributos.Inteligencia) * (.Stats.ELV - 1)
+        Case eClass.Clerigo, eClass.Naturalista
+            ManaReal = 50 + 2 * .Stats.UserAtributos(eAtributos.Inteligencia) * (.Stats.ELV - 1)
+        Case eClass.Druida
+            ManaReal = 50 + 2.1 * .Stats.UserAtributos(eAtributos.Inteligencia) * (.Stats.ELV - 1)
+        Case eClass.Sigiloso
+            ManaReal = 50 + .Stats.UserAtributos(eAtributos.Inteligencia) * (.Stats.ELV - 1)
+    End Select
+
+    If ManaReal > 0 Then
+        .Stats.MaxMAN = ManaReal
+        .Stats.MinMAN = .Stats.MaxMAN
+        
+        Call WriteUpdateMana(UserIndex)
+    End If
+
+End With
 End Sub

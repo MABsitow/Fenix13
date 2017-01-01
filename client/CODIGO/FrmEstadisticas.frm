@@ -1034,10 +1034,7 @@ For i = 1 To NUMATRIBUTOS
 Next
 
 For i = 1 To NUMSKILLS
-    Skills(i).Caption = UserSkills(i)
-    Ancho = IIf(PorcentajeSkills(i) = 0, ANCHO_BARRA, (100 - PorcentajeSkills(i)) / 100 * ANCHO_BARRA)
-    shpSkillsBar(i).Width = Ancho
-    shpSkillsBar(i).Left = BAR_LEFT_POS + ANCHO_BARRA - Ancho
+'    Skills(i).Caption = UserSkills(i)
 Next
 
 
@@ -1061,7 +1058,7 @@ With UserEstadisticas
     Label6(1).Caption = .CiudadanosMatados
     Label6(2).Caption = .UsuariosMatados
     Label6(3).Caption = .NpcsMatados
-    Label6(4).Caption = .Clase
+    Label6(4).Caption = .clase
     Label6(5).Caption = .PenaCarcel
 End With
 

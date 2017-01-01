@@ -3903,7 +3903,7 @@ info=Sastre de Arghal
 
 [NPC151]
 Name=Pirata
-NpcType=6
+NpcType=66
 Desc=Vendo pasajes, viajero.
 Head=301
 Body=221
@@ -3924,7 +3924,7 @@ info=pasajes arghal
 
 [NPC152]
 Name=Pirata
-NpcType=6
+NpcType=66
 Desc=¡Acércate y echa un vistazo!
 Head=301
 Body=221
@@ -3946,7 +3946,7 @@ info=pasajes banderbill
 
 [NPC153]
 Name=Pirata
-NpcType=6
+NpcType=66
 Desc=¡Pasajes! ¡Pasajes!
 Head=301
 Body=221
@@ -3970,7 +3970,7 @@ Info=pasajes Hilidian
 
 [NPC154]
 Name=Pirata
-NpcType=6
+NpcType=66
 Desc=¡Viaja por estas tierras con mis pasajes!
 Head=301
 Body=221
@@ -3992,7 +3992,7 @@ info=Pasajes Nix
 
 [NPC155]
 Name=Pirata
-NpcType=6
+NpcType=66
 Desc=¡Acércate y echa un vistazo!
 Head=301
 Body=221

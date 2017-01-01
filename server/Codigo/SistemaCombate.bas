@@ -63,7 +63,7 @@ Private Function PoderEvasionEscudo(ByVal UserIndex As Integer) As Long
 '
 '***************************************************
 
-    PoderEvasionEscudo = (UserList(UserIndex).Stats.UserSkills(eSkill.Defensa) * ModClase(UserList(UserIndex).clase).Escudo) / 2
+    PoderEvasionEscudo = (UserList(UserIndex).Stats.UserSkills(eSkill.Defensa) * ModClase(UserList(UserIndex).Clase).Escudo) / 2
 End Function
 
 Private Function PoderEvasion(ByVal UserIndex As Integer) As Long
@@ -75,7 +75,7 @@ Private Function PoderEvasion(ByVal UserIndex As Integer) As Long
     Dim lTemp As Long
     With UserList(UserIndex)
         lTemp = (.Stats.UserSkills(eSkill.Tacticas) + _
-          .Stats.UserSkills(eSkill.Tacticas) / 33 * .Stats.UserAtributos(eAtributos.Agilidad)) * ModClase(.clase).Evasion
+          .Stats.UserSkills(eSkill.Tacticas) / 33 * .Stats.UserAtributos(eAtributos.Agilidad)) * ModClase(.Clase).Evasion
        
         PoderEvasion = (lTemp + (2.5 * MaximoInt(.Stats.ELV - 12, 0)))
     End With
@@ -92,13 +92,13 @@ Private Function PoderAtaqueArma(ByVal UserIndex As Integer) As Long
     
     With UserList(UserIndex)
         If .Stats.UserSkills(eSkill.Armas) < 31 Then
-            PoderAtaqueTemp = .Stats.UserSkills(eSkill.Armas) * ModClase(.clase).AtaqueArmas
+            PoderAtaqueTemp = .Stats.UserSkills(eSkill.Armas) * ModClase(.Clase).AtaqueArmas
         ElseIf .Stats.UserSkills(eSkill.Armas) < 61 Then
-            PoderAtaqueTemp = (.Stats.UserSkills(eSkill.Armas) + .Stats.UserAtributos(eAtributos.Agilidad)) * ModClase(.clase).AtaqueArmas
+            PoderAtaqueTemp = (.Stats.UserSkills(eSkill.Armas) + .Stats.UserAtributos(eAtributos.Agilidad)) * ModClase(.Clase).AtaqueArmas
         ElseIf .Stats.UserSkills(eSkill.Armas) < 91 Then
-            PoderAtaqueTemp = (.Stats.UserSkills(eSkill.Armas) + 2 * .Stats.UserAtributos(eAtributos.Agilidad)) * ModClase(.clase).AtaqueArmas
+            PoderAtaqueTemp = (.Stats.UserSkills(eSkill.Armas) + 2 * .Stats.UserAtributos(eAtributos.Agilidad)) * ModClase(.Clase).AtaqueArmas
         Else
-           PoderAtaqueTemp = (.Stats.UserSkills(eSkill.Armas) + 3 * .Stats.UserAtributos(eAtributos.Agilidad)) * ModClase(.clase).AtaqueArmas
+           PoderAtaqueTemp = (.Stats.UserSkills(eSkill.Armas) + 3 * .Stats.UserAtributos(eAtributos.Agilidad)) * ModClase(.Clase).AtaqueArmas
         End If
         
         PoderAtaqueArma = (PoderAtaqueTemp + (2.5 * MaximoInt(.Stats.ELV - 12, 0)))
@@ -116,13 +116,13 @@ Private Function PoderAtaqueProyectil(ByVal UserIndex As Integer) As Long
     
     With UserList(UserIndex)
         If .Stats.UserSkills(eSkill.Proyectiles) < 31 Then
-            PoderAtaqueTemp = .Stats.UserSkills(eSkill.Proyectiles) * ModClase(.clase).AtaqueProyectiles
+            PoderAtaqueTemp = .Stats.UserSkills(eSkill.Proyectiles) * ModClase(.Clase).AtaqueProyectiles
         ElseIf .Stats.UserSkills(eSkill.Proyectiles) < 61 Then
-            PoderAtaqueTemp = (.Stats.UserSkills(eSkill.Proyectiles) + .Stats.UserAtributos(eAtributos.Agilidad)) * ModClase(.clase).AtaqueProyectiles
+            PoderAtaqueTemp = (.Stats.UserSkills(eSkill.Proyectiles) + .Stats.UserAtributos(eAtributos.Agilidad)) * ModClase(.Clase).AtaqueProyectiles
         ElseIf .Stats.UserSkills(eSkill.Proyectiles) < 91 Then
-            PoderAtaqueTemp = (.Stats.UserSkills(eSkill.Proyectiles) + 2 * .Stats.UserAtributos(eAtributos.Agilidad)) * ModClase(.clase).AtaqueProyectiles
+            PoderAtaqueTemp = (.Stats.UserSkills(eSkill.Proyectiles) + 2 * .Stats.UserAtributos(eAtributos.Agilidad)) * ModClase(.Clase).AtaqueProyectiles
         Else
-            PoderAtaqueTemp = (.Stats.UserSkills(eSkill.Proyectiles) + 3 * .Stats.UserAtributos(eAtributos.Agilidad)) * ModClase(.clase).AtaqueProyectiles
+            PoderAtaqueTemp = (.Stats.UserSkills(eSkill.Proyectiles) + 3 * .Stats.UserAtributos(eAtributos.Agilidad)) * ModClase(.Clase).AtaqueProyectiles
         End If
         
         PoderAtaqueProyectil = (PoderAtaqueTemp + (2.5 * MaximoInt(.Stats.ELV - 12, 0)))
@@ -140,13 +140,13 @@ Private Function PoderAtaqueWrestling(ByVal UserIndex As Integer) As Long
     
     With UserList(UserIndex)
         If .Stats.UserSkills(eSkill.Wrestling) < 31 Then
-            PoderAtaqueTemp = .Stats.UserSkills(eSkill.Wrestling) * ModClase(.clase).AtaqueWrestling
+            PoderAtaqueTemp = .Stats.UserSkills(eSkill.Wrestling) * ModClase(.Clase).AtaqueWrestling
         ElseIf .Stats.UserSkills(eSkill.Wrestling) < 61 Then
-            PoderAtaqueTemp = (.Stats.UserSkills(eSkill.Wrestling) + .Stats.UserAtributos(eAtributos.Agilidad)) * ModClase(.clase).AtaqueWrestling
+            PoderAtaqueTemp = (.Stats.UserSkills(eSkill.Wrestling) + .Stats.UserAtributos(eAtributos.Agilidad)) * ModClase(.Clase).AtaqueWrestling
         ElseIf .Stats.UserSkills(eSkill.Wrestling) < 91 Then
-            PoderAtaqueTemp = (.Stats.UserSkills(eSkill.Wrestling) + 2 * .Stats.UserAtributos(eAtributos.Agilidad)) * ModClase(.clase).AtaqueWrestling
+            PoderAtaqueTemp = (.Stats.UserSkills(eSkill.Wrestling) + 2 * .Stats.UserAtributos(eAtributos.Agilidad)) * ModClase(.Clase).AtaqueWrestling
         Else
-            PoderAtaqueTemp = (.Stats.UserSkills(eSkill.Wrestling) + 3 * .Stats.UserAtributos(eAtributos.Agilidad)) * ModClase(.clase).AtaqueWrestling
+            PoderAtaqueTemp = (.Stats.UserSkills(eSkill.Wrestling) + 3 * .Stats.UserAtributos(eAtributos.Agilidad)) * ModClase(.Clase).AtaqueWrestling
         End If
         
         PoderAtaqueWrestling = (PoderAtaqueTemp + (2.5 * MaximoInt(.Stats.ELV - 12, 0)))
@@ -185,11 +185,8 @@ Public Function UserImpactoNpc(ByVal UserIndex As Integer, ByVal NpcIndex As Int
     
     UserImpactoNpc = (RandomNumber(1, 100) <= ProbExito)
     
-    If UserImpactoNpc Then
-        Call SubirSkill(UserIndex, Skill, True)
-    Else
-        Call SubirSkill(UserIndex, Skill, False)
-    End If
+    Call SubirSkill(UserIndex, Skill)
+    
 End Function
 
 Public Function NpcImpacto(ByVal NpcIndex As Integer, ByVal UserIndex As Integer) As Boolean
@@ -235,9 +232,7 @@ Public Function NpcImpacto(ByVal NpcIndex As Integer, ByVal UserIndex As Integer
                     'Se rechazo el ataque con el escudo
                     Call SendData(SendTarget.ToPCArea, UserIndex, PrepareMessagePlayWave(SND_ESCUDO, UserList(UserIndex).Pos.X, UserList(UserIndex).Pos.Y))
                     Call WriteMultiMessage(UserIndex, eMessages.BlockedWithShieldUser) 'Call WriteBlockedWithShieldUser(UserIndex)
-                    Call SubirSkill(UserIndex, eSkill.Defensa, True)
-                Else
-                    Call SubirSkill(UserIndex, eSkill.Defensa, False)
+                    Call SubirSkill(UserIndex, eSkill.Defensa, 25)
                 End If
             End If
         End If
@@ -258,7 +253,7 @@ Public Function CalcularDaño(ByVal UserIndex As Integer, Optional ByVal NpcIndex
     Dim proyectil As ObjData
     Dim DañoMaxArma As Long
     Dim DañoMinArma As Long
-    Dim ObjIndex As Integer
+    Dim OBJIndex As Integer
     
     ''sacar esto si no queremos q la matadracos mate el Dragon si o si
     Dim matoDragon As Boolean
@@ -271,7 +266,7 @@ Public Function CalcularDaño(ByVal UserIndex As Integer, Optional ByVal NpcIndex
             ' Ataca a un npc?
             If NpcIndex > 0 Then
                 If Arma.proyectil = 1 Then
-                    ModifClase = ModClase(.clase).DañoProyectiles
+                    ModifClase = ModClase(.Clase).DañoProyectiles
                     DañoArma = RandomNumber(Arma.MinHIT, Arma.MaxHIT)
                     DañoMaxArma = Arma.MaxHIT
                     
@@ -282,7 +277,7 @@ Public Function CalcularDaño(ByVal UserIndex As Integer, Optional ByVal NpcIndex
                         'DañoMaxArma = DañoMaxArma + proyectil.MaxHIT
                     End If
                 Else
-                    ModifClase = ModClase(.clase).DañoArmas
+                    ModifClase = ModClase(.Clase).DañoArmas
                     
                     If .Invent.WeaponEqpObjIndex = EspadaMataDragonesIndex Then ' Usa la mata Dragones?
                         If Npclist(NpcIndex).NPCtype = DRAGON Then 'Ataca Dragon?
@@ -300,7 +295,7 @@ Public Function CalcularDaño(ByVal UserIndex As Integer, Optional ByVal NpcIndex
                 End If
             Else ' Ataca usuario
                 If Arma.proyectil = 1 Then
-                    ModifClase = ModClase(.clase).DañoProyectiles
+                    ModifClase = ModClase(.Clase).DañoProyectiles
                     DañoArma = RandomNumber(Arma.MinHIT, Arma.MaxHIT)
                     DañoMaxArma = Arma.MaxHIT
                      
@@ -311,10 +306,10 @@ Public Function CalcularDaño(ByVal UserIndex As Integer, Optional ByVal NpcIndex
                         'DañoMaxArma = DañoMaxArma + proyectil.MaxHIT
                     End If
                 Else
-                    ModifClase = ModClase(.clase).DañoArmas
+                    ModifClase = ModClase(.Clase).DañoArmas
                     
                     If .Invent.WeaponEqpObjIndex = EspadaMataDragonesIndex Then
-                        ModifClase = ModClase(.clase).DañoArmas
+                        ModifClase = ModClase(.Clase).DañoArmas
                         DañoArma = 1 ' Si usa la espada mataDragones daño es 1
                         DañoMaxArma = 1
                     Else
@@ -324,18 +319,18 @@ Public Function CalcularDaño(ByVal UserIndex As Integer, Optional ByVal NpcIndex
                 End If
             End If
         Else
-            ModifClase = ModClase(.clase).DañoWrestling
+            ModifClase = ModClase(.Clase).DañoWrestling
             
             ' Daño sin guantes
             DañoMinArma = 4
             DañoMaxArma = 9
             
             ' Plus de guantes (en slot de anillo)
-            ObjIndex = .Invent.AnilloEqpObjIndex
-            If ObjIndex > 0 Then
-                If ObjData(ObjIndex).Guante = 1 Then
-                    DañoMinArma = DañoMinArma + ObjData(ObjIndex).MinHIT
-                    DañoMaxArma = DañoMaxArma + ObjData(ObjIndex).MaxHIT
+            OBJIndex = .Invent.AnilloEqpObjIndex
+            If OBJIndex > 0 Then
+                If ObjData(OBJIndex).Guante = 1 Then
+                    DañoMinArma = DañoMinArma + ObjData(OBJIndex).MinHIT
+                    DañoMaxArma = DañoMaxArma + ObjData(OBJIndex).MaxHIT
                 End If
             End If
             
@@ -393,10 +388,7 @@ Public Sub UserDañoNpc(ByVal UserIndex As Integer, ByVal NpcIndex As Integer)
             
             'trata de dar golpe crítico
             Call DoGolpeCritico(UserIndex, NpcIndex, 0, daño)
-            
-            If PuedeAcuchillar(UserIndex) Then
-                Call DoAcuchillar(UserIndex, NpcIndex, 0, daño)
-            End If
+
         End If
         
         
@@ -407,7 +399,6 @@ Public Sub UserDañoNpc(ByVal UserIndex As Integer, ByVal NpcIndex As Integer)
                 If UserList(UserIndex).Invent.WeaponEqpObjIndex = EspadaMataDragonesIndex Then
                     Call QuitarObjetos(EspadaMataDragonesIndex, 1, UserIndex)
                 End If
-                If .Stats.MaxHp > 100000 Then Call LogDesarrollo(UserList(UserIndex).Name & " mató un dragón")
             End If
             
             ' Para que las mascotas no sigan intentando luchar y
@@ -455,7 +446,7 @@ Public Sub NpcDaño(ByVal NpcIndex As Integer, ByVal UserIndex As Integer)
                 'Si tiene casco absorbe el golpe
                 If .Invent.CascoEqpObjIndex > 0 Then
                    Obj = ObjData(.Invent.CascoEqpObjIndex)
-                   absorbido = RandomNumber(Obj.MinDef, Obj.MaxDef)
+                   If Obj.Gorro = 0 Then absorbido = RandomNumber(Obj.MinDef, Obj.MaxDef)
                 End If
           Case Else
                 'Si tiene armadura absorbe el golpe
@@ -640,12 +631,11 @@ Public Function NpcAtacaUser(ByVal NpcIndex As Integer, ByVal UserIndex As Integ
             '¿Puede envenenar?
             If Npclist(NpcIndex).Veneno = 1 Then Call NpcEnvenenarUser(UserIndex)
         End With
-        
-        Call SubirSkill(UserIndex, eSkill.Tacticas, False)
     Else
         Call WriteMultiMessage(UserIndex, eMessages.NPCSwing)
-        Call SubirSkill(UserIndex, eSkill.Tacticas, True)
     End If
+    
+    Call SubirSkill(UserIndex, eSkill.Tacticas)
     
     'Controla el nivel del usuario
     Call CheckUserLevel(UserIndex)
@@ -952,15 +942,13 @@ On Error GoTo Errhandler
                 Call WriteMultiMessage(AtacanteIndex, eMessages.BlockedWithShieldother)
                 Call WriteMultiMessage(VictimaIndex, eMessages.BlockedWithShieldUser)
                 
-                Call SubirSkill(VictimaIndex, eSkill.Defensa, True)
-            Else
-                Call SubirSkill(VictimaIndex, eSkill.Defensa, False)
+                Call SubirSkill(VictimaIndex, eSkill.Defensa, 25)
             End If
         End If
     End If
     
     If Not UsuarioImpacto Then
-        Call SubirSkill(AtacanteIndex, Skill, False)
+        Call SubirSkill(AtacanteIndex, Skill)
     End If
     
     Call FlushBuffer(VictimaIndex)
@@ -1006,15 +994,15 @@ On Error GoTo Errhandler
             End If
             
             'Pablo (ToxicWaste): Guantes de Hurto del Bandido en acción
-            If .clase = eClass.Bandit Then
+            If .Clase = eClass.Bandido Then
                 Call DoDesequipar(AtacanteIndex, VictimaIndex)
                 
             'y ahora, el ladrón puede llegar a paralizar con el golpe.
-            ElseIf .clase = eClass.Thief Then
+            ElseIf .Clase = eClass.Ladron Then
                 Call DoHandInmo(AtacanteIndex, VictimaIndex)
             End If
             
-            Call SubirSkill(VictimaIndex, eSkill.Tacticas, False)
+            Call SubirSkill(VictimaIndex, eSkill.Tacticas)
             Call UserDañoUser(AtacanteIndex, VictimaIndex)
         Else
             ' Invisible admins doesn't make sound to other clients except itself
@@ -1026,10 +1014,10 @@ On Error GoTo Errhandler
             
             Call WriteMultiMessage(AtacanteIndex, eMessages.UserSwing)
             Call WriteMultiMessage(VictimaIndex, eMessages.UserAttackedSwing, AtacanteIndex)
-            Call SubirSkill(VictimaIndex, eSkill.Tacticas, True)
+            Call SubirSkill(VictimaIndex, eSkill.Tacticas)
         End If
         
-        If .clase = eClass.Thief Then Call Desarmar(AtacanteIndex, VictimaIndex)
+        If .Clase = eClass.Ladron Then Call Desarmar(AtacanteIndex, VictimaIndex)
     End With
     
     UsuarioAtacaUsuario = True
@@ -1072,10 +1060,6 @@ On Error GoTo Errhandler
              defbarco = RandomNumber(Obj.MinDef, Obj.MaxDef)
         End If
         
-        If .Invent.WeaponEqpObjIndex > 0 Then
-            Resist = ObjData(.Invent.WeaponEqpObjIndex).Refuerzo
-        End If
-        
         Lugar = RandomNumber(PartesCuerpo.bCabeza, PartesCuerpo.bTorso)
         
         Select Case Lugar
@@ -1116,22 +1100,14 @@ On Error GoTo Errhandler
             If .Invent.WeaponEqpObjIndex > 0 Then
                 If ObjData(.Invent.WeaponEqpObjIndex).proyectil Then
                     'es un Arco. Sube Armas a Distancia
-                    Call SubirSkill(AtacanteIndex, eSkill.Proyectiles, True)
-                    
-                    ' Si es arma arrojadiza..
-                    If ObjData(.Invent.WeaponEqpObjIndex).Municion = 0 Then
-                        ' Si acuchilla
-                        If ObjData(.Invent.WeaponEqpObjIndex).Acuchilla = 1 Then
-                            Call DoAcuchillar(AtacanteIndex, 0, VictimaIndex, daño)
-                        End If
-                    End If
+                    Call SubirSkill(AtacanteIndex, eSkill.Proyectiles)
                 Else
                     'Sube combate con armas.
-                    Call SubirSkill(AtacanteIndex, eSkill.Armas, True)
+                    Call SubirSkill(AtacanteIndex, eSkill.Armas)
                 End If
             Else
                 'sino tal vez lucha libre
-                Call SubirSkill(AtacanteIndex, eSkill.Wrestling, True)
+                Call SubirSkill(AtacanteIndex, eSkill.Wrestling)
             End If
                     
             'Trata de apuñalar por la espalda al enemigo
@@ -1146,8 +1122,6 @@ On Error GoTo Errhandler
             
             ' No cuenta la muerte si estaba en estado atacable
             If UserList(VictimaIndex).flags.AtacablePor <> AtacanteIndex Then
-                'Store it!
-                Call Statistics.StoreFrag(AtacanteIndex, VictimaIndex)
                 
                 Call ContarMuerte(VictimaIndex, AtacanteIndex)
             End If

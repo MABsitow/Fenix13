@@ -534,7 +534,6 @@ Private Sub LoadButtons()
     
     For Index = 1 To MAX_LIST_ITEMS
         imgMarcoItem(Index).Picture = picRecuadroItem
-        imgMarcoUpgrade(Index).Picture = picRecuadroItem
         imgMarcoMaderas(Index).Picture = picRecuadroMaderas
     Next Index
     
@@ -612,7 +611,7 @@ Private Sub LoadDefaultValues()
     
     cboItemsCiclo.ListIndex = 0
     
-    Scroll.value = 0
+    Scroll.Value = 0
     
     UsarMacro = True
     
@@ -627,7 +626,7 @@ Private Sub Construir(ByVal Index As Integer)
     Dim ItemIndex As Integer
     Dim CantItemsCiclo As Integer
     
-    If Scroll.Visible = True Then ItemIndex = Scroll.value
+    If Scroll.Visible = True Then ItemIndex = Scroll.Value
     ItemIndex = ItemIndex + Index
     
     Select Case UltimaPestania
@@ -644,9 +643,7 @@ Private Sub Construir(ByVal Index As Integer)
             
             Call WriteInitCrafting(Val(txtCantItems.Text), CantItemsCiclo)
             Call WriteCraftCarpenter(ObjCarpintero(ItemIndex).OBJIndex)
-            
-        Case ePestania.ieMejorar
-            Call WriteItemUpgrade(CarpinteroMejorar(ItemIndex).OBJIndex)
+
     End Select
         
     Unload Me
@@ -676,10 +673,6 @@ Public Sub HideExtraControls(ByVal NumItems As Integer, Optional ByVal Upgrading
         picItem(i).Visible = (NumItems >= i)
         imgMarcoItem(i).Visible = (NumItems >= i)
         imgMarcoMaderas(i).Visible = (NumItems >= i)
-
-        ' Upgrade
-        imgMarcoUpgrade(i).Visible = (NumItems >= i And Upgrading)
-        picUpgrade(i).Visible = (NumItems >= i And Upgrading)
     Next i
     
     If NumItems > MAX_LIST_ITEMS Then
@@ -738,32 +731,6 @@ For i = 1 To MAX_LIST_ITEMS
     End If
 Next i
 End Sub
-
-Public Sub RenderUpgradeList(ByVal Inicio As Integer)
-Dim i As Long
-Dim NumItems As Integer
-
-NumItems = UBound(CarpinteroMejorar)
-Inicio = Inicio - 1
-
-For i = 1 To MAX_LIST_ITEMS
-    If i + Inicio <= NumItems Then
-        With CarpinteroMejorar(i + Inicio)
-            ' Agrego el item
-            Call RenderItem(picItem(i), .GrhIndex)
-            picItem(i).ToolTipText = .Name
-            
-            Call RenderItem(picUpgrade(i), .UpgradeGrhIndex)
-            picUpgrade(i).ToolTipText = .UpgradeName
-        
-            ' Inventario de leños
-            Call InvMaderasCarpinteria(i).SetItem(1, 0, .Madera, 0, MADERA_GRH, 0, 0, 0, 0, 0, 0, "Leña")
-            Call InvMaderasCarpinteria(i).SetItem(2, 0, .MaderaElfica, 0, MADERA_ELFICA_GRH, 0, 0, 0, 0, 0, 0, "Leña élfica")
-        End With
-    End If
-Next i
-End Sub
-
 
 Private Sub Form_MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
     LastPressed.ToggleToNormal
@@ -825,7 +792,7 @@ Private Sub imgPestania_Click(Index As Integer)
     If Cargando Then Exit Sub
     If UltimaPestania = Index Then Exit Sub
     
-    Scroll.value = 0
+    Scroll.Value = 0
     
     Select Case Index
         Case ePestania.ieItems
@@ -839,16 +806,6 @@ Private Sub imgPestania_Click(Index As Integer)
             ' Cargo inventarios e imagenes
             Call RenderList(1)
             
-
-        Case ePestania.ieMejorar
-            ' Background
-            Me.Picture = Pestanias(ePestania.ieMejorar)
-            
-            NumItems = UBound(CarpinteroMejorar)
-            
-            Call HideExtraControls(NumItems, True)
-            
-            Call RenderUpgradeList(1)
     End Select
 
     UltimaPestania = Index
@@ -860,13 +817,11 @@ Private Sub Scroll_Change()
     
     If Cargando Then Exit Sub
     
-    i = Scroll.value
+    i = Scroll.Value
     ' Cargo inventarios e imagenes
     
     Select Case UltimaPestania
         Case ePestania.ieItems
             Call RenderList(i + 1)
-        Case ePestania.ieMejorar
-            Call RenderUpgradeList(i + 1)
     End Select
 End Sub

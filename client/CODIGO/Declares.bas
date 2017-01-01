@@ -238,18 +238,38 @@ Public Const FOgata As Integer = 1521
 
 
 Public Enum eClass
-    Mage = 1    'Mago
-    Cleric      'Clérigo
-    Warrior     'Guerrero
-    Assasin     'Asesino
-    Thief       'Ladrón
-    Bard        'Bardo
-    Druid       'Druida
-    Bandit      'Bandido
-    Paladin     'Paladín
-    Hunter      'Cazador
-    Worker      'Trabajador
-    Pirat       'Pirata
+        Ciudadano = 1
+        Trabajador = 2
+        Experto_Minerales = 3
+        Minero = 4
+        Herrero = 5 '8
+        Experto_Madera = 6 '13
+        Talador = 7 '14
+        Carpintero = 8 '18
+        Pescador = 9 '23
+        Sastre = 10 '27
+        Alquimista = 11 '31
+        Luchador = 12 '35
+        Con_Mana = 13 '36
+        Hechicero = 14 '37
+        Mago = 15 '38
+        Nigromante = 16 '39
+        Orden_Sagrada = 17 '40
+        Paladin = 18 '41
+        Clerigo = 19 '42
+        Naturalista = 20 '43
+        Bardo = 21 '44
+        Druida = 22 '45
+        Sigiloso = 23 '46
+        Asesino = 24 '47
+        Cazador = 25 '48
+        Sin_Mana = 26 '49
+        Arquero = 27 '50
+        Guerrero = 28 '51
+        Caballero = 29 '52
+        Bandido = 30 '53
+        Pirata = 31 '55
+        Ladron = 32 '56
 End Enum
 
 Public Enum eCiudad
@@ -289,6 +309,8 @@ Public Enum eSkill
     Proyectiles = 18
     Wrestling = 19
     Navegacion = 20
+    Sastreria = 21
+    Resis = 22
 End Enum
 
 Public Enum eAtributos
@@ -651,7 +673,7 @@ Type tEstadisticasUsu
     CriminalesMatados As Long
     UsuariosMatados As Long
     NpcsMatados As Long
-    Clase As String
+    clase As String
     PenaCarcel As Long
 End Type
 
@@ -664,9 +686,6 @@ Type tItemsConstruibles
     LinO As Integer
     Madera As Integer
     MaderaElfica As Integer
-    Upgrade As Integer
-    UpgradeName As String
-    UpgradeGrhIndex As Integer
 End Type
 
 Public Nombres As Boolean
@@ -731,13 +750,12 @@ Public UserRaza As eRaza
 Public UserEmail As String
 
 Public Const NUMCIUDADES As Byte = 5
-Public Const NUMSKILLS As Byte = 20
+Public Const NUMSKILLS As Byte = 22
 Public Const NUMATRIBUTOS As Byte = 5
-Public Const NUMCLASES As Byte = 12
+Public Const NUMCLASES As Byte = 32
 Public Const NUMRAZAS As Byte = 5
 
 Public UserSkills(1 To NUMSKILLS) As Byte
-Public PorcentajeSkills(1 To NUMSKILLS) As Byte
 Public SkillsNames(1 To NUMSKILLS) As String
 
 Public UserAtributos(1 To NUMATRIBUTOS) As Byte
