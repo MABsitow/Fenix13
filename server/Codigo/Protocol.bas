@@ -136,6 +136,8 @@ Private Enum ServerPacketID
     MultiMessage
     StopWorking
     CancelOfferItem
+    SubeClase
+    ShowFormClase
 End Enum
 
 Private Enum ClientPacketID
@@ -226,6 +228,8 @@ Private Enum ClientPacketID
     ShareNpc                '/COMPARTIRNPC
     StopSharingNpc          '/NOCOMPARTIRNPC
     Consulta
+    RequestClaseForm
+    EligioClase
 End Enum
 
 ''
@@ -581,6 +585,12 @@ On Error Resume Next
         Case ClientPacketID.Consulta
             Call HandleConsulta(UserIndex)
         
+        Case ClientPacketID.RequestClaseForm
+            Call HandleRequestClaseForm(UserIndex)
+        
+        Case ClientPacketID.EligioClase
+            Call HandleEligioClase(UserIndex)
+            
         Case Else
             'ERROR : Abort!
             Call CloseSocket(UserIndex)
@@ -1236,7 +1246,6 @@ On Error GoTo Errhandler
     Dim race As eRaza
     Dim gender As eGenero
     Dim homeland As eCiudad
-    Dim Class As eClass
     Dim Head As Integer
     Dim mail As String
     
@@ -1276,7 +1285,6 @@ On Error GoTo Errhandler
     
     race = buffer.ReadByte()
     gender = buffer.ReadByte()
-    Class = buffer.ReadByte()
     Head = buffer.ReadInteger
     mail = buffer.ReadASCIIString()
     homeland = buffer.ReadByte()
@@ -1285,7 +1293,7 @@ On Error GoTo Errhandler
         If Not VersionOK(version) Then
             Call WriteErrorMsg(UserIndex, "Esta versión del juego es obsoleta, la versión correcta es la " & ULTIMAVERSION & ". La misma se encuentra disponible en www.argentumonline.com.ar")
         Else
-            Call ConnectNewUser(UserIndex, UserName, Password, race, gender, Class, mail, homeland, Head)
+            Call ConnectNewUser(UserIndex, UserName, Password, race, gender, mail, homeland, Head)
         End If
 
     'If we got here then packet is complete, copy data back to original queue
@@ -1346,7 +1354,7 @@ On Error GoTo Errhandler
             .Counters.TiempoOculto = 0
             
             If .flags.Navegando = 1 Then
-                If .clase = eClass.Pirat Then
+                If .Clase = eClass.Pirata Then
                     ' Pierde la apariencia de fragata fantasmal
                     Call ToogleBoatBody(UserIndex)
                     Call WriteConsoleMsg(UserIndex, "¡Has recuperado tu apariencia normal!", FontTypeNames.FONTTYPE_INFO)
@@ -1362,9 +1370,7 @@ On Error GoTo Errhandler
         End If
         
         If LenB(Chat) <> 0 Then
-            'Analize chat...
-            Call Statistics.ParseChat(Chat)
-            
+
             If Not (.flags.AdminInvisible = 1) Then
                 If .flags.Muerto = 1 Then
                     Call SendData(SendTarget.ToDeadArea, UserIndex, PrepareMessageChatOverHead(Chat, .Char.CharIndex, CHAT_COLOR_DEAD_CHAR))
@@ -1437,7 +1443,7 @@ On Error GoTo Errhandler
             .Counters.TiempoOculto = 0
             
             If .flags.Navegando = 1 Then
-                If .clase = eClass.Pirat Then
+                If .Clase = eClass.Pirata Then
                     ' Pierde la apariencia de fragata fantasmal
                     Call ToogleBoatBody(UserIndex)
                     Call WriteConsoleMsg(UserIndex, "¡Has recuperado tu apariencia normal!", FontTypeNames.FONTTYPE_INFO)
@@ -1453,9 +1459,7 @@ On Error GoTo Errhandler
         End If
             
         If LenB(Chat) <> 0 Then
-            'Analize chat...
-            Call Statistics.ParseChat(Chat)
-                
+
             If .flags.Privilegios And PlayerType.User Then
                 If UserList(UserIndex).flags.Muerto = 1 Then
                     Call SendData(SendTarget.ToDeadArea, UserIndex, PrepareMessageChatOverHead(Chat, .Char.CharIndex, CHAT_COLOR_DEAD_CHAR))
@@ -1553,9 +1557,7 @@ On Error GoTo Errhandler
                     End If
                     
                     If LenB(Chat) <> 0 Then
-                        'Analize chat...
-                        Call Statistics.ParseChat(Chat)
-                        
+
                         If Not (.flags.AdminInvisible = 1) Then
                             Call WriteChatOverHead(UserIndex, Chat, .Char.CharIndex, vbBlue)
                             Call WriteChatOverHead(TargetUserIndex, Chat, .Char.CharIndex, vbBlue)
@@ -1694,12 +1696,12 @@ Private Sub HandleWalk(ByVal UserIndex As Integer)
         
         'Can't move while hidden except he is a thief
         If .flags.Oculto = 1 And .flags.AdminInvisible = 0 Then
-            If .clase <> eClass.Thief And .clase <> eClass.Bandit Then
+            If .Clase <> eClass.Ladron And .Clase <> eClass.Bandido Then
                 .flags.Oculto = 0
                 .Counters.TiempoOculto = 0
             
                 If .flags.Navegando = 1 Then
-                    If .clase = eClass.Pirat Then
+                    If .Clase = eClass.Pirata Then
                         ' Pierde la apariencia de fragata fantasmal
                         Call ToogleBoatBody(UserIndex)
                         Call WriteConsoleMsg(UserIndex, "¡Has recuperado tu apariencia normal!", FontTypeNames.FONTTYPE_INFO)
@@ -1787,7 +1789,7 @@ Private Sub HandleAttack(ByVal UserIndex As Integer)
             .Counters.TiempoOculto = 0
             
             If .flags.Navegando = 1 Then
-                If .clase = eClass.Pirat Then
+                If .Clase = eClass.Pirata Then
                     ' Pierde la apariencia de fragata fantasmal
                     Call ToogleBoatBody(UserIndex)
                     Call WriteConsoleMsg(UserIndex, "¡Has recuperado tu apariencia normal!", FontTypeNames.FONTTYPE_INFO)
@@ -2054,9 +2056,7 @@ On Error GoTo Errhandler
         
         If LenB(Chat) <> 0 Then
             If PuedeSeguirComerciando(UserIndex) Then
-                'Analize chat...
-                Call Statistics.ParseChat(Chat)
-                
+
                 Chat = UserList(UserIndex).Name & "> " & Chat
                 Call WriteCommerceChat(UserIndex, Chat, FontTypeNames.FONTTYPE_PARTY)
                 Call WriteCommerceChat(UserList(UserIndex).ComUsu.DestUsu, Chat, FontTypeNames.FONTTYPE_PARTY)
@@ -2353,7 +2353,7 @@ Private Sub HandleWork(ByVal UserIndex As Integer)
                 End If
             
                 If .flags.Navegando = 1 Then
-                    If .clase <> eClass.Pirat Then
+                    If .Clase <> eClass.Pirata Then
                         '[CDT 17-02-2004]
                         If Not .flags.UltimoMensaje = 3 Then
                             Call WriteConsoleMsg(UserIndex, "No puedes ocultarte si estás navegando.", FontTypeNames.FONTTYPE_INFO)
@@ -4839,9 +4839,7 @@ On Error GoTo Errhandler
         Chat = buffer.ReadASCIIString()
         
         If LenB(Chat) <> 0 Then
-            'Analize chat...
-            Call Statistics.ParseChat(Chat)
-            
+
             If .flags.Privilegios And PlayerType.RoyalCouncil Then
                 Call SendData(SendTarget.ToConsejo, UserIndex, PrepareMessageConsoleMsg("(Consejero) " & .Name & "> " & Chat, FontTypeNames.FONTTYPE_CONSEJO))
             ElseIf .flags.Privilegios And PlayerType.ChaosCouncil Then
@@ -5519,9 +5517,7 @@ On Error GoTo Errhandler
         Text = buffer.ReadASCIIString()
         
         If .flags.Silenciado = 0 Then
-            'Analize chat...
-            Call Statistics.ParseChat(Text)
-            
+
             Call SendData(SendTarget.ToAdmins, 0, PrepareMessageConsoleMsg(LCase$(.Name) & " DENUNCIA: " & Text, FontTypeNames.FONTTYPE_GUILDMSG))
             Call WriteConsoleMsg(UserIndex, "Denuncia enviada, espere..", FontTypeNames.FONTTYPE_INFO)
         End If
@@ -5575,9 +5571,7 @@ On Error GoTo Errhandler
             Call LogGM(.Name, "Mensaje a Gms:" & message)
         
             If LenB(message) <> 0 Then
-                'Analize chat...
-                Call Statistics.ParseChat(message)
-            
+
                 Call SendData(SendTarget.ToAdmins, 0, PrepareMessageConsoleMsg(.Name & "> " & message, FontTypeNames.FONTTYPE_GMMSG))
             End If
         End If
@@ -6904,6 +6898,7 @@ On Error GoTo Errhandler
                             Call WriteConsoleMsg(UserIndex, "Charfile Alterado: " & UserName, FontTypeNames.FONTTYPE_INFO)
                         Else ' Online
                             UserList(tUser).Stats.ELV = val(Arg1)
+                            If PuedeSubirClase(tUser) Then Call WriteSubeClase(tUser, True) Else Call WriteSubeClase(tUser, False)
                             Call WriteUpdateUserStats(tUser)
                         End If
                     
@@ -6922,10 +6917,12 @@ On Error GoTo Errhandler
                                 Call WriteVar(UserCharPath, "INIT", "Clase", LoopC)
                                 Call WriteConsoleMsg(UserIndex, "Charfile Alterado: " & UserName, FontTypeNames.FONTTYPE_INFO)
                             Else ' Online
-                                UserList(tUser).clase = LoopC
+                                UserList(tUser).Clase = LoopC
+                                
+                                If PuedeSubirClase(tUser) Then Call WriteSubeClase(tUser, True) Else Call WriteSubeClase(tUser, False)
                             End If
                         End If
-                    
+                        
                         ' Log it
                         CommandString = CommandString & "CLASE "
                         
@@ -13135,7 +13132,7 @@ On Error GoTo Errhandler
         
         For i = 1 To UBound(ArmasHerrero())
             ' Can the user create this object? If so add it to the list....
-            If ObjData(ArmasHerrero(i)).SkHerreria <= Round(UserList(UserIndex).Stats.UserSkills(eSkill.Herreria) / ModHerreriA(UserList(UserIndex).clase), 0) Then
+            If ObjData(ArmasHerrero(i)).SkHerreria <= Round(UserList(UserIndex).Stats.UserSkills(eSkill.Herreria) / ModHerreria(UserList(UserIndex).Clase), 0) Then
                 Count = Count + 1
                 validIndexes(Count) = i
             End If
@@ -13189,7 +13186,7 @@ On Error GoTo Errhandler
         
         For i = 1 To UBound(ArmadurasHerrero())
             ' Can the user create this object? If so add it to the list....
-            If ObjData(ArmadurasHerrero(i)).SkHerreria <= Round(UserList(UserIndex).Stats.UserSkills(eSkill.Herreria) / ModHerreriA(UserList(UserIndex).clase), 0) Then
+            If ObjData(ArmadurasHerrero(i)).SkHerreria <= Round(UserList(UserIndex).Stats.UserSkills(eSkill.Herreria) / ModHerreria(UserList(UserIndex).Clase), 0) Then
                 Count = Count + 1
                 validIndexes(Count) = i
             End If
@@ -13243,7 +13240,7 @@ On Error GoTo Errhandler
         
         For i = 1 To UBound(ObjCarpintero())
             ' Can the user create this object? If so add it to the list....
-            If ObjData(ObjCarpintero(i)).SkCarpinteria <= UserList(UserIndex).Stats.UserSkills(eSkill.Carpinteria) \ ModCarpinteria(UserList(UserIndex).clase) Then
+            If ObjData(ObjCarpintero(i)).SkCarpinteria <= UserList(UserIndex).Stats.UserSkills(eSkill.Carpinteria) \ ModCarpinteria(UserList(UserIndex).Clase) Then
                 Count = Count + 1
                 validIndexes(Count) = i
             End If
@@ -13525,7 +13522,7 @@ On Error GoTo Errhandler
         
         Call .WriteInteger(UserList(UserIndex).Stats.NPCsMuertos)
         
-        Call .WriteByte(UserList(UserIndex).clase)
+        Call .WriteByte(UserList(UserIndex).Clase)
         Call .WriteLong(UserList(UserIndex).Counters.Pena)
     End With
 Exit Sub
@@ -13790,7 +13787,7 @@ On Error GoTo Errhandler
     
     With UserList(UserIndex)
         Call .outgoingData.WriteByte(ServerPacketID.SendSkills)
-        Call .outgoingData.WriteByte(.clase)
+        Call .outgoingData.WriteByte(.Clase)
         
         For i = 1 To NUMSKILLS
             Call .outgoingData.WriteByte(UserList(UserIndex).Stats.UserSkills(i))
@@ -14822,4 +14819,59 @@ Errhandler:
         Call FlushBuffer(UserIndex)
         Resume
     End If
+End Sub
+
+Public Sub WriteSubeClase(ByVal UserIndex As Integer, ByVal Show As Boolean)
+On Error GoTo Errhandler
+
+    With UserList(UserIndex).outgoingData
+        
+        Call .WriteByte(ServerPacketID.SubeClase)
+        Call .WriteBoolean(Show)
+    
+    End With
+Exit Sub
+
+Errhandler:
+    If Err.Number = UserList(UserIndex).outgoingData.NotEnoughSpaceErrCode Then
+        Call FlushBuffer(UserIndex)
+        Resume
+    End If
+
+End Sub
+
+Public Sub WriteShowClaseForm(ByVal UserIndex As Integer, ByVal Clase As Byte)
+On Error GoTo Errhandler
+
+        With UserList(UserIndex).outgoingData
+        
+            Call .WriteByte(ServerPacketID.ShowFormClase)
+            Call .WriteByte(Clase)
+            
+        End With
+Exit Sub
+
+Errhandler:
+    If Err.Number = UserList(UserIndex).outgoingData.NotEnoughSpaceErrCode Then
+        Call FlushBuffer(UserIndex)
+        Resume
+    End If
+End Sub
+
+Private Sub HandleEligioClase(ByVal UserIndex As Integer)
+    
+    With UserList(UserIndex).incomingData
+        
+        Call .ReadByte
+        
+        Call RecibirSubClase(UserIndex, .ReadByte)
+    
+    End With
+End Sub
+
+Private Sub HandleRequestClaseForm(ByVal UserIndex As Integer)
+    
+    UserList(UserIndex).incomingData.ReadByte
+    
+    Call EnviarSubClase(UserIndex)
 End Sub

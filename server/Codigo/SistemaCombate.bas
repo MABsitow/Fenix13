@@ -63,7 +63,7 @@ Private Function PoderEvasionEscudo(ByVal UserIndex As Integer) As Long
 '
 '***************************************************
 
-    PoderEvasionEscudo = (UserList(UserIndex).Stats.UserSkills(eSkill.Defensa) * ModClase(UserList(UserIndex).clase).Escudo) / 2
+    PoderEvasionEscudo = (UserList(UserIndex).Stats.UserSkills(eSkill.Defensa) * ModClase(UserList(UserIndex).Clase).Escudo) / 2
 End Function
 
 Private Function PoderEvasion(ByVal UserIndex As Integer) As Long
@@ -75,7 +75,7 @@ Private Function PoderEvasion(ByVal UserIndex As Integer) As Long
     Dim lTemp As Long
     With UserList(UserIndex)
         lTemp = (.Stats.UserSkills(eSkill.Tacticas) + _
-          .Stats.UserSkills(eSkill.Tacticas) / 33 * .Stats.UserAtributos(eAtributos.Agilidad)) * ModClase(.clase).Evasion
+          .Stats.UserSkills(eSkill.Tacticas) / 33 * .Stats.UserAtributos(eAtributos.Agilidad)) * ModClase(.Clase).Evasion
        
         PoderEvasion = (lTemp + (2.5 * MaximoInt(.Stats.ELV - 12, 0)))
     End With
@@ -92,13 +92,13 @@ Private Function PoderAtaqueArma(ByVal UserIndex As Integer) As Long
     
     With UserList(UserIndex)
         If .Stats.UserSkills(eSkill.Armas) < 31 Then
-            PoderAtaqueTemp = .Stats.UserSkills(eSkill.Armas) * ModClase(.clase).AtaqueArmas
+            PoderAtaqueTemp = .Stats.UserSkills(eSkill.Armas) * ModClase(.Clase).AtaqueArmas
         ElseIf .Stats.UserSkills(eSkill.Armas) < 61 Then
-            PoderAtaqueTemp = (.Stats.UserSkills(eSkill.Armas) + .Stats.UserAtributos(eAtributos.Agilidad)) * ModClase(.clase).AtaqueArmas
+            PoderAtaqueTemp = (.Stats.UserSkills(eSkill.Armas) + .Stats.UserAtributos(eAtributos.Agilidad)) * ModClase(.Clase).AtaqueArmas
         ElseIf .Stats.UserSkills(eSkill.Armas) < 91 Then
-            PoderAtaqueTemp = (.Stats.UserSkills(eSkill.Armas) + 2 * .Stats.UserAtributos(eAtributos.Agilidad)) * ModClase(.clase).AtaqueArmas
+            PoderAtaqueTemp = (.Stats.UserSkills(eSkill.Armas) + 2 * .Stats.UserAtributos(eAtributos.Agilidad)) * ModClase(.Clase).AtaqueArmas
         Else
-           PoderAtaqueTemp = (.Stats.UserSkills(eSkill.Armas) + 3 * .Stats.UserAtributos(eAtributos.Agilidad)) * ModClase(.clase).AtaqueArmas
+           PoderAtaqueTemp = (.Stats.UserSkills(eSkill.Armas) + 3 * .Stats.UserAtributos(eAtributos.Agilidad)) * ModClase(.Clase).AtaqueArmas
         End If
         
         PoderAtaqueArma = (PoderAtaqueTemp + (2.5 * MaximoInt(.Stats.ELV - 12, 0)))
@@ -116,13 +116,13 @@ Private Function PoderAtaqueProyectil(ByVal UserIndex As Integer) As Long
     
     With UserList(UserIndex)
         If .Stats.UserSkills(eSkill.Proyectiles) < 31 Then
-            PoderAtaqueTemp = .Stats.UserSkills(eSkill.Proyectiles) * ModClase(.clase).AtaqueProyectiles
+            PoderAtaqueTemp = .Stats.UserSkills(eSkill.Proyectiles) * ModClase(.Clase).AtaqueProyectiles
         ElseIf .Stats.UserSkills(eSkill.Proyectiles) < 61 Then
-            PoderAtaqueTemp = (.Stats.UserSkills(eSkill.Proyectiles) + .Stats.UserAtributos(eAtributos.Agilidad)) * ModClase(.clase).AtaqueProyectiles
+            PoderAtaqueTemp = (.Stats.UserSkills(eSkill.Proyectiles) + .Stats.UserAtributos(eAtributos.Agilidad)) * ModClase(.Clase).AtaqueProyectiles
         ElseIf .Stats.UserSkills(eSkill.Proyectiles) < 91 Then
-            PoderAtaqueTemp = (.Stats.UserSkills(eSkill.Proyectiles) + 2 * .Stats.UserAtributos(eAtributos.Agilidad)) * ModClase(.clase).AtaqueProyectiles
+            PoderAtaqueTemp = (.Stats.UserSkills(eSkill.Proyectiles) + 2 * .Stats.UserAtributos(eAtributos.Agilidad)) * ModClase(.Clase).AtaqueProyectiles
         Else
-            PoderAtaqueTemp = (.Stats.UserSkills(eSkill.Proyectiles) + 3 * .Stats.UserAtributos(eAtributos.Agilidad)) * ModClase(.clase).AtaqueProyectiles
+            PoderAtaqueTemp = (.Stats.UserSkills(eSkill.Proyectiles) + 3 * .Stats.UserAtributos(eAtributos.Agilidad)) * ModClase(.Clase).AtaqueProyectiles
         End If
         
         PoderAtaqueProyectil = (PoderAtaqueTemp + (2.5 * MaximoInt(.Stats.ELV - 12, 0)))
@@ -140,13 +140,13 @@ Private Function PoderAtaqueWrestling(ByVal UserIndex As Integer) As Long
     
     With UserList(UserIndex)
         If .Stats.UserSkills(eSkill.Wrestling) < 31 Then
-            PoderAtaqueTemp = .Stats.UserSkills(eSkill.Wrestling) * ModClase(.clase).AtaqueWrestling
+            PoderAtaqueTemp = .Stats.UserSkills(eSkill.Wrestling) * ModClase(.Clase).AtaqueWrestling
         ElseIf .Stats.UserSkills(eSkill.Wrestling) < 61 Then
-            PoderAtaqueTemp = (.Stats.UserSkills(eSkill.Wrestling) + .Stats.UserAtributos(eAtributos.Agilidad)) * ModClase(.clase).AtaqueWrestling
+            PoderAtaqueTemp = (.Stats.UserSkills(eSkill.Wrestling) + .Stats.UserAtributos(eAtributos.Agilidad)) * ModClase(.Clase).AtaqueWrestling
         ElseIf .Stats.UserSkills(eSkill.Wrestling) < 91 Then
-            PoderAtaqueTemp = (.Stats.UserSkills(eSkill.Wrestling) + 2 * .Stats.UserAtributos(eAtributos.Agilidad)) * ModClase(.clase).AtaqueWrestling
+            PoderAtaqueTemp = (.Stats.UserSkills(eSkill.Wrestling) + 2 * .Stats.UserAtributos(eAtributos.Agilidad)) * ModClase(.Clase).AtaqueWrestling
         Else
-            PoderAtaqueTemp = (.Stats.UserSkills(eSkill.Wrestling) + 3 * .Stats.UserAtributos(eAtributos.Agilidad)) * ModClase(.clase).AtaqueWrestling
+            PoderAtaqueTemp = (.Stats.UserSkills(eSkill.Wrestling) + 3 * .Stats.UserAtributos(eAtributos.Agilidad)) * ModClase(.Clase).AtaqueWrestling
         End If
         
         PoderAtaqueWrestling = (PoderAtaqueTemp + (2.5 * MaximoInt(.Stats.ELV - 12, 0)))
@@ -266,7 +266,7 @@ Public Function CalcularDaño(ByVal UserIndex As Integer, Optional ByVal NpcIndex
             ' Ataca a un npc?
             If NpcIndex > 0 Then
                 If Arma.proyectil = 1 Then
-                    ModifClase = ModClase(.clase).DañoProyectiles
+                    ModifClase = ModClase(.Clase).DañoProyectiles
                     DañoArma = RandomNumber(Arma.MinHIT, Arma.MaxHIT)
                     DañoMaxArma = Arma.MaxHIT
                     
@@ -277,7 +277,7 @@ Public Function CalcularDaño(ByVal UserIndex As Integer, Optional ByVal NpcIndex
                         'DañoMaxArma = DañoMaxArma + proyectil.MaxHIT
                     End If
                 Else
-                    ModifClase = ModClase(.clase).DañoArmas
+                    ModifClase = ModClase(.Clase).DañoArmas
                     
                     If .Invent.WeaponEqpObjIndex = EspadaMataDragonesIndex Then ' Usa la mata Dragones?
                         If Npclist(NpcIndex).NPCtype = DRAGON Then 'Ataca Dragon?
@@ -295,7 +295,7 @@ Public Function CalcularDaño(ByVal UserIndex As Integer, Optional ByVal NpcIndex
                 End If
             Else ' Ataca usuario
                 If Arma.proyectil = 1 Then
-                    ModifClase = ModClase(.clase).DañoProyectiles
+                    ModifClase = ModClase(.Clase).DañoProyectiles
                     DañoArma = RandomNumber(Arma.MinHIT, Arma.MaxHIT)
                     DañoMaxArma = Arma.MaxHIT
                      
@@ -306,10 +306,10 @@ Public Function CalcularDaño(ByVal UserIndex As Integer, Optional ByVal NpcIndex
                         'DañoMaxArma = DañoMaxArma + proyectil.MaxHIT
                     End If
                 Else
-                    ModifClase = ModClase(.clase).DañoArmas
+                    ModifClase = ModClase(.Clase).DañoArmas
                     
                     If .Invent.WeaponEqpObjIndex = EspadaMataDragonesIndex Then
-                        ModifClase = ModClase(.clase).DañoArmas
+                        ModifClase = ModClase(.Clase).DañoArmas
                         DañoArma = 1 ' Si usa la espada mataDragones daño es 1
                         DañoMaxArma = 1
                     Else
@@ -319,7 +319,7 @@ Public Function CalcularDaño(ByVal UserIndex As Integer, Optional ByVal NpcIndex
                 End If
             End If
         Else
-            ModifClase = ModClase(.clase).DañoWrestling
+            ModifClase = ModClase(.Clase).DañoWrestling
             
             ' Daño sin guantes
             DañoMinArma = 4
@@ -994,11 +994,11 @@ On Error GoTo Errhandler
             End If
             
             'Pablo (ToxicWaste): Guantes de Hurto del Bandido en acción
-            If .clase = eClass.Bandit Then
+            If .Clase = eClass.Bandido Then
                 Call DoDesequipar(AtacanteIndex, VictimaIndex)
                 
             'y ahora, el ladrón puede llegar a paralizar con el golpe.
-            ElseIf .clase = eClass.Thief Then
+            ElseIf .Clase = eClass.Ladron Then
                 Call DoHandInmo(AtacanteIndex, VictimaIndex)
             End If
             
@@ -1017,7 +1017,7 @@ On Error GoTo Errhandler
             Call SubirSkill(VictimaIndex, eSkill.Tacticas)
         End If
         
-        If .clase = eClass.Thief Then Call Desarmar(AtacanteIndex, VictimaIndex)
+        If .Clase = eClass.Ladron Then Call Desarmar(AtacanteIndex, VictimaIndex)
     End With
     
     UsuarioAtacaUsuario = True
@@ -1122,8 +1122,6 @@ On Error GoTo Errhandler
             
             ' No cuenta la muerte si estaba en estado atacable
             If UserList(VictimaIndex).flags.AtacablePor <> AtacanteIndex Then
-                'Store it!
-                Call Statistics.StoreFrag(AtacanteIndex, VictimaIndex)
                 
                 Call ContarMuerte(VictimaIndex, AtacanteIndex)
             End If

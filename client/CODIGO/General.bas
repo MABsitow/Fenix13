@@ -792,7 +792,7 @@ UserMap = 1
     Audio.SoundActivated = Not ClientSetup.bNoSound
     Audio.SoundEffectsActivated = Not ClientSetup.bNoSoundEffects
     'Inicializamos el inventario gráfico
-    Call Inventario.Initialize(DirectDraw, frmMain.PicInv, MAX_INVENTORY_SLOTS)
+    Call Inventario.Initialize(DirectDraw, frmMain.picInv, MAX_INVENTORY_SLOTS)
     
     Call Audio.MusicMP3Play(App.path & "\MP3\" & MP3_Inicio & ".mp3")
     
@@ -1114,18 +1114,38 @@ Private Sub InicializarNombres()
     ListaRazas(eRaza.Gnomo) = "Gnomo"
     ListaRazas(eRaza.Enano) = "Enano"
 
-    ListaClases(eClass.Mage) = "Mago"
-    ListaClases(eClass.Cleric) = "Clerigo"
-    ListaClases(eClass.Warrior) = "Guerrero"
-    ListaClases(eClass.Assasin) = "Asesino"
-    ListaClases(eClass.Thief) = "Ladron"
-    ListaClases(eClass.Bard) = "Bardo"
-    ListaClases(eClass.Druid) = "Druida"
-    ListaClases(eClass.Bandit) = "Bandido"
+    ListaClases(eClass.Ciudadano) = "Ciudadano"
+    ListaClases(eClass.Trabajador) = "Trabajador"
+    ListaClases(eClass.Experto_Minerales) = "Experto en minerales"
+    ListaClases(eClass.Minero) = "Minero"
+    ListaClases(eClass.Herrero) = "Herrero"
+    ListaClases(eClass.Experto_Madera) = "Experto en uso de madera"
+    ListaClases(eClass.Talador) = "Leñador"
+    ListaClases(eClass.Carpintero) = "Carpintero"
+    ListaClases(eClass.Pescador) = "Pescador"
+    ListaClases(eClass.Sastre) = "Sastre"
+    ListaClases(eClass.Alquimista) = "Alquimista"
+    ListaClases(eClass.Luchador) = "Luchador"
+    ListaClases(eClass.Con_Mana) = "Con uso de mana"
+    ListaClases(eClass.Hechicero) = "Hechicero"
+    ListaClases(eClass.Mago) = "Mago"
+    ListaClases(eClass.Nigromante) = "Nigromante"
+    ListaClases(eClass.Orden_Sagrada) = "Orden sagrada"
     ListaClases(eClass.Paladin) = "Paladin"
-    ListaClases(eClass.Hunter) = "Cazador"
-    ListaClases(eClass.Worker) = "Trabajador"
-    ListaClases(eClass.Pirat) = "Pirata"
+    ListaClases(eClass.Clerigo) = "Clerigo"
+    ListaClases(eClass.Naturalista) = "Naturalista"
+    ListaClases(eClass.Bardo) = "Bardo"
+    ListaClases(eClass.Druida) = "Druida"
+    ListaClases(eClass.Sigiloso) = "Sigiloso"
+    ListaClases(eClass.Asesino) = "Asesino"
+    ListaClases(eClass.Cazador) = "Cazador"
+    ListaClases(eClass.Sin_Mana) = "Sin uso de mana"
+    ListaClases(eClass.Arquero) = "Arquero"
+    ListaClases(eClass.Guerrero) = "Guerrero"
+    ListaClases(eClass.Caballero) = "Caballero"
+    ListaClases(eClass.Bandido) = "Bandido"
+    ListaClases(eClass.Pirata) = "Pirata"
+    ListaClases(eClass.Ladron) = "Ladron"
     
     SkillsNames(eSkill.Magia) = "Magia"
     SkillsNames(eSkill.Robar) = "Robar"

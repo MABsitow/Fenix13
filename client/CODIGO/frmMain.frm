@@ -183,6 +183,7 @@ Begin VB.Form frmMain
       _ExtentY        =   2619
       _Version        =   393217
       BackColor       =   0
+      Enabled         =   -1  'True
       ReadOnly        =   -1  'True
       ScrollBars      =   2
       DisableNoScroll =   -1  'True
@@ -207,6 +208,18 @@ Begin VB.Form frmMain
       Top             =   2400
       Visible         =   0   'False
       Width           =   2565
+   End
+   Begin VB.Label lblClase 
+      AutoSize        =   -1  'True
+      BackStyle       =   0  'Transparent
+      Caption         =   "C"
+      ForeColor       =   &H00FFFFFF&
+      Height          =   195
+      Left            =   10680
+      TabIndex        =   30
+      Top             =   1200
+      Visible         =   0   'False
+      Width           =   105
    End
    Begin VB.Image imgMapa 
       Height          =   300
@@ -1333,6 +1346,10 @@ Private Sub lblScroll_Click(Index As Integer)
     Inventario.ScrollInventory (Index = 0)
 End Sub
 
+Private Sub lblClase_Click()
+    Call WriteRequestClaseForm
+End Sub
+
 Private Sub lblCerrar_Click()
     prgRun = False
 End Sub
@@ -1421,8 +1438,8 @@ Private Sub SendTxt_KeyUp(KeyCode As Integer, Shift As Integer)
         KeyCode = 0
         SendTxt.Visible = False
         
-        If PicInv.Visible Then
-            PicInv.SetFocus
+        If picInv.Visible Then
+            picInv.SetFocus
         Else
             hlst.SetFocus
         End If
@@ -1714,13 +1731,13 @@ Private Sub Label4_Click()
     InvEqu.Picture = LoadPicture(App.path & "\Graficos\Centroinventario.jpg")
 
     ' Activo controles de inventario
-    PicInv.Visible = True
+    picInv.Visible = True
     imgInvScrollUp.Visible = True
     imgInvScrollDown.Visible = True
 
     ' Desactivo controles de hechizo
     hlst.Visible = False
-    cmdINFO.Visible = False
+    cmdInfo.Visible = False
     CmdLanzar.Visible = False
     
     cmdMoverHechi(0).Visible = False
@@ -1735,14 +1752,14 @@ Private Sub Label7_Click()
     
     ' Activo controles de hechizos
     hlst.Visible = True
-    cmdINFO.Visible = True
+    cmdInfo.Visible = True
     CmdLanzar.Visible = True
     
     cmdMoverHechi(0).Visible = True
     cmdMoverHechi(1).Visible = True
     
     ' Desactivo controles de inventario
-    PicInv.Visible = False
+    picInv.Visible = False
     imgInvScrollUp.Visible = False
     imgInvScrollDown.Visible = False
 
@@ -1774,8 +1791,8 @@ On Error Resume Next  'el .SetFocus causaba errores al salir y volver a entrar
         (Not frmMSG.Visible) And (Not MirandoForo) And _
         (Not frmEstadisticas.Visible) And (Not frmCantidad.Visible) Then
          
-        If PicInv.Visible Then
-            PicInv.SetFocus
+        If picInv.Visible Then
+            picInv.SetFocus
         ElseIf hlst.Visible Then
             hlst.SetFocus
         End If
@@ -1783,8 +1800,8 @@ On Error Resume Next  'el .SetFocus causaba errores al salir y volver a entrar
 End Sub
 
 Private Sub RecTxt_KeyDown(KeyCode As Integer, Shift As Integer)
-    If PicInv.Visible Then
-        PicInv.SetFocus
+    If picInv.Visible Then
+        picInv.SetFocus
     Else
         hlst.SetFocus
     End If
@@ -1840,8 +1857,8 @@ Private Sub SendCMSTXT_KeyUp(KeyCode As Integer, Shift As Integer)
         KeyCode = 0
         Me.SendCMSTXT.Visible = False
         
-        If PicInv.Visible Then
-            PicInv.SetFocus
+        If picInv.Visible Then
+            picInv.SetFocus
         Else
             hlst.SetFocus
         End If

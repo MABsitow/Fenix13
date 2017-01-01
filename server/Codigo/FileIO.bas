@@ -407,8 +407,6 @@ Public Sub DoBackUp()
     
     Call SendData(SendTarget.ToAll, 0, PrepareMessagePauseToggle())
     
-    'Call EstadisticasWeb.Informar(EVENTO_NUEVO_CLAN, 0)
-    
     haciendoBK = False
     
     'Log
@@ -879,9 +877,6 @@ Sub LoadOBJData()
             
             Num = val(Leer.GetValue("OBJ" & Object, "NumClases"))
             
-            'todo clases
-            If Num > NUMCLASES Then Num = NUMCLASES
-            
             Dim i As Integer
             For i = 1 To Num
                 .ClaseProhibida(i) = val(Leer.GetValue("OBJ" & Object, "CP" & i))
@@ -1063,7 +1058,7 @@ Sub LoadUserInit(ByVal UserIndex As Integer, ByRef UserFile As clsIniReader)
         .email = UserFile.GetValue("CONTACTO", "Email")
         
         .Genero = UserFile.GetValue("INIT", "Genero")
-        .clase = UserFile.GetValue("INIT", "Clase")
+        .Clase = UserFile.GetValue("INIT", "Clase")
         .raza = UserFile.GetValue("INIT", "Raza")
         .Hogar = UserFile.GetValue("INIT", "Hogar")
         .Char.heading = CInt(UserFile.GetValue("INIT", "Heading"))
@@ -1613,8 +1608,7 @@ Sub LoadSini()
     'PorcentajeRecuperoMana = val(GetVar(IniPath & "Server.ini", "BALANCE", "PorcentajeRecuperoMana"))
     
     ''&&&&&&&&&&&&&&&&&&&&& FIN BALANCE &&&&&&&&&&&&&&&&&&&&&&&
-    Call Statistics.Initialize
-    
+
     Ullathorpe.Map = GetVar(DatPath & "Ciudades.dat", "Ullathorpe", "Mapa")
     Ullathorpe.X = GetVar(DatPath & "Ciudades.dat", "Ullathorpe", "X")
     Ullathorpe.Y = GetVar(DatPath & "Ciudades.dat", "Ullathorpe", "Y")
@@ -1675,7 +1669,7 @@ With UserList(UserIndex)
 
     'ESTO TIENE QUE EVITAR ESE BUGAZO QUE NO SE POR QUE GRABA USUARIOS NULOS
     'clase=0 es el error, porq el enum empieza de 1!!
-    If .clase = 0 Or .Stats.ELV = 0 Then
+    If .Clase = 0 Or .Stats.ELV = 0 Then
         Call LogCriticEvent("Estoy intentantdo guardar un usuario nulo de nombre: " & .Name)
         Exit Sub
     End If
@@ -1762,7 +1756,7 @@ With UserList(UserIndex)
     Call WriteVar(UserFile, "INIT", "Genero", .Genero)
     Call WriteVar(UserFile, "INIT", "Raza", .raza)
     Call WriteVar(UserFile, "INIT", "Hogar", .Hogar)
-    Call WriteVar(UserFile, "INIT", "Clase", .clase)
+    Call WriteVar(UserFile, "INIT", "Clase", .Clase)
     Call WriteVar(UserFile, "INIT", "Desc", .desc)
     
     Call WriteVar(UserFile, "INIT", "Heading", CStr(.Char.heading))

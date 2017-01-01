@@ -258,6 +258,21 @@ On Error Resume Next
     LevelSkill(49).LevelValue = 100
     LevelSkill(50).LevelValue = 100
     
+    ELUs(1) = 300
+    Dim i As Long
+    
+    For i = 2 To 10
+        ELUs(i) = ELUs(i - 1) * 1.5
+    Next
+    
+    For i = 11 To 24
+        ELUs(i) = ELUs(i - 1) * 1.3
+    Next
+    
+    For i = 25 To STAT_MAXELV - 1
+        ELUs(i) = ELUs(i - 1) * 1.2
+    Next
+
     
     ListaRazas(eRaza.Humano) = "Humano"
     ListaRazas(eRaza.Elfo) = "Elfo"
@@ -265,18 +280,42 @@ On Error Resume Next
     ListaRazas(eRaza.Gnomo) = "Gnomo"
     ListaRazas(eRaza.Enano) = "Enano"
     
-    ListaClases(eClass.Mage) = "Mago"
-    ListaClases(eClass.Cleric) = "Clerigo"
-    ListaClases(eClass.Warrior) = "Guerrero"
-    ListaClases(eClass.Assasin) = "Asesino"
-    ListaClases(eClass.Thief) = "Ladron"
-    ListaClases(eClass.Bard) = "Bardo"
-    ListaClases(eClass.Druid) = "Druida"
-    ListaClases(eClass.Bandit) = "Bandido"
+    ListaClases(eClass.Ciudadano) = "Ciudadano"
+    ListaClases(eClass.Trabajador) = "Trabajador"
+    ListaClases(eClass.Experto_Minerales) = "Experto en minerales"
+    ListaClases(eClass.Minero) = "Minero"
+    ListaClases(eClass.Herrero) = "Herrero"
+    ListaClases(eClass.Experto_Madera) = "Experto en uso de madera"
+    ListaClases(eClass.Talador) = "Leñador"
+    ListaClases(eClass.Carpintero) = "Carpintero"
+    ListaClases(eClass.Pescador) = "Pescador"
+    ListaClases(eClass.Sastre) = "Sastre"
+    ListaClases(eClass.Alquimista) = "Alquimista"
+    ListaClases(eClass.Luchador) = "Luchador"
+    ListaClases(eClass.Con_Mana) = "Con uso de mana"
+    ListaClases(eClass.Hechicero) = "Hechicero"
+    ListaClases(eClass.Mago) = "Mago"
+    ListaClases(eClass.Nigromante) = "Nigromante"
+    ListaClases(eClass.Orden_Sagrada) = "Orden sagrada"
     ListaClases(eClass.Paladin) = "Paladin"
-    ListaClases(eClass.Hunter) = "Cazador"
-    ListaClases(eClass.Worker) = "Trabajador"
-    ListaClases(eClass.Pirat) = "Pirata"
+    ListaClases(eClass.Clerigo) = "Clerigo"
+    ListaClases(eClass.Naturalista) = "Naturalista"
+    ListaClases(eClass.Bardo) = "Bardo"
+    ListaClases(eClass.Druida) = "Druida"
+    ListaClases(eClass.Sigiloso) = "Sigiloso"
+    ListaClases(eClass.Asesino) = "Asesino"
+    ListaClases(eClass.Cazador) = "Cazador"
+    ListaClases(eClass.Sin_Mana) = "Sin uso de mana"
+    ListaClases(eClass.Arquero) = "Arquero"
+    ListaClases(eClass.Guerrero) = "Guerrero"
+    ListaClases(eClass.Caballero) = "Caballero"
+    ListaClases(eClass.Bandido) = "Bandido"
+    ListaClases(eClass.Pirata) = "Pirata"
+    ListaClases(eClass.Ladron) = "Ladron"
+    
+    ReDim Recompensas(1 To NUMCLASES, 1 To 3, 1 To 2) As Recompensa
+
+    Call EstablecerRestas
     
     SkillsNames(eSkill.Magia) = "Magia"
     SkillsNames(eSkill.Robar) = "Robar"
@@ -462,8 +501,6 @@ On Error Resume Next
     End If
     
     tInicioServer = GetTickCount() And &H7FFFFFFF
-    Call InicializaEstadisticas
-
 End Sub
 
 Function FileExist(ByVal File As String, Optional FileType As VbFileAttribute = vbNormal) As Boolean
@@ -906,9 +943,6 @@ On Error Resume Next
     For LoopC = 1 To MaxUsers
         Call CloseSocket(LoopC)
     Next
-    
-    'Initialize statistics!!
-    Call Statistics.Initialize
     
     For LoopC = 1 To UBound(UserList())
         Set UserList(LoopC).incomingData = Nothing
@@ -1523,25 +1557,6 @@ Sub GuardarUsuarios()
     Call SendData(SendTarget.ToAll, 0, PrepareMessagePauseToggle())
 
     haciendoBK = False
-End Sub
-
-
-Sub InicializaEstadisticas()
-'***************************************************
-'Author: Unknown
-'Last Modification: -
-'
-'***************************************************
-
-    Dim Ta As Long
-    Ta = GetTickCount() And &H7FFFFFFF
-    
-    Call EstadisticasWeb.Inicializa(frmMain.hWnd)
-    Call EstadisticasWeb.Informar(CANTIDAD_MAPAS, NumMaps)
-    Call EstadisticasWeb.Informar(CANTIDAD_ONLINE, NumUsers)
-    Call EstadisticasWeb.Informar(UPTIME_SERVER, (Ta - tInicioServer) / 1000)
-    Call EstadisticasWeb.Informar(RECORD_USUARIOS, recordusuarios)
-
 End Sub
 
 Public Sub FreeNPCs()

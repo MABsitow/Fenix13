@@ -45,7 +45,6 @@ End Type
 Public Apuestas As tAPuestas
 
 Public tInicioServer As Long
-Public EstadisticasWeb As New clsEstadisticasIPC
 
 'INTERVALOS
 Public SanaIntervaloSinDescansar As Integer
@@ -442,31 +441,6 @@ Public Sub BanIpCargar()
 
 End Sub
 
-Public Sub ActualizaEstadisticasWeb()
-'***************************************************
-'Author: Unknown
-'Last Modification: -
-'
-'***************************************************
-
-    Static Andando As Boolean
-    Static Contador As Long
-    Dim Tmp As Boolean
-    
-    Contador = Contador + 1
-    
-    If Contador >= 10 Then
-        Contador = 0
-        Tmp = EstadisticasWeb.EstadisticasAndando()
-        
-        If Andando = False And Tmp = True Then
-            Call InicializaEstadisticas
-        End If
-        
-        Andando = Tmp
-    End If
-
-End Sub
 
 Public Function UserDarPrivilegioLevel(ByVal Name As String) As PlayerType
 '***************************************************

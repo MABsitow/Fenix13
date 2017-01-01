@@ -73,7 +73,7 @@ On Error GoTo manejador
         If ObjData(OBJIndex).ClaseProhibida(1) <> 0 Then
             Dim i As Integer
             For i = 1 To NUMCLASES
-                If ObjData(OBJIndex).ClaseProhibida(i) = UserList(UserIndex).clase Then
+                If ObjData(OBJIndex).ClaseProhibida(i) = UserList(UserIndex).Clase Then
                     ClasePuedeUsarItem = False
                     sMotivo = "Tu clase no puede usar este objeto."
                     Exit Function
@@ -239,7 +239,7 @@ With UserList(UserIndex)
                 If EsGM(UserIndex) Then Call LogGM(.Name, "Tiró cantidad:" & MiObj.Amount & " Objeto:" & ObjData(MiObj.OBJIndex).Name)
                 Dim AuxPos As WorldPos
                 
-                If .clase = eClass.Pirat And .Invent.BarcoObjIndex = 476 Then
+                If .Clase = eClass.Pirata And .Invent.BarcoObjIndex = 476 Then
                     AuxPos = TirarItemAlPiso(.Pos, MiObj, False)
                     If AuxPos.X <> 0 And AuxPos.Y <> 0 Then
                         .Stats.GLD = .Stats.GLD - MiObj.Amount
@@ -1504,7 +1504,7 @@ Sub UseInvItem(ByVal UserIndex As Integer, ByVal Slot As Byte)
             Case eOBJType.otBarcos
                 'Verifica si esta aproximado al agua antes de permitirle navegar
                 If .Stats.ELV < 25 Then
-                    If .clase <> eClass.Worker And .clase <> eClass.Pirat Then
+                    If Not esTrabajador(.Clase) And .Clase <> eClass.Pirata Then
                         Call WriteConsoleMsg(UserIndex, "Para recorrer los mares debes ser nivel 25 o superior.", FontTypeNames.FONTTYPE_INFO)
                         Exit Sub
                     Else
@@ -1629,7 +1629,7 @@ Sub TirarTodosLosItems(ByVal UserIndex As Integer)
 
                     DropAgua = True
                     ' Es pirata?
-                    If .clase = eClass.Pirat Then
+                    If .Clase = eClass.Pirata Then
                         ' Si tiene galeon equipado
                         If .Invent.BarcoObjIndex = 476 Then
                             ' Limitación por nivel, después dropea normalmente

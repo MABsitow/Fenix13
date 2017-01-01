@@ -137,19 +137,39 @@ Mago=0.6
 Druida=0.75
 Trabajador=0.7
 
-[MODVIDA]
-Guerrero=10
-Cazador=9.5
-Paladin=9.5
-Bandido=9.5
-Asesino=8.5
-Pirata=9.5
-Ladron=10
-Clerigo=8.5
-Bardo=8.5
-Mago=7.5
-Druida=8.5
-Trabajador=9.5
+[MODVIDA] 'Mas grande el numero = menos vida x lvl
+Ciudadano=3
+Trabajador=2.5
+Experto en minerales=2.5
+Minero=2.5
+Herrero=2.5
+Experto en uso de madera=2.5
+Leñador=2.5
+Carpintero=2.5
+Pescador=2.5
+Sastre=2.5
+Alquimista=2.5
+Luchador=3
+Con uso de Mana=3
+Hechicero=3
+Mago=3
+Nigromante=3
+Orden Sagrada=1.5
+Paladin=0.5
+Clerigo=1.5
+Naturalista=2.5
+Bardo=1.5
+Druida=3
+Sigiloso=1.5
+Asesino=1.5
+Cazador=0.5
+Sin uso de mana=2
+Arquero=0
+Guerrero=0
+Caballero=0
+Bandido=0
+Pirata=1.5
+Ladron=2.5
 
 [DISTRIBUCION]
 La suma de los "E" debe ser siempre 100.

@@ -359,8 +359,6 @@ End If
 
 Call PasarSegundo 'sistema de desconexion de 10 segs
 
-Call ActualizaEstadisticasWeb
-
 Exit Sub
 
 errhand:
@@ -379,7 +377,7 @@ Static MinutosLatsClean As Long
 Static MinsPjesSave As Long
 
 Dim i As Integer
-Dim num As Long
+Dim Num As Long
 
 Minutos = Minutos + 1
 
@@ -498,9 +496,6 @@ End Sub
 
 Private Sub Form_Unload(Cancel As Integer)
 On Error Resume Next
-
-'Save stats!!!
-Call Statistics.DumpStatistics
 
 Call QuitarIconoSystray
 

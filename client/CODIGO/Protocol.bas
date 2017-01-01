@@ -142,6 +142,8 @@ Private Enum ServerPacketID
     MultiMessage
     StopWorking
     CancelOfferItem
+    SubeClase
+    ShowFormClase
 End Enum
 
 Private Enum ClientPacketID
@@ -232,6 +234,8 @@ Private Enum ClientPacketID
     ShareNpc                '/COMPARTIRNPC
     StopSharingNpc          '/NOCOMPARTIRNPC
     Consulta
+    RequestClaseForm
+    EligioClase
 End Enum
 
 Public Enum FontTypeNames
@@ -646,10 +650,7 @@ On Error Resume Next
         
         Case ServerPacketID.UpdateTagAndStatus
             Call HandleUpdateTagAndStatus
-        
             
-        
-        
         '*******************
         'GM messages
         '*******************
@@ -668,6 +669,9 @@ On Error Resume Next
         Case ServerPacketID.UserNameList            ' LISTUSU
             Call HandleUserNameList
             
+        '*******************
+        '/END GM messages
+        '*******************
         
         Case ServerPacketID.UpdateStrenghtAndDexterity
             Call HandleUpdateStrenghtAndDexterity
@@ -689,6 +693,13 @@ On Error Resume Next
             
         Case ServerPacketID.CancelOfferItem
             Call HandleCancelOfferItem
+        
+        Case ServerPacketID.SubeClase
+            Call HandleSubeClase
+        
+        
+        Case ServerPacketID.ShowFormClase
+            Call HandleShowFormClase
             
         Case Else
             'ERROR : Abort!
@@ -1146,7 +1157,7 @@ Private Sub HandleBankInit()
     
         BankGold = incomingData.ReadLong
     Call InvBanco(0).Initialize(DirectDraw, frmBancoObj.PicBancoInv, MAX_BANCOINVENTORY_SLOTS)
-    Call InvBanco(1).Initialize(DirectDraw, frmBancoObj.PicInv, Inventario.MaxObjs)
+    Call InvBanco(1).Initialize(DirectDraw, frmBancoObj.picInv, Inventario.MaxObjs)
     
     For i = 1 To Inventario.MaxObjs
         With Inventario
@@ -3685,7 +3696,7 @@ Private Sub HandleMiniStats()
         .CriminalesMatados = incomingData.ReadLong()
         .UsuariosMatados = incomingData.ReadLong()
         .NpcsMatados = incomingData.ReadInteger()
-        .Clase = ListaClases(incomingData.ReadByte())
+        .clase = ListaClases(incomingData.ReadByte())
         .PenaCarcel = incomingData.ReadLong()
     End With
 End Sub
@@ -4530,7 +4541,6 @@ Public Sub WriteLoginNewChar()
         Call .WriteByte(App.Revision)
         Call .WriteByte(UserRaza)
         Call .WriteByte(UserSexo)
-        Call .WriteByte(UserClase)
         Call .WriteInteger(UserHead)
         
         Call .WriteASCIIString(UserEmail)
@@ -8274,6 +8284,58 @@ Public Sub WriteSetIniVar(ByRef sLlave As String, ByRef sClave As String, ByRef 
         Call .WriteASCIIString(sClave)
         Call .WriteASCIIString(sValor)
     End With
+End Sub
+
+Private Sub HandleSubeClase()
+    With incomingData
+        
+        .ReadByte 'remove id
+        
+        frmMain.lblClase.Visible = .ReadBoolean
+    
+    End With
+End Sub
+
+Public Sub WriteRequestClaseForm()
+    
+    With outgoingData
+    
+        Call .WriteByte(ClientPacketID.RequestClaseForm)
+    
+    End With
+End Sub
+
+Private Sub HandleShowFormClase()
+
+    With incomingData
+            
+            Call .ReadByte 'remove id
+            
+            UserClase = .ReadByte()
+            
+            Select Case UserClase
+            
+                Case eClass.Trabajador, eClass.Con_Mana
+                    frmSubeClase4.Show
+                    frmSubeClase4.SetFocus
+                
+                Case Else
+                    frmSubeClase2.Show
+                    frmSubeClase2.SetFocus
+            End Select
+    
+    End With
+End Sub
+
+Public Sub WriteSendEligioSubClase(ByVal Index As Integer)
+    
+    With outgoingData
+        
+        .WriteByte (ClientPacketID.EligioClase)
+        .WriteByte Index
+    
+    End With
+
 End Sub
 
 ''

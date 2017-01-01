@@ -48,13 +48,13 @@ On Error GoTo Errhandler
         .Counters.TiempoOculto = .Counters.TiempoOculto - 1
         If .Counters.TiempoOculto <= 0 Then
             
-            If .clase = eClass.Bandit Then
+            If .Clase = eClass.Bandido Then
                 .Counters.TiempoOculto = Int(IntervaloOculto / 2)
             Else
                 .Counters.TiempoOculto = IntervaloOculto
             End If
             
-            If .clase = eClass.Hunter And .Stats.UserSkills(eSkill.Ocultarse) > 90 Then
+            If .Clase = eClass.Cazador And .Stats.UserSkills(eSkill.Ocultarse) > 90 Then
                 If .Invent.ArmourEqpObjIndex = 648 Or .Invent.ArmourEqpObjIndex = 360 Then
                     Exit Sub
                 End If
@@ -63,7 +63,7 @@ On Error GoTo Errhandler
             .flags.Oculto = 0
             
             If .flags.Navegando = 1 Then
-                If .clase = eClass.Pirat Then
+                If .Clase = eClass.Pirata Then
                     ' Pierde la apariencia de fragata fantasmal
                     Call ToogleBoatBody(UserIndex)
                     Call WriteConsoleMsg(UserIndex, "¡Has recuperado tu apariencia normal!", FontTypeNames.FONTTYPE_INFO)
@@ -165,7 +165,7 @@ Public Sub DoNavega(ByVal UserIndex As Integer, ByRef Barco As ObjData, ByVal Sl
     Dim ModNave As Single
     
     With UserList(UserIndex)
-        ModNave = ModNavegacion(.clase, UserIndex)
+        ModNave = ModNavegacion(.Clase, UserIndex)
         
         If .Stats.UserSkills(eSkill.Navegacion) / ModNave < Barco.MinSkill Then
             Call WriteConsoleMsg(UserIndex, "No tienes suficientes conocimientos para usar este barco.", FontTypeNames.FONTTYPE_INFO)
@@ -186,7 +186,7 @@ Public Sub DoNavega(ByVal UserIndex As Integer, ByRef Barco As ObjData, ByVal Sl
             
                 Call ToogleBoatBody(UserIndex)
                 
-                If .clase = eClass.Pirat Then
+                If .Clase = eClass.Pirata Then
                     If .flags.Oculto = 1 Then
                         .flags.Oculto = 0
                         Call SetInvisible(UserIndex, .Char.CharIndex, False)
@@ -211,7 +211,7 @@ Public Sub DoNavega(ByVal UserIndex As Integer, ByRef Barco As ObjData, ByVal Sl
             If .flags.Muerto = 0 Then
                 .Char.Head = .OrigChar.Head
                 
-                If .clase = eClass.Pirat Then
+                If .Clase = eClass.Pirata Then
                     If .flags.Oculto = 1 Then
                         ' Al desequipar barca, perdió el ocultar
                         .flags.Oculto = 0
@@ -267,7 +267,7 @@ On Error GoTo Errhandler
         If .flags.TargetObjInvIndex > 0 Then
            
            If ObjData(.flags.TargetObjInvIndex).OBJType = eOBJType.otMinerales And _
-                ObjData(.flags.TargetObjInvIndex).MinSkill <= .Stats.UserSkills(eSkill.Mineria) / ModFundicion(.clase) Then
+                ObjData(.flags.TargetObjInvIndex).MinSkill <= .Stats.UserSkills(eSkill.Mineria) / ModFundicion(.Clase) Then
                 Call DoLingotes(UserIndex)
            Else
                 Call WriteConsoleMsg(UserIndex, "No tienes conocimientos de minería suficientes para trabajar este mineral.", FontTypeNames.FONTTYPE_INFO)
@@ -294,7 +294,7 @@ On Error GoTo Errhandler
     With UserList(UserIndex)
         If .flags.TargetObjInvIndex > 0 Then
             If ObjData(.flags.TargetObjInvIndex).OBJType = eOBJType.otWeapon Then
-                If ObjData(.flags.TargetObjInvIndex).SkHerreria <= .Stats.UserSkills(eSkill.Herreria) / ModHerreriA(.clase) Then
+                If ObjData(.flags.TargetObjInvIndex).SkHerreria <= .Stats.UserSkills(eSkill.Herreria) / ModHerreria(.Clase) Then
                     Call DoFundir(UserIndex)
                 Else
                     Call WriteConsoleMsg(UserIndex, "No tienes los conocimientos suficientes en herrería para fundir este objeto.", FontTypeNames.FONTTYPE_INFO)
@@ -457,7 +457,7 @@ Public Function PuedeConstruir(ByVal UserIndex As Integer, ByVal ItemIndex As In
 '16/11/2009: ZaMa - Validates if the player has the required amount of materials, depending on the number of items to make
 '***************************************************
 PuedeConstruir = HerreroTieneMateriales(UserIndex, ItemIndex, CantidadItems) And _
-                    Round(UserList(UserIndex).Stats.UserSkills(eSkill.Herreria) / ModHerreriA(UserList(UserIndex).clase), 0) >= ObjData(ItemIndex).SkHerreria
+                    Round(UserList(UserIndex).Stats.UserSkills(eSkill.Herreria) / ModHerreria(UserList(UserIndex).Clase), 0) >= ObjData(ItemIndex).SkHerreria
 End Function
 
 Public Function PuedeConstruirHerreria(ByVal ItemIndex As Integer) As Boolean
@@ -524,7 +524,7 @@ With UserList(UserIndex)
         End If
         
         'Sacamos energía
-        If .clase = eClass.Worker Then
+        If esTrabajador(.Clase) Then
             'Chequeamos que tenga los puntos antes de sacarselos
             If .Stats.MinSta >= GASTO_ENERGIA_TRABAJADOR Then
                 .Stats.MinSta = .Stats.MinSta - GASTO_ENERGIA_TRABAJADOR
@@ -619,7 +619,7 @@ With UserList(UserIndex)
         Exit Sub
     End If
 
-    If Round(.Stats.UserSkills(eSkill.Carpinteria) \ ModCarpinteria(.clase), 0) >= _
+    If Round(.Stats.UserSkills(eSkill.Carpinteria) \ ModCarpinteria(.Clase), 0) >= _
        ObjData(ItemIndex).SkCarpinteria And _
        PuedeConstruirCarpintero(ItemIndex) And _
        .Invent.WeaponEqpObjIndex = SERRUCHO_CARPINTERO Then
@@ -642,7 +642,7 @@ With UserList(UserIndex)
         End If
        
         'Sacamos energía
-        If .clase = eClass.Worker Then
+        If esTrabajador(.Clase) Then
             'Chequeamos que tenga los puntos antes de sacarselos
             If .Stats.MinSta >= GASTO_ENERGIA_TRABAJADOR Then
                 .Stats.MinSta = .Stats.MinSta - GASTO_ENERGIA_TRABAJADOR
@@ -814,88 +814,88 @@ End With
 
 End Sub
 
-Function ModNavegacion(ByVal clase As eClass, ByVal UserIndex As Integer) As Single
+Function ModNavegacion(ByVal Clase As eClass, ByVal UserIndex As Integer) As Single
 '***************************************************
 'Autor: Unknown (orginal version)
 'Last Modification: 27/11/2009
 '27/11/2009: ZaMa - A worker can navigate before only if it's an expert fisher
 '12/04/2010: ZaMa - Arreglo modificador de pescador, para que navegue con 60 skills.
 '***************************************************
-Select Case clase
-    Case eClass.Pirat
+Select Case Clase
+    Case eClass.Pirata
         ModNavegacion = 1
-    Case eClass.Worker
-        If UserList(UserIndex).Stats.UserSkills(eSkill.Pesca) = 100 Then
-            ModNavegacion = 1.71
-        Else
-            ModNavegacion = 2
-        End If
     Case Else
         ModNavegacion = 2
 End Select
 
+If esTrabajador(Clase) Then
+    If UserList(UserIndex).Stats.UserSkills(eSkill.Pesca) = 100 Then
+        ModNavegacion = 1.71
+    Else
+        ModNavegacion = 2
+    End If
+End If
+
 End Function
 
 
-Function ModFundicion(ByVal clase As eClass) As Single
+Function ModFundicion(ByVal Clase As eClass) As Single
 '***************************************************
 'Author: Unknown
 'Last Modification: -
 '
 '***************************************************
 
-Select Case clase
-    Case eClass.Worker
-        ModFundicion = 1
-    Case Else
-        ModFundicion = 3
-End Select
+If esTrabajador(Clase) Then
+    ModFundicion = 1
+Else
+    ModFundicion = 3
+End If
 
 End Function
 
-Function ModCarpinteria(ByVal clase As eClass) As Integer
+Function ModCarpinteria(ByVal Clase As eClass) As Integer
 '***************************************************
 'Author: Unknown
 'Last Modification: -
 '
 '***************************************************
 
-Select Case clase
-    Case eClass.Worker
-        ModCarpinteria = 1
-    Case Else
-        ModCarpinteria = 3
-End Select
+If esTrabajador(Clase) Then
+    ModCarpinteria = 1
+Else
+    ModCarpinteria = 3
+End If
+
 
 End Function
 
-Function ModHerreriA(ByVal clase As eClass) As Single
+Function ModHerreria(ByVal Clase As eClass) As Single
 '***************************************************
 'Author: Unknown
 'Last Modification: -
 '
 '***************************************************
-Select Case clase
-    Case eClass.Worker
-        ModHerreriA = 1
-    Case Else
-        ModHerreriA = 4
-End Select
+If esTrabajador(Clase) Then
+    ModHerreria = 1
+Else
+    ModHerreria = 4
+End If
 
 End Function
 
-Function ModDomar(ByVal clase As eClass) As Integer
+Function ModDomar(ByVal Clase As eClass) As Integer
 '***************************************************
 'Author: Unknown
 'Last Modification: -
 '
 '***************************************************
-    Select Case clase
-        Case eClass.Druid
+    Select Case Clase
+        Case eClass.Druida
             ModDomar = 6
-        Case eClass.Hunter
+        Case eClass.Cazador
             ModDomar = 6
-        Case eClass.Cleric
+        Case eClass.Clerigo
             ModDomar = 7
         Case Else
             ModDomar = 10
@@ -1191,7 +1191,7 @@ Dim Suerte As Integer
 Dim res As Integer
 Dim CantidadItems As Integer
 
-If UserList(UserIndex).clase = eClass.Worker Then
+If esTrabajador(UserList(UserIndex).Clase) Then
     Call QuitarSta(UserIndex, EsfuerzoPescarPescador)
 Else
     Call QuitarSta(UserIndex, EsfuerzoPescarGeneral)
@@ -1206,7 +1206,7 @@ res = RandomNumber(1, Suerte)
 If res <= 6 Then
     Dim MiObj As Obj
     
-    If UserList(UserIndex).clase = eClass.Worker Then
+    If esTrabajador(UserList(UserIndex).Clase) Then
         With UserList(UserIndex)
             CantidadItems = 1 + MaximoInt(1, CInt((.Stats.ELV - 4) / 5))
         End With
@@ -1260,7 +1260,7 @@ Dim Suerte As Integer
 Dim res As Integer
 Dim EsPescador As Boolean
 
-If UserList(UserIndex).clase = eClass.Worker Then
+If esTrabajador(UserList(UserIndex).Clase) Then
     Call QuitarSta(UserIndex, EsfuerzoPescarPescador)
     EsPescador = True
 Else
@@ -1418,7 +1418,7 @@ On Error GoTo Errhandler
                 
             If res < 3 Then 'Exito robo
                
-                If (RandomNumber(1, 50) < 25) And (.clase = eClass.Thief) Then
+                If (RandomNumber(1, 50) < 25) And (.Clase = eClass.Ladron) Then
                     If TieneObjetosRobables(VictimaIndex) Then
                         Call RobarObjeto(LadrOnIndex, VictimaIndex)
                     Else
@@ -1428,7 +1428,7 @@ On Error GoTo Errhandler
                     If UserList(VictimaIndex).Stats.GLD > 0 Then
                         Dim N As Integer
                         
-                        If .clase = eClass.Thief Then
+                        If .Clase = eClass.Ladron Then
                         ' Si no tine puestos los guantes de hurto roba un 50% menos. Pablo (ToxicWaste)
                             If GuantesHurto Then
                                 N = RandomNumber(.Stats.ELV * 50, .Stats.ELV * 100)
@@ -1581,7 +1581,7 @@ If flag Then
         Call TirarItemAlPiso(UserList(LadrOnIndex).Pos, MiObj)
     End If
     
-    If UserList(LadrOnIndex).clase = eClass.Thief Then
+    If UserList(LadrOnIndex).Clase = eClass.Ladron Then
         Call WriteConsoleMsg(LadrOnIndex, "Has robado " & MiObj.Amount & " " & ObjData(MiObj.OBJIndex).Name, FontTypeNames.FONTTYPE_INFO)
     Else
         Call WriteConsoleMsg(LadrOnIndex, "Has hurtado " & MiObj.Amount & " " & ObjData(MiObj.OBJIndex).Name, FontTypeNames.FONTTYPE_INFO)
@@ -1607,14 +1607,14 @@ Dim Skill As Integer
 
 Skill = UserList(UserIndex).Stats.UserSkills(eSkill.Apuñalar)
 
-Select Case UserList(UserIndex).clase
-    Case eClass.Assasin
+Select Case UserList(UserIndex).Clase
+    Case eClass.Asesino
         Suerte = Int(((0.00003 * Skill - 0.002) * Skill + 0.098) * Skill + 4.25)
     
-    Case eClass.Cleric, eClass.Paladin, eClass.Pirat
+    Case eClass.Clerigo, eClass.Paladin, eClass.Pirata
         Suerte = Int(((0.000003 * Skill + 0.0006) * Skill + 0.0107) * Skill + 4.93)
     
-    Case eClass.Bard
+    Case eClass.Bardo
         Suerte = Int(((0.000002 * Skill + 0.0002) * Skill + 0.032) * Skill + 4.81)
     
     Case Else
@@ -1624,7 +1624,7 @@ End Select
 
 If RandomNumber(0, 100) < Suerte Then
     If VictimUserIndex <> 0 Then
-        If UserList(UserIndex).clase = eClass.Assasin Then
+        If UserList(UserIndex).Clase = eClass.Asesino Then
             daño = Round(daño * 1.4, 0)
         Else
             daño = Round(daño * 1.5, 0)
@@ -1658,7 +1658,7 @@ Public Sub DoGolpeCritico(ByVal UserIndex As Integer, ByVal VictimNpcIndex As In
 Dim Suerte As Integer
 Dim Skill As Integer
 
-If UserList(UserIndex).clase <> eClass.Bandit Then Exit Sub
+If UserList(UserIndex).Clase <> eClass.Bandido Then Exit Sub
 If UserList(UserIndex).Invent.WeaponEqpSlot = 0 Then Exit Sub
 If ObjData(UserList(UserIndex).Invent.WeaponEqpObjIndex).Name <> "Espada Vikinga" Then Exit Sub
 
@@ -1716,7 +1716,7 @@ Dim Suerte As Integer
 Dim res As Integer
 Dim CantidadItems As Integer
 
-If UserList(UserIndex).clase = eClass.Worker Then
+If esTrabajador(UserList(UserIndex).Clase) Then
     Call QuitarSta(UserIndex, EsfuerzoTalarLeñador)
 Else
     Call QuitarSta(UserIndex, EsfuerzoTalarGeneral)
@@ -1731,7 +1731,7 @@ res = RandomNumber(1, Suerte)
 If res <= 6 Then
     Dim MiObj As Obj
     
-    If UserList(UserIndex).clase = eClass.Worker Then
+    If esTrabajador(UserList(UserIndex).Clase) Then
         With UserList(UserIndex)
             CantidadItems = 1 + MaximoInt(1, CInt((.Stats.ELV - 4) / 5))
         End With
@@ -1788,7 +1788,7 @@ Dim res As Integer
 Dim CantidadItems As Integer
 
 With UserList(UserIndex)
-    If .clase = eClass.Worker Then
+    If esTrabajador(.Clase) Then
         Call QuitarSta(UserIndex, EsfuerzoExcavarMinero)
     Else
         Call QuitarSta(UserIndex, EsfuerzoExcavarGeneral)
@@ -1807,7 +1807,7 @@ With UserList(UserIndex)
         
         MiObj.OBJIndex = ObjData(.flags.TargetObj).MineralIndex
         
-        If UserList(UserIndex).clase = eClass.Worker Then
+        If esTrabajador(UserList(UserIndex).Clase) Then
             CantidadItems = 1 + MaximoInt(1, CInt((.Stats.ELV - 4) / 5))
             
             MiObj.Amount = RandomNumber(1, CantidadItems)
@@ -2044,7 +2044,7 @@ Public Sub DoHurtar(ByVal UserIndex As Integer, ByVal VictimaIndex As Integer)
 '***************************************************
 If TriggerZonaPelea(UserIndex, VictimaIndex) <> TRIGGER6_AUSENTE Then Exit Sub
 
-If UserList(UserIndex).clase <> eClass.Bandit Then Exit Sub
+If UserList(UserIndex).Clase <> eClass.Bandido Then Exit Sub
 'Esto es precario y feo, pero por ahora no se me ocurrió nada mejor.
 'Uso el slot de los anillos para "equipar" los guantes.
 'Y los reconozco porque les puse DefensaMagicaMin y Max = 0
@@ -2070,7 +2070,7 @@ Public Sub DoHandInmo(ByVal UserIndex As Integer, ByVal VictimaIndex As Integer)
 'Implements the special Skill of the Thief
 '***************************************************
 If UserList(VictimaIndex).flags.Paralizado = 1 Then Exit Sub
-If UserList(UserIndex).clase <> eClass.Thief Then Exit Sub
+If UserList(UserIndex).Clase <> eClass.Ladron Then Exit Sub
     
 
 If UserList(UserIndex).Invent.AnilloEqpObjIndex <> GUANTE_HURTO Then Exit Sub
@@ -2127,3 +2127,9 @@ Public Function MaxItemsConstruibles(ByVal UserIndex As Integer) As Integer
     MaxItemsConstruibles = MaximoInt(1, CInt((UserList(UserIndex).Stats.ELV - 4) / 5))
 End Function
 
+Public Function esTrabajador(ByVal Clase As eClass)
+
+esTrabajador = (Clase = eClass.Carpintero Or Clase = eClass.Experto_Madera Or Clase = eClass.Experto_Minerales Or _
+                Clase = eClass.Herrero Or Clase = eClass.Minero Or Clase = eClass.Pescador Or Clase = eClass.Sastre Or _
+                Clase = eClass.Talador Or Clase = eClass.Trabajador)
+End Function

@@ -105,9 +105,7 @@ With UserList(UserIndex)
                 Call UserDie(UserIndex)
                 '[Barrin 1-12-03]
                 If Npclist(NpcIndex).MaestroUser > 0 Then
-                    'Store it!
-                    Call Statistics.StoreFrag(Npclist(NpcIndex).MaestroUser, UserIndex)
-                    
+
                     Call ContarMuerte(UserIndex, Npclist(NpcIndex).MaestroUser)
                     Call ActStats(UserIndex, Npclist(NpcIndex).MaestroUser)
                 End If
@@ -307,7 +305,7 @@ Dim DruidManaBonus As Single
         End If
         
         If Hechizos(HechizoIndex).Baculo > 0 Then
-            If .clase = eClass.Mage Then 'Or .clase = eClass.druida Or .clase = eClass.nigromante Then
+            If .Clase = eClass.Mago Or .Clase = eClass.Druida Or .Clase = eClass.Nigromante Then
                 If .Invent.WeaponEqpObjIndex > 0 Then
                     If ObjData(.Invent.WeaponEqpObjIndex).Baculo < Hechizos(HechizoIndex).Baculo Then
                         Call WriteConsoleMsg(UserIndex, "No posees un báculo lo suficientemente poderoso para poder lanzar el conjuro.", FontTypeNames.FONTTYPE_INFO)
@@ -335,7 +333,7 @@ Dim DruidManaBonus As Single
         End If
     
         DruidManaBonus = 1
-        If .clase = eClass.Druid Then
+        If .Clase = eClass.Druida Then
             If .Invent.AnilloEqpObjIndex = FLAUTAELFICA Then
                 ' 50% menos de mana requerido para mimetismo
                 If Hechizos(HechizoIndex).Mimetiza = 1 Then
@@ -534,7 +532,7 @@ Sub HandleHechizoTerreno(ByVal UserIndex As Integer, ByVal SpellIndex As Integer
                 ManaRequerida = .Stats.MinMAN
             Else
                 ' Bonificaciones en hechizos
-                If .clase = eClass.Druid Then
+                If .Clase = eClass.Druida Then
                     ' Solo con flauta equipada
                     If .Invent.AnilloEqpObjIndex = FLAUTAELFICA Then
                         ' 30% menos de mana para invocaciones
@@ -586,7 +584,7 @@ Sub HandleHechizoUsuario(ByVal UserIndex As Integer, ByVal SpellIndex As Integer
             ManaRequerida = Hechizos(SpellIndex).ManaRequerido
             
             ' Bonificaciones para druida
-            If .clase = eClass.Druid Then
+            If .Clase = eClass.Druida Then
                 ' Solo con flauta magica
                 If .Invent.AnilloEqpObjIndex = FLAUTAELFICA Then
                     If Hechizos(SpellIndex).Mimetiza = 1 Then
@@ -654,7 +652,7 @@ Sub HandleHechizoNPC(ByVal UserIndex As Integer, ByVal HechizoIndex As Integer)
             ManaRequerida = Hechizos(HechizoIndex).ManaRequerido
             
             ' Bonificación para druidas.
-            If .clase = eClass.Druid Then
+            If .Clase = eClass.Druida Then
                 ' Se mostró como usuario, puede ser atacado por npcs
                 .flags.Ignorado = False
                 
@@ -1048,7 +1046,7 @@ With UserList(UserIndex)
             
             
             'revisamos si necesita vara
-            If .clase = eClass.Mage Then
+            If .Clase = eClass.Mago Then
                 If .Invent.WeaponEqpObjIndex > 0 Then
                     If ObjData(.Invent.WeaponEqpObjIndex).Baculo < Hechizos(HechizoIndex).Baculo Then
                         Call WriteConsoleMsg(UserIndex, "Necesitas un báculo mejor para lanzar este hechizo.", FontTypeNames.FONTTYPE_INFO)
@@ -1056,13 +1054,13 @@ With UserList(UserIndex)
                         Exit Sub
                     End If
                 End If
-            ElseIf .clase = eClass.Bard Then
+            ElseIf .Clase = eClass.Bardo Then
                 If .Invent.AnilloEqpObjIndex <> LAUDELFICO And .Invent.AnilloEqpObjIndex <> LAUDMAGICO Then
                     Call WriteConsoleMsg(UserIndex, "Necesitas un instrumento mágico para devolver la vida.", FontTypeNames.FONTTYPE_INFO)
                     HechizoCasteado = False
                     Exit Sub
                 End If
-            ElseIf .clase = eClass.Druid Then
+            ElseIf .Clase = eClass.Druida Then
                 If .Invent.AnilloEqpObjIndex <> FLAUTAELFICA And .Invent.AnilloEqpObjIndex <> FLAUTAMAGICA Then
                     Call WriteConsoleMsg(UserIndex, "Necesitas un instrumento mágico para devolver la vida.", FontTypeNames.FONTTYPE_INFO)
                     HechizoCasteado = False
@@ -1328,7 +1326,7 @@ If Hechizos(SpellIndex).Mimetiza = 1 Then
         If .flags.AdminInvisible = 1 Then Exit Sub
         
             
-        If .clase = eClass.Druid Then
+        If .Clase = eClass.Druida Then
             'copio el char original al mimetizado
             
             .CharMimetizado.body = .Char.body
@@ -1756,8 +1754,6 @@ With UserList(TargetIndex)
         If .Stats.MinHp < 1 Then
         
             If .flags.AtacablePor <> UserIndex Then
-                'Store it!
-                Call Statistics.StoreFrag(UserIndex, TargetIndex)
                 Call ContarMuerte(TargetIndex, UserIndex)
             End If
             
@@ -2083,4 +2079,27 @@ Public Sub DisNobAuBan(ByVal UserIndex As Integer, NoblePts As Long, BandidoPts 
             Call RefreshCharStatus(UserIndex)
         End If
     End With
+End Sub
+
+Public Sub AprenderHechizo(ByVal UserIndex As Integer, ByVal HechizoEspecial As Integer)
+Dim j As Long
+
+If Not TieneHechizo(HechizoEspecial, UserIndex) Then
+    
+    For j = 1 To MAXUSERHECHIZOS
+        If UserList(UserIndex).Stats.UserHechizos(j) = 0 Then Exit For
+    Next j
+    
+    If UserList(UserIndex).Stats.UserHechizos(j) > 0 Then
+        Call WriteConsoleMsg(UserIndex, "Sabes demasiados hechizos!", FontTypeNames.FONTTYPE_INFO)
+        Exit Sub
+    Else
+        UserList(UserIndex).Stats.UserHechizos(j) = HechizoEspecial
+        Call UpdateUserHechizos(False, UserIndex, j)
+    End If
+    
+Else
+    Call WriteConsoleMsg(UserIndex, "Ya conoces el hechizo.", FontTypeNames.FONTTYPE_INFO)
+End If
+
 End Sub

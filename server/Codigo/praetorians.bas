@@ -87,7 +87,7 @@ On Error GoTo errorh
 Exit Function
 
 errorh:
-    LogError ("Error en NPCAI.EsPretoriano? " & Npclist(NpcIndex).name)
+    LogError ("Error en NPCAI.EsPretoriano? " & Npclist(NpcIndex).Name)
     'do nothing
 
 End Function
@@ -1027,10 +1027,10 @@ End Sub
 Function EsMagoOClerigo(ByVal PJEnInd As Integer) As Boolean
 On Error GoTo errorh
 
-    EsMagoOClerigo = UserList(PJEnInd).clase = eClass.Mage Or _
-                        UserList(PJEnInd).clase = eClass.Cleric Or _
-                        UserList(PJEnInd).clase = eClass.Druid Or _
-                        UserList(PJEnInd).clase = eClass.Bard
+    EsMagoOClerigo = UserList(PJEnInd).Clase = eClass.Mago Or _
+                        UserList(PJEnInd).Clase = eClass.Clerigo Or _
+                        UserList(PJEnInd).Clase = eClass.Druida Or _
+                        UserList(PJEnInd).Clase = eClass.Bardo
 Exit Function
 
 errorh:
@@ -1155,7 +1155,7 @@ On Error GoTo errorh
     ''Envia ceguera
     Call WriteBlind(PJEnInd)
     ''bardea si es el rey
-    If Npclist(npcind).name = "Rey Pretoriano" Then
+    If Npclist(npcind).Name = "Rey Pretoriano" Then
         Call WriteConsoleMsg(PJEnInd, "El rey pretoriano te ha vuelto ciego ", FontTypeNames.FONTTYPE_FIGHT)
         Call WriteConsoleMsg(PJEnInd, "A la distancia escuchas las siguientes palabras: ¡Cobarde, no eres digno de luchar conmigo si escapas! ", FontTypeNames.FONTTYPE_VENENO)
     End If
@@ -1182,7 +1182,7 @@ On Error GoTo errorh
     Call WriteDumb(PJEnInd)
 
     'bardea si es el rey
-    If Npclist(npcind).name = "Rey Pretoriano" Then
+    If Npclist(npcind).Name = "Rey Pretoriano" Then
         Call WriteConsoleMsg(PJEnInd, "El rey pretoriano te ha vuelto estúpido.", FontTypeNames.FONTTYPE_FIGHT)
     End If
 Exit Sub
@@ -1247,7 +1247,7 @@ If Hechizos(Spell).SubeHP = 1 Then
     UserList(UserIndex).Stats.MinHp = UserList(UserIndex).Stats.MinHp + daño
     If UserList(UserIndex).Stats.MinHp > UserList(UserIndex).Stats.MaxHp Then UserList(UserIndex).Stats.MinHp = UserList(UserIndex).Stats.MaxHp
     
-    Call WriteConsoleMsg(UserIndex, Npclist(NpcIndex).name & " te ha quitado " & daño & " puntos de vida.", FontTypeNames.FONTTYPE_FIGHT)
+    Call WriteConsoleMsg(UserIndex, Npclist(NpcIndex).Name & " te ha quitado " & daño & " puntos de vida.", FontTypeNames.FONTTYPE_FIGHT)
 
     Call WriteUpdateHP(UserIndex)
 ElseIf Hechizos(Spell).SubeHP = 2 Then
@@ -1258,7 +1258,7 @@ ElseIf Hechizos(Spell).SubeHP = 2 Then
 
     If UserList(UserIndex).flags.Privilegios And PlayerType.User Then UserList(UserIndex).Stats.MinHp = UserList(UserIndex).Stats.MinHp - daño
     
-    Call WriteConsoleMsg(UserIndex, Npclist(NpcIndex).name & " te ha quitado " & daño & " puntos de vida.", FontTypeNames.FONTTYPE_FIGHT)
+    Call WriteConsoleMsg(UserIndex, Npclist(NpcIndex).Name & " te ha quitado " & daño & " puntos de vida.", FontTypeNames.FONTTYPE_FIGHT)
     
     'Muere
     If UserList(UserIndex).Stats.MinHp < 1 Then
@@ -1343,7 +1343,7 @@ On Error GoTo errorh
                         ''efectiviza el danio
                         If UserList(PJInd).flags.Privilegios And PlayerType.User Then UserList(PJInd).Stats.MinHp = UserList(PJInd).Stats.MinHp - danioI
                         
-                        Call WriteConsoleMsg(PJInd, Npclist(npcind).name & " te ha quitado " & danioI & " puntos de vida al romper su vara.", FontTypeNames.FONTTYPE_FIGHT)
+                        Call WriteConsoleMsg(PJInd, Npclist(npcind).Name & " te ha quitado " & danioI & " puntos de vida al romper su vara.", FontTypeNames.FONTTYPE_FIGHT)
                         Call SendData(SendTarget.ToPCArea, PJInd, PrepareMessagePlayWave(Hechizos(indireccion).WAV, UserList(PJInd).Pos.X, UserList(PJInd).Pos.Y))
                         Call SendData(SendTarget.ToPCArea, PJInd, PrepareMessageCreateFX(UserList(PJInd).Char.CharIndex, Hechizos(indireccion).FXgrh, Hechizos(indireccion).loops))
                         
