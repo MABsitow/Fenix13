@@ -124,8 +124,8 @@ On Error Resume Next
                 End If
                 
             '¿Es un obj?
-            ElseIf MapData(Map, X, Y).ObjInfo.ObjIndex > 0 Then
-                tempIndex = MapData(Map, X, Y).ObjInfo.ObjIndex
+            ElseIf MapData(Map, X, Y).ObjInfo.OBJIndex > 0 Then
+                tempIndex = MapData(Map, X, Y).ObjInfo.OBJIndex
                 
                 .flags.TargetObj = tempIndex
                 
@@ -142,8 +142,8 @@ On Error Resume Next
                         End If
                 End Select
             '>>>>>>>>>>>OBJETOS QUE OCUPAM MAS DE UN TILE<<<<<<<<<<<<<
-            ElseIf MapData(Map, X + 1, Y).ObjInfo.ObjIndex > 0 Then
-                tempIndex = MapData(Map, X + 1, Y).ObjInfo.ObjIndex
+            ElseIf MapData(Map, X + 1, Y).ObjInfo.OBJIndex > 0 Then
+                tempIndex = MapData(Map, X + 1, Y).ObjInfo.OBJIndex
                 .flags.TargetObj = tempIndex
                 
                 Select Case ObjData(tempIndex).OBJType
@@ -153,8 +153,8 @@ On Error Resume Next
                     
                 End Select
             
-            ElseIf MapData(Map, X + 1, Y + 1).ObjInfo.ObjIndex > 0 Then
-                tempIndex = MapData(Map, X + 1, Y + 1).ObjInfo.ObjIndex
+            ElseIf MapData(Map, X + 1, Y + 1).ObjInfo.OBJIndex > 0 Then
+                tempIndex = MapData(Map, X + 1, Y + 1).ObjInfo.OBJIndex
                 .flags.TargetObj = tempIndex
         
                 Select Case ObjData(tempIndex).OBJType
@@ -162,8 +162,8 @@ On Error Resume Next
                         Call AccionParaPuerta(Map, X + 1, Y + 1, UserIndex)
                 End Select
             
-            ElseIf MapData(Map, X, Y + 1).ObjInfo.ObjIndex > 0 Then
-                tempIndex = MapData(Map, X, Y + 1).ObjInfo.ObjIndex
+            ElseIf MapData(Map, X, Y + 1).ObjInfo.OBJIndex > 0 Then
+                tempIndex = MapData(Map, X, Y + 1).ObjInfo.OBJIndex
                 .flags.TargetObj = tempIndex
                 
                 Select Case ObjData(tempIndex).OBJType
@@ -195,7 +195,7 @@ On Error Resume Next
         Exit Sub
     End If
     
-    If SendPosts(UserIndex, ObjData(MapData(Map, X, Y).ObjInfo.ObjIndex).ForoID) Then
+    If SendPosts(UserIndex, ObjData(MapData(Map, X, Y).ObjInfo.OBJIndex).ForoID) Then
         Call WriteShowForumForm(UserIndex)
     End If
     
@@ -211,14 +211,14 @@ Sub AccionParaPuerta(ByVal Map As Integer, ByVal X As Integer, ByVal Y As Intege
 On Error Resume Next
 
 If Not (Distance(UserList(UserIndex).Pos.X, UserList(UserIndex).Pos.Y, X, Y) > 2) Then
-    If ObjData(MapData(Map, X, Y).ObjInfo.ObjIndex).Llave = 0 Then
-        If ObjData(MapData(Map, X, Y).ObjInfo.ObjIndex).Cerrada = 1 Then
+    If ObjData(MapData(Map, X, Y).ObjInfo.OBJIndex).Llave = 0 Then
+        If ObjData(MapData(Map, X, Y).ObjInfo.OBJIndex).Cerrada = 1 Then
                 'Abre la puerta
-                If ObjData(MapData(Map, X, Y).ObjInfo.ObjIndex).Llave = 0 Then
+                If ObjData(MapData(Map, X, Y).ObjInfo.OBJIndex).Llave = 0 Then
                     
-                    MapData(Map, X, Y).ObjInfo.ObjIndex = ObjData(MapData(Map, X, Y).ObjInfo.ObjIndex).IndexAbierta
+                    MapData(Map, X, Y).ObjInfo.OBJIndex = ObjData(MapData(Map, X, Y).ObjInfo.OBJIndex).IndexAbierta
                     
-                    Call modSendData.SendToAreaByPos(Map, X, Y, PrepareMessageObjectCreate(ObjData(MapData(Map, X, Y).ObjInfo.ObjIndex).GrhIndex, X, Y))
+                    Call modSendData.SendToAreaByPos(Map, X, Y, PrepareMessageObjectCreate(ObjData(MapData(Map, X, Y).ObjInfo.OBJIndex).GrhIndex, X, Y))
                     
                     'Desbloquea
                     MapData(Map, X, Y).Blocked = 0
@@ -237,9 +237,9 @@ If Not (Distance(UserList(UserIndex).Pos.X, UserList(UserIndex).Pos.Y, X, Y) > 2
                 End If
         Else
                 'Cierra puerta
-                MapData(Map, X, Y).ObjInfo.ObjIndex = ObjData(MapData(Map, X, Y).ObjInfo.ObjIndex).IndexCerrada
+                MapData(Map, X, Y).ObjInfo.OBJIndex = ObjData(MapData(Map, X, Y).ObjInfo.OBJIndex).IndexCerrada
                 
-                Call modSendData.SendToAreaByPos(Map, X, Y, PrepareMessageObjectCreate(ObjData(MapData(Map, X, Y).ObjInfo.ObjIndex).GrhIndex, X, Y))
+                Call modSendData.SendToAreaByPos(Map, X, Y, PrepareMessageObjectCreate(ObjData(MapData(Map, X, Y).ObjInfo.OBJIndex).GrhIndex, X, Y))
                                 
                 MapData(Map, X, Y).Blocked = 1
                 MapData(Map, X - 1, Y).Blocked = 1
@@ -251,7 +251,7 @@ If Not (Distance(UserList(UserIndex).Pos.X, UserList(UserIndex).Pos.Y, X, Y) > 2
                 Call SendData(SendTarget.ToPCArea, UserIndex, PrepareMessagePlayWave(SND_PUERTA, X, Y))
         End If
         
-        UserList(UserIndex).flags.TargetObj = MapData(Map, X, Y).ObjInfo.ObjIndex
+        UserList(UserIndex).flags.TargetObj = MapData(Map, X, Y).ObjInfo.OBJIndex
     Else
         Call WriteConsoleMsg(UserIndex, "La puerta está cerrada con llave.", FontTypeNames.FONTTYPE_INFO)
     End If
@@ -270,10 +270,10 @@ Sub AccionParaCartel(ByVal Map As Integer, ByVal X As Integer, ByVal Y As Intege
 
 On Error Resume Next
 
-If ObjData(MapData(Map, X, Y).ObjInfo.ObjIndex).OBJType = 8 Then
+If ObjData(MapData(Map, X, Y).ObjInfo.OBJIndex).OBJType = 8 Then
   
-  If Len(ObjData(MapData(Map, X, Y).ObjInfo.ObjIndex).texto) > 0 Then
-    Call WriteShowSignal(UserIndex, MapData(Map, X, Y).ObjInfo.ObjIndex)
+  If Len(ObjData(MapData(Map, X, Y).ObjInfo.OBJIndex).texto) > 0 Then
+    Call WriteShowSignal(UserIndex, MapData(Map, X, Y).ObjInfo.OBJIndex)
   End If
   
 End If
@@ -321,7 +321,7 @@ With UserList(UserIndex)
     
     If exito = 1 Then
         If MapInfo(.Pos.Map).Zona <> Ciudad Then
-            Obj.ObjIndex = FOGATA
+            Obj.OBJIndex = FOGATA
             Obj.Amount = 1
             
             Call WriteConsoleMsg(UserIndex, "Has prendido la fogata.", FontTypeNames.FONTTYPE_INFO)
@@ -334,17 +334,15 @@ With UserList(UserIndex)
             Fogatita.X = X
             Fogatita.Y = Y
             Call TrashCollector.Add(Fogatita)
-            
-            Call SubirSkill(UserIndex, eSkill.Supervivencia, True)
         Else
             Call WriteConsoleMsg(UserIndex, "La ley impide realizar fogatas en las ciudades.", FontTypeNames.FONTTYPE_INFO)
             Exit Sub
         End If
     Else
         Call WriteConsoleMsg(UserIndex, "No has podido hacer fuego.", FontTypeNames.FONTTYPE_INFO)
-        Call SubirSkill(UserIndex, eSkill.Supervivencia, False)
     End If
 
 End With
 
+    Call SubirSkill(UserIndex, eSkill.Supervivencia)
 End Sub

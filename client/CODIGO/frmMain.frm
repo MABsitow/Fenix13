@@ -209,6 +209,18 @@ Begin VB.Form frmMain
       Visible         =   0   'False
       Width           =   2565
    End
+   Begin VB.Label lblClase 
+      AutoSize        =   -1  'True
+      BackStyle       =   0  'Transparent
+      Caption         =   "C"
+      ForeColor       =   &H00FFFFFF&
+      Height          =   195
+      Left            =   10680
+      TabIndex        =   30
+      Top             =   1200
+      Visible         =   0   'False
+      Width           =   105
+   End
    Begin VB.Image imgMapa 
       Height          =   300
       Left            =   10230
@@ -1332,6 +1344,10 @@ End Sub
 
 Private Sub lblScroll_Click(Index As Integer)
     Inventario.ScrollInventory (Index = 0)
+End Sub
+
+Private Sub lblClase_Click()
+    Call WriteRequestClaseForm
 End Sub
 
 Private Sub lblCerrar_Click()

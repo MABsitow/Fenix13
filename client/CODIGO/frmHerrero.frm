@@ -515,7 +515,6 @@ Private Sub CargarImagenes()
     
     For Index = 1 To MAX_LIST_ITEMS
         imgMarcoItem(Index).Picture = picRecuadroItem
-        imgMarcoUpgrade(Index).Picture = picRecuadroItem
         imgMarcoLingotes(Index).Picture = picRecuadroLingotes
     Next Index
     
@@ -554,7 +553,7 @@ Private Sub ConstruirItem(ByVal Index As Integer)
     Dim ItemIndex As Integer
     Dim CantItemsCiclo As Integer
     
-    If Scroll.Visible = True Then ItemIndex = Scroll.value
+    If Scroll.Visible = True Then ItemIndex = Scroll.Value
     ItemIndex = ItemIndex + Index
     
     Select Case UltimaPestania
@@ -586,8 +585,6 @@ Private Sub ConstruirItem(ByVal Index As Integer)
             Call WriteInitCrafting(Val(txtCantItems.Text), CantItemsCiclo)
             Call WriteCraftBlacksmith(ArmadurasHerrero(ItemIndex).OBJIndex)
         
-        Case ePestania.ieMejorar
-            Call WriteItemUpgrade(HerreroMejorar(ItemIndex).OBJIndex)
     End Select
     
     Unload Me
@@ -638,8 +635,6 @@ Public Sub HideExtraControls(ByVal NumItems As Integer, Optional ByVal Upgrading
         picItem(i).Visible = (NumItems >= i)
         imgMarcoItem(i).Visible = (NumItems >= i)
         imgMarcoLingotes(i).Visible = (NumItems >= i)
-        picUpgradeItem(i).Visible = (NumItems >= i And Upgrading)
-        imgMarcoUpgrade(i).Visible = (NumItems >= i And Upgrading)
     Next i
     
     picConstruir0.Visible = (NumItems >= 1 And Not Upgrading)
@@ -718,31 +713,6 @@ For i = 1 To MAX_LIST_ITEMS
 Next i
 End Sub
 
-Public Sub RenderUpgradeList(ByVal Inicio As Integer)
-Dim i As Long
-Dim NumItems As Integer
-
-NumItems = UBound(HerreroMejorar)
-Inicio = Inicio - 1
-
-For i = 1 To MAX_LIST_ITEMS
-    If i + Inicio <= NumItems Then
-        With HerreroMejorar(i + Inicio)
-            ' Agrego el item
-            Call RenderItem(picItem(i), .GrhIndex)
-            picItem(i).ToolTipText = .Name
-            
-            Call RenderItem(picUpgradeItem(i), .UpgradeGrhIndex)
-            picUpgradeItem(i).ToolTipText = .UpgradeName
-            
-             ' Inventariode lingotes
-            Call InvLingosHerreria(i).SetItem(1, 0, .LinH, 0, LH_GRH, 0, 0, 0, 0, 0, 0, "Lingotes de Hierro")
-            Call InvLingosHerreria(i).SetItem(2, 0, .LinP, 0, LP_GRH, 0, 0, 0, 0, 0, 0, "Lingotes de Plata")
-            Call InvLingosHerreria(i).SetItem(3, 0, .LinO, 0, LO_GRH, 0, 0, 0, 0, 0, 0, "Lingotes de Oro")
-        End With
-    End If
-Next i
-End Sub
 
 Private Sub Form_MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
     LastPressed.ToggleToNormal
@@ -821,7 +791,7 @@ Private Sub picPestania_Click(Index As Integer)
     If Cargando Then Exit Sub
     If UltimaPestania = Index Then Exit Sub
     
-    Scroll.value = 0
+    Scroll.Value = 0
     
     Select Case Index
         Case ePestania.ieArmas
@@ -850,15 +820,6 @@ Private Sub picPestania_Click(Index As Integer)
             
             Armas = False
             
-        Case ePestania.ieMejorar
-            ' Background
-            Me.Picture = Pestanias(ePestania.ieMejorar)
-            
-            NumItems = UBound(HerreroMejorar)
-            
-            Call HideExtraControls(NumItems, True)
-            
-            Call RenderUpgradeList(1)
     End Select
 
     UltimaPestania = Index
@@ -869,7 +830,7 @@ Private Sub Scroll_Change()
     
     If Cargando Then Exit Sub
     
-    i = Scroll.value
+    i = Scroll.Value
     ' Cargo inventarios e imagenes
     
     Select Case UltimaPestania
@@ -877,13 +838,11 @@ Private Sub Scroll_Change()
             Call RenderList(i + 1, True)
         Case ePestania.ieArmaduras
             Call RenderList(i + 1, False)
-        Case ePestania.ieMejorar
-            Call RenderUpgradeList(i + 1)
     End Select
 End Sub
 
 Private Sub txtCantItems_Change()
-On Error GoTo ErrHandler
+On Error GoTo Errhandler
     If Val(txtCantItems.Text) < 0 Then
         txtCantItems.Text = 1
     End If
@@ -894,7 +853,7 @@ On Error GoTo ErrHandler
     
     Exit Sub
     
-ErrHandler:
+Errhandler:
     'If we got here the user may have pasted (Shift + Insert) a REALLY large number, causing an overflow, so we set amount back to 1
     txtCantItems.Text = MAX_INVENTORY_OBJS
 End Sub

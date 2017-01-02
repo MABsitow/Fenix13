@@ -333,7 +333,7 @@ ValidateSkills = True
     
 End Function
 
-Sub ConnectNewUser(ByVal UserIndex As Integer, ByRef Name As String, ByRef Password As String, ByVal UserRaza As eRaza, ByVal UserSexo As eGenero, ByVal UserClase As eClass, _
+Sub ConnectNewUser(ByVal UserIndex As Integer, ByRef Name As String, ByRef Password As String, ByVal UserRaza As eRaza, ByVal UserSexo As eGenero, _
                     ByRef UserEmail As String, ByVal Hogar As eCiudad, ByVal Head As Integer)
 '*************************************************
 'Author: Unknown
@@ -345,7 +345,6 @@ Sub ConnectNewUser(ByVal UserIndex As Integer, ByRef Name As String, ByRef Passw
 '20/04/2007 Pablo (ToxicWaste) - Puse -1 de fuerza al Elfo.
 '09/01/2008 Pablo (ToxicWaste) - Ahora los modificadores de Raza se controlan desde Balance.dat
 '11/19/2009: Pato - Modifico la maná inicial del bandido.
-'11/19/2009: Pato - Asigno los valores iniciales de ExpSkills y EluSkills.
 '03/12/2009: Budi - Optimización del código.
 '*************************************************
 Dim i As Long
@@ -400,7 +399,7 @@ With UserList(UserIndex)
     
     
     .Name = Name
-    .clase = UserClase
+    .Clase = eClass.Ciudadano
     .raza = UserRaza
     .Genero = UserSexo
     .email = UserEmail
@@ -416,7 +415,6 @@ With UserList(UserIndex)
     
     For i = 1 To NUMSKILLS
         .Stats.UserSkills(i) = 0
-        Call CheckEluSkill(UserIndex, i, True)
     Next i
     
     .Stats.SkillPts = 10
@@ -447,32 +445,6 @@ With UserList(UserIndex)
     .Stats.MaxHam = 100
     .Stats.MinHam = 100
     
-    
-    '<-----------------MANA----------------------->
-    If UserClase = eClass.Mage Then 'Cambio en mana inicial (ToxicWaste)
-        MiInt = .Stats.UserAtributos(eAtributos.Inteligencia) * 3
-        .Stats.MaxMAN = MiInt
-        .Stats.MinMAN = MiInt
-    ElseIf UserClase = eClass.Cleric Or UserClase = eClass.Druid _
-        Or UserClase = eClass.Bard Or UserClase = eClass.Assasin Then
-            .Stats.MaxMAN = 50
-            .Stats.MinMAN = 50
-    ElseIf UserClase = eClass.Bandit Then 'Mana Inicial del Bandido (ToxicWaste)
-            .Stats.MaxMAN = 50
-            .Stats.MinMAN = 50
-    Else
-        .Stats.MaxMAN = 0
-        .Stats.MinMAN = 0
-    End If
-    
-    If UserClase = eClass.Mage Or UserClase = eClass.Cleric Or _
-       UserClase = eClass.Druid Or UserClase = eClass.Bard Or _
-       UserClase = eClass.Assasin Then
-            .Stats.UserHechizos(1) = 2
-        
-            If UserClase = eClass.Druid Then .Stats.UserHechizos(2) = 46
-    End If
-    
     .Stats.MaxHIT = 2
     .Stats.MinHIT = 1
     
@@ -484,47 +456,31 @@ With UserList(UserIndex)
     
     '???????????????? INVENTARIO ¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿
     Dim Slot As Byte
-    Dim IsPaladin As Boolean
+    .Invent.NroItems = 4
     
-    IsPaladin = UserClase = eClass.Paladin
+    .Invent.Object(1).OBJIndex = ManzanaNewbie
+    .Invent.Object(1).Amount = 100
     
-    'Pociones Rojas (Newbie)
-    Slot = 1
-    .Invent.Object(Slot).ObjIndex = 857
-    .Invent.Object(Slot).Amount = 200
+    .Invent.Object(2).OBJIndex = 468
+    .Invent.Object(2).Amount = 100
     
-    'Pociones azules (Newbie)
-    If .Stats.MaxMAN > 0 Or IsPaladin Then
-        Slot = Slot + 1
-        .Invent.Object(Slot).ObjIndex = 856
-        .Invent.Object(Slot).Amount = 200
-    
-    Else
-        'Pociones amarillas (Newbie)
-        Slot = Slot + 1
-        .Invent.Object(Slot).ObjIndex = 855
-        .Invent.Object(Slot).Amount = 100
-    
-        'Pociones verdes (Newbie)
-        Slot = Slot + 1
-        .Invent.Object(Slot).ObjIndex = 858
-        .Invent.Object(Slot).Amount = 50
-    
-    End If
-    
+    .Invent.Object(3).OBJIndex = 460
+    .Invent.Object(3).Amount = 1
+    .Invent.Object(3).Equipped = 1
+
     ' Ropa (Newbie)
     Slot = Slot + 1
     Select Case UserRaza
         Case eRaza.Humano
-            .Invent.Object(Slot).ObjIndex = 463
+            .Invent.Object(Slot).OBJIndex = 463
         Case eRaza.Elfo
-            .Invent.Object(Slot).ObjIndex = 464
+            .Invent.Object(Slot).OBJIndex = 464
         Case eRaza.Drow
-            .Invent.Object(Slot).ObjIndex = 465
+            .Invent.Object(Slot).OBJIndex = 465
         Case eRaza.Enano
-            .Invent.Object(Slot).ObjIndex = 466
+            .Invent.Object(Slot).OBJIndex = 466
         Case eRaza.Gnomo
-            .Invent.Object(Slot).ObjIndex = 466
+            .Invent.Object(Slot).OBJIndex = 466
     End Select
     
     ' Equipo ropa
@@ -532,51 +488,29 @@ With UserList(UserIndex)
     .Invent.Object(Slot).Equipped = 1
     
     .Invent.ArmourEqpSlot = Slot
-    .Invent.ArmourEqpObjIndex = .Invent.Object(Slot).ObjIndex
+    .Invent.ArmourEqpObjIndex = .Invent.Object(Slot).OBJIndex
 
     'Arma (Newbie)
     Slot = Slot + 1
-    Select Case UserClase
-        Case eClass.Hunter
-            ' Arco (Newbie)
-            .Invent.Object(Slot).ObjIndex = 859
-        Case eClass.Worker
-            ' Herramienta (Newbie)
-            .Invent.Object(Slot).ObjIndex = RandomNumber(561, 565)
-        Case Else
-            ' Daga (Newbie)
-            .Invent.Object(Slot).ObjIndex = 460
-    End Select
+    .Invent.Object(Slot).OBJIndex = 460
     
     ' Equipo arma
     .Invent.Object(Slot).Amount = 1
     .Invent.Object(Slot).Equipped = 1
     
-    .Invent.WeaponEqpObjIndex = .Invent.Object(Slot).ObjIndex
+    .Invent.WeaponEqpObjIndex = .Invent.Object(Slot).OBJIndex
     .Invent.WeaponEqpSlot = Slot
     
     .Char.WeaponAnim = GetWeaponAnim(UserIndex, .Invent.WeaponEqpObjIndex)
 
-    ' Municiones (Newbie)
-    If UserClase = eClass.Hunter Then
-        Slot = Slot + 1
-        .Invent.Object(Slot).ObjIndex = 860
-        .Invent.Object(Slot).Amount = 150
-        
-        ' Equipo flechas
-        .Invent.Object(Slot).Equipped = 1
-        .Invent.MunicionEqpSlot = Slot
-        .Invent.MunicionEqpObjIndex = 860
-    End If
-
     ' Manzanas (Newbie)
     Slot = Slot + 1
-    .Invent.Object(Slot).ObjIndex = 467
+    .Invent.Object(Slot).OBJIndex = 467
     .Invent.Object(Slot).Amount = 100
     
     ' Jugos (Nwbie)
     Slot = Slot + 1
-    .Invent.Object(Slot).ObjIndex = 468
+    .Invent.Object(Slot).OBJIndex = 468
     .Invent.Object(Slot).Amount = 100
     
     ' Sin casco y escudo
@@ -653,7 +587,6 @@ On Error GoTo Errhandler
         If NumUsers > 0 Then NumUsers = NumUsers - 1
         Call CloseUser(UserIndex)
         
-        Call EstadisticasWeb.Informar(CANTIDAD_ONLINE, NumUsers)
     Else
         Call ResetUserSlot(UserIndex)
     End If
@@ -937,7 +870,7 @@ Next Y
 HayPCarea = False
 End Function
 
-Function HayOBJarea(Pos As WorldPos, ObjIndex As Integer) As Boolean
+Function HayOBJarea(Pos As WorldPos, OBJIndex As Integer) As Boolean
 '***************************************************
 'Author: Unknown
 'Last Modification: -
@@ -947,7 +880,7 @@ Function HayOBJarea(Pos As WorldPos, ObjIndex As Integer) As Boolean
 Dim X As Integer, Y As Integer
 For Y = Pos.Y - MinYBorder + 1 To Pos.Y + MinYBorder - 1
         For X = Pos.X - MinXBorder + 1 To Pos.X + MinXBorder - 1
-            If MapData(Pos.Map, X, Y).ObjInfo.ObjIndex = ObjIndex Then
+            If MapData(Pos.Map, X, Y).ObjInfo.OBJIndex = OBJIndex Then
                 HayOBJarea = True
                 Exit Function
             End If
@@ -1068,11 +1001,11 @@ With UserList(UserIndex)
     End If
     
     'Si es gm lo seteo en el mapa de gms
-  '  If (.flags.Privilegios And (PlayerType.Admin Or PlayerType.Dios Or PlayerType.SemiDios Or PlayerType.Consejero)) Then
-  '      .Pos.Map = 86
-  '      .Pos.X = 50
-  '      .Pos.Y = 50
-  '  End If
+    If (.flags.Privilegios And (PlayerType.Admin Or PlayerType.Dios Or PlayerType.SemiDios Or PlayerType.Consejero)) Then
+        .Pos.Map = 86
+        .Pos.X = 50
+        .Pos.Y = 50
+    End If
     
     'Add RM flag if needed
     If EsRolesMaster(Name) Then
@@ -1113,7 +1046,7 @@ With UserList(UserIndex)
     If .Invent.WeaponEqpSlot = 0 Then .Char.WeaponAnim = NingunArma
     
     If .Invent.MochilaEqpSlot > 0 Then
-        .CurrentInventorySlots = MAX_NORMAL_INVENTORY_SLOTS + ObjData(.Invent.Object(.Invent.MochilaEqpSlot).ObjIndex).MochilaType * 5
+        .CurrentInventorySlots = MAX_NORMAL_INVENTORY_SLOTS + ObjData(.Invent.Object(.Invent.MochilaEqpSlot).OBJIndex).MochilaType * 5
     Else
         .CurrentInventorySlots = MAX_NORMAL_INVENTORY_SLOTS
     End If
@@ -1307,9 +1240,7 @@ With UserList(UserIndex)
     
     'usado para borrar Pjs
     Call WriteVar(CharPath & .Name & ".chr", "INIT", "Logged", "1")
-    
-    Call EstadisticasWeb.Informar(CANTIDAD_ONLINE, NumUsers)
-    
+        
     MapInfo(.Pos.Map).NumUsers = MapInfo(.Pos.Map).NumUsers + 1
     
     If .Stats.SkillPts > 0 Then
@@ -1321,8 +1252,6 @@ With UserList(UserIndex)
         Call SendData(SendTarget.ToAll, 0, PrepareMessageConsoleMsg("Record de usuarios conectados simultaneamente." & "Hay " & NumUsers & " usuarios.", FontTypeNames.FONTTYPE_INFO))
         recordusuarios = NumUsers
         Call WriteVar(IniPath & "Server.ini", "INIT", "Record", str(recordusuarios))
-        
-        Call EstadisticasWeb.Informar(RECORD_USUARIOS, recordusuarios)
     End If
     
     If .NroMascotas > 0 And MapInfo(.Pos.Map).Pk Then
@@ -1364,6 +1293,8 @@ With UserList(UserIndex)
     
     Call WriteLoggedMessage(UserIndex)
     
+    If PuedeSubirClase(UserIndex) Then Call WriteSubeClase(UserIndex, True)
+    
    ' Call modGuilds.SendGuildNews(UserIndex)
     
     ' Esta protegido del ataque de npcs por 5 segundos, si no realiza ninguna accion
@@ -1378,10 +1309,7 @@ With UserList(UserIndex)
    ' If LenB(tStr) <> 0 Then
    '     Call WriteShowMessageBox(UserIndex, "Tu solicitud de ingreso al clan ha sido rechazada. El clan te explica que: " & tStr)
    ' End If
-    
-    'Load the user statistics
-    Call Statistics.UserConnected(UserIndex)
-    
+
     Call MostrarNumUsers
     
     N = FreeFile
@@ -1518,7 +1446,7 @@ Sub ResetBasicUserInfo(ByVal UserIndex As Integer)
         .Pos.X = 0
         .Pos.Y = 0
         .ip = vbNullString
-        .clase = 0
+        .Clase = 0
         .email = vbNullString
         .Genero = 0
         .Hogar = 0
@@ -1679,7 +1607,7 @@ Sub ResetUserBanco(ByVal UserIndex As Integer)
     For LoopC = 1 To MAX_BANCOINVENTORY_SLOTS
           UserList(UserIndex).BancoInvent.Object(LoopC).Amount = 0
           UserList(UserIndex).BancoInvent.Object(LoopC).Equipped = 0
-          UserList(UserIndex).BancoInvent.Object(LoopC).ObjIndex = 0
+          UserList(UserIndex).BancoInvent.Object(LoopC).OBJIndex = 0
     Next LoopC
     
     UserList(UserIndex).BancoInvent.NroItems = 0
@@ -1783,9 +1711,6 @@ UserList(UserIndex).Counters.Saliendo = False
 
 'Le devolvemos el body y head originales
 If UserList(UserIndex).flags.AdminInvisible = 1 Then Call DoAdminInvisible(UserIndex)
-
-'Save statistics
-Call Statistics.UserDisconnected(UserIndex)
 
 ' Grabamos el personaje del usuario
 Call SaveUser(UserIndex, CharPath & Name & ".chr")
