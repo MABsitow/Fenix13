@@ -91,8 +91,6 @@ End Type
 
 Dim TmpArray(1 To ROWS, 1 To COLUMS) As tIntermidiateWork
 
-Dim TilePosY As Integer
-
 Private Function Limites(ByVal vfila As Integer, ByVal vcolu As Integer)
 '***************************************************
 'Author: Unknown
@@ -103,17 +101,17 @@ Private Function Limites(ByVal vfila As Integer, ByVal vcolu As Integer)
 Limites = vcolu >= 1 And vcolu <= COLUMS And vfila >= 1 And vfila <= ROWS
 End Function
 
-Private Function IsWalkable(ByVal map As Integer, ByVal row As Integer, ByVal Col As Integer, ByVal NpcIndex As Integer) As Boolean
+Private Function IsWalkable(ByVal Map As Integer, ByVal row As Integer, ByVal Col As Integer, ByVal NpcIndex As Integer) As Boolean
 '***************************************************
 'Author: Unknown
 'Last Modification: -
 '
 '***************************************************
 
-IsWalkable = MapData(map, row, Col).Blocked = 0 And MapData(map, row, Col).NpcIndex = 0
+IsWalkable = MapData(Map, row, Col).Blocked = 0 And MapData(Map, row, Col).NpcIndex = 0
 
-If MapData(map, row, Col).UserIndex <> 0 Then
-     If MapData(map, row, Col).UserIndex <> Npclist(NpcIndex).PFINFO.TargetUser Then IsWalkable = False
+If MapData(Map, row, Col).UserIndex <> 0 Then
+     If MapData(Map, row, Col).UserIndex <> Npclist(NpcIndex).PFINFO.TargetUser Then IsWalkable = False
 End If
 
 End Function
@@ -214,7 +212,7 @@ Public Sub SeekPath(ByVal NpcIndex As Integer, Optional ByVal MaxSteps As Intege
     Dim NpcMap As Integer
     Dim steps As Integer
     
-    NpcMap = Npclist(NpcIndex).Pos.map
+    NpcMap = Npclist(NpcIndex).Pos.Map
     
     steps = 0
     
@@ -263,13 +261,13 @@ Private Sub MakePath(ByVal NpcIndex As Integer)
         Exit Sub
     End If
     
-    ReDim Npclist(NpcIndex).PFINFO.Path(0 To Pasos) As tVertice
+    ReDim Npclist(NpcIndex).PFINFO.path(0 To Pasos) As tVertice
     
     miV.X = Npclist(NpcIndex).PFINFO.Target.X
     miV.Y = Npclist(NpcIndex).PFINFO.Target.Y
     
     For i = Pasos To 1 Step -1
-        Npclist(NpcIndex).PFINFO.Path(i) = miV
+        Npclist(NpcIndex).PFINFO.path(i) = miV
         miV = TmpArray(miV.Y, miV.X).PrevV
     Next i
     

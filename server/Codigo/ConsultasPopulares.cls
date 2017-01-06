@@ -72,16 +72,16 @@ Public Sub LoadData()
 Dim CantOpciones As Integer
 Dim i As Integer
 
-    pEncuestaActualNum = val(GetVar(App.Path & ARCHIVOCONFIG, "INIT", "ConsultaActual"))
-    pEncuestaActualTex = GetVar(App.Path & ARCHIVOCONFIG, "INIT", "ConsultaActualTexto")
-    pNivelRequerido = GetVar(App.Path & ARCHIVOCONFIG, "INIT", "NivelRequerido")
+    pEncuestaActualNum = val(GetVar(App.path & ARCHIVOCONFIG, "INIT", "ConsultaActual"))
+    pEncuestaActualTex = GetVar(App.path & ARCHIVOCONFIG, "INIT", "ConsultaActualTexto")
+    pNivelRequerido = GetVar(App.path & ARCHIVOCONFIG, "INIT", "NivelRequerido")
 
     If pEncuestaActualNum > 0 Then
        'cargo todas las opciones
-        CantOpciones = val(GetVar(App.Path & ARCHIVOCONFIG, "ENCUESTA" & pEncuestaActualNum, "CANTOPCIONES"))
+        CantOpciones = val(GetVar(App.path & ARCHIVOCONFIG, "ENCUESTA" & pEncuestaActualNum, "CANTOPCIONES"))
         ReDim pOpciones(1 To CantOpciones) As Integer
         For i = 1 To CantOpciones
-            pOpciones(i) = val(GetVar(App.Path & ARCHIVOCONFIG, "ENCUESTA" & pEncuestaActualNum, "OPCION" & i))
+            pOpciones(i) = val(GetVar(App.path & ARCHIVOCONFIG, "ENCUESTA" & pEncuestaActualNum, "OPCION" & i))
         Next i
     End If
 End Sub
@@ -100,7 +100,7 @@ Dim sufragio As Integer
         Exit Function
     End If
 
-    CharFile = CharPath & UserList(UserIndex).name & ".chr"
+    CharFile = CharPath & UserList(UserIndex).Name & ".chr"
     
     
     
@@ -110,9 +110,9 @@ Dim sufragio As Integer
             If Not YaVoto Then
                 If Not MailYaVoto(UserList(UserIndex).email) Then
                     'pj apto para votar
-                    sufragio = CLng(val(GetVar(App.Path & ARCHIVOCONFIG, "RESULTADOS" & pEncuestaActualNum, "V" & opcion)))
+                    sufragio = CLng(val(GetVar(App.path & ARCHIVOCONFIG, "RESULTADOS" & pEncuestaActualNum, "V" & opcion)))
                     sufragio = sufragio + 1
-                    Call WriteVar(App.Path & ARCHIVOCONFIG, "RESULTADOS" & pEncuestaActualNum, "V" & opcion, str(sufragio))
+                    Call WriteVar(App.path & ARCHIVOCONFIG, "RESULTADOS" & pEncuestaActualNum, "V" & opcion, str$(sufragio))
                     doVotar = "Tu voto ha sido computado. Opcion: " & opcion
                     Call MarcarPjComoQueYaVoto(UserIndex)
                     Call MarcarMailComoQueYaVoto(UserList(UserIndex).email)
@@ -144,14 +144,14 @@ Dim i As Integer
     Call WriteConsoleMsg(UserIndex, pEncuestaActualTex, FontTypeNames.FONTTYPE_GUILD)
     Call WriteConsoleMsg(UserIndex, " Opciones de voto: ", FontTypeNames.FONTTYPE_GUILDMSG)
     For i = 1 To UBound(pOpciones)
-        Call WriteConsoleMsg(UserIndex, "(Opcion " & i & "): " & GetVar(App.Path & ARCHIVOCONFIG, "ENCUESTA" & pEncuestaActualNum, "OPCION" & i), FontTypeNames.FONTTYPE_GUILDMSG)
+        Call WriteConsoleMsg(UserIndex, "(Opcion " & i & "): " & GetVar(App.path & ARCHIVOCONFIG, "ENCUESTA" & pEncuestaActualNum, "OPCION" & i), FontTypeNames.FONTTYPE_GUILDMSG)
     Next i
     Call WriteConsoleMsg(UserIndex, " Para votar una opcion, escribe /encuesta NUMERODEOPCION, por ejemplo para votar la opcion 1, escribe /encuesta 1. Tu voto no podra ser cambiado.", FontTypeNames.FONTTYPE_VENENO)
 End Function
 
 
 Private Sub MarcarPjComoQueYaVoto(ByVal UserIndex As Integer)
-    Call WriteVar(CharPath & UserList(UserIndex).name & ".chr", "CONSULTAS", "Voto", str(pEncuestaActualNum))
+    Call WriteVar(CharPath & UserList(UserIndex).Name & ".chr", "CONSULTAS", "Voto", str$(pEncuestaActualNum))
 End Sub
 
 
@@ -164,7 +164,7 @@ MailYaVoto = False
 
 ArchN = FreeFile()
 
-Open App.Path & ARCHIVOMAILS For Input As #ArchN
+Open App.path & ARCHIVOMAILS For Input As #ArchN
 
 Do While Not EOF(ArchN)
     Line Input #ArchN, Tmp
@@ -184,7 +184,7 @@ Dim ArchN As Integer
 
 ArchN = FreeFile()
 
-Open App.Path & ARCHIVOMAILS For Append As #ArchN
+Open App.path & ARCHIVOMAILS For Append As #ArchN
 Print #ArchN, email
 
 Close #ArchN

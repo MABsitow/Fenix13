@@ -58,9 +58,6 @@ Public IntervaloParalizado As Integer
 Public IntervaloInvisible As Integer
 Public IntervaloFrio As Integer
 Public IntervaloWavFx As Integer
-Public IntervaloLanzaHechizo As Integer
-Public IntervaloNPCPuedeAtacar As Integer
-Public IntervaloNPCAI As Integer
 Public IntervaloInvocacion As Integer
 Public IntervaloOculto As Integer '[Nacho]
 Public IntervaloUserPuedeAtacar As Long
@@ -140,7 +137,6 @@ Sub WorldSave()
 On Error Resume Next
 
     Dim loopX As Integer
-    Dim Porc As Long
     
     Call SendData(SendTarget.ToAll, 0, PrepareMessageConsoleMsg("Servidor> Iniciando WorldSave", FontTypeNames.FONTTYPE_SERVER))
 
@@ -232,20 +228,6 @@ Public Sub Encarcelar(ByVal UserIndex As Integer, ByVal Minutos As Long, Optiona
         UserList(UserIndex).flags.Traveling = 0
         UserList(UserIndex).Counters.goHome = 0
         Call WriteMultiMessage(UserIndex, eMessages.CancelHome)
-    End If
-End Sub
-
-
-Public Sub BorrarUsuario(ByVal UserName As String)
-'***************************************************
-'Author: Unknown
-'Last Modification: -
-'
-'***************************************************
-
-On Error Resume Next
-    If FileExist(CharPath & UCase$(UserName) & ".chr", vbNormal) Then
-        Kill CharPath & UCase$(UserName) & ".chr"
     End If
 End Sub
 

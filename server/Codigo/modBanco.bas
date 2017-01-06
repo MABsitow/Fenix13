@@ -70,7 +70,7 @@ With UserList(UserIndex)
     'Actualiza un solo slot
     If Not UpdateAll Then
         'Actualiza el inventario
-        If .BancoInvent.Object(Slot).ObjIndex > 0 Then
+        If .BancoInvent.Object(Slot).OBJIndex > 0 Then
             Call SendBanObj(UserIndex, Slot, .BancoInvent.Object(Slot))
         Else
             Call SendBanObj(UserIndex, Slot, NullObj)
@@ -79,7 +79,7 @@ With UserList(UserIndex)
     'Actualiza todos los slots
         For LoopC = 1 To MAX_BANCOINVENTORY_SLOTS
             'Actualiza el inventario
-            If .BancoInvent.Object(LoopC).ObjIndex > 0 Then
+            If .BancoInvent.Object(LoopC).OBJIndex > 0 Then
                 Call SendBanObj(UserIndex, LoopC, .BancoInvent.Object(LoopC))
             Else
                 Call SendBanObj(UserIndex, LoopC, NullObj)
@@ -121,7 +121,7 @@ Errhandler:
 
 End Sub
 
-Sub UserReciveObj(ByVal UserIndex As Integer, ByVal ObjIndex As Integer, ByVal Cantidad As Integer)
+Sub UserReciveObj(ByVal UserIndex As Integer, ByVal OBJIndex As Integer, ByVal Cantidad As Integer)
 '***************************************************
 'Author: Unknown
 'Last Modification: -
@@ -132,14 +132,14 @@ Dim Slot As Integer
 Dim obji As Integer
 
 With UserList(UserIndex)
-    If .BancoInvent.Object(ObjIndex).Amount <= 0 Then Exit Sub
+    If .BancoInvent.Object(OBJIndex).Amount <= 0 Then Exit Sub
     
-    obji = .BancoInvent.Object(ObjIndex).ObjIndex
+    obji = .BancoInvent.Object(OBJIndex).OBJIndex
     
     
     '¿Ya tiene un objeto de este tipo?
     Slot = 1
-    Do Until .Invent.Object(Slot).ObjIndex = obji And _
+    Do Until .Invent.Object(Slot).OBJIndex = obji And _
        .Invent.Object(Slot).Amount + Cantidad <= MAX_INVENTORY_OBJS
         
         Slot = Slot + 1
@@ -151,7 +151,7 @@ With UserList(UserIndex)
     'Sino se fija por un slot vacio
     If Slot > .CurrentInventorySlots Then
         Slot = 1
-        Do Until .Invent.Object(Slot).ObjIndex = 0
+        Do Until .Invent.Object(Slot).OBJIndex = 0
             Slot = Slot + 1
 
             If Slot > .CurrentInventorySlots Then
@@ -167,10 +167,10 @@ With UserList(UserIndex)
     'Mete el obj en el slot
     If .Invent.Object(Slot).Amount + Cantidad <= MAX_INVENTORY_OBJS Then
         'Menor que MAX_INV_OBJS
-        .Invent.Object(Slot).ObjIndex = obji
+        .Invent.Object(Slot).OBJIndex = obji
         .Invent.Object(Slot).Amount = .Invent.Object(Slot).Amount + Cantidad
         
-        Call QuitarBancoInvItem(UserIndex, CByte(ObjIndex), Cantidad)
+        Call QuitarBancoInvItem(UserIndex, CByte(OBJIndex), Cantidad)
     Else
         Call WriteConsoleMsg(UserIndex, "No podés tener mas objetos.", FontTypeNames.FONTTYPE_INFO)
     End If
@@ -185,10 +185,10 @@ Sub QuitarBancoInvItem(ByVal UserIndex As Integer, ByVal Slot As Byte, ByVal Can
 '
 '***************************************************
 
-Dim ObjIndex As Integer
+Dim OBJIndex As Integer
 
 With UserList(UserIndex)
-    ObjIndex = .BancoInvent.Object(Slot).ObjIndex
+    OBJIndex = .BancoInvent.Object(Slot).OBJIndex
 
     'Quita un Obj
 
@@ -196,7 +196,7 @@ With UserList(UserIndex)
     
     If .BancoInvent.Object(Slot).Amount <= 0 Then
         .BancoInvent.NroItems = .BancoInvent.NroItems - 1
-        .BancoInvent.Object(Slot).ObjIndex = 0
+        .BancoInvent.Object(Slot).OBJIndex = 0
         .BancoInvent.Object(Slot).Amount = 0
     End If
 End With
@@ -239,7 +239,7 @@ On Error GoTo Errhandler
 Errhandler:
 End Sub
 
-Sub UserDejaObj(ByVal UserIndex As Integer, ByVal ObjIndex As Integer, ByVal Cantidad As Integer)
+Sub UserDejaObj(ByVal UserIndex As Integer, ByVal OBJIndex As Integer, ByVal Cantidad As Integer)
 '***************************************************
 'Author: Unknown
 'Last Modification: -
@@ -252,11 +252,11 @@ Sub UserDejaObj(ByVal UserIndex As Integer, ByVal ObjIndex As Integer, ByVal Can
     If Cantidad < 1 Then Exit Sub
     
     With UserList(UserIndex)
-        obji = .Invent.Object(ObjIndex).ObjIndex
+        obji = .Invent.Object(OBJIndex).OBJIndex
         
         '¿Ya tiene un objeto de este tipo?
         Slot = 1
-        Do Until .BancoInvent.Object(Slot).ObjIndex = obji And _
+        Do Until .BancoInvent.Object(Slot).OBJIndex = obji And _
             .BancoInvent.Object(Slot).Amount + Cantidad <= MAX_INVENTORY_OBJS
             Slot = Slot + 1
             
@@ -268,7 +268,7 @@ Sub UserDejaObj(ByVal UserIndex As Integer, ByVal ObjIndex As Integer, ByVal Can
         'Sino se fija por un slot vacio antes del slot devuelto
         If Slot > MAX_BANCOINVENTORY_SLOTS Then
             Slot = 1
-            Do Until .BancoInvent.Object(Slot).ObjIndex = 0
+            Do Until .BancoInvent.Object(Slot).OBJIndex = 0
                 Slot = Slot + 1
                 
                 If Slot > MAX_BANCOINVENTORY_SLOTS Then
@@ -285,10 +285,10 @@ Sub UserDejaObj(ByVal UserIndex As Integer, ByVal ObjIndex As Integer, ByVal Can
             If .BancoInvent.Object(Slot).Amount + Cantidad <= MAX_INVENTORY_OBJS Then
                 
                 'Menor que MAX_INV_OBJS
-                .BancoInvent.Object(Slot).ObjIndex = obji
+                .BancoInvent.Object(Slot).OBJIndex = obji
                 .BancoInvent.Object(Slot).Amount = .BancoInvent.Object(Slot).Amount + Cantidad
                 
-                Call QuitarUserInvItem(UserIndex, CByte(ObjIndex), Cantidad)
+                Call QuitarUserInvItem(UserIndex, CByte(OBJIndex), Cantidad)
             Else
                 Call WriteConsoleMsg(UserIndex, "El banco no puede cargar tantos objetos.", FontTypeNames.FONTTYPE_INFO)
             End If
@@ -306,12 +306,12 @@ Sub SendUserBovedaTxt(ByVal sendIndex As Integer, ByVal UserIndex As Integer)
 On Error Resume Next
 Dim j As Integer
 
-Call WriteConsoleMsg(sendIndex, UserList(UserIndex).name, FontTypeNames.FONTTYPE_INFO)
+Call WriteConsoleMsg(sendIndex, UserList(UserIndex).Name, FontTypeNames.FONTTYPE_INFO)
 Call WriteConsoleMsg(sendIndex, "Tiene " & UserList(UserIndex).BancoInvent.NroItems & " objetos.", FontTypeNames.FONTTYPE_INFO)
 
 For j = 1 To MAX_BANCOINVENTORY_SLOTS
-    If UserList(UserIndex).BancoInvent.Object(j).ObjIndex > 0 Then
-        Call WriteConsoleMsg(sendIndex, "Objeto " & j & " " & ObjData(UserList(UserIndex).BancoInvent.Object(j).ObjIndex).name & " Cantidad:" & UserList(UserIndex).BancoInvent.Object(j).Amount, FontTypeNames.FONTTYPE_INFO)
+    If UserList(UserIndex).BancoInvent.Object(j).OBJIndex > 0 Then
+        Call WriteConsoleMsg(sendIndex, "Objeto " & j & " " & ObjData(UserList(UserIndex).BancoInvent.Object(j).OBJIndex).Name & " Cantidad:" & UserList(UserIndex).BancoInvent.Object(j).Amount, FontTypeNames.FONTTYPE_INFO)
     End If
 Next
 
@@ -339,7 +339,7 @@ If FileExist(CharFile, vbNormal) Then
         ObjInd = ReadField(1, Tmp, Asc("-"))
         ObjCant = ReadField(2, Tmp, Asc("-"))
         If ObjInd > 0 Then
-            Call WriteConsoleMsg(sendIndex, "Objeto " & j & " " & ObjData(ObjInd).name & " Cantidad:" & ObjCant, FontTypeNames.FONTTYPE_INFO)
+            Call WriteConsoleMsg(sendIndex, "Objeto " & j & " " & ObjData(ObjInd).Name & " Cantidad:" & ObjCant, FontTypeNames.FONTTYPE_INFO)
         End If
     Next
 Else

@@ -273,8 +273,6 @@ Attribute VB_Exposed = False
 
 Option Explicit
 
-Public ESCUCHADAS As Long
-
 Private Type NOTIFYICONDATA
     cbSize As Long
     hWnd As Long
@@ -374,10 +372,6 @@ On Error GoTo Errhandler
 'fired every minute
 Static Minutos As Long
 Static MinutosLatsClean As Long
-Static MinsPjesSave As Long
-
-Dim i As Integer
-Dim Num As Long
 
 Minutos = Minutos + 1
 
@@ -499,13 +493,7 @@ On Error Resume Next
 
 Call QuitarIconoSystray
 
-#If UsarQueSocket = 1 Then
 Call LimpiaWsApi
-#ElseIf UsarQueSocket = 0 Then
-Socket1.Cleanup
-#ElseIf UsarQueSocket = 2 Then
-Serv.Detener
-#End If
 
 Dim LoopC As Integer
 
@@ -559,8 +547,6 @@ On Error GoTo hayerror
                     '[Alejo-18-5]
                     bEnviarStats = False
                     bEnviarAyS = False
-                    
-                    Call DoTileEvents(iUserIndex, .Pos.Map, .Pos.X, .Pos.Y)
                     
                     
                     If .flags.Paralizado = 1 Then Call EfectoParalisisUser(iUserIndex)
@@ -780,9 +766,6 @@ Private Sub TIMER_AI_Timer()
 
 On Error GoTo ErrorHandler
 Dim NpcIndex As Long
-Dim X As Integer
-Dim Y As Integer
-Dim UseAI As Integer
 Dim mapa As Integer
 Dim e_p As Integer
 
@@ -899,9 +882,7 @@ Call LogError("Error tLluviaTimer")
 End Sub
 
 Private Sub tPiqueteC_Timer()
-    Dim NuevaA As Boolean
    ' Dim NuevoL As Boolean
-    Dim GI As Integer
     
     Dim i As Long
     
@@ -950,105 +931,3 @@ Exit Sub
 Errhandler:
     Call LogError("Error en tPiqueteC_Timer " & Err.Number & ": " & Err.description)
 End Sub
-
-
-
-
-
-'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-'''''''''''''''''USO DEL CONTROL TCPSERV'''''''''''''''''''''''''''
-'''''''''''''Compilar con UsarQueSocket = 3''''''''''''''''''''''''
-'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-
-
-#If UsarQueSocket = 3 Then
-
-Private Sub TCPServ_Eror(ByVal Numero As Long, ByVal Descripcion As String)
-    Call LogError("TCPSERVER SOCKET ERROR: " & Numero & "/" & Descripcion)
-End Sub
-
-Private Sub TCPServ_NuevaConn(ByVal ID As Long)
-On Error GoTo errorHandlerNC
-
-    ESCUCHADAS = ESCUCHADAS + 1
-    Escuch.Caption = ESCUCHADAS
-    
-    Dim i As Integer
-    
-    Dim NewIndex As Integer
-    NewIndex = NextOpenUser
-    
-    If NewIndex <= MaxUsers Then
-        'call logindex(NewIndex, "******> Accept. ConnId: " & ID)
-        
-        TCPServ.SetDato ID, NewIndex
-        
-        If aDos.MaxConexiones(TCPServ.GetIP(ID)) Then
-            Call aDos.RestarConexion(TCPServ.GetIP(ID))
-            Call ResetUserSlot(NewIndex)
-            Exit Sub
-        End If
-
-        If NewIndex > LastUser Then LastUser = NewIndex
-
-        UserList(NewIndex).ConnID = ID
-        UserList(NewIndex).ip = TCPServ.GetIP(ID)
-        UserList(NewIndex).ConnIDValida = True
-        Set UserList(NewIndex).CommandsBuffer = New CColaArray
-        
-        For i = 1 To BanIps.Count
-            If BanIps.Item(i) = TCPServ.GetIP(ID) Then
-                Call ResetUserSlot(NewIndex)
-                Exit Sub
-            End If
-        Next i
-
-    Else
-        Call CloseSocket(NewIndex, True)
-        LogCriticEvent ("NEWINDEX > MAXUSERS. IMPOSIBLE ALOCATEAR SOCKETS")
-    End If
-
-Exit Sub
-
-errorHandlerNC:
-Call LogError("TCPServer::NuevaConexion " & Err.description)
-End Sub
-
-Private Sub TCPServ_Close(ByVal ID As Long, ByVal MiDato As Long)
-    On Error GoTo eh
-    '' No cierro yo el socket. El on_close lo cierra por mi.
-    'call logindex(MiDato, "******> Remote Close. ConnId: " & ID & " Midato: " & MiDato)
-    Call CloseSocket(MiDato, False)
-Exit Sub
-eh:
-    Call LogError("Ocurrio un error en el evento TCPServ_Close. ID/miDato:" & ID & "/" & MiDato)
-End Sub
-
-Private Sub TCPServ_Read(ByVal ID As Long, Datos As Variant, ByVal Cantidad As Long, ByVal MiDato As Long)
-On Error GoTo errorh
-
-With UserList(MiDato)
-    Datos = StrConv(StrConv(Datos, vbUnicode), vbFromUnicode)
-    
-    Call .incomingData.WriteASCIIStringFixed(Datos)
-    
-    If .ConnID <> -1 Then
-        Call HandleIncomingData(MiDato)
-    Else
-        Exit Sub
-    End If
-End With
-
-Exit Sub
-
-errorh:
-Call LogError("Error socket read: " & MiDato & " dato:" & RD & " userlogged: " & UserList(MiDato).flags.UserLogged & " connid:" & UserList(MiDato).ConnID & " ID Parametro" & ID & " error:" & Err.description)
-
-End Sub
-
-#End If
-'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-''''''''''''''FIN  USO DEL CONTROL TCPSERV'''''''''''''''''''''''''
-'''''''''''''Compilar con UsarQueSocket = 3''''''''''''''''''''''''
-'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-

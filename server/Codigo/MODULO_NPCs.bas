@@ -874,13 +874,13 @@ Private Sub NPCTirarOro(ByRef MiNPC As npc)
         MiAux = MiNPC.GiveGLD
         Do While MiAux > MAX_INVENTORY_OBJS
             MiObj.Amount = MAX_INVENTORY_OBJS
-            MiObj.ObjIndex = iORO
+            MiObj.OBJIndex = iORO
             Call TirarItemAlPiso(MiNPC.Pos, MiObj)
             MiAux = MiAux - MAX_INVENTORY_OBJS
         Loop
         If MiAux > 0 Then
             MiObj.Amount = MiAux
-            MiObj.ObjIndex = iORO
+            MiObj.OBJIndex = iORO
             Call TirarItemAlPiso(MiNPC.Pos, MiObj)
         End If
     End If
@@ -910,7 +910,6 @@ Public Function OpenNPC(ByVal NpcNumber As Integer, Optional ByVal Respawn = Tru
     Dim Leer As clsIniReader
     Dim LoopC As Long
     Dim ln As String
-    Dim aux As String
     
     Set Leer = LeerNPCs
     
@@ -984,7 +983,7 @@ Public Function OpenNPC(ByVal NpcNumber As Integer, Optional ByVal Respawn = Tru
         .Invent.NroItems = val(Leer.GetValue("NPC" & NpcNumber, "NROITEMS"))
         For LoopC = 1 To .Invent.NroItems
             ln = Leer.GetValue("NPC" & NpcNumber, "Obj" & LoopC)
-            .Invent.Object(LoopC).ObjIndex = val(ReadField(1, ln, 45))
+            .Invent.Object(LoopC).OBJIndex = val(ReadField(1, ln, 45))
             .Invent.Object(LoopC).Amount = val(ReadField(2, ln, 45))
         Next LoopC
         
@@ -1016,7 +1015,7 @@ Public Function OpenNPC(ByVal NpcNumber As Integer, Optional ByVal Respawn = Tru
             End If
             
             .NoMagia = val(Leer.GetValue("NPC" & NpcNumber, "NoMagia"))
-            .veinvis = val(Leer.GetValue("NPC" & NpcNumber, "VerInvis"))
+            .VeInvis = val(Leer.GetValue("NPC" & NpcNumber, "VerInvis"))
             .BackUp = val(Leer.GetValue("NPC" & NpcNumber, "BackUp"))
             .RespawnOrigPos = val(Leer.GetValue("NPC" & NpcNumber, "OrigPos"))
             .AfectaParalisis = val(Leer.GetValue("NPC" & NpcNumber, "AfectaParalisis"))

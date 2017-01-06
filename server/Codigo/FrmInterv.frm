@@ -681,27 +681,27 @@ Private Sub Command2_Click()
 On Error GoTo Err
 
 'Intervalos
-Call WriteVar(IniPath & "Server.ini", "INTERVALOS", "SanaIntervaloSinDescansar", str(SanaIntervaloSinDescansar))
-Call WriteVar(IniPath & "Server.ini", "INTERVALOS", "StaminaIntervaloSinDescansar", str(StaminaIntervaloSinDescansar))
-Call WriteVar(IniPath & "Server.ini", "INTERVALOS", "SanaIntervaloDescansar", str(SanaIntervaloDescansar))
-Call WriteVar(IniPath & "Server.ini", "INTERVALOS", "StaminaIntervaloDescansar", str(StaminaIntervaloDescansar))
-Call WriteVar(IniPath & "Server.ini", "INTERVALOS", "IntervaloSed", str(IntervaloSed))
-Call WriteVar(IniPath & "Server.ini", "INTERVALOS", "IntervaloHambre", str(IntervaloHambre))
-Call WriteVar(IniPath & "Server.ini", "INTERVALOS", "IntervaloVeneno", str(IntervaloVeneno))
-Call WriteVar(IniPath & "Server.ini", "INTERVALOS", "IntervaloParalizado", str(IntervaloParalizado))
-Call WriteVar(IniPath & "Server.ini", "INTERVALOS", "IntervaloInvisible", str(IntervaloInvisible))
-Call WriteVar(IniPath & "Server.ini", "INTERVALOS", "IntervaloFrio", str(IntervaloFrio))
-Call WriteVar(IniPath & "Server.ini", "INTERVALOS", "IntervaloWAVFX", str(IntervaloWavFx))
-Call WriteVar(IniPath & "Server.ini", "INTERVALOS", "IntervaloInvocacion", str(IntervaloInvocacion))
-Call WriteVar(IniPath & "Server.ini", "INTERVALOS", "IntervaloParaConexion", str(IntervaloParaConexion))
+Call WriteVar(IniPath & "Server.ini", "INTERVALOS", "SanaIntervaloSinDescansar", str$(SanaIntervaloSinDescansar))
+Call WriteVar(IniPath & "Server.ini", "INTERVALOS", "StaminaIntervaloSinDescansar", str$(StaminaIntervaloSinDescansar))
+Call WriteVar(IniPath & "Server.ini", "INTERVALOS", "SanaIntervaloDescansar", str$(SanaIntervaloDescansar))
+Call WriteVar(IniPath & "Server.ini", "INTERVALOS", "StaminaIntervaloDescansar", str$(StaminaIntervaloDescansar))
+Call WriteVar(IniPath & "Server.ini", "INTERVALOS", "IntervaloSed", str$(IntervaloSed))
+Call WriteVar(IniPath & "Server.ini", "INTERVALOS", "IntervaloHambre", str$(IntervaloHambre))
+Call WriteVar(IniPath & "Server.ini", "INTERVALOS", "IntervaloVeneno", str$(IntervaloVeneno))
+Call WriteVar(IniPath & "Server.ini", "INTERVALOS", "IntervaloParalizado", str$(IntervaloParalizado))
+Call WriteVar(IniPath & "Server.ini", "INTERVALOS", "IntervaloInvisible", str$(IntervaloInvisible))
+Call WriteVar(IniPath & "Server.ini", "INTERVALOS", "IntervaloFrio", str$(IntervaloFrio))
+Call WriteVar(IniPath & "Server.ini", "INTERVALOS", "IntervaloWAVFX", str$(IntervaloWavFx))
+Call WriteVar(IniPath & "Server.ini", "INTERVALOS", "IntervaloInvocacion", str$(IntervaloInvocacion))
+Call WriteVar(IniPath & "Server.ini", "INTERVALOS", "IntervaloParaConexion", str$(IntervaloParaConexion))
 
 '&&&&&&&&&&&&&&&&&&&&& TIMERS &&&&&&&&&&&&&&&&&&&&&&&
 
-Call WriteVar(IniPath & "Server.ini", "INTERVALOS", "IntervaloLanzaHechizo", str(IntervaloUserPuedeCastear))
+Call WriteVar(IniPath & "Server.ini", "INTERVALOS", "IntervaloLanzaHechizo", str$(IntervaloUserPuedeCastear))
 Call WriteVar(IniPath & "Server.ini", "INTERVALOS", "IntervaloNpcAI", frmMain.TIMER_AI.Interval)
 Call WriteVar(IniPath & "Server.ini", "INTERVALOS", "IntervaloNpcPuedeAtacar", frmMain.npcataca.Interval)
-Call WriteVar(IniPath & "Server.ini", "INTERVALOS", "IntervaloTrabajo", str(IntervaloUserPuedeTrabajar))
-Call WriteVar(IniPath & "Server.ini", "INTERVALOS", "IntervaloUserPuedeAtacar", str(IntervaloUserPuedeAtacar))
+Call WriteVar(IniPath & "Server.ini", "INTERVALOS", "IntervaloTrabajo", str$(IntervaloUserPuedeTrabajar))
+Call WriteVar(IniPath & "Server.ini", "INTERVALOS", "IntervaloUserPuedeAtacar", str$(IntervaloUserPuedeAtacar))
 Call WriteVar(IniPath & "Server.ini", "INTERVALOS", "IntervaloPerdidaStaminaLluvia", frmMain.tLluvia.Interval)
 
 

@@ -78,17 +78,15 @@ On Error Resume Next
         
         Dim i As Byte
         Dim MiObj As Obj
-        Dim NroDrop As Integer
         Dim Random As Integer
-        Dim ObjIndex As Integer
         
         
         ' Tira todo el inventario
         If IsPretoriano Then
             For i = 1 To MAX_INVENTORY_SLOTS
-                If .Invent.Object(i).ObjIndex > 0 Then
+                If .Invent.Object(i).OBJIndex > 0 Then
                       MiObj.Amount = .Invent.Object(i).Amount
-                      MiObj.ObjIndex = .Invent.Object(i).ObjIndex
+                      MiObj.OBJIndex = .Invent.Object(i).OBJIndex
                       Call TirarItemAlPiso(.Pos, MiObj)
                 End If
             Next i
@@ -106,14 +104,14 @@ On Error Resume Next
                 
                 For i = 1 To MAX_INVENTORY_SLOTS
                     
-                    If .Invent.Object(i).ObjIndex > 0 Then
+                    If .Invent.Object(i).OBJIndex > 0 Then
                         If .MaxRecom Then
                             MiObj.Amount = RandomNumber(.MinRecom, .MaxRecom)
                         Else
                             MiObj.Amount = .Invent.Object(i).Amount
                         End If
                         
-                        MiObj.ObjIndex = .Invent.Object(i).ObjIndex
+                        MiObj.OBJIndex = .Invent.Object(i).OBJIndex
                         
                         'CHECK: le meto el item al ultimo que atacó?
                         'CHECK: parecido a fénix, solo que acá si no puede meter el item en el inventario _
@@ -130,14 +128,14 @@ On Error Resume Next
                     
                     For i = 1 To MAX_INVENTORY_SLOTS
                         
-                        If .Invent.Object(i).ObjIndex > 0 Then
+                        If .Invent.Object(i).OBJIndex > 0 Then
                             If .MaxRecom Then
                                 MiObj.Amount = RandomNumber(.MinRecom, .MaxRecom)
                             Else
                                 MiObj.Amount = .Invent.Object(i).Amount
                             End If
                             
-                            MiObj.ObjIndex = .Invent.Object(i).ObjIndex
+                            MiObj.OBJIndex = .Invent.Object(i).OBJIndex
                             
                             If Not MeterItemEnInventario(.flags.AttackedBy, MiObj) Then Call TirarItemAlPiso(.Pos, MiObj)
                             
@@ -154,7 +152,7 @@ On Error Resume Next
 
 End Sub
 
-Function QuedanItems(ByVal NpcIndex As Integer, ByVal ObjIndex As Integer) As Boolean
+Function QuedanItems(ByVal NpcIndex As Integer, ByVal OBJIndex As Integer) As Boolean
 '***************************************************
 'Author: Unknown
 'Last Modification: -
@@ -166,7 +164,7 @@ On Error Resume Next
     Dim i As Integer
     If Npclist(NpcIndex).Invent.NroItems > 0 Then
         For i = 1 To MAX_INVENTORY_SLOTS
-            If Npclist(NpcIndex).Invent.Object(i).ObjIndex = ObjIndex Then
+            If Npclist(NpcIndex).Invent.Object(i).OBJIndex = OBJIndex Then
                 QuedanItems = True
                 Exit Function
             End If
@@ -182,7 +180,7 @@ End Function
 ' @param ObjIndex Specifies reference to object
 ' @return   The amount of the item that the npc has
 ' @remarks This function reads the Npc.dat file
-Function EncontrarCant(ByVal NpcIndex As Integer, ByVal ObjIndex As Integer) As Integer
+Function EncontrarCant(ByVal NpcIndex As Integer, ByVal OBJIndex As Integer) As Integer
 '***************************************************
 'Author: Unknown
 'Last Modification: 03/09/08
@@ -199,7 +197,7 @@ On Error Resume Next
      
     For i = 1 To MAX_INVENTORY_SLOTS
         ln = GetVar(npcfile, "NPC" & Npclist(NpcIndex).Numero, "Obj" & i)
-        If ObjIndex = val(ReadField(1, ln, 45)) Then
+        If OBJIndex = val(ReadField(1, ln, 45)) Then
             EncontrarCant = val(ReadField(2, ln, 45))
             Exit Function
         End If
@@ -224,7 +222,7 @@ On Error Resume Next
         .Invent.NroItems = 0
         
         For i = 1 To MAX_INVENTORY_SLOTS
-           .Invent.Object(i).ObjIndex = 0
+           .Invent.Object(i).OBJIndex = 0
            .Invent.Object(i).Amount = 0
         Next i
         
@@ -247,19 +245,19 @@ Sub QuitarNpcInvItem(ByVal NpcIndex As Integer, ByVal Slot As Byte, ByVal Cantid
 ' - 03/09/08 Now this sub checks that te npc has an item before respawning it (Marco)
 '23/11/2009: ZaMa - Optimizacion de codigo.
 '***************************************************
-    Dim ObjIndex As Integer
+    Dim OBJIndex As Integer
     Dim iCant As Integer
     
     With Npclist(NpcIndex)
-        ObjIndex = .Invent.Object(Slot).ObjIndex
+        OBJIndex = .Invent.Object(Slot).OBJIndex
     
         'Quita un Obj
-        If ObjData(.Invent.Object(Slot).ObjIndex).Crucial = 0 Then
+        If ObjData(.Invent.Object(Slot).OBJIndex).Crucial = 0 Then
             .Invent.Object(Slot).Amount = .Invent.Object(Slot).Amount - Cantidad
             
             If .Invent.Object(Slot).Amount <= 0 Then
                 .Invent.NroItems = .Invent.NroItems - 1
-                .Invent.Object(Slot).ObjIndex = 0
+                .Invent.Object(Slot).OBJIndex = 0
                 .Invent.Object(Slot).Amount = 0
                 If .Invent.NroItems = 0 And .InvReSpawn <> 1 Then
                    Call CargarInvent(NpcIndex) 'Reponemos el inventario
@@ -270,14 +268,14 @@ Sub QuitarNpcInvItem(ByVal NpcIndex As Integer, ByVal Slot As Byte, ByVal Cantid
             
             If .Invent.Object(Slot).Amount <= 0 Then
                 .Invent.NroItems = .Invent.NroItems - 1
-                .Invent.Object(Slot).ObjIndex = 0
+                .Invent.Object(Slot).OBJIndex = 0
                 .Invent.Object(Slot).Amount = 0
                 
-                If Not QuedanItems(NpcIndex, ObjIndex) Then
+                If Not QuedanItems(NpcIndex, OBJIndex) Then
                     'Check if the item is in the npc's dat.
-                    iCant = EncontrarCant(NpcIndex, ObjIndex)
+                    iCant = EncontrarCant(NpcIndex, OBJIndex)
                     If iCant Then
-                        .Invent.Object(Slot).ObjIndex = ObjIndex
+                        .Invent.Object(Slot).OBJIndex = OBJIndex
                         .Invent.Object(Slot).Amount = iCant
                         .Invent.NroItems = .Invent.NroItems + 1
                     End If
@@ -310,7 +308,7 @@ Sub CargarInvent(ByVal NpcIndex As Integer)
         
         For LoopC = 1 To .Invent.NroItems
             ln = GetVar(npcfile, "NPC" & .Numero, "Obj" & LoopC)
-            .Invent.Object(LoopC).ObjIndex = val(ReadField(1, ln, 45))
+            .Invent.Object(LoopC).OBJIndex = val(ReadField(1, ln, 45))
             .Invent.Object(LoopC).Amount = val(ReadField(2, ln, 45))
             
         Next LoopC
@@ -327,7 +325,6 @@ Public Sub TirarOroNpc(ByVal Cantidad As Long, ByRef Pos As WorldPos)
 On Error GoTo Errhandler
 
     If Cantidad > 0 Then
-        Dim i As Byte
         Dim MiObj As Obj
         Dim RemainingGold As Long
         
@@ -346,7 +343,7 @@ On Error GoTo Errhandler
                 RemainingGold = 0
             End If
 
-            MiObj.ObjIndex = iORO
+            MiObj.OBJIndex = iORO
             
             Call TirarItemAlPiso(Pos, MiObj)
         Wend

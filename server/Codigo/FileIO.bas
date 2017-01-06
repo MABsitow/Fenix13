@@ -418,138 +418,65 @@ Public Sub DoBackUp()
     Close #nfile
 End Sub
 
+'CSEH: ErrLog
 Public Sub GrabarMapa(ByVal Map As Long, ByVal MAPFILE As String)
-'***************************************************
-'Author: Unknown
-'Last Modification: -
-'
-'***************************************************
-
-On Error Resume Next
-    Dim FreeFileMap As Long
-    Dim FreeFileInf As Long
-    Dim Y As Long
-    Dim X As Long
-    Dim ByFlags As Byte
-    Dim TempInt As Integer
-    Dim LoopC As Long
+    '***************************************************
+    'Author: Unknown
+    'Last Modification: -
+    '
+    '***************************************************
+    '<EhHeader>
+    On Error GoTo GrabarMapa_Err
+    '</EhHeader>
+        Dim FreeFileMap As Long
+        Dim Y As Long
+        Dim X As Long
+        Dim writer As New clsByteBuffer
     
-    If FileExist(MAPFILE & ".map", vbNormal) Then
-        Kill MAPFILE & ".map"
-    End If
-    
-    If FileExist(MAPFILE & ".inf", vbNormal) Then
-        Kill MAPFILE & ".inf"
-    End If
-    
-    'Open .map file
-    FreeFileMap = FreeFile
-    Open MAPFILE & ".Map" For Binary As FreeFileMap
-    Seek FreeFileMap, 1
-    
-    'Open .inf file
-    FreeFileInf = FreeFile
-    Open MAPFILE & ".Inf" For Binary As FreeFileInf
-    Seek FreeFileInf, 1
-    'map Header
-            
-    Put FreeFileMap, , MapInfo(Map).MapVersion
-    Put FreeFileMap, , MiCabecera
-    Put FreeFileMap, , TempInt
-    Put FreeFileMap, , TempInt
-    Put FreeFileMap, , TempInt
-    Put FreeFileMap, , TempInt
-    
-    'inf Header
-    Put FreeFileInf, , TempInt
-    Put FreeFileInf, , TempInt
-    Put FreeFileInf, , TempInt
-    Put FreeFileInf, , TempInt
-    Put FreeFileInf, , TempInt
-    
-    'Write .map file
-    For Y = YMinMapSize To YMaxMapSize
-        For X = XMinMapSize To XMaxMapSize
-            With MapData(Map, X, Y)
-                ByFlags = 0
-                
-                If .Blocked Then ByFlags = ByFlags Or 1
-                If .Graphic(2) Then ByFlags = ByFlags Or 2
-                If .Graphic(3) Then ByFlags = ByFlags Or 4
-                If .Graphic(4) Then ByFlags = ByFlags Or 8
-                If .trigger Then ByFlags = ByFlags Or 16
-                
-                Put FreeFileMap, , ByFlags
-                
-                Put FreeFileMap, , .Graphic(1)
-                
-                For LoopC = 2 To 4
-                    If .Graphic(LoopC) Then _
-                        Put FreeFileMap, , .Graphic(LoopC)
-                Next LoopC
-                
-                If .trigger Then _
-                    Put FreeFileMap, , CInt(.trigger)
-                
-                '.inf file
-                
-                ByFlags = 0
-                
-                If .ObjInfo.OBJIndex > 0 Then
-                   If ObjData(.ObjInfo.OBJIndex).OBJType = eOBJType.otFogata Then
-                        .ObjInfo.OBJIndex = 0
-                        .ObjInfo.Amount = 0
-                    End If
-                End If
-    
-                If .TileExit.Map Then ByFlags = ByFlags Or 1
-                If .NpcIndex Then ByFlags = ByFlags Or 2
-                If .ObjInfo.OBJIndex Then ByFlags = ByFlags Or 4
-                
-                Put FreeFileInf, , ByFlags
-                
-                If .TileExit.Map Then
-                    Put FreeFileInf, , .TileExit.Map
-                    Put FreeFileInf, , .TileExit.X
-                    Put FreeFileInf, , .TileExit.Y
-                End If
-                
-                If .NpcIndex Then _
-                    Put FreeFileInf, , Npclist(.NpcIndex).Numero
-                
-                If .ObjInfo.OBJIndex Then
-                    Put FreeFileInf, , .ObjInfo.OBJIndex
-                    Put FreeFileInf, , .ObjInfo.Amount
-                End If
-            End With
-        Next X
-    Next Y
-    
-    'Close .map file
-    Close FreeFileMap
-
-    'Close .inf file
-    Close FreeFileInf
-
-    With MapInfo(Map)
-    
-        'write .dat file
-        Call WriteVar(MAPFILE & ".dat", "Mapa" & Map, "Name", .Name)
-        Call WriteVar(MAPFILE & ".dat", "Mapa" & Map, "MusicNum", .Music)
-        Call WriteVar(MAPFILE & ".dat", "mapa" & Map, "MagiaSinefecto", .MagiaSinEfecto)
-    
-        Call WriteVar(MAPFILE & ".dat", "Mapa" & Map, "Terreno", .Terreno)
-        Call WriteVar(MAPFILE & ".dat", "Mapa" & Map, "Zona", .Zona)
-        Call WriteVar(MAPFILE & ".dat", "Mapa" & Map, "Restringir", .Restringir)
-        Call WriteVar(MAPFILE & ".dat", "Mapa" & Map, "BackUp", str(.BackUp))
-    
-        If .Pk Then
-            Call WriteVar(MAPFILE & ".dat", "Mapa" & Map, "Pk", "0")
-        Else
-            Call WriteVar(MAPFILE & ".dat", "Mapa" & Map, "Pk", "1")
+100     If FileExist(MAPFILE & ".bkp", vbNormal) Then
+105         Kill MAPFILE & ".bkp"
         End If
-    End With
 
+        'Open .map file
+110     FreeFileMap = FreeFile
+115     Open MAPFILE & ".bkp" For Binary As FreeFileMap
+120     Seek FreeFileMap, 1
+    
+    
+125     Call writer.initializeWriter(FreeFileMap)
+    
+        'Write .bkp file
+130     For Y = YMinMapSize To YMaxMapSize
+135         For X = XMinMapSize To XMaxMapSize
+140             With MapData(Map, X, Y)
+145                 If .ObjInfo.OBJIndex Then
+150                     If Not ObjData(.ObjInfo.OBJIndex).OBJType = eOBJType.otFogata Then
+155                         If Not ItemEsDeMapa(Map, X, Y) Then
+160                             Call writer.putByte(X)
+165                             Call writer.putByte(Y)
+170                             Call writer.putInteger(.ObjInfo.OBJIndex)
+175                             Call writer.putInteger(.ObjInfo.Amount)
+                            End If
+                        End If
+                    
+                    End If
+                End With
+180         Next X
+185     Next Y
+    
+190     Call writer.putByte(100)
+    
+195     Call writer.saveBuffer
+    
+        'Close .map file
+200     Close FreeFileMap
+
+    '<EhFooter>
+    Exit Sub
+
+GrabarMapa_Err:
+        Call LogError("Error en GrabarMapa: " & Erl & " - " & Err.description)
+    '</EhFooter>
 End Sub
 Sub LoadArmasHerreria()
 '***************************************************
@@ -626,14 +553,6 @@ Sub LoadBalance()
     'Modificadores de Vida
     For i = 1 To NUMCLASES
         ModVida(i) = val(GetVar(DatPath & "Balance.dat", "MODVIDA", ListaClases(i)))
-    Next i
-    
-    'Distribución de Vida
-    For i = 1 To 5
-        DistribucionEnteraVida(i) = val(GetVar(DatPath & "Balance.dat", "DISTRIBUCION", "E" + CStr(i)))
-    Next i
-    For i = 1 To 4
-        DistribucionSemienteraVida(i) = val(GetVar(DatPath & "Balance.dat", "DISTRIBUCION", "S" + CStr(i)))
     Next i
     
     'Extra
@@ -844,9 +763,7 @@ Sub LoadOBJData()
             .MinDef = val(Leer.GetValue("OBJ" & Object, "MINDEF"))
             .MaxDef = val(Leer.GetValue("OBJ" & Object, "MAXDEF"))
             .def = (.MinDef + .MaxDef) / 2
-            
-            .RazaEnana = val(Leer.GetValue("OBJ" & Object, "RazaEnana"))
-            
+                        
             .Valor = val(Leer.GetValue("OBJ" & Object, "Valor"))
             
             .Crucial = val(Leer.GetValue("OBJ" & Object, "Crucial"))
@@ -1170,7 +1087,6 @@ Sub LoadUserInit(ByVal UserIndex As Integer, ByRef UserFile As clsIniReader)
         End If
         
         .NroMascotas = CInt(UserFile.GetValue("MASCOTAS", "NroMascotas"))
-        Dim NpcIndex As Integer
         For LoopC = 1 To MAXMASCOTAS
             .MascotasType(LoopC) = val(UserFile.GetValue("MASCOTAS", "MAS" & LoopC))
         Next LoopC
@@ -1221,9 +1137,7 @@ Sub CargarBackUp()
 100     If frmMain.Visible Then frmMain.txStatus.Caption = "Cargando backup."
     
         Dim Map As Integer
-        Dim TempInt As Integer
         Dim tFileName As String
-        Dim npcfile As String
         
 105         NumMaps = val(GetVar(DatPath & "Map.dat", "INIT", "NumMaps"))
 110         Call InitAreas
@@ -1278,9 +1192,7 @@ Sub LoadMapData()
 100     If frmMain.Visible Then frmMain.txStatus.Caption = "Cargando mapas..."
     
         Dim Map As Integer
-        Dim TempInt As Integer
         Dim tFileName As String
-        Dim npcfile As String
     
 105         NumMaps = val(GetVar(DatPath & "Map.dat", "INIT", "NumMaps"))
 110         Call InitAreas
@@ -1364,12 +1276,10 @@ Public Sub CargarMapa(ByVal Map As Long, ByVal MAPFl As String)
     On Error GoTo CargarMapa_Err
     '</EhHeader>
         Dim FreeFileMap As Long
-        Dim FreeFileInf As Long
         Dim Y As Long
         Dim X As Long
         Dim ByFlags As Byte
         Dim npcfile As String
-        Dim TempInt As Integer
         Dim i As Long
     
         'array to store map data
@@ -1829,7 +1739,7 @@ With UserList(UserIndex)
     
     Call WriteVar(UserFile, "STATS", "ELU", CStr(.Stats.ELU))
     Call WriteVar(UserFile, "MUERTES", "UserMuertes", CStr(.Stats.UsuariosMatados))
-    'Call WriteVar(UserFile, "MUERTES", "CrimMuertes", CStr(.Stats.CriminalesMatados))
+    'Call WriteVar(UserFile, "MUERTES", "CrimMuertes", Cstr$(.Stats.CriminalesMatados))
     Call WriteVar(UserFile, "MUERTES", "NpcsMuertes", CStr(.Stats.NPCsMuertos))
       
     '[KEVIN]----------------------------------------------------------------------------
@@ -2162,17 +2072,15 @@ Public Sub CargaApuestas()
 
 End Sub
 
-Public Sub generateMatrix(ByVal mapa As Integer)
+Public Sub generateMatrix()
 '***************************************************
 'Author: Unknown
 'Last Modification: -
 '
 '***************************************************
 
-Dim i As Integer
-Dim j As Integer
-Dim X As Integer
-Dim Y As Integer
+Dim j As Long
+Dim i As Long
 
 ReDim distanceToCities(1 To NumMaps) As HomeDistance
 
@@ -2272,7 +2180,6 @@ Public Sub LoadArmadurasFaccion()
 '
 '***************************************************
     Dim ClassIndex As Long
-    Dim RaceIndex As Long
     
     Dim ArmaduraIndex As Integer
     

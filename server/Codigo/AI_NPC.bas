@@ -50,7 +50,7 @@ End Enum
 
 Public Const ELEMENTALFUEGO As Integer = 93
 Public Const ELEMENTALTIERRA As Integer = 94
-Public Const ELEMENTALAGUA As Integer = 92
+'Public Const ELEMENTALAGUA As Integer = 92
 
 'Damos a los NPCs el mismo rango de visi�n que un PJ
 Public Const RANGO_VISION_X As Byte = 8
@@ -787,10 +787,7 @@ Public Sub AiNpcObjeto(ByVal NpcIndex As Integer)
 '14/09/2009: ZaMa - Now npcs don't follow protected users.
 '***************************************************
     Dim UserIndex As Integer
-    Dim tHeading As Byte
     Dim i As Long
-    Dim SignoNS As Integer
-    Dim SignoEO As Integer
     Dim UserProtected As Boolean
     
     With Npclist(NpcIndex)

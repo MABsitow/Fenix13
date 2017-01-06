@@ -121,9 +121,9 @@ Private Sub GiveFactionArmours(ByVal UserIndex As Integer, ByVal IsCaos As Boole
         ObjArmour.Amount = GetArmourAmount(Rango, eTipoDefArmors.ieBaja)
         
         If IsCaos Then
-            ObjArmour.ObjIndex = ArmadurasFaccion(.clase, .raza).Caos(eTipoDefArmors.ieBaja)
+            ObjArmour.OBJIndex = ArmadurasFaccion(.Clase, .raza).Caos(eTipoDefArmors.ieBaja)
         Else
-            ObjArmour.ObjIndex = ArmadurasFaccion(.clase, .raza).Armada(eTipoDefArmors.ieBaja)
+            ObjArmour.OBJIndex = ArmadurasFaccion(.Clase, .raza).Armada(eTipoDefArmors.ieBaja)
         End If
         
         If Not MeterItemEnInventario(UserIndex, ObjArmour) Then
@@ -135,9 +135,9 @@ Private Sub GiveFactionArmours(ByVal UserIndex As Integer, ByVal IsCaos As Boole
         ObjArmour.Amount = GetArmourAmount(Rango, eTipoDefArmors.ieMedia)
         
         If IsCaos Then
-            ObjArmour.ObjIndex = ArmadurasFaccion(.clase, .raza).Caos(eTipoDefArmors.ieMedia)
+            ObjArmour.OBJIndex = ArmadurasFaccion(.Clase, .raza).Caos(eTipoDefArmors.ieMedia)
         Else
-            ObjArmour.ObjIndex = ArmadurasFaccion(.clase, .raza).Armada(eTipoDefArmors.ieMedia)
+            ObjArmour.OBJIndex = ArmadurasFaccion(.Clase, .raza).Armada(eTipoDefArmors.ieMedia)
         End If
         
         If Not MeterItemEnInventario(UserIndex, ObjArmour) Then
@@ -149,9 +149,9 @@ Private Sub GiveFactionArmours(ByVal UserIndex As Integer, ByVal IsCaos As Boole
         ObjArmour.Amount = GetArmourAmount(Rango, eTipoDefArmors.ieAlta)
         
         If IsCaos Then
-            ObjArmour.ObjIndex = ArmadurasFaccion(.clase, .raza).Caos(eTipoDefArmors.ieAlta)
+            ObjArmour.OBJIndex = ArmadurasFaccion(.Clase, .raza).Caos(eTipoDefArmors.ieAlta)
         Else
-            ObjArmour.ObjIndex = ArmadurasFaccion(.clase, .raza).Armada(eTipoDefArmors.ieAlta)
+            ObjArmour.OBJIndex = ArmadurasFaccion(.Clase, .raza).Armada(eTipoDefArmors.ieAlta)
         End If
         
         If Not MeterItemEnInventario(UserIndex, ObjArmour) Then
@@ -199,42 +199,42 @@ Public Sub EnlistarArmadaReal(ByVal UserIndex As Integer)
 
 With UserList(UserIndex)
     If .Faccion.ArmadaReal = 1 Then
-        Call WriteChatOverHead(UserIndex, "¡¡¡Ya perteneces a las tropas reales!!! Ve a combatir criminales.", str(Npclist(.flags.TargetNPC).Char.CharIndex), vbWhite)
+        Call WriteChatOverHead(UserIndex, "¡¡¡Ya perteneces a las tropas reales!!! Ve a combatir criminales.", str$(Npclist(.flags.TargetNPC).Char.CharIndex), vbWhite)
         Exit Sub
     End If
     
     If .Faccion.FuerzasCaos = 1 Then
-        Call WriteChatOverHead(UserIndex, "¡¡¡Maldito insolente!!! Vete de aquí seguidor de las sombras.", str(Npclist(.flags.TargetNPC).Char.CharIndex), vbWhite)
+        Call WriteChatOverHead(UserIndex, "¡¡¡Maldito insolente!!! Vete de aquí seguidor de las sombras.", str$(Npclist(.flags.TargetNPC).Char.CharIndex), vbWhite)
         Exit Sub
     End If
     
     If criminal(UserIndex) Then
-        Call WriteChatOverHead(UserIndex, "¡¡¡No se permiten criminales en el ejército real!!!", str(Npclist(.flags.TargetNPC).Char.CharIndex), vbWhite)
+        Call WriteChatOverHead(UserIndex, "¡¡¡No se permiten criminales en el ejército real!!!", str$(Npclist(.flags.TargetNPC).Char.CharIndex), vbWhite)
         Exit Sub
     End If
     
     If .Faccion.CriminalesMatados < 30 Then
-        Call WriteChatOverHead(UserIndex, "Para unirte a nuestras fuerzas debes matar al menos 30 criminales, sólo has matado " & .Faccion.CriminalesMatados & ".", str(Npclist(.flags.TargetNPC).Char.CharIndex), vbWhite)
+        Call WriteChatOverHead(UserIndex, "Para unirte a nuestras fuerzas debes matar al menos 30 criminales, sólo has matado " & .Faccion.CriminalesMatados & ".", str$(Npclist(.flags.TargetNPC).Char.CharIndex), vbWhite)
         Exit Sub
     End If
     
     If .Stats.ELV < 25 Then
-        Call WriteChatOverHead(UserIndex, "¡¡¡Para unirte a nuestras fuerzas debes ser al menos de nivel 25!!!", str(Npclist(.flags.TargetNPC).Char.CharIndex), vbWhite)
+        Call WriteChatOverHead(UserIndex, "¡¡¡Para unirte a nuestras fuerzas debes ser al menos de nivel 25!!!", str$(Npclist(.flags.TargetNPC).Char.CharIndex), vbWhite)
         Exit Sub
     End If
      
     If .Faccion.CiudadanosMatados > 0 Then
-        Call WriteChatOverHead(UserIndex, "¡Has asesinado gente inocente, no aceptamos asesinos en las tropas reales!", str(Npclist(.flags.TargetNPC).Char.CharIndex), vbWhite)
+        Call WriteChatOverHead(UserIndex, "¡Has asesinado gente inocente, no aceptamos asesinos en las tropas reales!", str$(Npclist(.flags.TargetNPC).Char.CharIndex), vbWhite)
         Exit Sub
     End If
     
     If .Faccion.Reenlistadas > 4 Then
-        Call WriteChatOverHead(UserIndex, "¡Has sido expulsado de las fuerzas reales demasiadas veces!", str(Npclist(.flags.TargetNPC).Char.CharIndex), vbWhite)
+        Call WriteChatOverHead(UserIndex, "¡Has sido expulsado de las fuerzas reales demasiadas veces!", str$(Npclist(.flags.TargetNPC).Char.CharIndex), vbWhite)
         Exit Sub
     End If
     
     If .Reputacion.NobleRep < 1000000 Then
-        Call WriteChatOverHead(UserIndex, "Necesitas ser aún más noble para integrar el ejército real, sólo tienes " & .Reputacion.NobleRep & "/1.000.000 puntos de nobleza", str(Npclist(.flags.TargetNPC).Char.CharIndex), vbWhite)
+        Call WriteChatOverHead(UserIndex, "Necesitas ser aún más noble para integrar el ejército real, sólo tienes " & .Reputacion.NobleRep & "/1.000.000 puntos de nobleza", str$(Npclist(.flags.TargetNPC).Char.CharIndex), vbWhite)
         Exit Sub
     End If
     
@@ -242,7 +242,7 @@ With UserList(UserIndex)
     .Faccion.ArmadaReal = 1
     .Faccion.Reenlistadas = .Faccion.Reenlistadas + 1
     
-    Call WriteChatOverHead(UserIndex, "¡¡¡Bienvenido al ejército real!!! Aquí tienes tus vestimentas. Cumple bien tu labor exterminando criminales y me encargaré de recompensarte.", str(Npclist(.flags.TargetNPC).Char.CharIndex), vbWhite)
+    Call WriteChatOverHead(UserIndex, "¡¡¡Bienvenido al ejército real!!! Aquí tienes tus vestimentas. Cumple bien tu labor exterminando criminales y me encargaré de recompensarte.", str$(Npclist(.flags.TargetNPC).Char.CharIndex), vbWhite)
     
     ' TODO: Dejo esta variable por ahora, pero con chequear las reenlistadas deberia ser suficiente :S
     If .Faccion.RecibioArmaduraReal = 0 Then
@@ -264,7 +264,7 @@ With UserList(UserIndex)
     
     If .flags.Navegando Then Call RefreshCharStatus(UserIndex) 'Actualizamos la barca si esta navegando (NicoNZ)
     
-    Call LogEjercitoReal(.name & " ingresó el " & Date & " cuando era nivel " & .Stats.ELV)
+    Call LogEjercitoReal(.Name & " ingresó el " & Date & " cuando era nivel " & .Stats.ELV)
 End With
 
 End Sub
@@ -288,7 +288,7 @@ With UserList(UserIndex)
     Nobleza = .Reputacion.NobleRep
     
     If Crimis < NextRecom Then
-        Call WriteChatOverHead(UserIndex, "Mata " & NextRecom - Crimis & " criminales más para recibir la próxima recompensa.", str(Npclist(.flags.TargetNPC).Char.CharIndex), vbWhite)
+        Call WriteChatOverHead(UserIndex, "Mata " & NextRecom - Crimis & " criminales más para recibir la próxima recompensa.", str$(Npclist(.flags.TargetNPC).Char.CharIndex), vbWhite)
         Exit Sub
     End If
     
@@ -315,7 +315,7 @@ With UserList(UserIndex)
         
         Case 640:
             If Lvl < 27 Then
-                Call WriteChatOverHead(UserIndex, "Mataste suficientes criminales, pero te faltan " & 27 - Lvl & " niveles para poder recibir la próxima recompensa.", str(Npclist(.flags.TargetNPC).Char.CharIndex), vbWhite)
+                Call WriteChatOverHead(UserIndex, "Mataste suficientes criminales, pero te faltan " & 27 - Lvl & " niveles para poder recibir la próxima recompensa.", str$(Npclist(.flags.TargetNPC).Char.CharIndex), vbWhite)
                 Exit Sub
             End If
             .Faccion.RecompensasReal = 6
@@ -331,7 +331,7 @@ With UserList(UserIndex)
         
         Case 2000:
             If Lvl < 30 Then
-                Call WriteChatOverHead(UserIndex, "Mataste suficientes criminales, pero te faltan " & 30 - Lvl & " niveles para poder recibir la próxima recompensa.", str(Npclist(.flags.TargetNPC).Char.CharIndex), vbWhite)
+                Call WriteChatOverHead(UserIndex, "Mataste suficientes criminales, pero te faltan " & 30 - Lvl & " niveles para poder recibir la próxima recompensa.", str$(Npclist(.flags.TargetNPC).Char.CharIndex), vbWhite)
                 Exit Sub
             End If
             .Faccion.RecompensasReal = 9
@@ -339,7 +339,7 @@ With UserList(UserIndex)
         
         Case 2500:
             If Nobleza < 2000000 Then
-                Call WriteChatOverHead(UserIndex, "Mataste suficientes criminales, pero te faltan " & 2000000 - Nobleza & " puntos de nobleza para poder recibir la próxima recompensa.", str(Npclist(.flags.TargetNPC).Char.CharIndex), vbWhite)
+                Call WriteChatOverHead(UserIndex, "Mataste suficientes criminales, pero te faltan " & 2000000 - Nobleza & " puntos de nobleza para poder recibir la próxima recompensa.", str$(Npclist(.flags.TargetNPC).Char.CharIndex), vbWhite)
                 Exit Sub
             End If
             .Faccion.RecompensasReal = 10
@@ -347,7 +347,7 @@ With UserList(UserIndex)
         
         Case 3000:
             If Nobleza < 3000000 Then
-                Call WriteChatOverHead(UserIndex, "Mataste suficientes criminales, pero te faltan " & 3000000 - Nobleza & " puntos de nobleza para poder recibir la próxima recompensa.", str(Npclist(.flags.TargetNPC).Char.CharIndex), vbWhite)
+                Call WriteChatOverHead(UserIndex, "Mataste suficientes criminales, pero te faltan " & 3000000 - Nobleza & " puntos de nobleza para poder recibir la próxima recompensa.", str$(Npclist(.flags.TargetNPC).Char.CharIndex), vbWhite)
                 Exit Sub
             End If
             .Faccion.RecompensasReal = 11
@@ -355,11 +355,11 @@ With UserList(UserIndex)
         
         Case 3500:
             If Lvl < 35 Then
-                Call WriteChatOverHead(UserIndex, "Mataste suficientes criminales, pero te faltan " & 35 - Lvl & " niveles para poder recibir la próxima recompensa.", str(Npclist(.flags.TargetNPC).Char.CharIndex), vbWhite)
+                Call WriteChatOverHead(UserIndex, "Mataste suficientes criminales, pero te faltan " & 35 - Lvl & " niveles para poder recibir la próxima recompensa.", str$(Npclist(.flags.TargetNPC).Char.CharIndex), vbWhite)
                 Exit Sub
             End If
             If Nobleza < 4000000 Then
-                Call WriteChatOverHead(UserIndex, "Mataste suficientes criminales, pero te faltan " & 4000000 - Nobleza & " puntos de nobleza para poder recibir la próxima recompensa.", str(Npclist(.flags.TargetNPC).Char.CharIndex), vbWhite)
+                Call WriteChatOverHead(UserIndex, "Mataste suficientes criminales, pero te faltan " & 4000000 - Nobleza & " puntos de nobleza para poder recibir la próxima recompensa.", str$(Npclist(.flags.TargetNPC).Char.CharIndex), vbWhite)
                 Exit Sub
             End If
             .Faccion.RecompensasReal = 12
@@ -367,11 +367,11 @@ With UserList(UserIndex)
         
         Case 4000:
             If Lvl < 36 Then
-                Call WriteChatOverHead(UserIndex, "Mataste suficientes criminales, pero te faltan " & 36 - Lvl & " niveles para poder recibir la próxima recompensa.", str(Npclist(.flags.TargetNPC).Char.CharIndex), vbWhite)
+                Call WriteChatOverHead(UserIndex, "Mataste suficientes criminales, pero te faltan " & 36 - Lvl & " niveles para poder recibir la próxima recompensa.", str$(Npclist(.flags.TargetNPC).Char.CharIndex), vbWhite)
                 Exit Sub
             End If
             If Nobleza < 5000000 Then
-                Call WriteChatOverHead(UserIndex, "Mataste suficientes criminales, pero te faltan " & 5000000 - Nobleza & " puntos de nobleza para poder recibir la próxima recompensa.", str(Npclist(.flags.TargetNPC).Char.CharIndex), vbWhite)
+                Call WriteChatOverHead(UserIndex, "Mataste suficientes criminales, pero te faltan " & 5000000 - Nobleza & " puntos de nobleza para poder recibir la próxima recompensa.", str$(Npclist(.flags.TargetNPC).Char.CharIndex), vbWhite)
                 Exit Sub
             End If
             .Faccion.RecompensasReal = 13
@@ -379,25 +379,25 @@ With UserList(UserIndex)
         
         Case 5000:
             If Lvl < 37 Then
-                Call WriteChatOverHead(UserIndex, "Mataste suficientes criminales, pero te faltan " & 37 - Lvl & " niveles para poder recibir la próxima recompensa.", str(Npclist(.flags.TargetNPC).Char.CharIndex), vbWhite)
+                Call WriteChatOverHead(UserIndex, "Mataste suficientes criminales, pero te faltan " & 37 - Lvl & " niveles para poder recibir la próxima recompensa.", str$(Npclist(.flags.TargetNPC).Char.CharIndex), vbWhite)
                 Exit Sub
             End If
             If Nobleza < 6000000 Then
-                Call WriteChatOverHead(UserIndex, "Mataste suficientes criminales, pero te faltan " & 6000000 - Nobleza & " puntos de nobleza para poder recibir la próxima recompensa.", str(Npclist(.flags.TargetNPC).Char.CharIndex), vbWhite)
+                Call WriteChatOverHead(UserIndex, "Mataste suficientes criminales, pero te faltan " & 6000000 - Nobleza & " puntos de nobleza para poder recibir la próxima recompensa.", str$(Npclist(.flags.TargetNPC).Char.CharIndex), vbWhite)
                 Exit Sub
             End If
             .Faccion.RecompensasReal = 14
             .Faccion.NextRecompensa = 10000
         
         Case 10000:
-            Call WriteChatOverHead(UserIndex, "Eres uno de mis mejores soldados. Mataste " & Crimis & " criminales, sigue así. Ya no tengo más recompensa para darte que mi agradecimiento. ¡Felicidades!", str(Npclist(.flags.TargetNPC).Char.CharIndex), vbWhite)
+            Call WriteChatOverHead(UserIndex, "Eres uno de mis mejores soldados. Mataste " & Crimis & " criminales, sigue así. Ya no tengo más recompensa para darte que mi agradecimiento. ¡Felicidades!", str$(Npclist(.flags.TargetNPC).Char.CharIndex), vbWhite)
             Exit Sub
         
         Case Else:
             Exit Sub
     End Select
     
-    Call WriteChatOverHead(UserIndex, "¡¡¡Aquí tienes tu recompensa " & TituloReal(UserIndex) & "!!!", str(Npclist(.flags.TargetNPC).Char.CharIndex), vbWhite)
+    Call WriteChatOverHead(UserIndex, "¡¡¡Aquí tienes tu recompensa " & TituloReal(UserIndex) & "!!!", str$(Npclist(.flags.TargetNPC).Char.CharIndex), vbWhite)
 
     ' Recompensas de armaduras y exp
     Call GiveFactionArmours(UserIndex, False)
@@ -540,39 +540,39 @@ Public Sub EnlistarCaos(ByVal UserIndex As Integer)
 
 With UserList(UserIndex)
     If Not criminal(UserIndex) Then
-        Call WriteChatOverHead(UserIndex, "¡¡¡Lárgate de aquí, bufón!!!", str(Npclist(.flags.TargetNPC).Char.CharIndex), vbWhite)
+        Call WriteChatOverHead(UserIndex, "¡¡¡Lárgate de aquí, bufón!!!", str$(Npclist(.flags.TargetNPC).Char.CharIndex), vbWhite)
         Exit Sub
     End If
     
     If .Faccion.FuerzasCaos = 1 Then
-        Call WriteChatOverHead(UserIndex, "¡¡¡Ya perteneces a la legión oscura!!!", str(Npclist(.flags.TargetNPC).Char.CharIndex), vbWhite)
+        Call WriteChatOverHead(UserIndex, "¡¡¡Ya perteneces a la legión oscura!!!", str$(Npclist(.flags.TargetNPC).Char.CharIndex), vbWhite)
         Exit Sub
     End If
     
     If .Faccion.ArmadaReal = 1 Then
-        Call WriteChatOverHead(UserIndex, "Las sombras reinarán en Argentum. ¡¡¡Fuera de aquí insecto real!!!", str(Npclist(.flags.TargetNPC).Char.CharIndex), vbWhite)
+        Call WriteChatOverHead(UserIndex, "Las sombras reinarán en Argentum. ¡¡¡Fuera de aquí insecto real!!!", str$(Npclist(.flags.TargetNPC).Char.CharIndex), vbWhite)
         Exit Sub
     End If
     
     '[Barrin 17-12-03] Si era miembro de la Armada Real no se puede enlistar
     If .Faccion.RecibioExpInicialReal = 1 Then 'Tomamos el valor de ahí: ¿Recibio la experiencia para entrar?
-        Call WriteChatOverHead(UserIndex, "No permitiré que ningún insecto real ingrese a mis tropas.", str(Npclist(.flags.TargetNPC).Char.CharIndex), vbWhite)
+        Call WriteChatOverHead(UserIndex, "No permitiré que ningún insecto real ingrese a mis tropas.", str$(Npclist(.flags.TargetNPC).Char.CharIndex), vbWhite)
         Exit Sub
     End If
     '[/Barrin]
     
     If Not criminal(UserIndex) Then
-        Call WriteChatOverHead(UserIndex, "¡¡Ja ja ja!! Tú no eres bienvenido aquí asqueroso ciudadano.", str(Npclist(.flags.TargetNPC).Char.CharIndex), vbWhite)
+        Call WriteChatOverHead(UserIndex, "¡¡Ja ja ja!! Tú no eres bienvenido aquí asqueroso ciudadano.", str$(Npclist(.flags.TargetNPC).Char.CharIndex), vbWhite)
         Exit Sub
     End If
     
     If .Faccion.CiudadanosMatados < 70 Then
-        Call WriteChatOverHead(UserIndex, "Para unirte a nuestras fuerzas debes matar al menos 70 ciudadanos, sólo has matado " & .Faccion.CiudadanosMatados & ".", str(Npclist(.flags.TargetNPC).Char.CharIndex), vbWhite)
+        Call WriteChatOverHead(UserIndex, "Para unirte a nuestras fuerzas debes matar al menos 70 ciudadanos, sólo has matado " & .Faccion.CiudadanosMatados & ".", str$(Npclist(.flags.TargetNPC).Char.CharIndex), vbWhite)
         Exit Sub
     End If
     
     If .Stats.ELV < 25 Then
-        Call WriteChatOverHead(UserIndex, "¡¡¡Para unirte a nuestras fuerzas debes ser al menos nivel 25!!!", str(Npclist(.flags.TargetNPC).Char.CharIndex), vbWhite)
+        Call WriteChatOverHead(UserIndex, "¡¡¡Para unirte a nuestras fuerzas debes ser al menos nivel 25!!!", str$(Npclist(.flags.TargetNPC).Char.CharIndex), vbWhite)
         Exit Sub
     End If
     
@@ -581,9 +581,9 @@ With UserList(UserIndex)
     
     If .Faccion.Reenlistadas > 4 Then
         If .Faccion.Reenlistadas = 200 Then
-            Call WriteChatOverHead(UserIndex, "Has sido expulsado de las fuerzas oscuras y durante tu rebeldía has atacado a mi ejército. ¡Vete de aquí!", str(Npclist(.flags.TargetNPC).Char.CharIndex), vbWhite)
+            Call WriteChatOverHead(UserIndex, "Has sido expulsado de las fuerzas oscuras y durante tu rebeldía has atacado a mi ejército. ¡Vete de aquí!", str$(Npclist(.flags.TargetNPC).Char.CharIndex), vbWhite)
         Else
-            Call WriteChatOverHead(UserIndex, "¡Has sido expulsado de las fuerzas oscuras demasiadas veces!", str(Npclist(.flags.TargetNPC).Char.CharIndex), vbWhite)
+            Call WriteChatOverHead(UserIndex, "¡Has sido expulsado de las fuerzas oscuras demasiadas veces!", str$(Npclist(.flags.TargetNPC).Char.CharIndex), vbWhite)
         End If
         Exit Sub
     End If
@@ -591,7 +591,7 @@ With UserList(UserIndex)
     .Faccion.Reenlistadas = .Faccion.Reenlistadas + 1
     .Faccion.FuerzasCaos = 1
     
-    Call WriteChatOverHead(UserIndex, "¡¡¡Bienvenido al lado oscuro!!! Aquí tienes tus armaduras. Derrama sangre ciudadana y real, y serás recompensado, lo prometo.", str(Npclist(.flags.TargetNPC).Char.CharIndex), vbWhite)
+    Call WriteChatOverHead(UserIndex, "¡¡¡Bienvenido al lado oscuro!!! Aquí tienes tus armaduras. Derrama sangre ciudadana y real, y serás recompensado, lo prometo.", str$(Npclist(.flags.TargetNPC).Char.CharIndex), vbWhite)
     
     If .Faccion.RecibioArmaduraCaos = 0 Then
                 
@@ -609,7 +609,7 @@ With UserList(UserIndex)
     
     If .flags.Navegando Then Call RefreshCharStatus(UserIndex) 'Actualizamos la barca si esta navegando (NicoNZ)
 
-    Call LogEjercitoCaos(.name & " ingresó el " & Date & " cuando era nivel " & .Stats.ELV)
+    Call LogEjercitoCaos(.Name & " ingresó el " & Date & " cuando era nivel " & .Stats.ELV)
 End With
 
 End Sub
@@ -631,7 +631,7 @@ With UserList(UserIndex)
     NextRecom = .Faccion.NextRecompensa
     
     If Ciudas < NextRecom Then
-        Call WriteChatOverHead(UserIndex, "Mata " & NextRecom - Ciudas & " cuidadanos más para recibir la próxima recompensa.", str(Npclist(.flags.TargetNPC).Char.CharIndex), vbWhite)
+        Call WriteChatOverHead(UserIndex, "Mata " & NextRecom - Ciudas & " cuidadanos más para recibir la próxima recompensa.", str$(Npclist(.flags.TargetNPC).Char.CharIndex), vbWhite)
         Exit Sub
     End If
     
@@ -658,7 +658,7 @@ With UserList(UserIndex)
         
         Case 1500:
             If Lvl < 27 Then
-                Call WriteChatOverHead(UserIndex, "Mataste suficientes ciudadanos, pero te faltan " & 27 - Lvl & " niveles para poder recibir la próxima recompensa.", str(Npclist(.flags.TargetNPC).Char.CharIndex), vbWhite)
+                Call WriteChatOverHead(UserIndex, "Mataste suficientes ciudadanos, pero te faltan " & 27 - Lvl & " niveles para poder recibir la próxima recompensa.", str$(Npclist(.flags.TargetNPC).Char.CharIndex), vbWhite)
                 Exit Sub
             End If
             .Faccion.RecompensasCaos = 6
@@ -674,7 +674,7 @@ With UserList(UserIndex)
         
         Case 4600:
             If Lvl < 30 Then
-                Call WriteChatOverHead(UserIndex, "Mataste suficientes ciudadanos, pero te faltan " & 30 - Lvl & " niveles para poder recibir la próxima recompensa.", str(Npclist(.flags.TargetNPC).Char.CharIndex), vbWhite)
+                Call WriteChatOverHead(UserIndex, "Mataste suficientes ciudadanos, pero te faltan " & 30 - Lvl & " niveles para poder recibir la próxima recompensa.", str$(Npclist(.flags.TargetNPC).Char.CharIndex), vbWhite)
                 Exit Sub
             End If
             .Faccion.RecompensasCaos = 9
@@ -682,7 +682,7 @@ With UserList(UserIndex)
         
         Case 5800:
             If Lvl < 31 Then
-                Call WriteChatOverHead(UserIndex, "Mataste suficientes ciudadanos, pero te faltan " & 31 - Lvl & " niveles para poder recibir la próxima recompensa.", str(Npclist(.flags.TargetNPC).Char.CharIndex), vbWhite)
+                Call WriteChatOverHead(UserIndex, "Mataste suficientes ciudadanos, pero te faltan " & 31 - Lvl & " niveles para poder recibir la próxima recompensa.", str$(Npclist(.flags.TargetNPC).Char.CharIndex), vbWhite)
                 Exit Sub
             End If
             .Faccion.RecompensasCaos = 10
@@ -690,7 +690,7 @@ With UserList(UserIndex)
         
         Case 6990:
             If Lvl < 33 Then
-                Call WriteChatOverHead(UserIndex, "Mataste suficientes ciudadanos, pero te faltan " & 33 - Lvl & " niveles para poder recibir la próxima recompensa.", str(Npclist(.flags.TargetNPC).Char.CharIndex), vbWhite)
+                Call WriteChatOverHead(UserIndex, "Mataste suficientes ciudadanos, pero te faltan " & 33 - Lvl & " niveles para poder recibir la próxima recompensa.", str$(Npclist(.flags.TargetNPC).Char.CharIndex), vbWhite)
                 Exit Sub
             End If
             .Faccion.RecompensasCaos = 11
@@ -698,7 +698,7 @@ With UserList(UserIndex)
         
         Case 8100:
             If Lvl < 35 Then
-                Call WriteChatOverHead(UserIndex, "Mataste suficientes ciudadanos, pero te faltan " & 35 - Lvl & " niveles para poder recibir la próxima recompensa.", str(Npclist(.flags.TargetNPC).Char.CharIndex), vbWhite)
+                Call WriteChatOverHead(UserIndex, "Mataste suficientes ciudadanos, pero te faltan " & 35 - Lvl & " niveles para poder recibir la próxima recompensa.", str$(Npclist(.flags.TargetNPC).Char.CharIndex), vbWhite)
                 Exit Sub
             End If
             .Faccion.RecompensasCaos = 12
@@ -706,7 +706,7 @@ With UserList(UserIndex)
         
         Case 9300:
             If Lvl < 36 Then
-                Call WriteChatOverHead(UserIndex, "Mataste suficientes ciudadanos, pero te faltan " & 36 - Lvl & " niveles para poder recibir la próxima recompensa.", str(Npclist(.flags.TargetNPC).Char.CharIndex), vbWhite)
+                Call WriteChatOverHead(UserIndex, "Mataste suficientes ciudadanos, pero te faltan " & 36 - Lvl & " niveles para poder recibir la próxima recompensa.", str$(Npclist(.flags.TargetNPC).Char.CharIndex), vbWhite)
                 Exit Sub
             End If
             .Faccion.RecompensasCaos = 13
@@ -714,14 +714,14 @@ With UserList(UserIndex)
         
         Case 11500:
             If Lvl < 37 Then
-                Call WriteChatOverHead(UserIndex, "Mataste suficientes ciudadanos, pero te faltan " & 37 - Lvl & " niveles para poder recibir la próxima recompensa.", str(Npclist(.flags.TargetNPC).Char.CharIndex), vbWhite)
+                Call WriteChatOverHead(UserIndex, "Mataste suficientes ciudadanos, pero te faltan " & 37 - Lvl & " niveles para poder recibir la próxima recompensa.", str$(Npclist(.flags.TargetNPC).Char.CharIndex), vbWhite)
                 Exit Sub
             End If
             .Faccion.RecompensasCaos = 14
             .Faccion.NextRecompensa = 23000
         
         Case 23000:
-            Call WriteChatOverHead(UserIndex, "Eres uno de mis mejores soldados. Mataste " & Ciudas & " ciudadanos . Tu única recompensa será la sangre derramada. ¡¡Continúa así!!", str(Npclist(.flags.TargetNPC).Char.CharIndex), vbWhite)
+            Call WriteChatOverHead(UserIndex, "Eres uno de mis mejores soldados. Mataste " & Ciudas & " ciudadanos . Tu única recompensa será la sangre derramada. ¡¡Continúa así!!", str$(Npclist(.flags.TargetNPC).Char.CharIndex), vbWhite)
             Exit Sub
         
         Case Else:
@@ -729,7 +729,7 @@ With UserList(UserIndex)
             
     End Select
     
-    Call WriteChatOverHead(UserIndex, "¡¡¡Bien hecho " & TituloCaos(UserIndex) & ", aquí tienes tu recompensa!!!", str(Npclist(.flags.TargetNPC).Char.CharIndex), vbWhite)
+    Call WriteChatOverHead(UserIndex, "¡¡¡Bien hecho " & TituloCaos(UserIndex) & ", aquí tienes tu recompensa!!!", str$(Npclist(.flags.TargetNPC).Char.CharIndex), vbWhite)
     
     ' Recompensas de armaduras y exp
     Call GiveFactionArmours(UserIndex, True)
