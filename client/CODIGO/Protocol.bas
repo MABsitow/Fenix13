@@ -408,8 +408,6 @@ Public Sub HandleIncomingData()
 'Last Modification: 05/17/06
 '
 '***************************************************
-On Error Resume Next
-
     Select Case incomingData.PeekByte()
         Case ServerPacketID.Logged                  ' LOGGED
             Call HandleLogged
@@ -3912,7 +3910,7 @@ Private Sub HandleSendSkills()
 'Last Modification: 11/19/09
 '11/19/09: Pato - Now the server send the percentage of progress of the skills.
 '***************************************************
-    If incomingData.length < 2 + NUMSKILLS * 2 Then
+    If incomingData.length < 2 + NUMSKILLS Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
@@ -4546,6 +4544,11 @@ Public Sub WriteLoginNewChar()
         Call .WriteASCIIString(UserEmail)
         
         Call .WriteByte(UserHogar)
+        
+        For i = 1 To NUMSKILLS
+            Call .WriteByte(UserSkills(i))
+        Next
+        
     End With
 End Sub
 

@@ -168,7 +168,7 @@ Private Function LoadSurface(ByVal fileIndex As Long) As DirectDrawSurface7
 'Loads the surface named fileIndex + ".bmp" and inserts it to the
 'surface list in the listIndex position
 '**************************************************************
-On Error GoTo ErrHandler
+On Error GoTo Errhandler
 
     Dim newSurface As SURFACE_ENTRY_DYN
     Dim ddsd As DDSURFACEDESC2
@@ -237,8 +237,8 @@ On Error GoTo ErrHandler
     Loop
 Exit Function
 
-ErrHandler:
-    If Err.Number = DDERR_OUTOFMEMORY Or Err.Number = DDERR_OUTOFVIDEOMEMORY Then
+Errhandler:
+    If Err.number = DDERR_OUTOFMEMORY Or Err.number = DDERR_OUTOFVIDEOMEMORY Then
         'Remove a surface and try again
         If RemoveLRU() Then
             Resume
@@ -248,7 +248,7 @@ ErrHandler:
         End If
     Else
         MsgBox "Un error inesperado ocurrió al intentar cargar el gráfico " & CStr(fileIndex) & ".BMP" & ". " & vbCrLf & _
-                "El código de error es " & CStr(Err.Number) & " - " & Err.Description & vbCrLf & vbCrLf & "Copia este mensaje y notifica a los administradores.", _
+                "El código de error es " & CStr(Err.number) & " - " & Err.Description & vbCrLf & vbCrLf & "Copia este mensaje y notifica a los administradores.", _
                 vbOKOnly Or vbCritical Or vbExclamation, "Error"
         End
     End If

@@ -229,7 +229,7 @@ Public Sub DoNavega(ByVal UserIndex As Integer, ByRef Barco As ObjData, ByVal Sl
                 If .Invent.EscudoEqpObjIndex > 0 Then _
                     .Char.ShieldAnim = ObjData(.Invent.EscudoEqpObjIndex).ShieldAnim
                 If .Invent.WeaponEqpObjIndex > 0 Then _
-                    .Char.WeaponAnim = GetWeaponAnim(UserIndex, .Invent.WeaponEqpObjIndex)
+                    .Char.WeaponAnim = ObjData(.Invent.WeaponEqpObjIndex).WeaponAnim
                 If .Invent.CascoEqpObjIndex > 0 Then _
                     .Char.CascoAnim = ObjData(.Invent.CascoEqpObjIndex).CascoAnim
                     

@@ -792,7 +792,7 @@ UserMap = 1
     Audio.SoundActivated = Not ClientSetup.bNoSound
     Audio.SoundEffectsActivated = Not ClientSetup.bNoSoundEffects
     'Inicializamos el inventario gráfico
-    Call Inventario.Initialize(DirectDraw, frmMain.picInv, MAX_INVENTORY_SLOTS)
+    Call Inventario.Initialize(DirectDraw, frmMain.PicInv, MAX_INVENTORY_SLOTS)
     
     Call Audio.MusicMP3Play(App.path & "\MP3\" & MP3_Inicio & ".mp3")
     
@@ -804,13 +804,7 @@ UserMap = 1
     Call Sleep(500)
     
     Unload frmCargando
-    
-    Dim PresPath As String
-    PresPath = DirGraficos & "Presentacion" & RandomNumber(1, 4) & ".jpg"
-    
-    frmPres.Picture = LoadPicture(PresPath)
-    frmPres.Show vbModal    'Es modal, así que se detiene la ejecución de Main hasta que se desaparece
-    
+        
 #If UsarWrench = 1 Then
     frmMain.Socket1.Startup
 #End If

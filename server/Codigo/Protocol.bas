@@ -1248,7 +1248,7 @@ On Error GoTo Errhandler
     Dim homeland As eCiudad
     Dim Head As Integer
     Dim mail As String
-    
+    Dim Skills(1 To NUMSKILLS) As Byte
     
     If PuedeCrearPersonajes = 0 Then
         Call WriteErrorMsg(UserIndex, "La creación de personajes en este servidor se ha deshabilitado.")
@@ -1289,11 +1289,16 @@ On Error GoTo Errhandler
     mail = buffer.ReadASCIIString()
     homeland = buffer.ReadByte()
     
-        
+    Dim i As Long
+    
+    For i = 1 To NUMSKILLS
+        Skills(i) = buffer.ReadByte
+    Next
+    
         If Not VersionOK(version) Then
             Call WriteErrorMsg(UserIndex, "Esta versión del juego es obsoleta, la versión correcta es la " & ULTIMAVERSION & ". La misma se encuentra disponible en www.argentumonline.com.ar")
         Else
-            Call ConnectNewUser(UserIndex, UserName, Password, race, gender, mail, homeland, Head)
+            Call ConnectNewUser(UserIndex, UserName, Password, race, gender, mail, homeland, Head, Skills)
         End If
 
     'If we got here then packet is complete, copy data back to original queue
@@ -1378,7 +1383,7 @@ On Error GoTo Errhandler
                     Call SendData(SendTarget.ToPCArea, UserIndex, PrepareMessageChatOverHead(Chat, .Char.CharIndex, .flags.ChatColor))
                 End If
             Else
-                If RTrim(Chat) <> "" Then
+                If RTrim$(Chat) <> "" Then
                     Call SendData(SendTarget.ToPCArea, UserIndex, PrepareMessageConsoleMsg("Gm> " & Chat, FontTypeNames.FONTTYPE_GM))
                 End If
             End If
@@ -3466,11 +3471,9 @@ On Error GoTo Errhandler
         
         Dim ForumMsgType As eForumMsgType
         
-        Dim File As String
         Dim Title As String
         Dim Post As String
         Dim ForumIndex As Integer
-        Dim postFile As String
         Dim ForumType As Byte
                 
         ForumMsgType = buffer.ReadByte()
@@ -3747,7 +3750,6 @@ Private Sub HandleQuit(ByVal UserIndex As Integer)
 '04/15/2008 - No se reseteaban lso contadores de invi ni de ocultar. (NicoNZ)
 '***************************************************
     Dim tUser As Integer
-    Dim isNotVisible As Boolean
     
     With UserList(UserIndex)
         'Remove packet ID
@@ -6726,7 +6728,6 @@ On Error GoTo Errhandler
         Dim valido As Boolean
         Dim LoopC As Byte
         Dim CommandString As String
-        Dim N As Byte
         Dim UserCharPath As String
         Dim Var As Long
         
@@ -6985,8 +6986,8 @@ On Error GoTo Errhandler
                     
                     Case eEditOptions.eo_Sex
                         Dim Sex As Byte
-                        Sex = IIf(UCase(Arg1) = "MUJER", eGenero.Mujer, 0) ' Mujer?
-                        Sex = IIf(UCase(Arg1) = "HOMBRE", eGenero.Hombre, Sex) ' Hombre?
+                        Sex = IIf(UCase$(Arg1) = "MUJER", eGenero.Mujer, 0) ' Mujer?
+                        Sex = IIf(UCase$(Arg1) = "HOMBRE", eGenero.Hombre, Sex) ' Hombre?
                         
                         If Sex <> 0 Then ' Es Hombre o mujer?
                             If tUser <= 0 Then ' OffLine
@@ -7484,7 +7485,6 @@ On Error GoTo Errhandler
         
         Dim UserName As String
         Dim tUser As Integer
-        Dim LoopC As Byte
         
         UserName = buffer.ReadASCIIString()
         
@@ -8930,7 +8930,6 @@ On Error GoTo Errhandler
         
         Dim UserName As String
         Dim tUser As Integer
-        Dim LoopC As Byte
         
         UserName = buffer.ReadASCIIString()
         
@@ -8992,7 +8991,6 @@ On Error GoTo Errhandler
         
         Dim UserName As String
         Dim tUser As Integer
-        Dim LoopC As Byte
         
         UserName = buffer.ReadASCIIString()
         
@@ -9046,7 +9044,6 @@ Private Sub HandleItemsInTheFloor(ByVal UserIndex As Integer)
         If .flags.Privilegios And (PlayerType.User Or PlayerType.Consejero Or PlayerType.SemiDios) Then Exit Sub
         
         Dim tObj As Integer
-        Dim lista As String
         Dim X As Long
         Dim Y As Long
         
@@ -9540,7 +9537,6 @@ Private Sub HandleCreateItem(ByVal UserIndex As Integer)
         Call .incomingData.ReadByte
 
         Dim tObj As Integer
-        Dim tStr As String
         tObj = .incomingData.ReadInteger()
 
         If .flags.Privilegios And (PlayerType.User Or PlayerType.Consejero Or PlayerType.SemiDios) Then Exit Sub
@@ -14226,7 +14222,7 @@ Public Sub FlushBuffer(ByVal UserIndex As Integer)
     With UserList(UserIndex).outgoingData
         If .length = 0 Then _
             Exit Sub
-        
+
         sndData = .ReadASCIIStringFixed(.length)
         
         Call EnviarDatosASlot(UserIndex, sndData)

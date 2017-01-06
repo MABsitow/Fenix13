@@ -37,20 +37,20 @@ Option Explicit
 'Public DialogosClanes As New clsGuildDlg
 Public Dialogos As New clsDialogs
 Public Audio As New clsAudio
-Public Inventario As New clsGrapchicalInventory
-Public InvBanco(1) As New clsGrapchicalInventory
+Public Inventario As New clsGraphicalInventory
+Public InvBanco(1) As New clsGraphicalInventory
 
 'Inventarios de comercio con usuario
-Public InvComUsu As New clsGrapchicalInventory ' Inventario del usuario visible en el comercio
-Public InvOroComUsu(2) As New clsGrapchicalInventory ' Inventarios de oro (ambos usuarios)
-Public InvOfferComUsu(1) As New clsGrapchicalInventory ' Inventarios de ofertas (ambos usuarios)
+Public InvComUsu As New clsGraphicalInventory ' Inventario del usuario visible en el comercio
+Public InvOroComUsu(2) As New clsGraphicalInventory ' Inventarios de oro (ambos usuarios)
+Public InvOfferComUsu(1) As New clsGraphicalInventory ' Inventarios de ofertas (ambos usuarios)
 
-Public InvComNpc As New clsGrapchicalInventory ' Inventario con los items que ofrece el npc
+Public InvComNpc As New clsGraphicalInventory ' Inventario con los items que ofrece el npc
 
 'Inventarios de herreria
 Public Const MAX_LIST_ITEMS As Byte = 4
-Public InvLingosHerreria(1 To MAX_LIST_ITEMS) As New clsGrapchicalInventory
-Public InvMaderasCarpinteria(1 To MAX_LIST_ITEMS) As New clsGrapchicalInventory
+Public InvLingosHerreria(1 To MAX_LIST_ITEMS) As New clsGraphicalInventory
+Public InvMaderasCarpinteria(1 To MAX_LIST_ITEMS) As New clsGraphicalInventory
                 
 Public SurfaceDB As clsSurfaceManager   'No va new porque es una interfaz, el new se pone al decidir que clase de objeto es
 Public CustomKeys As New clsCustomKeys

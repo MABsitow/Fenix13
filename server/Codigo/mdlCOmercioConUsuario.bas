@@ -22,9 +22,6 @@ Attribute VB_Name = "mdlCOmercioConUsuario"
 '[Alejo]
 Option Explicit
 
-Private Const MAX_ORO_LOGUEABLE As Long = 50000
-Private Const MAX_OBJ_LOGUEABLE As Long = 1000
-
 Public Const MAX_OFFER_SLOTS As Integer = 30 '20
 Public Const GOLD_OFFER_SLOT As Integer = MAX_OFFER_SLOTS + 1
 
@@ -140,7 +137,6 @@ Public Sub AceptarComercioUsu(ByVal UserIndex As Integer)
 '***************************************************
     Dim TradingObj As Obj
     Dim OtroUserIndex As Integer
-    Dim TerminarAhora As Boolean
     Dim OfferSlot As Integer
 
     UserList(UserIndex).ComUsu.Acepto = True

@@ -70,7 +70,7 @@ On Error GoTo errorh
     Dim i As Integer
     N = Npclist(NpcIndex).Numero
     i = Npclist(NpcIndex).Char.CharIndex
-'    Call SendData(SendTarget.ToNPCArea, NpcIndex, Npclist(NpcIndex).Pos.Map, "||" & vbGreen & "° Soy Pretoriano °" & Str(ind))
+'    Call SendData(SendTarget.ToNPCArea, NpcIndex, Npclist(NpcIndex).Pos.Map, "||" & vbGreen & "° Soy Pretoriano °" & str$(ind))
     Select Case Npclist(NpcIndex).Numero
     Case PRCLER_NPC
         esPretoriano = 1
@@ -726,7 +726,6 @@ On Error GoTo errorh
     Dim NPCPosX As Integer
     Dim NPCPosY As Integer
     Dim NPCPosM As Integer
-    Dim NPCAlInd As Integer
     Dim UI As Integer
     Dim PJEnInd As Integer
     Dim BestTarget As Integer
@@ -1503,7 +1502,7 @@ mapa = Map
             Else
                 ''si me muevo abajo entro en loop. Aca el algoritmo falla
                 If Npclist(npcorig).CanAttack = 1 And (RandomNumber(1, 100) > 95) Then
-                    Call SendData(SendTarget.ToNPCArea, npcorig, PrepareMessageChatOverHead("Maldito bastardo, ¡Ven aquí!", str(Npclist(npcorig).Char.CharIndex), vbYellow))
+                    Call SendData(SendTarget.ToNPCArea, npcorig, PrepareMessageChatOverHead("Maldito bastardo, ¡Ven aquí!", str$(Npclist(npcorig).Char.CharIndex), vbYellow))
                     Npclist(npcorig).CanAttack = 0
                 End If
             End If
@@ -1878,7 +1877,7 @@ On Error GoTo errorh
         retvalue = retvalue Or retValue2
         'If retvalue = False Then
         '    If Npclist(npcind).CanAttack = 1 Then
-        '        Call SendData(SendTarget.ToNPCArea, npcind, Npclist(npcind).Pos.Map, "||" & vbYellow & "°¡ Cobarde !°" & str(Npclist(npcind).Char.CharIndex))
+        '        Call SendData(SendTarget.ToNPCArea, npcind, Npclist(npcind).Pos.Map, "||" & vbYellow & "°¡ Cobarde !°" & str$(Npclist(npcind).Char.CharIndex))
         '        Npclist(npcind).CanAttack = 0
         '    End If
         'End If

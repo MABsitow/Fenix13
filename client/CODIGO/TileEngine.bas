@@ -921,7 +921,6 @@ On Error GoTo ErrorHandler
     
     Do Until Grh <= 0
         
-        
         With GrhData(Grh)
 
             'Get number of frames

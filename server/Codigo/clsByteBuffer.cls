@@ -12,10 +12,7 @@ Attribute VB_Creatable = True
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 Option Explicit
- 
-'Diseñado por miqueas150
-'URL: http://www.gs-zone.org/carga_de_mapas_desde_la_memoria_13_0_tl8J.html
- 
+
 Private Declare Sub CopyMemory Lib "kernel32" Alias "RtlMoveMemory" (ByRef destination As Any, ByRef source As Any, ByVal length As Long)
  
 Private data() As Byte
@@ -105,33 +102,33 @@ Public Function getString(Optional ByVal length As Integer = -1) As String
  
 End Function
  
-Public Sub putByte(ByVal Value As Byte)
-    data(lastPos + 1) = Value
+Public Sub putByte(ByVal value As Byte)
+    data(lastPos + 1) = value
     lastPos = lastPos + BYTE_SIZE
 End Sub
  
-Public Sub putBoolean(ByVal Value As Boolean)
-    Call CopyMemory(data(lastPos + 1), Value, BOOL_SIZE)
+Public Sub putBoolean(ByVal value As Boolean)
+    Call CopyMemory(data(lastPos + 1), value, BOOL_SIZE)
     lastPos = lastPos + BOOL_SIZE
 End Sub
  
-Public Sub putInteger(ByVal Value As Integer)
-    Call CopyMemory(data(lastPos + 1), Value, INTEGER_SIZE)
+Public Sub putInteger(ByVal value As Integer)
+    Call CopyMemory(data(lastPos + 1), value, INTEGER_SIZE)
     lastPos = lastPos + INTEGER_SIZE
 End Sub
  
-Public Sub putLong(ByVal Value As Long)
-    Call CopyMemory(data(lastPos + 1), Value, LONG_SIZE)
+Public Sub putLong(ByVal value As Long)
+    Call CopyMemory(data(lastPos + 1), value, LONG_SIZE)
     lastPos = lastPos + LONG_SIZE
 End Sub
  
-Public Sub putSingle(ByVal Value As Single)
-    Call CopyMemory(data(lastPos + 1), Value, SINGLE_SIZE)
+Public Sub putSingle(ByVal value As Single)
+    Call CopyMemory(data(lastPos + 1), value, SINGLE_SIZE)
     lastPos = lastPos + SINGLE_SIZE
 End Sub
  
-Public Sub putDouble(ByVal Value As Double)
-    Call CopyMemory(data(lastPos + 1), Value, DOUBLE_SIZE)
+Public Sub putDouble(ByVal value As Double)
+    Call CopyMemory(data(lastPos + 1), value, DOUBLE_SIZE)
     lastPos = lastPos + DOUBLE_SIZE
 End Sub
  

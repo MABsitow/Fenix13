@@ -557,7 +557,7 @@ Dim sENtrada As String
 sENtrada = InputBox("Escribe ""estoy DE acuerdo"" entre comillas y con distinción de mayúsculas minúsculas para desbanear a todos los personajes.", "UnBan", "hola")
 If sENtrada = "estoy DE acuerdo" Then
 
-    Fn = App.Path & "\logs\GenteBanned.log"
+    Fn = App.path & "\logs\GenteBanned.log"
     
     If FileExist(Fn, vbNormal) Then
         N = FreeFile
@@ -614,28 +614,11 @@ frmServidor.Visible = False
 End Sub
 
 Private Sub Command20_Click()
-#If UsarQueSocket = 1 Then
 
 If MsgBox("¿Está seguro que desea reiniciar los sockets? Se cerrarán todas las conexiones activas.", vbYesNo, "Reiniciar Sockets") = vbYes Then
     Call WSApiReiniciarSockets
 End If
 
-#ElseIf UsarQueSocket = 2 Then
-
-Dim LoopC As Integer
-
-If MsgBox("¿Está seguro que desea reiniciar los sockets? Se cerrarán todas las conexiones activas.", vbYesNo, "Reiniciar Sockets") = vbYes Then
-    For LoopC = 1 To MaxUsers
-        If UserList(LoopC).ConnID <> -1 And UserList(LoopC).ConnIDValida Then
-            Call CloseSocket(LoopC)
-        End If
-    Next LoopC
-    
-    Call frmMain.Serv.Detener
-    Call frmMain.Serv.Iniciar(Puerto)
-End If
-
-#End If
 End Sub
 
 'Barrin 29/9/03
@@ -681,13 +664,11 @@ Call MD5sCarga
 End Sub
 
 Private Sub Command26_Click()
-#If UsarQueSocket = 1 Then
     'Cierra el socket de escucha
     If SockListen >= 0 Then Call apiclosesocket(SockListen)
     
     'Inicia el socket de escucha
     SockListen = ListenForConnect(Puerto, hWndMsg, "")
-#End If
 End Sub
 
 Private Sub Command27_Click()
@@ -727,22 +708,15 @@ If frmMain.Visible Then frmMain.txStatus.Caption = "Reiniciando."
 
 FrmStat.Show
 
-If FileExist(App.Path & "\logs\errores.log", vbNormal) Then Kill App.Path & "\logs\errores.log"
-If FileExist(App.Path & "\logs\connect.log", vbNormal) Then Kill App.Path & "\logs\Connect.log"
-If FileExist(App.Path & "\logs\HackAttemps.log", vbNormal) Then Kill App.Path & "\logs\HackAttemps.log"
-If FileExist(App.Path & "\logs\Asesinatos.log", vbNormal) Then Kill App.Path & "\logs\Asesinatos.log"
-If FileExist(App.Path & "\logs\Resurrecciones.log", vbNormal) Then Kill App.Path & "\logs\Resurrecciones.log"
-If FileExist(App.Path & "\logs\Teleports.Log", vbNormal) Then Kill App.Path & "\logs\Teleports.Log"
+If FileExist(App.path & "\logs\errores.log", vbNormal) Then Kill App.path & "\logs\errores.log"
+If FileExist(App.path & "\logs\connect.log", vbNormal) Then Kill App.path & "\logs\Connect.log"
+If FileExist(App.path & "\logs\HackAttemps.log", vbNormal) Then Kill App.path & "\logs\HackAttemps.log"
+If FileExist(App.path & "\logs\Asesinatos.log", vbNormal) Then Kill App.path & "\logs\Asesinatos.log"
+If FileExist(App.path & "\logs\Resurrecciones.log", vbNormal) Then Kill App.path & "\logs\Resurrecciones.log"
+If FileExist(App.path & "\logs\Teleports.Log", vbNormal) Then Kill App.path & "\logs\Teleports.Log"
 
 
-#If UsarQueSocket = 1 Then
 Call apiclosesocket(SockListen)
-#ElseIf UsarQueSocket = 0 Then
-frmMain.Socket1.Cleanup
-frmMain.Socket2(0).Cleanup
-#ElseIf UsarQueSocket = 2 Then
-frmMain.Serv.Detener
-#End If
 
 Dim LoopC As Integer
 
@@ -761,27 +735,7 @@ Call LoadSini
 Call CargarBackUp
 Call LoadOBJData
 
-#If UsarQueSocket = 1 Then
 SockListen = ListenForConnect(Puerto, hWndMsg, "")
-
-#ElseIf UsarQueSocket = 0 Then
-frmMain.Socket1.AddressFamily = AF_INET
-frmMain.Socket1.Protocol = IPPROTO_IP
-frmMain.Socket1.SocketType = SOCK_STREAM
-frmMain.Socket1.Binary = False
-frmMain.Socket1.Blocking = False
-frmMain.Socket1.BufferSize = 1024
-
-frmMain.Socket2(0).AddressFamily = AF_INET
-frmMain.Socket2(0).Protocol = IPPROTO_IP
-frmMain.Socket2(0).SocketType = SOCK_STREAM
-frmMain.Socket2(0).Blocking = False
-frmMain.Socket2(0).BufferSize = 2048
-
-'Escucha
-frmMain.Socket1.LocalPort = Puerto
-frmMain.Socket1.listen
-#End If
 
 If frmMain.Visible Then frmMain.txStatus.Caption = "Escuchando conexiones entrantes ..."
 
@@ -808,16 +762,8 @@ frmServidor.Visible = False
 End Sub
 
 Private Sub Form_Load()
-#If UsarQueSocket = 1 Then
 Command20.Visible = True
 Command26.Visible = True
-#ElseIf UsarQueSocket = 0 Then
-Command20.Visible = False
-Command26.Visible = False
-#ElseIf UsarQueSocket = 2 Then
-Command20.Visible = True
-Command26.Visible = False
-#End If
 
 VS1.min = 0
 If picCont.Height > picFuera.ScaleHeight Then
@@ -825,14 +771,14 @@ If picCont.Height > picFuera.ScaleHeight Then
 Else
     VS1.max = 0
 End If
-picCont.Top = -VS1.Value
+picCont.Top = -VS1.value
 
 End Sub
 
 Private Sub VS1_Change()
-picCont.Top = -VS1.Value
+picCont.Top = -VS1.value
 End Sub
 
 Private Sub VS1_Scroll()
-picCont.Top = -VS1.Value
+picCont.Top = -VS1.value
 End Sub

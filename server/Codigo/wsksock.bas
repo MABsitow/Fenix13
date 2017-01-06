@@ -378,7 +378,6 @@ Global Const WSANO_ADDRESS = 11004
 
 
 'SOME STUFF I ADDED
-Public MySocket%
 Public SockReadBuffer$
 Public Const WSA_NoName = "Unknown"
 Public WSAStartedUp As Boolean     'Flag to keep track of whether winsock WSAStartup wascalled
@@ -532,7 +531,7 @@ Public Function GetAscIP(ByVal inn As Long) As String
     #End If
     Dim lpStr&
     Dim retString$
-    retString = String(32, 0)
+    retString = String$(32, 0)
     lpStr = inet_ntoa(inn)
     If lpStr Then
         nStr = lstrlen(lpStr)
@@ -955,3 +954,4 @@ Public Function WSAMakeSelectReply(TheEvent%, TheError%) As Long
 End Function
 
 #End If
+
