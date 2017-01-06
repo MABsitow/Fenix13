@@ -65,8 +65,6 @@ Function ClasePuedeUsarItem(ByVal UserIndex As Integer, ByVal OBJIndex As Intege
 '***************************************************
 
 On Error GoTo manejador
-
-    Dim flag As Boolean
     
     'Admins can use ANYTHING!
     If UserList(UserIndex).flags.Privilegios And PlayerType.User Then
@@ -193,7 +191,6 @@ On Error GoTo Errhandler
 With UserList(UserIndex)
     'SI EL Pjta TIENE ORO LO TIRAMOS
     If (Cantidad > 0) And (Cantidad <= .Stats.GLD) Then
-            Dim i As Byte
             Dim MiObj As Obj
             'info debug
             Dim loops As Integer
@@ -452,8 +449,6 @@ Function MeterItemEnInventario(ByVal UserIndex As Integer, ByRef MiObj As Obj) A
 
 On Error GoTo Errhandler
 
-    Dim X As Integer
-    Dim Y As Integer
     Dim Slot As Byte
     
     With UserList(UserIndex)
@@ -517,7 +512,6 @@ Sub GetObj(ByVal UserIndex As Integer)
 
     Dim Obj As ObjData
     Dim MiObj As Obj
-    Dim ObjPos As String
     
     With UserList(UserIndex)
         '¿Hay algun obj?
@@ -526,7 +520,6 @@ Sub GetObj(ByVal UserIndex As Integer)
             If ObjData(MapData(.Pos.Map, .Pos.X, .Pos.Y).ObjInfo.OBJIndex).Agarrable <> 1 Then
                 Dim X As Integer
                 Dim Y As Integer
-                Dim Slot As Byte
                 
                 X = .Pos.X
                 Y = .Pos.Y
@@ -782,9 +775,9 @@ On Error GoTo Errhandler
                         Call SendData(SendTarget.ToPCArea, UserIndex, PrepareMessagePlayWave(SND_SACARARMA, .Pos.X, .Pos.Y))
                     
                     If .flags.Mimetizado = 1 Then
-                        .CharMimetizado.WeaponAnim = GetWeaponAnim(UserIndex, OBJIndex)
+                        .CharMimetizado.WeaponAnim = ObjData(OBJIndex).WeaponAnim
                     Else
-                        .Char.WeaponAnim = GetWeaponAnim(UserIndex, OBJIndex)
+                        .Char.WeaponAnim = ObjData(OBJIndex).WeaponAnim
                         Call ChangeUserChar(UserIndex, .Char.body, .Char.Head, .Char.heading, .Char.WeaponAnim, .Char.ShieldAnim, .Char.CascoAnim)
                     End If
                Else
@@ -986,33 +979,39 @@ Errhandler:
     Call LogError("EquiparInvItem Slot:" & Slot & " - Error: " & Err.Number & " - Error Description : " & Err.description)
 End Sub
 
+'CSEH: ErrLog
 Private Function CheckRazaUsaRopa(ByVal UserIndex As Integer, ItemIndex As Integer, Optional ByRef sMotivo As String) As Boolean
-'***************************************************
-'Author: Unknown
-'Last Modification: 14/01/2010 (ZaMa)
-'14/01/2010: ZaMa - Agrego el motivo por el que no puede equipar/usar el item.
-'***************************************************
+    '<EhHeader>
+    On Error GoTo CheckRazaUsaRopa_Err
+    '</EhHeader>
+100     With UserList(UserIndex)
+105         If .flags.Privilegios Then
+110             CheckRazaUsaRopa = True
+                Exit Function
+            End If
 
-On Error GoTo Errhandler
+115         If Len(ObjData(ItemIndex).RazaProhibida(1)) > 0 Then
+                Dim i As Integer
+120             For i = 1 To NUMRAZAS
+125                 If (ObjData(ItemIndex).RazaProhibida(i)) = .raza Then
+130                     CheckRazaUsaRopa = False
+                        Exit Function
+                    End If
+                Next
+135             CheckRazaUsaRopa = True
+            Else
+140             CheckRazaUsaRopa = True
+            End If
 
-    With UserList(UserIndex)
-        'Verifica si la raza puede usar la ropa
-        If .raza = eRaza.Humano Or _
-           .raza = eRaza.Elfo Or _
-           .raza = eRaza.Drow Then
-                CheckRazaUsaRopa = (ObjData(ItemIndex).RazaEnana = 0)
-        Else
-                CheckRazaUsaRopa = (ObjData(ItemIndex).RazaEnana = 1)
-        End If
-    End With
+        End With
     
-    If Not CheckRazaUsaRopa Then sMotivo = "Tu raza no puede usar este objeto."
-    
+145     If Not CheckRazaUsaRopa Then sMotivo = "Tu raza no puede usar este objeto."
+    '<EhFooter>
     Exit Function
-    
-Errhandler:
-    Call LogError("Error CheckRazaUsaRopa ItemIndex:" & ItemIndex)
 
+CheckRazaUsaRopa_Err:
+        Call LogError("Error en CheckRazaUsaRopa: " & Erl & " - " & Err.description)
+    '</EhFooter>
 End Function
 
 Sub UseInvItem(ByVal UserIndex As Integer, ByVal Slot As Byte)

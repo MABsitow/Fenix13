@@ -71,7 +71,6 @@ Public Sub SendData(ByVal sndRoute As SendTarget, ByVal sndIndex As Integer, ByV
 '**************************************************************
 On Error Resume Next
     Dim LoopC As Long
-    Dim Map As Integer
     
     Select Case sndRoute
         Case SendTarget.ToPCArea
@@ -79,13 +78,7 @@ On Error Resume Next
             Exit Sub
         
         Case SendTarget.ToAdmins
-            For LoopC = 1 To LastUser
-                If UserList(LoopC).ConnID <> -1 Then
-                    If UserList(LoopC).flags.Privilegios And (PlayerType.Admin Or PlayerType.Dios Or PlayerType.SemiDios Or PlayerType.Consejero) Then
-                        Call EnviarDatosASlot(LoopC, sndData)
-                   End If
-                End If
-            Next LoopC
+            Call EnviarToAdmins(sndData)
             Exit Sub
         
         Case SendTarget.ToAll

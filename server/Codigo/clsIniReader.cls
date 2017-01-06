@@ -65,7 +65,7 @@ Option Base 0
 
 Private Type ChildNode
     Key As String
-    Value As String
+    value As String
 End Type
 
 ''
@@ -78,7 +78,7 @@ End Type
 ' @param    numValues Number of entrys in the main node.
 
 Private Type MainNode
-    name As String
+    Name As String
     values() As ChildNode
     numValues As Integer
 End Type
@@ -132,7 +132,7 @@ End Sub
 ' @param    file Complete path of the INI file to be loaded.
 ' @see      GetValue
 
-Public Sub Initialize(ByVal file As String)
+Public Sub Initialize(ByVal File As String)
 '**************************************************************
 'Author: Juan Martín Sotuyo Dodero
 'Last Modify Date: 27/07/2006
@@ -148,7 +148,7 @@ Public Sub Initialize(ByVal file As String)
     'Get a free handle and start reading line by line until the end
     handle = FreeFile
     
-    Open file For Input As handle
+    Open File For Input As handle
     
     Do Until EOF(handle)
         Line Input #handle, Text
@@ -163,7 +163,7 @@ Public Sub Initialize(ByVal file As String)
                     'Add a main node
                     ReDim Preserve fileData(MainNodes) As MainNode
                     
-                    fileData(MainNodes).name = UCase$(Trim$(mid$(Text, 2, Pos - 2)))
+                    fileData(MainNodes).Name = UCase$(Trim$(mid$(Text, 2, Pos - 2)))
                     
                     MainNodes = MainNodes + 1
                 End If
@@ -177,7 +177,7 @@ Public Sub Initialize(ByVal file As String)
                             'Add it to the main node's value
                             ReDim Preserve .values(.numValues) As ChildNode
                             
-                            .values(.numValues).Value = Right$(Text, Len(Text) - Pos)
+                            .values(.numValues).value = Right$(Text, Len(Text) - Pos)
                             .values(.numValues).Key = UCase$(Left$(Text, Pos - 1))
                             
                             .numValues = .numValues + 1
@@ -271,13 +271,13 @@ Private Sub SortMainNodes(ByVal First As Integer, ByVal Last As Integer)
     min = First
     max = Last
     
-    comp = fileData((min + max) \ 2).name
+    comp = fileData((min + max) \ 2).Name
     
     Do While min <= max
-        Do While fileData(min).name < comp And min < Last
+        Do While fileData(min).Name < comp And min < Last
             min = min + 1
         Loop
-        Do While fileData(max).name > comp And max > First
+        Do While fileData(max).Name > comp And max > First
             max = max - 1
         Loop
         If min <= max Then
@@ -317,7 +317,7 @@ Public Function GetValue(ByVal Main As String, ByVal Key As String) As String
         j = FindKey(fileData(i), UCase$(Key))
         
         'If we found it we return it
-        If j >= 0 Then GetValue = fileData(i).values(j).Value
+        If j >= 0 Then GetValue = fileData(i).values(j).value
     End If
 End Function
 
@@ -328,7 +328,7 @@ End Function
 ' @param    key The key of the value we are looking for.
 ' @returns  The value asociated with the given key under the requeted main section of the INI file or a null string if it's not found.
 
-Public Sub ChangeValue(ByVal Main As String, ByVal Key As String, ByVal Value As Long)
+Public Sub ChangeValue(ByVal Main As String, ByVal Key As String, ByVal value As Long)
 '**************************************************************
 'Author: ZaMa
 'Last Modify Date: 27/05/2009
@@ -345,7 +345,7 @@ Public Sub ChangeValue(ByVal Main As String, ByVal Key As String, ByVal Value As
         j = FindKey(fileData(i), UCase$(Key))
         
         'If we found it we change it
-        If j >= 0 Then fileData(i).values(j).Value = Value
+        If j >= 0 Then fileData(i).values(j).value = value
     End If
 End Sub
 
@@ -395,7 +395,7 @@ End Function
 ' @param    name The name of the MainNode we are looking for.
 ' @returns  The index in which the main section we are looking for is stored or the negation of the index in which it should be if not found.
 
-Private Function FindMain(ByVal name As String) As Long
+Private Function FindMain(ByVal Name As String) As Long
 '**************************************************************
 'Author: Juan Martín Sotuyo Dodero
 'Last Modify Date: 5/01/2006
@@ -412,9 +412,9 @@ Private Function FindMain(ByVal name As String) As Long
     Do While min <= max
         mid = (min + max) \ 2
         
-        If fileData(mid).name < name Then
+        If fileData(mid).Name < Name Then
             min = mid + 1
-        ElseIf fileData(mid).name > name Then
+        ElseIf fileData(mid).Name > Name Then
             max = mid - 1
         Else
             'We found it
@@ -434,12 +434,12 @@ End Function
 ' @param    name    The name of the element whose existance is being checked.
 ' @returns  True if the key exists, false otherwise.
 
-Public Function KeyExists(ByVal name As String) As Boolean
+Public Function KeyExists(ByVal Name As String) As Boolean
 '**************************************************************
 'Author: Juan Martín Sotuyo Dodero
 'Last Modify Date: 04/01/2008
 'Returns true of the key exists, false otherwise.
 '**************************************************************
-    KeyExists = FindMain(UCase$(name)) >= 0
+    KeyExists = FindMain(UCase$(Name)) >= 0
 End Function
 

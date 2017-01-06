@@ -204,28 +204,6 @@ Public Sub ChangeUserChar(ByVal UserIndex As Integer, ByVal body As Integer, ByV
     End With
 End Sub
 
-Public Function GetWeaponAnim(ByVal UserIndex As Integer, ByVal OBJIndex As Integer) As Integer
-'***************************************************
-'Author: Torres Patricio (Pato)
-'Last Modification: 03/29/10
-'
-'***************************************************
-    Dim Tmp As Integer
-
-    With UserList(UserIndex)
-        Tmp = ObjData(OBJIndex).WeaponRazaEnanaAnim
-            
-        If Tmp > 0 Then
-            If .raza = eRaza.Enano Or .raza = eRaza.Gnomo Then
-                GetWeaponAnim = Tmp
-                Exit Function
-            End If
-        End If
-        
-        GetWeaponAnim = ObjData(OBJIndex).WeaponAnim
-    End With
-End Function
-
 Public Sub EnviarFama(ByVal UserIndex As Integer)
 '***************************************************
 'Author: Unknown
@@ -438,8 +416,6 @@ Public Sub CheckUserLevel(ByVal UserIndex As Integer)
     Dim AumentoHP As Integer
     Dim WasNewbie As Boolean
     Dim Promedio As Double
-    Dim aux As Integer
-    Dim DistVida(1 To 5) As Integer
   '  Dim GI As Integer 'Guild Index
     
 On Error GoTo Errhandler
@@ -713,7 +689,7 @@ Sub MoveUserChar(ByVal UserIndex As Integer, ByVal nHeading As eHeading)
                         .Pos = CasPerPos
                         .Char.heading = CasperHeading
                         MapData(.Pos.Map, CasPerPos.X, CasPerPos.Y).UserIndex = CasperIndex
-                    
+                        
                     End With
                 
                     'Actualizamos las áreas de ser necesario
@@ -743,6 +719,8 @@ Sub MoveUserChar(ByVal UserIndex As Integer, ByVal nHeading As eHeading)
             UserList(UserIndex).Char.heading = nHeading
             MapData(UserList(UserIndex).Pos.Map, UserList(UserIndex).Pos.X, UserList(UserIndex).Pos.Y).UserIndex = UserIndex
             
+            Call DoTileEvents(UserIndex, UserList(UserIndex).Pos.Map, UserList(UserIndex).Pos.X, UserList(UserIndex).Pos.Y)
+
             'Actualizamos las áreas de ser necesario
             Call ModAreas.CheckUpdateNeededUser(UserIndex, nHeading)
         Else
@@ -1565,6 +1543,8 @@ Sub WarpUserChar(ByVal UserIndex As Integer, ByVal Map As Integer, ByVal X As In
         
         Call MakeUserChar(True, Map, UserIndex, Map, X, Y)
         Call WriteUserCharIndexInServer(UserIndex)
+
+        Call DoTileEvents(UserIndex, Map, X, Y)
         
         'Force a flush, so user index is in there before it's destroyed for teleporting
         Call FlushBuffer(UserIndex)

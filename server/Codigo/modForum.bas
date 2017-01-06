@@ -68,7 +68,7 @@ Public Sub AddForum(ByVal sForoID As String)
     NumForos = NumForos + 1
     ReDim Preserve Foros(1 To NumForos) As tForo
     
-    ForumPath = App.Path & "\foros\" & sForoID & ".for"
+    ForumPath = App.path & "\foros\" & sForoID & ".for"
     
     With Foros(NumForos)
     
@@ -81,7 +81,7 @@ Public Sub AddForum(ByVal sForoID As String)
             ' Cargo posts
             For PostIndex = 1 To .CantPosts
                 FileIndex = FreeFile
-                PostPath = App.Path & "\foros\" & sForoID & PostIndex & ".for"
+                PostPath = App.path & "\foros\" & sForoID & PostIndex & ".for"
 
                 Open PostPath For Input Shared As #FileIndex
                 
@@ -98,7 +98,7 @@ Public Sub AddForum(ByVal sForoID As String)
             ' Cargo anuncios
             For PostIndex = 1 To .CantAnuncios
                 FileIndex = FreeFile
-                PostPath = App.Path & "\foros\" & sForoID & PostIndex & "a.for"
+                PostPath = App.path & "\foros\" & sForoID & PostIndex & "a.for"
 
                 Open PostPath For Input Shared As #FileIndex
                 
@@ -205,13 +205,13 @@ Private Sub SaveForum(ByVal ForumIndex As Integer)
     With Foros(ForumIndex)
         
         ' Guardo info del foro
-        Call WriteVar(App.Path & "\Foros\" & .ID & ".for", "INFO", "CantMSG", .CantPosts)
-        Call WriteVar(App.Path & "\Foros\" & .ID & ".for", "INFO", "CantAnuncios", .CantAnuncios)
+        Call WriteVar(App.path & "\Foros\" & .ID & ".for", "INFO", "CantMSG", .CantPosts)
+        Call WriteVar(App.path & "\Foros\" & .ID & ".for", "INFO", "CantAnuncios", .CantAnuncios)
         
         ' Guardo posts
         For PostIndex = 1 To .CantPosts
             
-            PostPath = App.Path & "\Foros\" & .ID & PostIndex & ".for"
+            PostPath = App.path & "\Foros\" & .ID & PostIndex & ".for"
             FileIndex = FreeFile()
             Open PostPath For Output As FileIndex
             
@@ -228,7 +228,7 @@ Private Sub SaveForum(ByVal ForumIndex As Integer)
         ' Guardo Anuncios
         For PostIndex = 1 To .CantAnuncios
             
-            PostPath = App.Path & "\Foros\" & .ID & PostIndex & "a.for"
+            PostPath = App.path & "\Foros\" & .ID & PostIndex & "a.for"
             FileIndex = FreeFile()
             Open PostPath For Output As FileIndex
             
@@ -259,14 +259,14 @@ Public Sub CleanForum(ByVal ForumIndex As Integer)
     With Foros(ForumIndex)
     
         ' Elimino todo
-        ForumPath = App.Path & "\Foros\" & .ID & ".for"
+        ForumPath = App.path & "\Foros\" & .ID & ".for"
         If FileExist(ForumPath, vbNormal) Then
     
             NumPost = val(GetVar(ForumPath, "INFO", "CantMSG"))
             
             ' Elimino los post viejos
             For PostIndex = 1 To NumPost
-                Kill App.Path & "\Foros\" & .ID & PostIndex & ".for"
+                Kill App.path & "\Foros\" & .ID & PostIndex & ".for"
             Next PostIndex
             
             
@@ -274,12 +274,12 @@ Public Sub CleanForum(ByVal ForumIndex As Integer)
             
             ' Elimino los post viejos
             For PostIndex = 1 To NumPost
-                Kill App.Path & "\Foros\" & .ID & PostIndex & "a.for"
+                Kill App.path & "\Foros\" & .ID & PostIndex & "a.for"
             Next PostIndex
             
             
             ' Elimino el foro
-            Kill App.Path & "\Foros\" & .ID & ".for"
+            Kill App.path & "\Foros\" & .ID & ".for"
     
         End If
     End With

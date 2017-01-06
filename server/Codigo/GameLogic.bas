@@ -86,9 +86,9 @@ On Error GoTo Errhandler
     'Controla las salidas
     If InMapBounds(Map, X, Y) Then
         With MapData(Map, X, Y)
-            If .ObjInfo.ObjIndex > 0 Then
-                FxFlag = ObjData(.ObjInfo.ObjIndex).OBJType = eOBJType.otTeleport
-                TelepRadio = ObjData(.ObjInfo.ObjIndex).Radio
+            If .ObjInfo.OBJIndex > 0 Then
+                FxFlag = ObjData(.ObjInfo.OBJIndex).OBJType = eOBJType.otTeleport
+                TelepRadio = ObjData(.ObjInfo.OBJIndex).Radio
             End If
             
             If .TileExit.Map > 0 And .TileExit.Map <= NumMaps Then
@@ -689,30 +689,30 @@ With UserList(UserIndex)
             .TargetX = X
             .TargetY = Y
             '¿Es un obj?
-            If MapData(Map, X, Y).ObjInfo.ObjIndex > 0 Then
+            If MapData(Map, X, Y).ObjInfo.OBJIndex > 0 Then
                 'Informa el nombre
                 .TargetObjMap = Map
                 .TargetObjX = X
                 .TargetObjY = Y
                 FoundSomething = 1
-            ElseIf MapData(Map, X + 1, Y).ObjInfo.ObjIndex > 0 Then
+            ElseIf MapData(Map, X + 1, Y).ObjInfo.OBJIndex > 0 Then
                 'Informa el nombre
-                If ObjData(MapData(Map, X + 1, Y).ObjInfo.ObjIndex).OBJType = eOBJType.otPuertas Then
+                If ObjData(MapData(Map, X + 1, Y).ObjInfo.OBJIndex).OBJType = eOBJType.otPuertas Then
                     .TargetObjMap = Map
                     .TargetObjX = X + 1
                     .TargetObjY = Y
                     FoundSomething = 1
                 End If
-            ElseIf MapData(Map, X + 1, Y + 1).ObjInfo.ObjIndex > 0 Then
-                If ObjData(MapData(Map, X + 1, Y + 1).ObjInfo.ObjIndex).OBJType = eOBJType.otPuertas Then
+            ElseIf MapData(Map, X + 1, Y + 1).ObjInfo.OBJIndex > 0 Then
+                If ObjData(MapData(Map, X + 1, Y + 1).ObjInfo.OBJIndex).OBJType = eOBJType.otPuertas Then
                     'Informa el nombre
                     .TargetObjMap = Map
                     .TargetObjX = X + 1
                     .TargetObjY = Y + 1
                     FoundSomething = 1
                 End If
-            ElseIf MapData(Map, X, Y + 1).ObjInfo.ObjIndex > 0 Then
-                If ObjData(MapData(Map, X, Y + 1).ObjInfo.ObjIndex).OBJType = eOBJType.otPuertas Then
+            ElseIf MapData(Map, X, Y + 1).ObjInfo.OBJIndex > 0 Then
+                If ObjData(MapData(Map, X, Y + 1).ObjInfo.OBJIndex).OBJType = eOBJType.otPuertas Then
                     'Informa el nombre
                     .TargetObjMap = Map
                     .TargetObjX = X
@@ -722,7 +722,7 @@ With UserList(UserIndex)
             End If
             
             If FoundSomething = 1 Then
-                .TargetObj = MapData(Map, .TargetObjX, .TargetObjY).ObjInfo.ObjIndex
+                .TargetObj = MapData(Map, .TargetObjX, .TargetObjY).ObjInfo.OBJIndex
                 If MostrarCantidad(.TargetObj) Then
                     Call WriteConsoleMsg(UserIndex, ObjData(.TargetObj).Name & " - " & MapData(.TargetObjMap, .TargetObjX, .TargetObjY).ObjInfo.Amount & "", FontTypeNames.FONTTYPE_INFO)
                 Else
@@ -1092,4 +1092,11 @@ Public Function EsObjetoFijo(ByVal OBJType As eOBJType) As Boolean
                    OBJType = eOBJType.otCarteles Or _
                    OBJType = eOBJType.otArboles Or _
                    OBJType = eOBJType.otYacimiento
+End Function
+
+Public Function ItemEsDeMapa(ByVal Map As Integer, ByVal X As Integer, ByVal Y As Integer) As Boolean
+
+    ItemEsDeMapa = ObjData(MapData(Map, X, Y).ObjInfo.OBJIndex).Agarrable Or _
+                   MapData(Map, X, Y).Blocked
+
 End Function

@@ -29,8 +29,6 @@ Attribute VB_Name = "modHechizos"
 
 Option Explicit
 
-Public Const HELEMENTAL_FUEGO As Integer = 26
-Public Const HELEMENTAL_TIERRA As Integer = 28
 Public Const SUPERANILLO As Integer = 700
 
 Sub NpcLanzaSpellSobreUser(ByVal NpcIndex As Integer, ByVal UserIndex As Integer, ByVal Spell As Integer)
@@ -92,10 +90,6 @@ With UserList(UserIndex)
         
             .Stats.MinHp = .Stats.MinHp - daño
             
-            Call WriteConsoleMsg(UserIndex, Npclist(NpcIndex).Name & " te ha quitado " & daño & " puntos de vida.", FontTypeNames.FONTTYPE_FIGHT)
-            Call WriteUpdateUserStats(UserIndex)
-            Call SubirSkill(UserIndex, eSkill.Resis)
-            
             'Muere
             If .Stats.MinHp < 1 Then
                 .Stats.MinHp = 0
@@ -112,6 +106,9 @@ With UserList(UserIndex)
                 '[/Barrin]
             End If
         
+            Call WriteConsoleMsg(UserIndex, Npclist(NpcIndex).Name & " te ha quitado " & daño & " puntos de vida.", FontTypeNames.FONTTYPE_FIGHT)
+            Call WriteUpdateUserStats(UserIndex)
+            Call SubirSkill(UserIndex, eSkill.Resis)
         End If
         
     End If
@@ -873,7 +870,7 @@ With UserList(UserIndex)
         .Char.Head = UserList(TargetIndex).Char.Head
         .Char.CascoAnim = UserList(TargetIndex).Char.CascoAnim
         .Char.ShieldAnim = UserList(TargetIndex).Char.ShieldAnim
-        .Char.WeaponAnim = GetWeaponAnim(UserIndex, UserList(TargetIndex).Invent.WeaponEqpObjIndex)
+        .Char.WeaponAnim = UserList(TargetIndex).Char.WeaponAnim
         
         Call ChangeUserChar(UserIndex, .Char.body, .Char.Head, .Char.heading, .Char.WeaponAnim, .Char.ShieldAnim, .Char.CascoAnim)
        

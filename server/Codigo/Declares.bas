@@ -155,14 +155,6 @@ End Enum
 
 Public Const LimiteNewbie As Byte = 12
 
-Public Type tCabecera 'Cabecera de los con
-    desc As String * 255
-    crc As Long
-    MagicWord As Long
-End Type
-
-Public MiCabecera As tCabecera
-
 'Barrin 3/10/03
 'Cambiado a 2 segundos el 30/11/07
 Public Const TIEMPO_INICIOMEDITAR As Integer = 2000
@@ -179,9 +171,6 @@ Public Const LAUDELFICO As Integer = 1049
 Public Const FLAUTAELFICA As Integer = 1050
 
 Public Const APOCALIPSIS_SPELL_INDEX As Integer = 25
-Public Const DESCARGA_SPELL_INDEX As Integer = 23
-
-Public Const SLOTS_POR_FILA As Byte = 5
 
 Public Const MAXMASCOTASENTRENADOR As Byte = 7
 
@@ -232,12 +221,9 @@ Public Enum eTrigger6
 End Enum
 
 'TODO : Reemplazar por un enum
-Public Const Bosque As String = "BOSQUE"
 Public Const Nieve As String = "NIEVE"
-Public Const Desierto As String = "DESIERTO"
 Public Const Ciudad As String = "CIUDAD"
 Public Const Campo As String = "CAMPO"
-Public Const Dungeon As String = "DUNGEON"
 
 ' <<<<<< Targets >>>>>>
 Public Enum TargetType
@@ -267,8 +253,6 @@ Public Const EsfuerzoPescarGeneral As Byte = 3
 
 Public Const EsfuerzoExcavarMinero As Byte = 2
 Public Const EsfuerzoExcavarGeneral As Byte = 5
-
-Public Const FX_TELEPORT_INDEX As Integer = 1
 
 ' La utilidad de esto es casi nula, sólo se revisa si fue a la cabeza...
 Public Enum PartesCuerpo
@@ -314,12 +298,8 @@ Public Const PIQUETE_MINERO As Integer = 187
 Public Const DAGA As Integer = 15
 Public Const FOGATA_APAG As Integer = 136
 Public Const FOGATA As Integer = 63
-Public Const ORO_MINA As Integer = 194
-Public Const PLATA_MINA As Integer = 193
-Public Const HIERRO_MINA As Integer = 192
 Public Const MARTILLO_HERRERO As Integer = 389
 Public Const SERRUCHO_CARPINTERO As Integer = 198
-Public Const ObjArboles As Integer = 4
 Public Const RED_PESCA As Integer = 543
 Public Const CAÑA_PESCA As Integer = 138
 
@@ -452,14 +432,8 @@ Public Enum eAtributos
     Constitucion = 5
 End Enum
 
-Public Const AdicionalHPGuerrero As Byte = 2 'HP adicionales cuando sube de nivel
-Public Const AdicionalHPCazador As Byte = 1 'HP adicionales cuando sube de nivel
-
 Public Const AumentoSTDef As Byte = 15
-Public Const AumentoStBandido As Byte = AumentoSTDef + 23
-Public Const AumentoSTLadron As Byte = AumentoSTDef + 3
 Public Const AumentoSTMago As Byte = AumentoSTDef - 1
-Public Const AumentoSTTrabajador As Byte = AumentoSTDef + 25
 
 Public Const AdicionalSTLeñador As Byte = AumentoSTDef + 23
 Public Const AdicionalSTPescador As Byte = AumentoSTDef + 20
@@ -471,10 +445,6 @@ Public Const XMinMapSize As Byte = 1
 Public Const YMaxMapSize As Byte = 100
 Public Const YMinMapSize As Byte = 1
 
-'Tamaño del tileset
-Public Const TileSizeX As Byte = 32
-Public Const TileSizeY As Byte = 32
-
 'Tamaño en Tiles de la pantalla de visualizacion
 Public Const XWindow As Byte = 17
 Public Const YWindow As Byte = 13
@@ -483,21 +453,12 @@ Public Const YWindow As Byte = 13
 Public Const SND_SWING As Byte = 2
 Public Const SND_TALAR As Byte = 13
 Public Const SND_PESCAR As Byte = 14
-Public Const SND_MINERO As Byte = 15
 Public Const SND_WARP As Byte = 3
 Public Const SND_PUERTA As Byte = 5
 Public Const SND_NIVEL As Byte = 6
 
-Public Const SND_USERMUERTE As Byte = 11
 Public Const SND_IMPACTO As Byte = 10
 Public Const SND_IMPACTO2 As Byte = 12
-Public Const SND_LEÑADOR As Byte = 13
-Public Const SND_FOGATA As Byte = 14
-Public Const SND_AVE As Byte = 21
-Public Const SND_AVE2 As Byte = 22
-Public Const SND_AVE3 As Byte = 34
-Public Const SND_GRILLO As Byte = 28
-Public Const SND_GRILLO2 As Byte = 29
 Public Const SND_SACARARMA As Byte = 25
 Public Const SND_ESCUDO As Byte = 37
 Public Const MARTILLOHERRERO As Byte = 41
@@ -577,17 +538,10 @@ Public Const FONTTYPE_CONSEJOCAOSVesA As String = "~255~50~0~1~0"
 Public Const FONTTYPE_CENTINELA As String = "~0~255~0~1~0"
 
 'Estadisticas
-Public Const STAT_MAXELV As Byte = 255
+Public Const STAT_MAXELV As Byte = 45
 Public Const STAT_MAXHP As Integer = 999
 Public Const STAT_MAXSTA As Integer = 999
 Public Const STAT_MAXMAN As Integer = 9999
-Public Const STAT_MAXHIT_UNDER36 As Byte = 99
-Public Const STAT_MAXHIT_OVER36 As Integer = 999
-Public Const STAT_MAXDEF As Byte = 99
-
-Public Const ELU_SKILL_INICIAL As Byte = 200
-Public Const EXP_ACIERTO_SKILL As Byte = 50
-Public Const EXP_FALLO_SKILL As Byte = 20
 
 ' **************************************************************
 ' **************************************************************
@@ -814,7 +768,6 @@ Public Type ObjData
     Ropaje As Integer 'Indice del grafico del ropaje
     
     WeaponAnim As Integer ' Apunta a una anim de armas
-    WeaponRazaEnanaAnim As Integer
     ShieldAnim As Integer ' Apunta a una anim de escudo
     CascoAnim As Integer
     
@@ -834,7 +787,6 @@ Public Type ObjData
     IndexCerrada As Integer
     IndexCerradaLlave As Integer
     
-    RazaEnana As Byte
     Mujer As Byte
     Hombre As Byte
     
@@ -1472,9 +1424,7 @@ End Type
 
 '********** V A R I A B L E S     P U B L I C A S ***********
 
-Public SERVERONLINE As Boolean
 Public ULTIMAVERSION As String
-Public BackUp As Boolean ' TODO: Se usa esta variable ?
 
 Public ListaRazas(1 To NUMRAZAS) As String
 Public SkillsNames(1 To NUMSKILLS) As String
@@ -1519,7 +1469,6 @@ Public LastChar As Integer
 Public NumChars As Integer
 Public LastNPC As Integer
 Public NumNPCs As Integer
-Public NumFX As Integer
 Public NumMaps As Integer
 Public NumObjDatas As Integer
 Public NumeroHechizos As Integer
@@ -1563,8 +1512,6 @@ Public BanIps As New Collection
 Public ModClase(1 To NUMCLASES) As ModClase
 Public ModRaza(1 To NUMRAZAS) As ModRaza
 Public ModVida(1 To NUMCLASES) As Double
-Public DistribucionEnteraVida(1 To 5) As Integer
-Public DistribucionSemienteraVida(1 To 4) As Integer
 Public Ciudades(1 To NUMCIUDADES) As WorldPos
 Public distanceToCities() As HomeDistance
 '*********************************************************
@@ -1752,42 +1699,39 @@ Public Enum eGMCommands
     SetIniVar               '/SETINIVAR LLAVE CLAVE VALOR
 End Enum
 
-Public Const MATRIX_INITIAL_MAP As Integer = 1
-
 Public Const GOHOME_PENALTY As Integer = 5
-Public Const GM_MAP As Integer = 49
 
 Public Const TELEP_OBJ_INDEX As Integer = 1012
 
 Public Const HUMANO_H_PRIMER_CABEZA As Integer = 1
-Public Const HUMANO_H_ULTIMA_CABEZA As Integer = 40 'En verdad es hasta la 51, pero como son muchas estas las dejamos no seleccionables
+Public Const HUMANO_H_ULTIMA_CABEZA As Integer = 23 'En verdad es hasta la 51, pero como son muchas estas las dejamos no seleccionables
 
 Public Const ELFO_H_PRIMER_CABEZA As Integer = 101
-Public Const ELFO_H_ULTIMA_CABEZA As Integer = 122
+Public Const ELFO_H_ULTIMA_CABEZA As Integer = 107
 
 Public Const DROW_H_PRIMER_CABEZA As Integer = 201
-Public Const DROW_H_ULTIMA_CABEZA As Integer = 221
+Public Const DROW_H_ULTIMA_CABEZA As Integer = 204
 
 Public Const ENANO_H_PRIMER_CABEZA As Integer = 301
-Public Const ENANO_H_ULTIMA_CABEZA As Integer = 319
+Public Const ENANO_H_ULTIMA_CABEZA As Integer = 304
 
 Public Const GNOMO_H_PRIMER_CABEZA As Integer = 401
-Public Const GNOMO_H_ULTIMA_CABEZA As Integer = 416
+Public Const GNOMO_H_ULTIMA_CABEZA As Integer = 403
 '**************************************************
 Public Const HUMANO_M_PRIMER_CABEZA As Integer = 70
-Public Const HUMANO_M_ULTIMA_CABEZA As Integer = 89
+Public Const HUMANO_M_ULTIMA_CABEZA As Integer = 73
 
 Public Const ELFO_M_PRIMER_CABEZA As Integer = 170
-Public Const ELFO_M_ULTIMA_CABEZA As Integer = 188
+Public Const ELFO_M_ULTIMA_CABEZA As Integer = 174
 
 Public Const DROW_M_PRIMER_CABEZA As Integer = 270
-Public Const DROW_M_ULTIMA_CABEZA As Integer = 288
+Public Const DROW_M_ULTIMA_CABEZA As Integer = 274
 
 Public Const ENANO_M_PRIMER_CABEZA As Integer = 370
-Public Const ENANO_M_ULTIMA_CABEZA As Integer = 384
+Public Const ENANO_M_ULTIMA_CABEZA As Integer = 372
 
 Public Const GNOMO_M_PRIMER_CABEZA As Integer = 470
-Public Const GNOMO_M_ULTIMA_CABEZA As Integer = 484
+Public Const GNOMO_M_ULTIMA_CABEZA As Integer = 473
 
 ' Por ahora la dejo constante.. SI se quisiera extender la propiedad de paralziar, se podria hacer
 ' una nueva variable en el dat.
