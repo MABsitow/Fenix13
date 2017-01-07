@@ -39,13 +39,13 @@ Begin VB.Form frmMain
    Begin VB.Timer tPiqueteC 
       Enabled         =   0   'False
       Interval        =   6000
-      Left            =   480
-      Top             =   540
+      Left            =   120
+      Top             =   600
    End
    Begin VB.Timer packetResend 
       Interval        =   10
-      Left            =   480
-      Top             =   60
+      Left            =   120
+      Top             =   120
    End
    Begin VB.CheckBox SUPERLOG 
       Caption         =   "log"
@@ -72,8 +72,8 @@ Begin VB.Form frmMain
    Begin VB.Timer Auditoria 
       Enabled         =   0   'False
       Interval        =   1000
-      Left            =   1440
-      Top             =   1020
+      Left            =   1080
+      Top             =   1140
    End
    Begin VB.Timer GameTimer 
       Enabled         =   0   'False
@@ -84,26 +84,26 @@ Begin VB.Form frmMain
    Begin VB.Timer tLluviaEvent 
       Enabled         =   0   'False
       Interval        =   60000
-      Left            =   960
-      Top             =   1020
+      Left            =   600
+      Top             =   1140
    End
    Begin VB.Timer tLluvia 
       Enabled         =   0   'False
       Interval        =   500
-      Left            =   960
-      Top             =   540
+      Left            =   600
+      Top             =   600
    End
    Begin VB.Timer AutoSave 
       Enabled         =   0   'False
       Interval        =   60000
-      Left            =   480
+      Left            =   120
       Top             =   1080
    End
    Begin VB.Timer npcataca 
       Enabled         =   0   'False
       Interval        =   4000
-      Left            =   1920
-      Top             =   1020
+      Left            =   1560
+      Top             =   1140
    End
    Begin VB.Timer KillLog 
       Enabled         =   0   'False
@@ -404,11 +404,11 @@ Call PurgarPenas
 Call CheckIdleUser
 
 '<<<<<-------- Log the number of users online ------>>>
-Dim N As Integer
-N = FreeFile()
-Open App.path & "\logs\numusers.log" For Output Shared As N
-Print #N, NumUsers
-Close #N
+Dim n As Integer
+n = FreeFile()
+Open App.path & "\logs\numusers.log" For Output Shared As n
+Print #n, NumUsers
+Close #n
 '<<<<<-------- Log the number of users online ------>>>
 
 Exit Sub
@@ -502,11 +502,11 @@ For LoopC = 1 To MaxUsers
 Next
 
 'Log
-Dim N As Integer
-N = FreeFile
-Open App.path & "\logs\Main.log" For Append Shared As #N
-Print #N, Date & " " & time & " server cerrado."
-Close #N
+Dim n As Integer
+n = FreeFile
+Open App.path & "\logs\Main.log" For Append Shared As #n
+Print #n, Date & " " & time & " server cerrado."
+Close #n
 
 End
 

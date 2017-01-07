@@ -334,7 +334,7 @@ Public Sub MakeUserChar(ByVal toMap As Boolean, ByVal sndIndex As Integer, ByVal
 '15/01/2010: ZaMa - Ahora se envia el color del nick.
 '*************************************************
 
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
 
     Dim CharIndex As Integer
   '  Dim ClanTag As String
@@ -397,7 +397,7 @@ On Error GoTo Errhandler
     End With
 Exit Sub
 
-Errhandler:
+ErrHandler:
     LogError ("MakeUserChar: num: " & Err.Number & " desc: " & Err.description)
     'Resume Next
     Call CloseSocket(UserIndex)
@@ -418,7 +418,7 @@ Public Sub CheckUserLevel(ByVal UserIndex As Integer)
     Dim Promedio As Double
   '  Dim GI As Integer 'Guild Index
     
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     
     WasNewbie = EsNewbie(UserIndex)
     
@@ -621,7 +621,7 @@ On Error GoTo Errhandler
     Call WriteUpdateUserStats(UserIndex)
 Exit Sub
 
-Errhandler:
+ErrHandler:
     Call LogError("Error en la subrutina CheckUserLevel - Error : " & Err.Number & " - Description : " & Err.description)
 End Sub
 
@@ -774,19 +774,19 @@ Function NextOpenCharIndex() As Integer
 '
 '***************************************************
 
-    Dim LoopC As Long
+    Dim loopc As Long
     
-    For LoopC = 1 To MAXCHARS
-        If CharList(LoopC) = 0 Then
-            NextOpenCharIndex = LoopC
+    For loopc = 1 To MAXCHARS
+        If CharList(loopc) = 0 Then
+            NextOpenCharIndex = loopc
             NumChars = NumChars + 1
             
-            If LoopC > LastChar Then _
-                LastChar = LoopC
+            If loopc > LastChar Then _
+                LastChar = loopc
             
             Exit Function
         End If
-    Next LoopC
+    Next loopc
 End Function
 
 Function NextOpenUser() As Integer
@@ -796,14 +796,14 @@ Function NextOpenUser() As Integer
 '
 '***************************************************
 
-    Dim LoopC As Long
+    Dim loopc As Long
     
-    For LoopC = 1 To MaxUsers + 1
-        If LoopC > MaxUsers Then Exit For
-        If (UserList(LoopC).ConnID = -1 And UserList(LoopC).flags.UserLogged = False) Then Exit For
-    Next LoopC
+    For loopc = 1 To MaxUsers + 1
+        If loopc > MaxUsers Then Exit For
+        If (UserList(loopc).ConnID = -1 And UserList(loopc).flags.UserLogged = False) Then Exit For
+    Next loopc
     
-    NextOpenUser = LoopC
+    NextOpenUser = loopc
 End Function
 
 Public Sub SendUserStatsTxt(ByVal sendIndex As Integer, ByVal UserIndex As Integer)
@@ -984,8 +984,8 @@ On Error Resume Next
         Call WriteConsoleMsg(sendIndex, "Tiene " & .Invent.NroItems & " objetos.", FontTypeNames.FONTTYPE_INFO)
         
         For j = 1 To .CurrentInventorySlots
-            If .Invent.Object(j).OBJIndex > 0 Then
-                Call WriteConsoleMsg(sendIndex, "Objeto " & j & " " & ObjData(.Invent.Object(j).OBJIndex).Name & " Cantidad:" & .Invent.Object(j).Amount, FontTypeNames.FONTTYPE_INFO)
+            If .Invent.Object(j).ObjIndex > 0 Then
+                Call WriteConsoleMsg(sendIndex, "Objeto " & j & " " & ObjData(.Invent.Object(j).ObjIndex).Name & " Cantidad:" & .Invent.Object(j).Amount, FontTypeNames.FONTTYPE_INFO)
             End If
         Next j
     End With
@@ -1437,51 +1437,59 @@ Sub ContarMuerte(ByVal Muerto As Integer, ByVal Atacante As Integer)
     End With
 End Sub
 
-Sub Tilelibre(ByRef Pos As WorldPos, ByRef nPos As WorldPos, ByRef Obj As Obj, ByRef Agua As Boolean, ByRef Tierra As Boolean)
+Sub Tilelibre(ByRef Pos As WorldPos, ByRef nPos As WorldPos, ByRef Obj As Obj, _
+              ByRef PuedeAgua As Boolean, ByRef PuedeTierra As Boolean)
 '**************************************************************
 'Author: Unknown
-'Last Modify Date: 23/01/2007
+'Last Modify Date: 18/09/2010
 '23/01/2007 -> Pablo (ToxicWaste): El agua es ahora un TileLibre agregando las condiciones necesarias.
+'18/09/2010: ZaMa - Aplico optimizacion de busqueda de tile libre en forma de rombo.
 '**************************************************************
-    Dim LoopC As Integer
+On Error GoTo ErrHandler
+
+    Dim Found As Boolean
+    Dim loopc As Integer
     Dim tX As Long
     Dim tY As Long
-    Dim hayobj As Boolean
     
-    hayobj = False
-    nPos.Map = Pos.Map
-    nPos.X = 0
-    nPos.Y = 0
+    nPos = Pos
+    tX = Pos.X
+    tY = Pos.Y
     
-    Do While Not LegalPos(Pos.Map, nPos.X, nPos.Y, Agua, Tierra) Or hayobj
+    loopc = 1
+    
+    ' La primera posicion es valida?
+    If LegalPos(Pos.Map, nPos.X, nPos.Y, PuedeAgua, PuedeTierra, True) Then
         
-        If LoopC > 15 Then
-            Exit Do
+        If Not HayObjeto(Pos.Map, nPos.X, nPos.Y, Obj.ObjIndex, Obj.Amount) Then
+            Found = True
         End If
         
-        For tY = Pos.Y - LoopC To Pos.Y + LoopC
-            For tX = Pos.X - LoopC To Pos.X + LoopC
-                
-                If LegalPos(nPos.Map, tX, tY, Agua, Tierra) Then
-                    'We continue if: a - the item is different from 0 and the dropped item or b - the amount dropped + amount in map exceeds MAX_INVENTORY_OBJS
-                    hayobj = (MapData(nPos.Map, tX, tY).ObjInfo.OBJIndex > 0 And MapData(nPos.Map, tX, tY).ObjInfo.OBJIndex <> Obj.OBJIndex)
-                    If Not hayobj Then _
-                        hayobj = (MapData(nPos.Map, tX, tY).ObjInfo.Amount + Obj.Amount > MAX_INVENTORY_OBJS)
-                    If Not hayobj And MapData(nPos.Map, tX, tY).TileExit.Map = 0 Then
-                        nPos.X = tX
-                        nPos.Y = tY
-                        
-                        'break both fors
-                        tX = Pos.X + LoopC
-                        tY = Pos.Y + LoopC
-                    End If
-                End If
-            
-            Next tX
-        Next tY
+    End If
+    
+    ' Busca en las demas posiciones, en forma de "rombo"
+    If Not Found Then
+        While (Not Found) And loopc <= 16
+            If RhombLegalTilePos(Pos, tX, tY, loopc, Obj.ObjIndex, Obj.Amount, PuedeAgua, PuedeTierra) Then
+                nPos.X = tX
+                nPos.Y = tY
+                Found = True
+            End If
         
-        LoopC = LoopC + 1
-    Loop
+            loopc = loopc + 1
+        Wend
+        
+    End If
+    
+    If Not Found Then
+        nPos.X = 0
+        nPos.Y = 0
+    End If
+    
+    Exit Sub
+    
+ErrHandler:
+    Call LogError("Error en Tilelibre. Error: " & Err.Number & " - " & Err.description)
 End Sub
 
 Sub WarpUserChar(ByVal UserIndex As Integer, ByVal Map As Integer, ByVal X As Integer, ByVal Y As Integer, ByVal FX As Boolean, Optional ByVal Teletransported As Boolean)
@@ -2119,7 +2127,7 @@ Public Function FarthestPet(ByVal UserIndex As Integer) As Integer
 'Last Modify Date: 18/11/2009
 'Devuelve el indice de la mascota mas lejana.
 '**************************************************************
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     
     Dim PetIndex As Integer
     Dim Distancia As Integer
@@ -2155,11 +2163,11 @@ On Error GoTo Errhandler
 
     Exit Function
     
-Errhandler:
+ErrHandler:
     Call LogError("Error en FarthestPet")
 End Function
 
-Public Function HasEnoughItems(ByVal UserIndex As Integer, ByVal OBJIndex As Integer, ByVal Amount As Long) As Boolean
+Public Function HasEnoughItems(ByVal UserIndex As Integer, ByVal ObjIndex As Integer, ByVal Amount As Long) As Boolean
 '**************************************************************
 'Author: ZaMa
 'Last Modify Date: 25/11/2009
@@ -2171,7 +2179,7 @@ Public Function HasEnoughItems(ByVal UserIndex As Integer, ByVal OBJIndex As Int
     
     For Slot = 1 To UserList(UserIndex).CurrentInventorySlots
         ' Si es el item que busco
-        If UserList(UserIndex).Invent.Object(Slot).OBJIndex = OBJIndex Then
+        If UserList(UserIndex).Invent.Object(Slot).ObjIndex = ObjIndex Then
             ' Lo sumo a la cantidad total
             ItemInvAmount = ItemInvAmount + UserList(UserIndex).Invent.Object(Slot).Amount
         End If
@@ -2180,7 +2188,7 @@ Public Function HasEnoughItems(ByVal UserIndex As Integer, ByVal OBJIndex As Int
     HasEnoughItems = Amount <= ItemInvAmount
 End Function
 
-Public Function TotalOfferItems(ByVal OBJIndex As Integer, ByVal UserIndex As Integer) As Long
+Public Function TotalOfferItems(ByVal ObjIndex As Integer, ByVal UserIndex As Integer) As Long
 '**************************************************************
 'Author: ZaMa
 'Last Modify Date: 25/11/2009
@@ -2190,7 +2198,7 @@ Public Function TotalOfferItems(ByVal OBJIndex As Integer, ByVal UserIndex As In
     
     For Slot = 1 To MAX_OFFER_SLOTS
             ' Si es el item que busco
-        If UserList(UserIndex).ComUsu.Objeto(Slot) = OBJIndex Then
+        If UserList(UserIndex).ComUsu.Objeto(Slot) = ObjIndex Then
             ' Lo sumo a la cantidad total
             TotalOfferItems = TotalOfferItems + UserList(UserIndex).ComUsu.cant(Slot)
         End If

@@ -142,7 +142,7 @@ Public Const MP3_Inicio As Byte = 101
 Public RawServersList As String
 
 Public Type tColor
-    r As Byte
+    R As Byte
     g As Byte
     b As Byte
 End Type
@@ -394,7 +394,7 @@ Public Enum eGMCommands
     OnlineRoyalArmy         '/ONLINEREAL
     OnlineChaosLegion       '/ONLINECAOS
     GoNearby                '/IRCERCA
-    Comment                 '/REM
+    comment                 '/REM
     serverTime              '/HORA
     Where                   '/DONDE
     CreaturesInMap          '/NENE
@@ -425,7 +425,7 @@ Public Enum eGMCommands
     Forgive                 '/PERDON
     Kick                    '/ECHAR
     Execute                 '/EJECUTAR
-    banChar                 '/BAN
+    BanChar                 '/BAN
     UnbanChar               '/UNBAN
     NPCFollow               '/SEGUIR
     SummonChar              '/SUM
@@ -434,9 +434,9 @@ Public Enum eGMCommands
     ResetNPCInventory       '/RESETINV
     CleanWorld              '/LIMPIAR
     ServerMessage           '/RMSG
-    nickToIP                '/NICK2IP
+    NickToIP                '/NICK2IP
     IPToNick                '/IP2NICK
-       TeleportCreate          '/CT
+    TeleportCreate          '/CT
     TeleportDestroy         '/DT
     RainToggle              '/LLUVIA
     SetCharDescription      '/SETDESC
@@ -453,7 +453,7 @@ Public Enum eGMCommands
     ItemsInTheFloor         '/PISO
     MakeDumb                '/ESTUPIDO
     MakeDumbNoMore          '/NOESTUPIDO
-    dumpIPTables            '/DUMPSECURITY
+    DumpIPTables            '/DUMPSECURITY
     CouncilKick             '/KICKCONSE
     SetTrigger              '/TRIGGER
     AskTrigger              '/TRIGGER with no args
@@ -490,7 +490,6 @@ Public Enum eGMCommands
     AlterName               '/ANAME
     ToggleCentinelActivated '/CENTINELAACTIVADO
     DoBackUp                '/DOBACKUP
-  '  ShowGuildMessages       '/SHOWCMSG
     SaveMap                 '/GUARDAMAPA
     ChangeMapInfoPK         '/MODMAPINFO PK
     ChangeMapInfoBackup     '/MODMAPINFO BACKUP
@@ -513,6 +512,9 @@ Public Enum eGMCommands
     Ignored                 '/IGNORADO
     CheckSlot               '/SLOT
     SetIniVar               '/SETINIVAR LLAVE CLAVE VALOR
+    WarpToMap               '/GO
+    StaffMessage            '/STAFF
+    SearchObjs              '/BUSCAR
 End Enum
 
 '
@@ -878,7 +880,7 @@ Public Declare Sub Sleep Lib "kernel32" (ByVal dwMilliseconds As Long)
 
 'Para ejecutar el browser y programas externos
 Public Const SW_SHOWNORMAL As Long = 1
-Public Declare Function ShellExecute Lib "shell32.dll" Alias "ShellExecuteA" (ByVal hWnd As Long, ByVal lpOperation As String, ByVal lpFile As String, ByVal lpParameters As String, ByVal lpDirectory As String, ByVal nShowCmd As Long) As Long
+Public Declare Function ShellExecute Lib "shell32.dll" Alias "ShellExecuteA" (ByVal hwnd As Long, ByVal lpOperation As String, ByVal lpFile As String, ByVal lpParameters As String, ByVal lpDirectory As String, ByVal nShowCmd As Long) As Long
 
 'Lista de cabezas
 Public Type tIndiceCabeza
