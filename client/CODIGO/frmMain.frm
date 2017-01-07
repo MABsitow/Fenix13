@@ -1,7 +1,7 @@
 VERSION 5.00
-Object = "{3B7C8863-D78F-101B-B9B5-04021C009402}#1.2#0"; "RICHTX32.OCX"
+Object = "{3B7C8863-D78F-101B-B9B5-04021C009402}#1.2#0"; "Richtx32.ocx"
 Object = "{33101C00-75C3-11CF-A8A0-444553540000}#1.0#0"; "CSWSK32.OCX"
-Object = "{248DD890-BB45-11CF-9ABC-0080C7E7B78D}#1.0#0"; "MSWINSCK.OCX"
+Object = "{248DD890-BB45-11CF-9ABC-0080C7E7B78D}#1.0#0"; "MSWINSCK.ocx"
 Begin VB.Form frmMain 
    BorderStyle     =   0  'None
    ClientHeight    =   8970
@@ -26,8 +26,8 @@ Begin VB.Form frmMain
    MaxButton       =   0   'False
    MinButton       =   0   'False
    PaletteMode     =   1  'UseZOrder
-   ScaleHeight     =   598
-   ScaleMode       =   3  'Pixel
+   ScaleHeight     =   600
+   ScaleMode       =   0  'User
    ScaleWidth      =   800
    StartUpPosition =   2  'CenterScreen
    Visible         =   0   'False
@@ -183,6 +183,7 @@ Begin VB.Form frmMain
       _ExtentY        =   2619
       _Version        =   393217
       BackColor       =   0
+      BorderStyle     =   0
       Enabled         =   -1  'True
       ReadOnly        =   -1  'True
       ScrollBars      =   2
@@ -1580,7 +1581,6 @@ Private Sub Form_Click()
         
         If Not InGameArea() Then Exit Sub
         
-        If MouseShift = 0 Then
             If MouseBoton <> vbRightButton Then
                 '[ybarra]
                 If UsaMacro Then
@@ -1661,13 +1661,11 @@ Private Sub Form_Click()
             Else
                 Call AbrirMenuViewPort
             End If
-        ElseIf (MouseShift And 1) = 1 Then
-            If Not CustomKeys.KeyAssigned(KeyCodeConstants.vbKeyShift) Then
-                If MouseBoton = vbLeftButton Then
-                    Call WriteWarpChar("YO", UserMap, tX, tY)
-                End If
+            
+            If MouseBoton = vbRightButton Then
+                Call WriteWarpChar("YO", UserMap, tX, tY)
             End If
-        End If
+          
     End If
 End Sub
 

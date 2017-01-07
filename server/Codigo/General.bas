@@ -435,11 +435,11 @@ On Error Resume Next
     Unload frmCargando
     
     'Log
-    Dim N As Integer
-    N = FreeFile
-    Open App.path & "\logs\Main.log" For Append Shared As #N
-    Print #N, Date & " " & time & " server iniciado " & App.Major & "."; App.Minor & "." & App.Revision
-    Close #N
+    Dim n As Integer
+    n = FreeFile
+    Open App.path & "\logs\Main.log" For Append Shared As #n
+    Print #n, Date & " " & time & " server iniciado " & App.Major & "."; App.Minor & "." & App.Revision
+    Close #n
     
     'Ocultar
     If HideMe = 1 Then
@@ -910,11 +910,11 @@ On Error Resume Next
     If frmMain.Visible Then frmMain.txStatus.Caption = "Escuchando conexiones entrantes ..."
     
     'Log it
-    Dim N As Integer
-    N = FreeFile
-    Open App.path & "\logs\Main.log" For Append Shared As #N
-    Print #N, Date & " " & time & " servidor reiniciado."
-    Close #N
+    Dim n As Integer
+    n = FreeFile
+    Open App.path & "\logs\Main.log" For Append Shared As #n
+    Print #n, Date & " " & time & " servidor reiniciado."
+    Close #n
     
     'Ocultar
     
@@ -1245,7 +1245,7 @@ Public Sub EfectoVeneno(ByVal UserIndex As Integer)
 '
 '***************************************************
 
-    Dim N As Integer
+    Dim n As Integer
     
     With UserList(UserIndex)
         If .Counters.Veneno < IntervaloVeneno Then
@@ -1253,8 +1253,8 @@ Public Sub EfectoVeneno(ByVal UserIndex As Integer)
         Else
           Call WriteConsoleMsg(UserIndex, "Estás envenenado, si no te curas morirás.", FontTypeNames.FONTTYPE_VENENO)
           .Counters.Veneno = 0
-          N = RandomNumber(1, 5)
-          .Stats.MinHp = .Stats.MinHp - N
+          n = RandomNumber(1, 5)
+          .Stats.MinHp = .Stats.MinHp - n
           If .Stats.MinHp < 1 Then Call UserDie(UserIndex)
           Call WriteUpdateHP(UserIndex)
         End If
