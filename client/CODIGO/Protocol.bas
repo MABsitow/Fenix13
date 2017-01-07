@@ -1983,20 +1983,20 @@ On Error GoTo Errhandler
     
     Dim chat As String
     Dim CharIndex As Integer
-    Dim r As Byte
+    Dim R As Byte
     Dim g As Byte
     Dim b As Byte
     
     chat = Buffer.ReadASCIIString()
     CharIndex = Buffer.ReadInteger()
     
-    r = Buffer.ReadByte()
+    R = Buffer.ReadByte()
     g = Buffer.ReadByte()
     b = Buffer.ReadByte()
     
     'Only add the chat if the character exists (a CharacterRemove may have been sent to the PC / NPC area before the buffer was flushed)
     If charlist(CharIndex).Active Then _
-        Call Dialogos.CreateDialog(Trim$(chat), CharIndex, RGB(r, g, b))
+        Call Dialogos.CreateDialog(Trim$(chat), CharIndex, RGB(R, g, b))
     
     'If we got here then packet is complete, copy data back to original queue
     Call incomingData.CopyBuffer(Buffer)
@@ -2038,7 +2038,7 @@ On Error GoTo Errhandler
     Dim chat As String
     Dim FontIndex As Integer
     Dim str As String
-    Dim r As Byte
+    Dim R As Byte
     Dim g As Byte
     Dim b As Byte
     
@@ -2048,9 +2048,9 @@ On Error GoTo Errhandler
     If InStr(1, chat, "~") Then
         str = ReadField(2, chat, 126)
             If Val(str) > 255 Then
-                r = 255
+                R = 255
             Else
-                r = Val(str)
+                R = Val(str)
             End If
             
             str = ReadField(3, chat, 126)
@@ -2067,7 +2067,7 @@ On Error GoTo Errhandler
                 b = Val(str)
             End If
             
-        Call AddtoRichTextBox(frmMain.RecTxt, Left$(chat, InStr(1, chat, "~") - 1), r, g, b, Val(ReadField(5, chat, 126)) <> 0, Val(ReadField(6, chat, 126)) <> 0)
+        Call AddtoRichTextBox(frmMain.RecTxt, Left$(chat, InStr(1, chat, "~") - 1), R, g, b, Val(ReadField(5, chat, 126)) <> 0, Val(ReadField(6, chat, 126)) <> 0)
     Else
         With FontTypes(FontIndex)
             Call AddtoRichTextBox(frmMain.RecTxt, chat, .red, .green, .blue, .bold, .italic)
@@ -2120,7 +2120,7 @@ On Error GoTo Errhandler
     Dim chat As String
     Dim FontIndex As Integer
     Dim str As String
-    Dim r As Byte
+    Dim R As Byte
     Dim g As Byte
     Dim b As Byte
     
@@ -2130,9 +2130,9 @@ On Error GoTo Errhandler
     If InStr(1, chat, "~") Then
         str = ReadField(2, chat, 126)
             If Val(str) > 255 Then
-                r = 255
+                R = 255
             Else
-                r = Val(str)
+                R = Val(str)
             End If
             
             str = ReadField(3, chat, 126)
@@ -2149,7 +2149,7 @@ On Error GoTo Errhandler
                 b = Val(str)
             End If
             
-        Call AddtoRichTextBox(frmComerciarUsu.CommerceConsole, Left$(chat, InStr(1, chat, "~") - 1), r, g, b, Val(ReadField(5, chat, 126)) <> 0, Val(ReadField(6, chat, 126)) <> 0)
+        Call AddtoRichTextBox(frmComerciarUsu.CommerceConsole, Left$(chat, InStr(1, chat, "~") - 1), R, g, b, Val(ReadField(5, chat, 126)) <> 0, Val(ReadField(6, chat, 126)) <> 0)
     Else
         With FontTypes(FontIndex)
             Call AddtoRichTextBox(frmComerciarUsu.CommerceConsole, chat, .red, .green, .blue, .bold, .italic)
@@ -6016,7 +6016,7 @@ Public Sub WriteComment(ByVal Message As String)
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.GMCommands)
-        Call .WriteByte(eGMCommands.Comment)
+        Call .WriteByte(eGMCommands.comment)
         
         Call .WriteASCIIString(Message)
     End With
@@ -6610,7 +6610,7 @@ Public Sub WriteBanChar(ByVal UserName As String, ByVal reason As String)
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.GMCommands)
-        Call .WriteByte(eGMCommands.banChar)
+        Call .WriteByte(eGMCommands.BanChar)
         
         Call .WriteASCIIString(UserName)
         
@@ -6772,7 +6772,7 @@ Public Sub WriteNickToIP(ByVal UserName As String)
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.GMCommands)
-        Call .WriteByte(eGMCommands.nickToIP)
+        Call .WriteByte(eGMCommands.NickToIP)
         
         Call .WriteASCIIString(UserName)
     End With
@@ -7154,7 +7154,7 @@ Public Sub WriteDumpIPTables()
 'Writes the "DumpIPTables" message to the outgoing data buffer
 '***************************************************
     Call outgoingData.WriteByte(ClientPacketID.GMCommands)
-    Call outgoingData.WriteByte(eGMCommands.dumpIPTables)
+    Call outgoingData.WriteByte(eGMCommands.DumpIPTables)
 End Sub
 
 ''
@@ -8162,7 +8162,7 @@ End Sub
 ' @param    b The blue component of the new chat color.
 ' @remarks  The data is not actually sent until the buffer is properly flushed.
 
-Public Sub WriteChatColor(ByVal r As Byte, ByVal g As Byte, ByVal b As Byte)
+Public Sub WriteChatColor(ByVal R As Byte, ByVal g As Byte, ByVal b As Byte)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
@@ -8172,7 +8172,7 @@ Public Sub WriteChatColor(ByVal r As Byte, ByVal g As Byte, ByVal b As Byte)
         Call .WriteByte(ClientPacketID.GMCommands)
         Call .WriteByte(eGMCommands.ChatColor)
         
-        Call .WriteByte(r)
+        Call .WriteByte(R)
         Call .WriteByte(g)
         Call .WriteByte(b)
     End With
@@ -8286,6 +8286,66 @@ Public Sub WriteSetIniVar(ByRef sLlave As String, ByRef sClave As String, ByRef 
         Call .WriteASCIIString(sLlave)
         Call .WriteASCIIString(sClave)
         Call .WriteASCIIString(sValor)
+    End With
+End Sub
+
+''
+' Writes the "WarpToMap" message to the outgoing data buffer.
+'
+' @param    map The map to which to warp the character.
+' @remarks  The data is not actually sent until the buffer is properly flushed.
+
+Public Sub WriteWarpToMap(ByVal Map As Integer)
+'***************************************************
+'Author: Lorenzo Rivero (Rhynne)
+'Last Modification: 06/01/2017
+'Writes the "WarpToMap" message to the outgoing data buffer
+'***************************************************
+    With outgoingData
+        Call .WriteByte(ClientPacketID.GMCommands)
+        Call .WriteByte(eGMCommands.WarpToMap)
+
+        Call .WriteInteger(Map)
+    End With
+End Sub
+
+''
+' Writes the "StaffMessage" message to the outgoing data buffer.
+'
+' @param    message The message to be sent to players.
+' @remarks  The data is not actually sent until the buffer is properly flushed.
+
+Public Sub WriteStaffMessage(ByVal Message As String)
+'***************************************************
+'Author: Lorenzo Rivero (Rhynne)
+'Last Modification: 06/01/2017
+'Writes the "StaffMessage" message to the outgoing data buffer
+'***************************************************
+    With outgoingData
+        Call .WriteByte(ClientPacketID.GMCommands)
+        Call .WriteByte(eGMCommands.StaffMessage)
+        
+        Call .WriteASCIIString(Message)
+    End With
+End Sub
+
+''
+' Writes the "SearchObjs" message to the outgoing data buffer.
+'
+' @param    obj The message to be sent to players.
+' @remarks  The data is not actually sent until the buffer is properly flushed.
+
+Public Sub WriteSearchObjs(ByVal obj As String)
+'***************************************************
+'Author: Lorenzo Rivero (Rhynne)
+'Last Modification: 06/01/2017
+'Writes the "StaffMessage" message to the outgoing data buffer
+'***************************************************
+    With outgoingData
+        Call .WriteByte(ClientPacketID.GMCommands)
+        Call .WriteByte(eGMCommands.SearchObjs)
+        
+        Call .WriteASCIIString(obj)
     End With
 End Sub
 
