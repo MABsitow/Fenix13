@@ -1031,10 +1031,6 @@ Public Sub ParseUserCommand(ByVal RawCommand As String)
             Case "/BANIPRELOAD"
                 Call WriteBannedIPReload
                 
-           
-                
-   
-                
             Case "/BANIP"
                 If CantidadArgumentos >= 2 Then
                     If validipv4str(ArgumentosAll(0)) Then
@@ -1238,8 +1234,6 @@ Public Sub ParseUserCommand(ByVal RawCommand As String)
                     Call ShowConsoleMsg("Faltan parámetros. Utilice /rajar NICKNAME.")
                 End If
                 
-          
-                
             Case "/LASTEMAIL"
                 If notNullArguments Then
                     Call WriteRequestCharMail(ArgumentosRaw)
@@ -1314,8 +1308,6 @@ Public Sub ParseUserCommand(ByVal RawCommand As String)
                 
             Case "/DOBACKUP"
                 Call WriteDoBackup
-                
-           
                 
             Case "/GUARDAMAPA"
                 Call WriteSaveMap
@@ -1409,6 +1401,30 @@ Public Sub ParseUserCommand(ByVal RawCommand As String)
                     Call WriteSetIniVar(ArgumentosAll(0), ArgumentosAll(1), ArgumentosAll(2))
                 Else
                     Call ShowConsoleMsg("Prámetros incorrectos. Utilice /SETINIVAR LLAVE CLAVE VALOR")
+                End If
+            
+            Case "/GO"
+                If notNullArguments Then
+                    Call WriteWarpToMap(ArgumentosAll(0))
+                Else
+                    'Avisar que falta el parametro
+                    Call ShowConsoleMsg("Faltan parámetros. Utilice /GO Mapa.")
+                End If
+            
+            Case "/STAFF"
+                If notNullArguments Then
+                    Call WriteStaffMessage(ArgumentosRaw)
+                Else
+                    'Avisar que falta el parametro
+                    Call ShowConsoleMsg("Escriba un mensaje.")
+                End If
+            
+            Case "/BUSCAR"
+                If notNullArguments Then
+                    Call WriteSearchObjs(ArgumentosRaw)
+                Else
+                    'Avisar que falta el parametro
+                    Call ShowConsoleMsg("Faltan parámetros. Utilice /BUSCAR objeto.")
                 End If
             
             Case "/HOGAR"

@@ -826,7 +826,7 @@ Public Type ObjData
     NoSeCae As Integer
 End Type
 
-Public Type Obj
+Public Type obj
     OBJIndex As Integer
     Amount As Integer
 End Type
@@ -835,7 +835,7 @@ End Type
 Public Type Recompensa
     SubeHP As Integer
     SubeMP As Integer
-    Obj(1 To 2) As Obj
+    obj(1 To 2) As obj
 End Type
 
 '[Pablo ToxicWaste]
@@ -1398,7 +1398,7 @@ Public Type MapBlock
     Graphic(1 To 4) As Integer
     UserIndex As Integer
     NpcIndex As Integer
-    ObjInfo As Obj
+    ObjInfo As obj
     TileExit As WorldPos
     trigger As eTrigger
 End Type
@@ -1697,6 +1697,9 @@ Public Enum eGMCommands
     Ignored                 '/IGNORADO
     CheckSlot               '/SLOT
     SetIniVar               '/SETINIVAR LLAVE CLAVE VALOR
+    WarpToMap               '/GO
+    StaffMessage            '/STAFF
+    SearchObjs              '/BUSCAR
 End Enum
 
 Public Const GOHOME_PENALTY As Integer = 5

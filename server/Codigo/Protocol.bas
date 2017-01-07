@@ -985,7 +985,6 @@ With UserList(UserIndex)
         Case eGMCommands.ResetFactions           '/RAJAR
             Call HandleResetFactions(UserIndex)
         
-        
         Case eGMCommands.RequestCharMail         '/LASTEMAIL
             Call HandleRequestCharMail(UserIndex)
         
@@ -1069,6 +1068,15 @@ With UserList(UserIndex)
         
         Case eGMCommands.SetIniVar               '/SETINIVAR LLAVE CLAVE VALOR
             Call HandleSetIniVar(UserIndex)
+        
+        Case eGMCommands.WarpToMap               '/GO
+            Call HandleWarpToMap(UserIndex)
+        
+        Case eGMCommands.StaffMessage            '/STAFF
+            Call HandleStaffMessage(UserIndex)
+        
+        Case eGMCommands.SearchObjs              '/BUSCAR
+            Call HandleSearchObjs(UserIndex)
     End Select
 End With
 
@@ -3570,7 +3578,7 @@ Private Sub HandleMoveBank(ByVal UserIndex As Integer)
         
         Dim dir As Integer
         Dim Slot As Byte
-        Dim TempItem As Obj
+        Dim TempItem As obj
         
         If .ReadBoolean() Then
             dir = 1
@@ -4961,7 +4969,7 @@ On Error GoTo Errhandler
     With UserList(UserIndex)
         'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet...
         Dim buffer As New clsByteQueue
-        Dim N As Integer
+        Dim n As Integer
         
         Call buffer.CopyBuffer(.incomingData)
         
@@ -4972,13 +4980,13 @@ On Error GoTo Errhandler
         
         bugReport = buffer.ReadASCIIString()
         
-        N = FreeFile
-        Open App.path & "\LOGS\BUGs.log" For Append Shared As N
-        Print #N, "Usuario:" & .Name & "  Fecha:" & Date & "    Hora:" & time
-        Print #N, "BUG:"
-        Print #N, bugReport
-        Print #N, "########################################################################"
-        Close #N
+        n = FreeFile
+        Open App.path & "\LOGS\BUGs.log" For Append Shared As n
+        Print #n, "Usuario:" & .Name & "  Fecha:" & Date & "    Hora:" & time
+        Print #n, "BUG:"
+        Print #n, bugReport
+        Print #n, "########################################################################"
+        Close #n
         
         'If we got here then packet is complete, copy data back to original queue
         Call .incomingData.CopyBuffer(buffer)
@@ -8169,10 +8177,10 @@ On Error GoTo Errhandler
         If (.flags.Privilegios And (PlayerType.Admin Or PlayerType.Dios Or PlayerType.SemiDios)) Then
             If LenB(message) <> 0 Then
                 Call LogGM(.Name, "Mensaje Broadcast:" & message)
-                Call SendData(SendTarget.ToAll, 0, PrepareMessageConsoleMsg(UserList(UserIndex).Name & "> " & message, FontTypeNames.FONTTYPE_TALK))
+                Call SendData(SendTarget.ToAll, 0, PrepareMessageConsoleMsg(UserList(UserIndex).Name & ": " & message, FontTypeNames.FONTTYPE_VENENO))
                 ''''''''''''''''SOLO PARA EL TESTEO'''''''
                 ''''''''''SE USA PARA COMUNICARSE CON EL SERVER'''''''''''
-                frmMain.txtChat.Text = frmMain.txtChat.Text & vbNewLine & UserList(UserIndex).Name & " > " & message
+                frmMain.txtChat.Text = frmMain.txtChat.Text & vbNewLine & UserList(UserIndex).Name & ": " & message
             End If
         End If
         
@@ -8384,7 +8392,7 @@ Private Sub HandleTeleportCreate(ByVal UserIndex As Integer)
             Exit Sub
         End If
         
-        Dim ET As Obj
+        Dim ET As obj
         ET.Amount = 1
         ' Es el numero en el dat. El indice es el comienzo + el radio, todo harcodeado :(.
         ET.OBJIndex = TELEP_OBJ_INDEX + Radio
@@ -9555,7 +9563,7 @@ Private Sub HandleCreateItem(ByVal UserIndex As Integer)
         'Is the object not null?
         If LenB(ObjData(tObj).Name) = 0 Then Exit Sub
         
-        Dim Objeto As Obj
+        Dim Objeto As obj
         Call WriteConsoleMsg(UserIndex, "¡¡ATENCIÓN: FUERON CREADOS ***100*** ÍTEMS, TIRE Y /DEST LOS QUE NO NECESITE!!", FontTypeNames.FONTTYPE_GUILD)
         
         Objeto.Amount = 100
@@ -11704,6 +11712,156 @@ On Error GoTo 0
 End Sub
 
 ''
+' Handles the "WarpToMap" message.
+'
+' @param map The index of the user sending the message.
+
+Private Sub HandleWarpToMap(ByVal UserIndex As Integer)
+'***************************************************
+'Author: Lorenzo Rivero (Rhynne)
+'Last Modification: 06/01/2017
+'***************************************************
+    If UserList(UserIndex).incomingData.length < 3 Then
+        Err.Raise UserList(UserIndex).incomingData.NotEnoughDataErrCode
+        Exit Sub
+    End If
+    
+On Error GoTo Errhandler
+    With UserList(UserIndex)
+        'Remove packet ID
+        Call .incomingData.ReadByte
+
+        Dim Map As Integer
+
+        Map = .incomingData.ReadInteger()
+        
+        If .flags.Privilegios And (PlayerType.User Or PlayerType.RoleMaster) Then Exit Sub
+        
+        Call WarpUserChar(UserIndex, Map, 50, 50, True)
+        Call WriteConsoleMsg(UserIndex, UserList(UserIndex).Name & " transportado.", FontTypeNames.FONTTYPE_INFO)
+        Call LogGM(.Name, "Transportó a " & UserList(UserIndex).Name & " hacia " & "Mapa" & Map & " X:" & 50 & " Y:" & 50)
+    End With
+    
+Errhandler:
+    Dim error As Long
+    error = Err.Number
+On Error GoTo 0
+    
+    If error <> 0 Then _
+        Err.Raise error
+End Sub
+
+''
+' Handles the "ServerMessage" message.
+'
+' @param    userIndex The index of the user sending the message.
+Private Sub HandleStaffMessage(ByVal UserIndex As Integer)
+'***************************************************
+'Author: Lorenzo Rivero (Rhynne)
+'Last Modification: 06/01/2017
+'***************************************************
+    If UserList(UserIndex).incomingData.length < 3 Then
+        Err.Raise UserList(UserIndex).incomingData.NotEnoughDataErrCode
+        Exit Sub
+    End If
+    
+On Error GoTo Errhandler
+    With UserList(UserIndex)
+        'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet...
+        Dim buffer As New clsByteQueue
+        Call buffer.CopyBuffer(.incomingData)
+        
+        'Remove packet ID
+        Call buffer.ReadByte
+        
+        Dim message As String
+        message = buffer.ReadASCIIString()
+        
+        If (.flags.Privilegios And (PlayerType.Admin Or PlayerType.Dios Or PlayerType.SemiDios Or PlayerType.Consejero)) Then
+            If LenB(message) <> 0 Then
+                Call LogGM(.Name, "Mensaje a Gms:" & message)
+                Call SendData(SendTarget.ToAdmins, 0, PrepareMessageConsoleMsg(UserList(UserIndex).Name & "> " & message, FontTypeNames.FONTTYPE_TALK))
+                frmMain.txtChat.Text = frmMain.txtChat.Text & vbNewLine & UserList(UserIndex).Name & "> " & message
+            End If
+        End If
+        
+        'If we got here then packet is complete, copy data back to original queue
+        Call .incomingData.CopyBuffer(buffer)
+    End With
+
+Errhandler:
+    Dim error As Long
+    error = Err.Number
+On Error GoTo 0
+    
+    'Destroy auxiliar buffer
+    Set buffer = Nothing
+    
+    If error <> 0 Then _
+        Err.Raise error
+End Sub
+
+''
+' Handles the "SearchObjs" message.
+'
+' @param    userIndex The index of the user sending the message.
+Private Sub HandleSearchObjs(ByVal UserIndex As Integer)
+'***************************************************
+'Author: Lorenzo Rivero (Rhynne)
+'Last Modification: 06/01/2017
+'***************************************************
+    If UserList(UserIndex).incomingData.length < 3 Then
+        Err.Raise UserList(UserIndex).incomingData.NotEnoughDataErrCode
+        Exit Sub
+    End If
+    
+On Error GoTo Errhandler
+    With UserList(UserIndex)
+        'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet...
+        Dim buffer As New clsByteQueue
+        Call buffer.CopyBuffer(.incomingData)
+        
+        'Remove packet ID
+        Call buffer.ReadByte
+        
+        Dim obj As String
+        Dim n As Integer
+        Dim i As Integer
+        
+        obj = buffer.ReadASCIIString()
+        
+        If (.flags.Privilegios And (PlayerType.Admin Or PlayerType.Dios)) Then
+            For i = 1 To UBound(ObjData)
+                If InStr(1, ObjData(i).Name, obj) Then
+                     Call WriteConsoleMsg(UserIndex, i & " - " & ObjData(i).Name, FONTTYPE_INFO)
+                n = n + 1
+                End If
+            Next
+    
+            If n = 0 Then
+                Call WriteConsoleMsg(UserIndex, "No hubo resultados de la búsqueda: " & obj & ".", FONTTYPE_INFO)
+            Else
+                Call WriteConsoleMsg(UserIndex, "Hubo " & n & " resultados de la búsqueda: " & obj & ".", FONTTYPE_INFO)
+            End If
+        End If
+        
+        'If we got here then packet is complete, copy data back to original queue
+        Call .incomingData.CopyBuffer(buffer)
+    End With
+
+Errhandler:
+    Dim error As Long
+    error = Err.Number
+On Error GoTo 0
+    
+    'Destroy auxiliar buffer
+    Set buffer = Nothing
+    
+    If error <> 0 Then _
+        Err.Raise error
+End Sub
+
+''
 ' Writes the "Logged" message to the given user's outgoing data buffer.
 '
 ' @param    UserIndex User to which the message is intended.
@@ -13117,7 +13275,7 @@ Public Sub WriteBlacksmithWeapons(ByVal UserIndex As Integer)
 '***************************************************
 On Error GoTo Errhandler
     Dim i As Long
-    Dim Obj As ObjData
+    Dim obj As ObjData
     Dim validIndexes() As Integer
     Dim Count As Integer
     
@@ -13139,12 +13297,12 @@ On Error GoTo Errhandler
         
         ' Write the needed data of each object
         For i = 1 To Count
-            Obj = ObjData(ArmasHerrero(validIndexes(i)))
-            Call .WriteASCIIString(Obj.Name)
-            Call .WriteInteger(Obj.GrhIndex)
-            Call .WriteInteger(Obj.LingH)
-            Call .WriteInteger(Obj.LingP)
-            Call .WriteInteger(Obj.LingO)
+            obj = ObjData(ArmasHerrero(validIndexes(i)))
+            Call .WriteASCIIString(obj.Name)
+            Call .WriteInteger(obj.GrhIndex)
+            Call .WriteInteger(obj.LingH)
+            Call .WriteInteger(obj.LingP)
+            Call .WriteInteger(obj.LingO)
             Call .WriteInteger(ArmasHerrero(validIndexes(i)))
         Next i
     End With
@@ -13171,7 +13329,7 @@ Public Sub WriteBlacksmithArmors(ByVal UserIndex As Integer)
 '***************************************************
 On Error GoTo Errhandler
     Dim i As Long
-    Dim Obj As ObjData
+    Dim obj As ObjData
     Dim validIndexes() As Integer
     Dim Count As Integer
     
@@ -13193,12 +13351,12 @@ On Error GoTo Errhandler
         
         ' Write the needed data of each object
         For i = 1 To Count
-            Obj = ObjData(ArmadurasHerrero(validIndexes(i)))
-            Call .WriteASCIIString(Obj.Name)
-            Call .WriteInteger(Obj.GrhIndex)
-            Call .WriteInteger(Obj.LingH)
-            Call .WriteInteger(Obj.LingP)
-            Call .WriteInteger(Obj.LingO)
+            obj = ObjData(ArmadurasHerrero(validIndexes(i)))
+            Call .WriteASCIIString(obj.Name)
+            Call .WriteInteger(obj.GrhIndex)
+            Call .WriteInteger(obj.LingH)
+            Call .WriteInteger(obj.LingP)
+            Call .WriteInteger(obj.LingO)
             Call .WriteInteger(ArmadurasHerrero(validIndexes(i)))
         Next i
     End With
@@ -13225,7 +13383,7 @@ Public Sub WriteCarpenterObjects(ByVal UserIndex As Integer)
 '***************************************************
 On Error GoTo Errhandler
     Dim i As Long
-    Dim Obj As ObjData
+    Dim obj As ObjData
     Dim validIndexes() As Integer
     Dim Count As Integer
     
@@ -13247,11 +13405,11 @@ On Error GoTo Errhandler
         
         ' Write the needed data of each object
         For i = 1 To Count
-            Obj = ObjData(ObjCarpintero(validIndexes(i)))
-            Call .WriteASCIIString(Obj.Name)
-            Call .WriteInteger(Obj.GrhIndex)
-            Call .WriteInteger(Obj.Madera)
-            Call .WriteInteger(Obj.MaderaElfica)
+            obj = ObjData(ObjCarpintero(validIndexes(i)))
+            Call .WriteASCIIString(obj.Name)
+            Call .WriteInteger(obj.GrhIndex)
+            Call .WriteInteger(obj.Madera)
+            Call .WriteInteger(obj.MaderaElfica)
             Call .WriteInteger(ObjCarpintero(validIndexes(i)))
         Next i
     End With
@@ -13394,7 +13552,7 @@ End Sub
 ' @param    price       The value the NPC asks for the object.
 ' @remarks  The data is not actually sent until the buffer is properly flushed.
 
-Public Sub WriteChangeNPCInventorySlot(ByVal UserIndex As Integer, ByVal Slot As Byte, ByRef Obj As Obj, ByVal price As Single)
+Public Sub WriteChangeNPCInventorySlot(ByVal UserIndex As Integer, ByVal Slot As Byte, ByRef obj As obj, ByVal price As Single)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 12/03/09
@@ -13405,18 +13563,18 @@ Public Sub WriteChangeNPCInventorySlot(ByVal UserIndex As Integer, ByVal Slot As
 On Error GoTo Errhandler
     Dim ObjInfo As ObjData
     
-    If Obj.OBJIndex >= LBound(ObjData()) And Obj.OBJIndex <= UBound(ObjData()) Then
-        ObjInfo = ObjData(Obj.OBJIndex)
+    If obj.OBJIndex >= LBound(ObjData()) And obj.OBJIndex <= UBound(ObjData()) Then
+        ObjInfo = ObjData(obj.OBJIndex)
     End If
     
     With UserList(UserIndex).outgoingData
         Call .WriteByte(ServerPacketID.ChangeNPCInventorySlot)
         Call .WriteByte(Slot)
         Call .WriteASCIIString(ObjInfo.Name)
-        Call .WriteInteger(Obj.Amount)
+        Call .WriteInteger(obj.Amount)
         Call .WriteSingle(price)
         Call .WriteInteger(ObjInfo.GrhIndex)
-        Call .WriteInteger(Obj.OBJIndex)
+        Call .WriteInteger(obj.OBJIndex)
         Call .WriteByte(ObjInfo.OBJType)
         Call .WriteInteger(ObjInfo.MaxHIT)
         Call .WriteInteger(ObjInfo.MinHIT)
