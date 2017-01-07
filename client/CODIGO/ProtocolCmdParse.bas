@@ -1421,7 +1421,11 @@ Public Sub ParseUserCommand(ByVal RawCommand As String)
             
             Case "/BUSCAR"
                 If notNullArguments Then
-                    Call WriteSearchObjs(ArgumentosRaw)
+                    If Len(ArgumentosRaw) > 1 Then
+                        Call WriteSearchObjs(ArgumentosRaw)
+                    Else
+                        Call ShowConsoleMsg("Se mas específico.")
+                    End If
                 Else
                     'Avisar que falta el parametro
                     Call ShowConsoleMsg("Faltan parámetros. Utilice /BUSCAR objeto.")

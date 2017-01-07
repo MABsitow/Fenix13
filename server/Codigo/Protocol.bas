@@ -11810,7 +11810,7 @@ Private Sub HandleSearchObjs(ByVal UserIndex As Integer)
 'Author: Lorenzo Rivero (Rhynne)
 'Last Modification: 06/01/2017
 '***************************************************
-    If UserList(UserIndex).incomingData.length < 3 Then
+    If UserList(UserIndex).incomingData.length < 4 Then
         Err.Raise UserList(UserIndex).incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
@@ -11830,21 +11830,25 @@ On Error GoTo Errhandler
         
         obj = buffer.ReadASCIIString()
         
-        If (.flags.Privilegios And (PlayerType.Admin Or PlayerType.Dios)) Then
-            For i = 1 To UBound(ObjData)
-                If InStr(1, ObjData(i).Name, obj) Then
-                     Call WriteConsoleMsg(UserIndex, i & " - " & ObjData(i).Name, FONTTYPE_INFO)
-                n = n + 1
-                End If
-            Next
-    
-            If n = 0 Then
-                Call WriteConsoleMsg(UserIndex, "No hubo resultados de la búsqueda: " & obj & ".", FONTTYPE_INFO)
-            Else
-                Call WriteConsoleMsg(UserIndex, "Hubo " & n & " resultados de la búsqueda: " & obj & ".", FONTTYPE_INFO)
-            End If
-        End If
+        If Len(obj) > 1 Then
+            If (.flags.Privilegios And (PlayerType.Admin Or PlayerType.Dios)) Then
+                For i = 1 To UBound(ObjData)
+                    If InStr(1, ObjData(i).Name, obj) Then
+                         Call WriteConsoleMsg(UserIndex, i & " - " & ObjData(i).Name, FontTypeNames.FONTTYPE_INFO)
+                    n = n + 1
+                    End If
+                Next
         
+                If n = 0 Then
+                    Call WriteConsoleMsg(UserIndex, "No hubo resultados de la búsqueda: " & obj & ".", FontTypeNames.FONTTYPE_INFO)
+                Else
+                    Call WriteConsoleMsg(UserIndex, "Hubo " & n & " resultados de la búsqueda: " & obj & ".", FontTypeNames.FONTTYPE_INFO)
+                End If
+            End If
+        Else
+            Call WriteConsoleMsg(UserIndex, "Debe usar al menos dos o más carácteres.", FontTypeNames.FONTTYPE_INFO)
+            
+        End If
         'If we got here then packet is complete, copy data back to original queue
         Call .incomingData.CopyBuffer(buffer)
     End With
