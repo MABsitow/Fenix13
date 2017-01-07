@@ -25,71 +25,213 @@ Begin VB.Form frmSkills3
    ScaleWidth      =   600
    ShowInTaskbar   =   0   'False
    StartUpPosition =   1  'CenterOwner
+   Begin VB.Label Label1 
+      AutoSize        =   -1  'True
+      BackStyle       =   0  'Transparent
+      Caption         =   "Resistencia Magica"
+      BeginProperty Font 
+         Name            =   "Tahoma"
+         Size            =   9.75
+         Charset         =   0
+         Weight          =   700
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      ForeColor       =   &H00FFFFFF&
+      Height          =   240
+      Left            =   480
+      TabIndex        =   25
+      Top             =   4500
+      Width           =   1845
+   End
+   Begin VB.Image imgMenos22 
+      Height          =   285
+      Left            =   3120
+      Top             =   4500
+      Width           =   345
+   End
+   Begin VB.Image imgMas22 
+      Height          =   285
+      Left            =   3960
+      Top             =   4500
+      Width           =   345
+   End
+   Begin VB.Label text1 
+      Alignment       =   2  'Center
+      AutoSize        =   -1  'True
+      BackStyle       =   0  'Transparent
+      Caption         =   "0"
+      BeginProperty Font 
+         Name            =   "MS Sans Serif"
+         Size            =   8.25
+         Charset         =   0
+         Weight          =   700
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      ForeColor       =   &H00FFFFFF&
+      Height          =   255
+      Index           =   22
+      Left            =   3495
+      TabIndex        =   24
+      Top             =   4560
+      Width           =   405
+   End
+   Begin VB.Label lblSastrería 
+      AutoSize        =   -1  'True
+      BackStyle       =   0  'Transparent
+      Caption         =   "Sastrería"
+      BeginProperty Font 
+         Name            =   "Tahoma"
+         Size            =   9.75
+         Charset         =   0
+         Weight          =   700
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      ForeColor       =   &H00FFFFFF&
+      Height          =   240
+      Left            =   4680
+      TabIndex        =   23
+      Top             =   4560
+      Width           =   900
+   End
+   Begin VB.Image imgMenos21 
+      Height          =   285
+      Left            =   7320
+      Top             =   4560
+      Width           =   345
+   End
+   Begin VB.Image imgMas21 
+      Height          =   285
+      Left            =   8160
+      Top             =   4560
+      Width           =   345
+   End
+   Begin VB.Label text1 
+      Alignment       =   2  'Center
+      AutoSize        =   -1  'True
+      BackStyle       =   0  'Transparent
+      Caption         =   "0"
+      BeginProperty Font 
+         Name            =   "MS Sans Serif"
+         Size            =   8.25
+         Charset         =   0
+         Weight          =   700
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      ForeColor       =   &H00FFFFFF&
+      Height          =   255
+      Index           =   21
+      Left            =   7695
+      TabIndex        =   22
+      Top             =   4620
+      Width           =   405
+   End
+   Begin VB.Image imgMenos10 
+      Height          =   300
+      Left            =   7305
+      Top             =   4215
+      Width           =   300
+   End
+   Begin VB.Image imgMas10 
+      Height          =   300
+      Left            =   8145
+      Top             =   4215
+      Width           =   300
+   End
+   Begin VB.Label text1 
+      Alignment       =   2  'Center
+      AutoSize        =   -1  'True
+      BackStyle       =   0  'Transparent
+      Caption         =   "0"
+      BeginProperty Font 
+         Name            =   "MS Sans Serif"
+         Size            =   8.25
+         Charset         =   0
+         Weight          =   700
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      ForeColor       =   &H00FFFFFF&
+      Height          =   255
+      Index           =   10
+      Left            =   7680
+      TabIndex        =   21
+      Top             =   4275
+      Width           =   405
+   End
+   Begin VB.Image imgComercio 
+      Height          =   330
+      Left            =   4680
+      Top             =   4200
+      Width           =   1170
+   End
    Begin VB.Image imgNavegacion 
       Height          =   375
       Left            =   4695
-      Top             =   4110
+      Top             =   3750
       Width           =   1440
    End
    Begin VB.Image imgCombateSinArmas 
       Height          =   345
       Left            =   4695
-      Top             =   3735
+      Top             =   3375
       Width           =   2100
    End
    Begin VB.Image imgCombateDistancia 
       Height          =   345
       Left            =   4695
-      Top             =   3345
+      Top             =   2985
       Width           =   2280
    End
    Begin VB.Image imgDomar 
       Height          =   345
       Left            =   4695
-      Top             =   2970
+      Top             =   2610
       Width           =   1845
    End
    Begin VB.Image imgLiderazgo 
       Height          =   330
       Left            =   4695
-      Top             =   2580
+      Top             =   2220
       Width           =   1215
    End
    Begin VB.Image imgHerreria 
       Height          =   345
       Left            =   4695
-      Top             =   2205
+      Top             =   1845
       Width           =   1065
    End
    Begin VB.Image imgCarpinteria 
       Height          =   360
-      Left            =   4695
-      Top             =   1830
+      Left            =   4680
+      Top             =   1470
       Width           =   1365
    End
    Begin VB.Image imgMineria 
       Height          =   360
       Left            =   4695
-      Top             =   1440
+      Top             =   1080
       Width           =   1005
    End
    Begin VB.Image imgPesca 
       Height          =   330
       Left            =   4695
-      Top             =   1110
+      Top             =   750
       Width           =   780
    End
    Begin VB.Image imgEscudos 
       Height          =   270
-      Left            =   4695
-      Top             =   720
-      Width           =   2340
-   End
-   Begin VB.Image imgComercio 
-      Height          =   330
       Left            =   495
-      Top             =   4125
-      Width           =   1170
+      Top             =   4080
+      Width           =   2340
    End
    Begin VB.Image imgTalar 
       Height          =   360
@@ -159,8 +301,8 @@ Begin VB.Form frmSkills3
       ForeColor       =   &H00FFFFFF&
       Height          =   1215
       Left            =   600
-      TabIndex        =   21
-      Top             =   4710
+      TabIndex        =   20
+      Top             =   4920
       Width           =   7815
    End
    Begin VB.Image imgCancelar 
@@ -186,7 +328,7 @@ Begin VB.Form frmSkills3
       Height          =   255
       Index           =   1
       Left            =   3495
-      TabIndex        =   20
+      TabIndex        =   19
       Top             =   840
       Width           =   405
    End
@@ -207,7 +349,7 @@ Begin VB.Form frmSkills3
       Height          =   255
       Index           =   2
       Left            =   3495
-      TabIndex        =   19
+      TabIndex        =   18
       Top             =   1215
       Width           =   405
    End
@@ -228,7 +370,7 @@ Begin VB.Form frmSkills3
       Height          =   255
       Index           =   3
       Left            =   3495
-      TabIndex        =   18
+      TabIndex        =   17
       Top             =   1575
       Width           =   405
    End
@@ -249,7 +391,7 @@ Begin VB.Form frmSkills3
       Height          =   255
       Index           =   4
       Left            =   3495
-      TabIndex        =   17
+      TabIndex        =   16
       Top             =   1950
       Width           =   405
    End
@@ -270,7 +412,7 @@ Begin VB.Form frmSkills3
       Height          =   255
       Index           =   5
       Left            =   3495
-      TabIndex        =   16
+      TabIndex        =   15
       Top             =   2325
       Width           =   405
    End
@@ -291,7 +433,7 @@ Begin VB.Form frmSkills3
       Height          =   255
       Index           =   6
       Left            =   3495
-      TabIndex        =   15
+      TabIndex        =   14
       Top             =   2700
       Width           =   405
    End
@@ -312,7 +454,7 @@ Begin VB.Form frmSkills3
       Height          =   255
       Index           =   7
       Left            =   3495
-      TabIndex        =   14
+      TabIndex        =   13
       Top             =   3075
       Width           =   405
    End
@@ -333,7 +475,7 @@ Begin VB.Form frmSkills3
       Height          =   255
       Index           =   8
       Left            =   3495
-      TabIndex        =   13
+      TabIndex        =   12
       Top             =   3450
       Width           =   405
    End
@@ -354,7 +496,7 @@ Begin VB.Form frmSkills3
       Height          =   255
       Index           =   9
       Left            =   3495
-      TabIndex        =   12
+      TabIndex        =   11
       Top             =   3825
       Width           =   405
    End
@@ -373,31 +515,10 @@ Begin VB.Form frmSkills3
       EndProperty
       ForeColor       =   &H00FFFFFF&
       Height          =   255
-      Index           =   10
-      Left            =   3495
-      TabIndex        =   11
-      Top             =   4200
-      Width           =   405
-   End
-   Begin VB.Label text1 
-      Alignment       =   2  'Center
-      BackStyle       =   0  'Transparent
-      Caption         =   "0"
-      BeginProperty Font 
-         Name            =   "MS Sans Serif"
-         Size            =   8.25
-         Charset         =   0
-         Weight          =   700
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      ForeColor       =   &H00FFFFFF&
-      Height          =   255
       Index           =   11
-      Left            =   7635
+      Left            =   3435
       TabIndex        =   10
-      Top             =   840
+      Top             =   4200
       Width           =   405
    End
    Begin VB.Label text1 
@@ -418,7 +539,7 @@ Begin VB.Form frmSkills3
       Index           =   12
       Left            =   7635
       TabIndex        =   9
-      Top             =   1215
+      Top             =   855
       Width           =   405
    End
    Begin VB.Image imgMas1 
@@ -523,52 +644,40 @@ Begin VB.Form frmSkills3
       Top             =   3765
       Width           =   300
    End
-   Begin VB.Image imgMas10 
-      Height          =   300
-      Left            =   3960
-      Top             =   4140
-      Width           =   300
-   End
-   Begin VB.Image imgMenos10 
-      Height          =   300
-      Left            =   3120
-      Top             =   4140
-      Width           =   300
-   End
    Begin VB.Image imgMas11 
       Height          =   285
-      Left            =   8100
-      Top             =   780
+      Left            =   3900
+      Top             =   4140
       Width           =   345
    End
    Begin VB.Image imgMenos11 
       Height          =   285
-      Left            =   7260
-      Top             =   780
+      Left            =   3060
+      Top             =   4140
       Width           =   345
    End
    Begin VB.Image imgMas12 
       Height          =   285
       Left            =   8100
-      Top             =   1155
+      Top             =   795
       Width           =   345
    End
    Begin VB.Image imgMenos12 
       Height          =   285
       Left            =   7260
-      Top             =   1155
+      Top             =   795
       Width           =   345
    End
    Begin VB.Image imgMas13 
       Height          =   285
       Left            =   8100
-      Top             =   1515
+      Top             =   1155
       Width           =   345
    End
    Begin VB.Image imgMenos13 
       Height          =   285
       Left            =   7260
-      Top             =   1515
+      Top             =   1155
       Width           =   345
    End
    Begin VB.Label text1 
@@ -589,19 +698,19 @@ Begin VB.Form frmSkills3
       Index           =   13
       Left            =   7635
       TabIndex        =   8
-      Top             =   1575
+      Top             =   1215
       Width           =   405
    End
    Begin VB.Image imgMas14 
       Height          =   285
       Left            =   8100
-      Top             =   1890
+      Top             =   1530
       Width           =   345
    End
    Begin VB.Image imgMenos14 
       Height          =   285
       Left            =   7260
-      Top             =   1890
+      Top             =   1530
       Width           =   345
    End
    Begin VB.Label text1 
@@ -622,19 +731,19 @@ Begin VB.Form frmSkills3
       Index           =   14
       Left            =   7635
       TabIndex        =   7
-      Top             =   1950
+      Top             =   1590
       Width           =   405
    End
    Begin VB.Image imgMas15 
       Height          =   285
       Left            =   8100
-      Top             =   2265
+      Top             =   1905
       Width           =   345
    End
    Begin VB.Image imgMenos15 
       Height          =   285
       Left            =   7260
-      Top             =   2265
+      Top             =   1905
       Width           =   345
    End
    Begin VB.Label text1 
@@ -655,19 +764,19 @@ Begin VB.Form frmSkills3
       Index           =   15
       Left            =   7635
       TabIndex        =   6
-      Top             =   2325
+      Top             =   1965
       Width           =   405
    End
    Begin VB.Image imgMas16 
       Height          =   285
       Left            =   8100
-      Top             =   2640
+      Top             =   2280
       Width           =   345
    End
    Begin VB.Image imgMenos16 
       Height          =   285
       Left            =   7260
-      Top             =   2640
+      Top             =   2280
       Width           =   345
    End
    Begin VB.Label text1 
@@ -688,19 +797,19 @@ Begin VB.Form frmSkills3
       Index           =   16
       Left            =   7635
       TabIndex        =   5
-      Top             =   2700
+      Top             =   2340
       Width           =   405
    End
    Begin VB.Image imgMas17 
       Height          =   285
       Left            =   8100
-      Top             =   3015
+      Top             =   2655
       Width           =   345
    End
    Begin VB.Image imgMenos17 
       Height          =   285
       Left            =   7260
-      Top             =   3015
+      Top             =   2655
       Width           =   345
    End
    Begin VB.Label text1 
@@ -721,19 +830,19 @@ Begin VB.Form frmSkills3
       Index           =   17
       Left            =   7635
       TabIndex        =   4
-      Top             =   3075
+      Top             =   2715
       Width           =   405
    End
    Begin VB.Image imgMas18 
       Height          =   285
       Left            =   8100
-      Top             =   3390
+      Top             =   3030
       Width           =   345
    End
    Begin VB.Image imgMenos18 
       Height          =   285
       Left            =   7260
-      Top             =   3390
+      Top             =   3030
       Width           =   345
    End
    Begin VB.Label text1 
@@ -754,7 +863,7 @@ Begin VB.Form frmSkills3
       Index           =   18
       Left            =   7635
       TabIndex        =   3
-      Top             =   3450
+      Top             =   3090
       Width           =   405
    End
    Begin VB.Image imgMenos1 
@@ -781,19 +890,19 @@ Begin VB.Form frmSkills3
       Index           =   19
       Left            =   7635
       TabIndex        =   2
-      Top             =   3825
+      Top             =   3465
       Width           =   405
    End
    Begin VB.Image imgMas19 
       Height          =   285
       Left            =   8100
-      Top             =   3765
+      Top             =   3405
       Width           =   345
    End
    Begin VB.Image imgMenos19 
       Height          =   285
       Left            =   7260
-      Top             =   3765
+      Top             =   3405
       Width           =   345
    End
    Begin VB.Label text1 
@@ -814,19 +923,19 @@ Begin VB.Form frmSkills3
       Index           =   20
       Left            =   7635
       TabIndex        =   1
-      Top             =   4200
+      Top             =   3840
       Width           =   405
    End
    Begin VB.Image imgMas20 
       Height          =   285
       Left            =   8100
-      Top             =   4140
+      Top             =   3780
       Width           =   345
    End
    Begin VB.Image imgMenos20 
       Height          =   285
       Left            =   7260
-      Top             =   4140
+      Top             =   3780
       Width           =   345
    End
    Begin VB.Image imgAceptar 
@@ -937,7 +1046,7 @@ Private Sub LoadButtons()
     GrhPath = DirGraficos
 
 
-    For i = 1 To NUMSKILLS
+    For i = 1 To NUMSKILLS - 2
         Set cBotonMas(i) = New clsGraphicalButton
         Set cBotonMenos(i) = New clsGraphicalButton
         Set cSkillNames(i) = New clsGraphicalButton
@@ -1369,6 +1478,22 @@ End Sub
 
 Private Sub imgMas20_Click()
     Call SumarSkillPoint(20)
+End Sub
+
+Private Sub imgMenos22_Click()
+    Call RestarSkillPoint(22)
+End Sub
+
+Private Sub imgMenos21_Click()
+    Call RestarSkillPoint(21)
+End Sub
+
+Private Sub imgMas22_Click()
+    Call SumarSkillPoint(22)
+End Sub
+
+Private Sub imgMas21_Click()
+    Call SumarSkillPoint(21)
 End Sub
 
 Private Sub imgMas3_Click()
