@@ -1042,7 +1042,7 @@ Private Sub cmdCI_Click()
     tStr = InputBox("Indique el número del objeto a crear.", "Crear Objeto")
     If LenB(tStr) <> 0 Then _
         If MsgBox("¿Seguro desea crear el objeto " & tStr & "?", vbYesNo, "Atencion!") = vbYes Then _
-            Call ParseUserCommand("/CI " & tStr) 'We use the Parser to control the command format
+            Call ParseUserCommand("/ITEM " & tStr) 'We use the Parser to control the command format
 End Sub
 
 Private Sub cmdCIUMSG_Click()

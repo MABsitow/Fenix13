@@ -334,7 +334,7 @@ Public Sub MakeUserChar(ByVal toMap As Boolean, ByVal sndIndex As Integer, ByVal
 '15/01/2010: ZaMa - Ahora se envia el color del nick.
 '*************************************************
 
-On Error GoTo ErrHandler
+On Error GoTo Errhandler
 
     Dim CharIndex As Integer
   '  Dim ClanTag As String
@@ -397,7 +397,7 @@ On Error GoTo ErrHandler
     End With
 Exit Sub
 
-ErrHandler:
+Errhandler:
     LogError ("MakeUserChar: num: " & Err.Number & " desc: " & Err.description)
     'Resume Next
     Call CloseSocket(UserIndex)
@@ -418,7 +418,7 @@ Public Sub CheckUserLevel(ByVal UserIndex As Integer)
     Dim Promedio As Double
   '  Dim GI As Integer 'Guild Index
     
-On Error GoTo ErrHandler
+On Error GoTo Errhandler
     
     WasNewbie = EsNewbie(UserIndex)
     
@@ -621,7 +621,7 @@ On Error GoTo ErrHandler
     Call WriteUpdateUserStats(UserIndex)
 Exit Sub
 
-ErrHandler:
+Errhandler:
     Call LogError("Error en la subrutina CheckUserLevel - Error : " & Err.Number & " - Description : " & Err.description)
 End Sub
 
@@ -774,19 +774,19 @@ Function NextOpenCharIndex() As Integer
 '
 '***************************************************
 
-    Dim loopc As Long
+    Dim LoopC As Long
     
-    For loopc = 1 To MAXCHARS
-        If CharList(loopc) = 0 Then
-            NextOpenCharIndex = loopc
+    For LoopC = 1 To MAXCHARS
+        If CharList(LoopC) = 0 Then
+            NextOpenCharIndex = LoopC
             NumChars = NumChars + 1
             
-            If loopc > LastChar Then _
-                LastChar = loopc
+            If LoopC > LastChar Then _
+                LastChar = LoopC
             
             Exit Function
         End If
-    Next loopc
+    Next LoopC
 End Function
 
 Function NextOpenUser() As Integer
@@ -796,14 +796,14 @@ Function NextOpenUser() As Integer
 '
 '***************************************************
 
-    Dim loopc As Long
+    Dim LoopC As Long
     
-    For loopc = 1 To MaxUsers + 1
-        If loopc > MaxUsers Then Exit For
-        If (UserList(loopc).ConnID = -1 And UserList(loopc).flags.UserLogged = False) Then Exit For
-    Next loopc
+    For LoopC = 1 To MaxUsers + 1
+        If LoopC > MaxUsers Then Exit For
+        If (UserList(LoopC).ConnID = -1 And UserList(LoopC).flags.UserLogged = False) Then Exit For
+    Next LoopC
     
-    NextOpenUser = loopc
+    NextOpenUser = LoopC
 End Function
 
 Public Sub SendUserStatsTxt(ByVal sendIndex As Integer, ByVal UserIndex As Integer)
@@ -863,7 +863,12 @@ Public Sub SendUserStatsTxt(ByVal sendIndex As Integer, ByVal UserIndex As Integ
 #End If
         
         Call WriteConsoleMsg(sendIndex, "Oro: " & .Stats.GLD & "  Posición: " & .Pos.X & "," & .Pos.Y & " en mapa " & .Pos.Map, FontTypeNames.FONTTYPE_INFO)
-        Call WriteConsoleMsg(sendIndex, "Dados: " & .Stats.UserAtributos(eAtributos.Fuerza) & ", " & .Stats.UserAtributos(eAtributos.Agilidad) & ", " & .Stats.UserAtributos(eAtributos.Inteligencia) & ", " & .Stats.UserAtributos(eAtributos.Carisma) & ", " & .Stats.UserAtributos(eAtributos.Constitucion), FontTypeNames.FONTTYPE_INFO)
+        Call WriteConsoleMsg(sendIndex, "Dados - Fuerza: " & .Stats.UserAtributos(eAtributos.Fuerza), FontTypeNames.FONTTYPE_INFO)
+        Call WriteConsoleMsg(sendIndex, "Dados - Agilidad:" & .Stats.UserAtributos(eAtributos.Agilidad), FontTypeNames.FONTTYPE_INFO)
+        Call WriteConsoleMsg(sendIndex, "Dados - Inteligencia: " & .Stats.UserAtributos(eAtributos.Inteligencia), FontTypeNames.FONTTYPE_INFO)
+        Call WriteConsoleMsg(sendIndex, "Dados - Carisma " & .Stats.UserAtributos(eAtributos.Carisma), FontTypeNames.FONTTYPE_INFO)
+        Call WriteConsoleMsg(sendIndex, "Dados - Constitución: " & .Stats.UserAtributos(eAtributos.Constitucion), FontTypeNames.FONTTYPE_INFO)
+        
     End With
 End Sub
 
@@ -876,7 +881,7 @@ Sub SendUserMiniStatsTxt(ByVal sendIndex As Integer, ByVal UserIndex As Integer)
 '*************************************************
     With UserList(UserIndex)
         Call WriteConsoleMsg(sendIndex, "Pj: " & .Name, FontTypeNames.FONTTYPE_INFO)
-        Call WriteConsoleMsg(sendIndex, "Ciudadanos matados: " & .Faccion.CiudadanosMatados & " Criminales matados: " & .Faccion.CriminalesMatados & " usuarios matados: " & .Stats.UsuariosMatados, FontTypeNames.FONTTYPE_INFO)
+        Call WriteConsoleMsg(sendIndex, "Ciudadanos matados: " & .Faccion.CiudadanosMatados & " Criminales matados: " & .Faccion.CriminalesMatados & " Usuarios matados: " & .Stats.UsuariosMatados, FontTypeNames.FONTTYPE_INFO)
         Call WriteConsoleMsg(sendIndex, "NPCs muertos: " & .Stats.NPCsMuertos, FontTypeNames.FONTTYPE_INFO)
         Call WriteConsoleMsg(sendIndex, "Clase: " & ListaClases(.Clase), FontTypeNames.FONTTYPE_INFO)
         Call WriteConsoleMsg(sendIndex, "Pena: " & .Counters.Pena, FontTypeNames.FONTTYPE_INFO)
@@ -902,6 +907,9 @@ Sub SendUserMiniStatsTxt(ByVal sendIndex As Integer, ByVal UserIndex As Integer)
         
         Call WriteConsoleMsg(sendIndex, "Asesino: " & .Reputacion.AsesinoRep, FontTypeNames.FONTTYPE_INFO)
         Call WriteConsoleMsg(sendIndex, "Noble: " & .Reputacion.NobleRep, FontTypeNames.FONTTYPE_INFO)
+        
+        Call WriteConsoleMsg(sendIndex, "Torneos ganados: " & .Events.Torneos, FontTypeNames.FONTTYPE_INFO)
+        Call WriteConsoleMsg(sendIndex, "Quests ganadas: " & .Events.Quests, FontTypeNames.FONTTYPE_INFO)
         
        ' If .GuildIndex > 0 Then
        '     Call WriteConsoleMsg(sendIndex, "Clan: " & GuildName(.GuildIndex), FontTypeNames.FONTTYPE_INFO)
@@ -984,8 +992,8 @@ On Error Resume Next
         Call WriteConsoleMsg(sendIndex, "Tiene " & .Invent.NroItems & " objetos.", FontTypeNames.FONTTYPE_INFO)
         
         For j = 1 To .CurrentInventorySlots
-            If .Invent.Object(j).ObjIndex > 0 Then
-                Call WriteConsoleMsg(sendIndex, "Objeto " & j & " " & ObjData(.Invent.Object(j).ObjIndex).Name & " Cantidad:" & .Invent.Object(j).Amount, FontTypeNames.FONTTYPE_INFO)
+            If .Invent.Object(j).OBJIndex > 0 Then
+                Call WriteConsoleMsg(sendIndex, "Objeto " & j & " " & ObjData(.Invent.Object(j).OBJIndex).Name & " Cantidad:" & .Invent.Object(j).Amount, FontTypeNames.FONTTYPE_INFO)
             End If
         Next j
     End With
@@ -1445,10 +1453,10 @@ Sub Tilelibre(ByRef Pos As WorldPos, ByRef nPos As WorldPos, ByRef Obj As Obj, _
 '23/01/2007 -> Pablo (ToxicWaste): El agua es ahora un TileLibre agregando las condiciones necesarias.
 '18/09/2010: ZaMa - Aplico optimizacion de busqueda de tile libre en forma de rombo.
 '**************************************************************
-On Error GoTo ErrHandler
+On Error GoTo Errhandler
 
     Dim Found As Boolean
-    Dim loopc As Integer
+    Dim LoopC As Integer
     Dim tX As Long
     Dim tY As Long
     
@@ -1456,12 +1464,12 @@ On Error GoTo ErrHandler
     tX = Pos.X
     tY = Pos.Y
     
-    loopc = 1
+    LoopC = 1
     
     ' La primera posicion es valida?
     If LegalPos(Pos.Map, nPos.X, nPos.Y, PuedeAgua, PuedeTierra, True) Then
         
-        If Not HayObjeto(Pos.Map, nPos.X, nPos.Y, Obj.ObjIndex, Obj.Amount) Then
+        If Not HayObjeto(Pos.Map, nPos.X, nPos.Y, Obj.OBJIndex, Obj.Amount) Then
             Found = True
         End If
         
@@ -1469,14 +1477,14 @@ On Error GoTo ErrHandler
     
     ' Busca en las demas posiciones, en forma de "rombo"
     If Not Found Then
-        While (Not Found) And loopc <= 16
-            If RhombLegalTilePos(Pos, tX, tY, loopc, Obj.ObjIndex, Obj.Amount, PuedeAgua, PuedeTierra) Then
+        While (Not Found) And LoopC <= 16
+            If RhombLegalTilePos(Pos, tX, tY, LoopC, Obj.OBJIndex, Obj.Amount, PuedeAgua, PuedeTierra) Then
                 nPos.X = tX
                 nPos.Y = tY
                 Found = True
             End If
         
-            loopc = loopc + 1
+            LoopC = LoopC + 1
         Wend
         
     End If
@@ -1488,7 +1496,7 @@ On Error GoTo ErrHandler
     
     Exit Sub
     
-ErrHandler:
+Errhandler:
     Call LogError("Error en Tilelibre. Error: " & Err.Number & " - " & Err.description)
 End Sub
 
@@ -2127,7 +2135,7 @@ Public Function FarthestPet(ByVal UserIndex As Integer) As Integer
 'Last Modify Date: 18/11/2009
 'Devuelve el indice de la mascota mas lejana.
 '**************************************************************
-On Error GoTo ErrHandler
+On Error GoTo Errhandler
     
     Dim PetIndex As Integer
     Dim Distancia As Integer
@@ -2163,11 +2171,11 @@ On Error GoTo ErrHandler
 
     Exit Function
     
-ErrHandler:
+Errhandler:
     Call LogError("Error en FarthestPet")
 End Function
 
-Public Function HasEnoughItems(ByVal UserIndex As Integer, ByVal ObjIndex As Integer, ByVal Amount As Long) As Boolean
+Public Function HasEnoughItems(ByVal UserIndex As Integer, ByVal OBJIndex As Integer, ByVal Amount As Long) As Boolean
 '**************************************************************
 'Author: ZaMa
 'Last Modify Date: 25/11/2009
@@ -2179,7 +2187,7 @@ Public Function HasEnoughItems(ByVal UserIndex As Integer, ByVal ObjIndex As Int
     
     For Slot = 1 To UserList(UserIndex).CurrentInventorySlots
         ' Si es el item que busco
-        If UserList(UserIndex).Invent.Object(Slot).ObjIndex = ObjIndex Then
+        If UserList(UserIndex).Invent.Object(Slot).OBJIndex = OBJIndex Then
             ' Lo sumo a la cantidad total
             ItemInvAmount = ItemInvAmount + UserList(UserIndex).Invent.Object(Slot).Amount
         End If
@@ -2188,7 +2196,7 @@ Public Function HasEnoughItems(ByVal UserIndex As Integer, ByVal ObjIndex As Int
     HasEnoughItems = Amount <= ItemInvAmount
 End Function
 
-Public Function TotalOfferItems(ByVal ObjIndex As Integer, ByVal UserIndex As Integer) As Long
+Public Function TotalOfferItems(ByVal OBJIndex As Integer, ByVal UserIndex As Integer) As Long
 '**************************************************************
 'Author: ZaMa
 'Last Modify Date: 25/11/2009
@@ -2198,7 +2206,7 @@ Public Function TotalOfferItems(ByVal ObjIndex As Integer, ByVal UserIndex As In
     
     For Slot = 1 To MAX_OFFER_SLOTS
             ' Si es el item que busco
-        If UserList(UserIndex).ComUsu.Objeto(Slot) = ObjIndex Then
+        If UserList(UserIndex).ComUsu.Objeto(Slot) = OBJIndex Then
             ' Lo sumo a la cantidad total
             TotalOfferItems = TotalOfferItems + UserList(UserIndex).ComUsu.cant(Slot)
         End If

@@ -952,7 +952,6 @@ Sub LoadUserInit(ByVal UserIndex As Integer, ByRef UserFile As clsIniReader)
         With .flags
             .Muerto = CByte(UserFile.GetValue("FLAGS", "Muerto"))
             .Escondido = CByte(UserFile.GetValue("FLAGS", "Escondido"))
-            
             .Hambre = CByte(UserFile.GetValue("FLAGS", "Hambre"))
             .Sed = CByte(UserFile.GetValue("FLAGS", "Sed"))
             .Desnudo = CByte(UserFile.GetValue("FLAGS", "Desnudo"))
@@ -962,6 +961,11 @@ Sub LoadUserInit(ByVal UserIndex As Integer, ByRef UserFile As clsIniReader)
             
             'Matrix
             .lastMap = CInt(UserFile.GetValue("FLAGS", "LastMap"))
+        End With
+        
+        With .Events
+            .Quests = CByte(UserFile.GetValue("EVENTOS", "Quests"))
+            .Torneos = CByte(UserFile.GetValue("EVENTOS", "Torneos"))
         End With
         
         If .flags.Paralizado = 1 Then
@@ -1619,6 +1623,10 @@ With UserList(UserIndex)
     Call WriteVar(UserFile, "FLAGS", "Paralizado", CStr(.flags.Paralizado))
     'Matrix
     Call WriteVar(UserFile, "FLAGS", "LastMap", CStr(.flags.lastMap))
+    
+    'Eventos
+    Call WriteVar(UserFile, "EVENTOS", "Quests", CStr(.Events.Quests))
+    Call WriteVar(UserFile, "EVENTOS", "Torneos", CStr(.Events.Torneos))
     
     Call WriteVar(UserFile, "CONSEJO", "PERTENECE", IIf(.flags.Privilegios And PlayerType.RoyalCouncil, "1", "0"))
     Call WriteVar(UserFile, "CONSEJO", "PERTENECECAOS", IIf(.flags.Privilegios And PlayerType.ChaosCouncil, "1", "0"))
