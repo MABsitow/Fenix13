@@ -2557,7 +2557,7 @@ Private Sub HandleObjectCreate()
     Y = incomingData.ReadByte()
     
     MapData(X, Y).ObjGrh.GrhIndex = incomingData.ReadInteger()
-    
+
     Call InitGrh(MapData(X, Y).ObjGrh, MapData(X, Y).ObjGrh.GrhIndex)
 End Sub
 
@@ -8335,7 +8335,7 @@ End Sub
 ' @param    obj The message to be sent to players.
 ' @remarks  The data is not actually sent until the buffer is properly flushed.
 
-Public Sub WriteSearchObjs(ByVal obj As String)
+Public Sub WriteSearchObjs(ByVal Obj As String)
 '***************************************************
 'Author: Lorenzo Rivero (Rhynne)
 'Last Modification: 06/01/2017
@@ -8345,7 +8345,7 @@ Public Sub WriteSearchObjs(ByVal obj As String)
         Call .WriteByte(ClientPacketID.GMCommands)
         Call .WriteByte(eGMCommands.SearchObjs)
         
-        Call .WriteASCIIString(obj)
+        Call .WriteASCIIString(Obj)
     End With
 End Sub
 

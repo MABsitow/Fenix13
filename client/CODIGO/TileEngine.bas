@@ -625,7 +625,7 @@ Public Sub InitGrh(ByRef Grh As Grh, ByVal GrhIndex As Integer, Optional ByVal S
     On Error GoTo InitGrh_Err
     '</EhHeader>
         If GrhIndex = 0 Then Exit Sub
-        
+
 100     Grh.GrhIndex = GrhIndex
     
 105     If Started = 2 Then
@@ -895,7 +895,7 @@ End Function
 ' @return   True if the load was successfull, False otherwise.
 
 Private Function LoadGrhData() As Boolean
-On Error GoTo ErrorHandler
+On Error GoTo errorHandler
     Dim Grh As Long
     Dim Frame As Long
     Dim grhCount As Long
@@ -925,7 +925,7 @@ On Error GoTo ErrorHandler
 
             'Get number of frames
             Get handle, , .NumFrames
-            If .NumFrames <= 0 Then GoTo ErrorHandler
+            If .NumFrames <= 0 Then GoTo errorHandler
             
             'ReDim .Frames(1 To GrhData(Grh).NumFrames)
             
@@ -934,42 +934,42 @@ On Error GoTo ErrorHandler
                 For Frame = 1 To .NumFrames
                     Get handle, , .Frames(Frame)
                     If .Frames(Frame) <= 0 Or .Frames(Frame) > grhCount Then
-                        GoTo ErrorHandler
+                        GoTo errorHandler
                     End If
                 Next Frame
                 
                 Get handle, , .Speed
                 
-                If .Speed <= 0 Then GoTo ErrorHandler
+                If .Speed <= 0 Then GoTo errorHandler
                 
                 'Compute width and height
                 .pixelHeight = GrhData(.Frames(1)).pixelHeight
-                If .pixelHeight <= 0 Then GoTo ErrorHandler
+                If .pixelHeight <= 0 Then GoTo errorHandler
                 
                 .pixelWidth = GrhData(.Frames(1)).pixelWidth
-                If .pixelWidth <= 0 Then GoTo ErrorHandler
+                If .pixelWidth <= 0 Then GoTo errorHandler
                 
                 .TileWidth = GrhData(.Frames(1)).TileWidth
-                If .TileWidth <= 0 Then GoTo ErrorHandler
+                If .TileWidth <= 0 Then GoTo errorHandler
                 
                 .TileHeight = GrhData(.Frames(1)).TileHeight
-                If .TileHeight <= 0 Then GoTo ErrorHandler
+                If .TileHeight <= 0 Then GoTo errorHandler
             Else
                 'Read in normal GRH data
                 Get handle, , .FileNum
-                If .FileNum <= 0 Then GoTo ErrorHandler
+                If .FileNum <= 0 Then GoTo errorHandler
                 
                 Get handle, , GrhData(Grh).sX
-                If .sX < 0 Then GoTo ErrorHandler
+                If .sX < 0 Then GoTo errorHandler
                 
                 Get handle, , .sY
-                If .sY < 0 Then GoTo ErrorHandler
+                If .sY < 0 Then GoTo errorHandler
                 
                 Get handle, , .pixelWidth
-                If .pixelWidth <= 0 Then GoTo ErrorHandler
+                If .pixelWidth <= 0 Then GoTo errorHandler
                 
                 Get handle, , .pixelHeight
-                If .pixelHeight <= 0 Then GoTo ErrorHandler
+                If .pixelHeight <= 0 Then GoTo errorHandler
                 
                 'Compute width and height
                 .TileWidth = .pixelWidth / TilePixelHeight
@@ -987,7 +987,7 @@ On Error GoTo ErrorHandler
     LoadGrhData = True
 Exit Function
 
-ErrorHandler:
+errorHandler:
     LoadGrhData = False
 End Function
 
@@ -1760,7 +1760,7 @@ On Error GoTo 0
     
     'Create Primary Clipper
     Set PrimaryClipper = DirectDraw.CreateClipper(0)
-    Call PrimaryClipper.SetHWnd(frmMain.hWnd)
+    Call PrimaryClipper.SetHWnd(frmMain.hwnd)
     Call PrimarySurface.SetClipper(PrimaryClipper)
     
     With BackBufferRect
@@ -2120,16 +2120,16 @@ Private Sub CharRender(ByVal CharIndex As Long, ByVal PixelOffsetX As Integer, B
                             
                             If .priv = 0 Then
                                 If .Atacable Then
-                                    color = RGB(ColoresPJ(48).r, ColoresPJ(48).g, ColoresPJ(48).b)
+                                    color = RGB(ColoresPJ(48).R, ColoresPJ(48).g, ColoresPJ(48).b)
                                 Else
                                     If .Criminal Then
-                                        color = RGB(ColoresPJ(50).r, ColoresPJ(50).g, ColoresPJ(50).b)
+                                        color = RGB(ColoresPJ(50).R, ColoresPJ(50).g, ColoresPJ(50).b)
                                     Else
-                                        color = RGB(ColoresPJ(49).r, ColoresPJ(49).g, ColoresPJ(49).b)
+                                        color = RGB(ColoresPJ(49).R, ColoresPJ(49).g, ColoresPJ(49).b)
                                     End If
                                 End If
                             Else
-                                color = RGB(ColoresPJ(.priv).r, ColoresPJ(.priv).g, ColoresPJ(.priv).b)
+                                color = RGB(ColoresPJ(.priv).R, ColoresPJ(.priv).g, ColoresPJ(.priv).b)
                             End If
                             
                             'Nick
@@ -2191,6 +2191,6 @@ Private Sub CleanViewPort()
 'Last Modify Date: 12/03/04
 'Fills the viewport with black.
 '***************************************************
-    Dim r As RECT
-    Call BackBufferSurface.BltColorFill(r, vbBlack)
+    Dim R As RECT
+    Call BackBufferSurface.BltColorFill(R, vbBlack)
 End Sub

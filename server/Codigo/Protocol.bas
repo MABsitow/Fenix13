@@ -6128,6 +6128,8 @@ On Error GoTo 0
     
     If error <> 0 Then _
         Err.Raise error
+        
+    Call LogError("Handle WarpChar: " & Err.description)
 End Sub
 
 ''

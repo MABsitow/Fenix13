@@ -246,8 +246,9 @@ Public Sub CheckUpdateNeededUser(ByVal UserIndex As Integer, ByVal Head As Byte,
                 End If
                  
                 '<<< Item >>>
-                If MapData(Map, X, Y).ObjInfo.ObjIndex Then
-                    TempInt = MapData(Map, X, Y).ObjInfo.ObjIndex
+                If MapData(Map, X, Y).ObjInfo.OBJIndex Then
+                    TempInt = MapData(Map, X, Y).ObjInfo.OBJIndex
+                    
                     If Not EsObjetoFijo(ObjData(TempInt).OBJType) Then
                         Call WriteObjectCreate(UserIndex, ObjData(TempInt).GrhIndex, X, Y)
                         
