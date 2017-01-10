@@ -144,6 +144,7 @@ Private Enum ServerPacketID
     CancelOfferItem
     SubeClase
     ShowFormClase
+    EligeFaccion
 End Enum
 
 Private Enum ClientPacketID
@@ -695,9 +696,11 @@ Public Sub HandleIncomingData()
         Case ServerPacketID.SubeClase
             Call HandleSubeClase
         
-        
         Case ServerPacketID.ShowFormClase
             Call HandleShowFormClase
+        
+        Case ServerPacketID.EligeFaccion
+            Call HandleEligeFaccion
             
         Case Else
             'ERROR : Abort!
@@ -738,18 +741,6 @@ With incomingData
         
         Case eMessages.UserSwing
             Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_FALLADO_GOLPE, 255, 0, 0, True, False, True)
-        
-        Case eMessages.SafeModeOn
-            'Call frmMain.ControlSM(eSMType.sSafemode, True)
-        
-        Case eMessages.SafeModeOff
-            'Call frmMain.ControlSM(eSMType.sSafemode, False)
-        
-        Case eMessages.ResuscitationSafeOff
-            'Call frmMain.ControlSM(eSMType.sResucitation, False)
-         
-        Case eMessages.ResuscitationSafeOn
-            'Call frmMain.ControlSM(eSMType.sResucitation, True)
         
         Case eMessages.NobilityLost
             Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_PIERDE_NOBLEZA, 255, 0, 0, False, False, True)
@@ -898,10 +889,74 @@ With incomingData
         Case eMessages.CancelGoHome
             Call ShowConsoleMsg(MENSAJE_HOGAR_CANCEL, 255, 0, 0, True)
             Traveling = False
+        Case eMessages.WrongFaction
+            Call ShowConsoleMsg("¡No pertenecés a la facción!", 0, 128, 255, True)
+        Case eMessages.NeedToKill
+            If UserFaccion = eFaccion.Real Then
+                Call ShowConsoleMsg("¡Necesitas matar a " & Val(.ReadInteger) - Val(.ReadInteger) & " seguidores de Lord Thek!", 0, 128, 255, True)
+            Else
+                Call ShowConsoleMsg("¡Necesitas matar a " & Val(.ReadInteger) - Val(.ReadInteger) & " seguidores de la Alianza!", 255, 0, 0, True)
+            End If
+        Case eMessages.NeedTournaments
+            If UserFaccion = eFaccion.Real Then
+                Call ShowConsoleMsg("No ganaste suficientes torneos. Tenés que haber ganado " & .ReadByte & ", tienes: " & .ReadByte & ".", 0, 128, 255, True)
+            Else
+                Call ShowConsoleMsg("No ganaste suficientes torneos. Tenés que haber ganado " & .ReadByte & ", tienes: " & .ReadByte & ".", 255, 0, 0, True)
+            End If
+        Case eMessages.HierarchyUpgrade
+            If UserFaccion = eFaccion.Real Then
+                Call ShowConsoleMsg("¡Has ascendido de jerarquía! Ahora eres " & .ReadASCIIString & ".", 0, 128, 255, True)
+            Else
+                Call ShowConsoleMsg("¡Has ascendido de jerarquía! Ahora eres " & .ReadASCIIString & ".", 255, 0, 0, True)
+            End If
+        Case eMessages.LastHierarchy
+            If UserFaccion = eFaccion.Real Then
+                Call Dialogos.CreateDialog("¡Ya has alcanzado la máxima jerarquia de la Alianza del Fénix!", .ReadInteger, -1)
+            Else
+                Call Dialogos.CreateDialog("¡Ya has alcanzado la máxima jerarquia en el Ejército de Lord Thek!", .ReadInteger, -1)
+            End If
+            
+        Case eMessages.HierarchyExpelled
+            If UserFaccion = eFaccion.Real Then
+                Call ShowConsoleMsg("¡¡Has sido expulsado de la Alianza del Fénix!!", 0, 128, 255, True)
+            Else
+                Call ShowConsoleMsg("¡¡Has sido expulsado del Ejército de Lord Thek!!", 255, 0, 0, True)
+            End If
+        
+        Case eMessages.Neutral
+            If UserFaccion = eFaccion.Real Then
+                'Call ShowConsoleMsg("¡¡No eres fiel al rey!!", 0, 128, 255, True)
+                Call Dialogos.CreateDialog("¡¡No eres fiel al rey!!", .ReadInteger, -1)
+            Else
+                Call Dialogos.CreateDialog("¡¡No eres fiel a Lord Thek!!", .ReadInteger, -1)
+            End If
+            
+        Case eMessages.OppositeSide
+            If UserFaccion = eFaccion.Real Then
+                Call Dialogos.CreateDialog("¡¡Maldito insolente!! ¡Los seguidores de Lord Thek no tienen lugar en nuestro ejército!", .ReadInteger, -1)
+            Else
+                Call Dialogos.CreateDialog("¡¡Maldito insolente!! ¡Los seguidores del rey no tienen lugar en nuestro ejército!", .ReadInteger, -1)
+            End If
+            
+        Case eMessages.AlreadyBelong
+            If UserFaccion = eFaccion.Real Then
+                Call Dialogos.CreateDialog("¡Ya perteneces a las tropas reales! ¡Ve a combatir criminales!", .ReadInteger, -1)
+            Else
+                Call Dialogos.CreateDialog("¡Ya perteneces a las tropas del mal! ¡Ve a combatir ciudadanos!", .ReadInteger, -1)
+            End If
+        Case eMessages.LevelRequired
+            Call Dialogos.CreateDialog("Necesitas ser al menos nivel " & .ReadByte & " para poder ingresar.", .ReadInteger, -1)
+        
+        Case eMessages.FactionWelcome
+            If UserFaccion = eFaccion.Real Then
+                Call Dialogos.CreateDialog("¡Bienvenido a al Ejército Imperial! Si demuestras fidelidad y destreza en las peleas, podrás aumentar de jerarquía.", .ReadInteger, -1)
+            Else
+                Call Dialogos.CreateDialog("¡Bienvenido al Ejército de Lord Thek! Si demuestras tu fidelidad y destreza en las peleas, podrás aumentar de jerarquía.", .ReadInteger, -1)
+            End If
     End Select
 End With
-End Sub
 
+End Sub
 
 
 ''
@@ -8494,6 +8549,15 @@ Private Sub HandleShowFormClase()
     End With
 End Sub
 
+Private Sub HandleEligeFaccion()
+    
+    With incomingData
+    
+        Call .ReadByte
+        
+        frmMain.lblFaccion.Visible = .ReadBoolean
+    End With
+End Sub
 Public Sub WriteSendEligioSubClase(ByVal Index As Integer)
     
     With outgoingData
