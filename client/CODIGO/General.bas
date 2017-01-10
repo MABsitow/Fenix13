@@ -125,23 +125,23 @@ On Error Resume Next
     Dim i As Long
     
     For i = 0 To 48 '49 y 50 reservados para ciudadano y criminal
-        ColoresPJ(i).r = CByte(GetVar(archivoC, CStr(i), "R"))
+        ColoresPJ(i).R = CByte(GetVar(archivoC, CStr(i), "R"))
         ColoresPJ(i).g = CByte(GetVar(archivoC, CStr(i), "G"))
         ColoresPJ(i).b = CByte(GetVar(archivoC, CStr(i), "B"))
     Next i
     
     ' Crimi
-    ColoresPJ(50).r = CByte(GetVar(archivoC, "CR", "R"))
+    ColoresPJ(50).R = CByte(GetVar(archivoC, "CR", "R"))
     ColoresPJ(50).g = CByte(GetVar(archivoC, "CR", "G"))
     ColoresPJ(50).b = CByte(GetVar(archivoC, "CR", "B"))
     
     ' Ciuda
-    ColoresPJ(49).r = CByte(GetVar(archivoC, "CI", "R"))
+    ColoresPJ(49).R = CByte(GetVar(archivoC, "CI", "R"))
     ColoresPJ(49).g = CByte(GetVar(archivoC, "CI", "G"))
     ColoresPJ(49).b = CByte(GetVar(archivoC, "CI", "B"))
     
     ' Atacable
-    ColoresPJ(48).r = CByte(GetVar(archivoC, "AT", "R"))
+    ColoresPJ(48).R = CByte(GetVar(archivoC, "AT", "R"))
     ColoresPJ(48).g = CByte(GetVar(archivoC, "AT", "G"))
     ColoresPJ(48).b = CByte(GetVar(archivoC, "AT", "B"))
 End Sub
@@ -521,7 +521,8 @@ Sub SwitchMap(ByVal Map As Integer)
                 .Blocked = ByFlags And 1
                     
                 .Graphic(1).GrhIndex = reader.getInteger
-                    
+                Call InitGrh(.Graphic(1), .Graphic(1).GrhIndex)
+                
                 For i = 2 To 4
                     If ByFlags And (2 ^ (i - 1)) Then
                         .Graphic(i).GrhIndex = reader.getInteger
@@ -535,8 +536,6 @@ Sub SwitchMap(ByVal Map As Integer)
                     If (ByFlags And 2 ^ i) Then .Trigger = .Trigger Or 2 ^ (i - 4)
                 Next
                 
-                Call InitGrh(.Graphic(1), .Graphic(1).GrhIndex)
-                
                 'Erase NPCs
                 If MapData(X, Y).CharIndex > 0 Then
                     Call EraseChar(MapData(X, Y).CharIndex)
@@ -548,8 +547,6 @@ Sub SwitchMap(ByVal Map As Integer)
             End With
         Next X
     Next Y
-    
-    Close handle
     
     MapInfo.Name = ""
     MapInfo.Music = ""
@@ -654,7 +651,7 @@ On Error GoTo errorH
     
     ReDim ServersLst(1 To c) As tServerInfo
     For i = 1 To c
-        ServersLst(i).desc = GetVar(f, "S" & i, "Desc")
+        ServersLst(i).Desc = GetVar(f, "S" & i, "Desc")
         ServersLst(i).Ip = Trim$(GetVar(f, "S" & i, "Ip"))
         ServersLst(i).PassRecPort = CInt(GetVar(f, "S" & i, "P2"))
         ServersLst(i).Puerto = CInt(GetVar(f, "S" & i, "PJ"))
@@ -688,7 +685,7 @@ On Error Resume Next
         cur$ = ReadField(i, RawServersList, Asc(";"))
         ServersLst(i).Ip = ReadField(1, cur$, Asc(":"))
         ServersLst(i).Puerto = ReadField(2, cur$, Asc(":"))
-        ServersLst(i).desc = ReadField(4, cur$, Asc(":"))
+        ServersLst(i).Desc = ReadField(4, cur$, Asc(":"))
         ServersLst(i).PassRecPort = ReadField(3, cur$, Asc(":"))
     Next i
     
@@ -764,7 +761,7 @@ Sub Main()
     
     Call AddtoRichTextBox(frmCargando.Status, "Iniciando motor gráfico... ", 255, 255, 255, True, False, True)
     
-    If Not InitTileEngine(frmMain.hWnd, 149, 13, 32, 32, 13, 17, 9, 8, 8, 0.018) Then
+    If Not InitTileEngine(frmMain.hwnd, 149, 13, 32, 32, 13, 17, 9, 8, 8, 0.018) Then
         Call CloseClient
     End If
     
@@ -786,13 +783,13 @@ UserMap = 1
     Call AddtoRichTextBox(frmCargando.Status, "Iniciando DirectSound... ", 255, 255, 255, True, False, True)
     
     'Inicializamos el sonido
-    Call Audio.Initialize(DirectX, frmMain.hWnd, App.path & "\" & Config_Inicio.DirSonidos & "\", App.path & "\" & Config_Inicio.DirMusica & "\")
+    Call Audio.Initialize(DirectX, frmMain.hwnd, App.path & "\" & Config_Inicio.DirSonidos & "\", App.path & "\" & Config_Inicio.DirMusica & "\")
     'Enable / Disable audio
     Audio.MusicActivated = Not ClientSetup.bNoMusic
     Audio.SoundActivated = Not ClientSetup.bNoSound
     Audio.SoundEffectsActivated = Not ClientSetup.bNoSoundEffects
     'Inicializamos el inventario gráfico
-    Call Inventario.Initialize(DirectDraw, frmMain.PicInv, MAX_INVENTORY_SLOTS)
+    Call Inventario.Initialize(DirectDraw, frmMain.picInv, MAX_INVENTORY_SLOTS)
     
     Call Audio.MusicMP3Play(App.path & "\MP3\" & MP3_Inicio & ".mp3")
     
@@ -865,6 +862,10 @@ UserMap = 1
             lFrameTimer = GetTickCount
         End If
         
+       ' If GetTickCount - Count = 1000 Then
+        '        Call SendData(SendTarget.toMap, UserIndex, PrepareMessageCountdown(Count))
+        '        GetTickCount = Count
+        '    End If
         ' If there is anything to be sent, we send it
         Call FlushBuffer
         
@@ -1333,7 +1334,7 @@ End Function
 
 
 
-Public Sub LogError(desc As String)
+Public Sub LogError(Desc As String)
 '***************************************************
 'Author: Unknown
 'Last Modification: -
@@ -1345,7 +1346,7 @@ On Error GoTo Errhandler
     Dim nfile As Integer
     nfile = FreeFile ' obtenemos un canal
     Open App.path & "\errores.log" For Append Shared As #nfile
-    Print #nfile, Date & " " & time & " " & desc
+    Print #nfile, Date & " " & time & " " & Desc
     Close #nfile
     
     Exit Sub

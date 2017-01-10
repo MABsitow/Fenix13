@@ -153,7 +153,7 @@ Public ColoresPJ(0 To 50) As tColor
 Public Type tServerInfo
     Ip As String
     Puerto As Integer
-    desc As String
+    Desc As String
     PassRecPort As Integer
 End Type
 
@@ -461,7 +461,7 @@ Public Enum eGMCommands
     BannedIPReload          '/BANIPRELOAD
     BanIP                   '/BANIP
     UnbanIP                 '/UNBANIP
-    CreateItem              '/CI
+    CreateItem              '/ITEM
     DestroyItems            '/DEST
     ChaosLegionKick         '/NOCAOS
     RoyalArmyKick           '/NOREAL
@@ -480,7 +480,7 @@ Public Enum eGMCommands
     ImperialArmour          '/AI1 - 4
     ChaosArmour             '/AC1 - 4
     NavigateToggle          '/NAVE
-    ServerOpenToUsersToggle '/HABILITAR
+    ServerOpenToUsersToggle '/RESTRINGIR
     TurnOffServer           '/APAGAR
     TurnCriminal            '/CONDEN
     ResetFactions           '/RAJAR
@@ -515,6 +515,11 @@ Public Enum eGMCommands
     WarpToMap               '/GO
     StaffMessage            '/STAFF
     SearchObjs              '/BUSCAR
+    Countdown               '/CUENTA
+    WinTournament           '/GANOTORNEO
+    LoseTournament          '/PERDIOTORNEO
+    WinQuest                '/GANOQUEST
+    LoseQuest               '/PERDIOQUEST
 End Enum
 
 '

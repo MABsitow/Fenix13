@@ -1,5 +1,5 @@
 VERSION 5.00
-Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.2#0"; "MSCOMCTL.OCX"
+Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.1#0"; "MSCOMCTL.OCX"
 Begin VB.Form frmPanelGm 
    BorderStyle     =   1  'Fixed Single
    Caption         =   "Panel GM"
@@ -1042,7 +1042,7 @@ Private Sub cmdCI_Click()
     tStr = InputBox("Indique el número del objeto a crear.", "Crear Objeto")
     If LenB(tStr) <> 0 Then _
         If MsgBox("¿Seguro desea crear el objeto " & tStr & "?", vbYesNo, "Atencion!") = vbYes Then _
-            Call ParseUserCommand("/CI " & tStr) 'We use the Parser to control the command format
+            Call ParseUserCommand("/ITEM " & tStr) 'We use the Parser to control the command format
 End Sub
 
 Private Sub cmdCIUMSG_Click()

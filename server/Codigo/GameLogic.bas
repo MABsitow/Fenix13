@@ -82,13 +82,13 @@ Public Sub DoTileEvents(ByVal UserIndex As Integer, ByVal Map As Integer, ByVal 
     Dim TelepRadio As Integer
     Dim DestPos As WorldPos
     
-On Error GoTo ErrHandler
+On Error GoTo Errhandler
     'Controla las salidas
     If InMapBounds(Map, X, Y) Then
         With MapData(Map, X, Y)
-            If .ObjInfo.ObjIndex > 0 Then
-                FxFlag = ObjData(.ObjInfo.ObjIndex).OBJType = eOBJType.otTeleport
-                TelepRadio = ObjData(.ObjInfo.ObjIndex).Radio
+            If .ObjInfo.OBJIndex > 0 Then
+                FxFlag = ObjData(.ObjInfo.OBJIndex).OBJType = eOBJType.otTeleport
+                TelepRadio = ObjData(.ObjInfo.OBJIndex).Radio
             End If
             
             If .TileExit.Map > 0 And .TileExit.Map <= NumMaps Then
@@ -179,7 +179,7 @@ On Error GoTo ErrHandler
     End If
 Exit Sub
 
-ErrHandler:
+Errhandler:
     Call LogError("Error en DotileEvents. Error: " & Err.Number & " - Desc: " & Err.description)
 End Sub
 
@@ -243,8 +243,8 @@ Sub ClosestLegalPos(Pos As WorldPos, ByRef nPos As WorldPos, Optional PuedeAgua 
 'Encuentra la posicion legal mas cercana y la guarda en nPos
 '*****************************************************************
 
-    Dim Found As Boolean
-    Dim loopc As Integer
+    Dim found As Boolean
+    Dim LoopC As Integer
     Dim tX As Long
     Dim tY As Long
     
@@ -252,27 +252,27 @@ Sub ClosestLegalPos(Pos As WorldPos, ByRef nPos As WorldPos, Optional PuedeAgua 
     tX = Pos.X
     tY = Pos.Y
     
-    loopc = 1
+    LoopC = 1
     
     ' La primera posicion es valida?
     If LegalPos(Pos.Map, nPos.X, nPos.Y, PuedeAgua, PuedeTierra, CheckExitTile) Then
-        Found = True
+        found = True
     
     ' Busca en las demas posiciones, en forma de "rombo"
     Else
-        While (Not Found) And loopc <= 12
-            If RhombLegalPos(Pos, tX, tY, loopc, PuedeAgua, PuedeTierra, CheckExitTile) Then
+        While (Not found) And LoopC <= 12
+            If RhombLegalPos(Pos, tX, tY, LoopC, PuedeAgua, PuedeTierra, CheckExitTile) Then
                 nPos.X = tX
                 nPos.Y = tY
-                Found = True
+                found = True
             End If
         
-            loopc = loopc + 1
+            LoopC = LoopC + 1
         Wend
         
     End If
     
-    If Not Found Then
+    If Not found Then
         nPos.X = 0
         nPos.Y = 0
     End If
@@ -330,16 +330,16 @@ Function CheckForSameIP(ByVal UserIndex As Integer, ByVal UserIP As String) As B
 '
 '***************************************************
 
-    Dim loopc As Long
+    Dim LoopC As Long
     
-    For loopc = 1 To MaxUsers
-        If UserList(loopc).flags.UserLogged = True Then
-            If UserList(loopc).ip = UserIP And UserIndex <> loopc Then
+    For LoopC = 1 To MaxUsers
+        If UserList(LoopC).flags.UserLogged = True Then
+            If UserList(LoopC).ip = UserIP And UserIndex <> LoopC Then
                 CheckForSameIP = True
                 Exit Function
             End If
         End If
-    Next loopc
+    Next LoopC
     
     CheckForSameIP = False
 End Function
@@ -352,10 +352,10 @@ Function CheckForSameName(ByVal Name As String) As Boolean
 '***************************************************
 
 'Controlo que no existan usuarios con el mismo nombre
-    Dim loopc As Long
+    Dim LoopC As Long
     
-    For loopc = 1 To LastUser
-        If UserList(loopc).flags.UserLogged Then
+    For LoopC = 1 To LastUser
+        If UserList(LoopC).flags.UserLogged Then
             
             'If UCase$(UserList(LoopC).Name) = UCase$(Name) And UserList(LoopC).ConnID <> -1 Then
             'OJO PREGUNTAR POR EL CONNID <> -1 PRODUCE QUE UN PJ EN DETERMINADO
@@ -363,12 +363,12 @@ Function CheckForSameName(ByVal Name As String) As Boolean
             'ESE EVENTO NO DISPARA UN SAVE USER, LO QUE PUEDE SER UTILIZADO PARA DUPLICAR ITEMS
             'ESTE BUG EN ALKON PRODUJO QUE EL SERVIDOR ESTE CAIDO DURANTE 3 DIAS. ATENTOS.
             
-            If UCase$(UserList(loopc).Name) = UCase$(Name) Then
+            If UCase$(UserList(LoopC).Name) = UCase$(Name) Then
                 CheckForSameName = True
                 Exit Function
             End If
         End If
-    Next loopc
+    Next LoopC
     
     CheckForSameName = False
 End Function
@@ -610,13 +610,13 @@ Sub SendHelp(ByVal index As Integer)
 '***************************************************
 
 Dim NumHelpLines As Integer
-Dim loopc As Integer
+Dim LoopC As Integer
 
 NumHelpLines = val(GetVar(DatPath & "Help.dat", "INIT", "NumLines"))
 
-For loopc = 1 To NumHelpLines
-    Call WriteConsoleMsg(index, GetVar(DatPath & "Help.dat", "Help", "Line" & loopc), FontTypeNames.FONTTYPE_INFO)
-Next loopc
+For LoopC = 1 To NumHelpLines
+    Call WriteConsoleMsg(index, GetVar(DatPath & "Help.dat", "Help", "Line" & LoopC), FontTypeNames.FONTTYPE_INFO)
+Next LoopC
 
 End Sub
 
@@ -641,7 +641,7 @@ Sub LookatTile(ByVal UserIndex As Integer, ByVal Map As Integer, ByVal X As Inte
 '13/02/2009: ZaMa - EL nombre del gm que aparece por consola al clickearlo, tiene el color correspondiente a su rango
 '***************************************************
 
-On Error GoTo ErrHandler
+On Error GoTo Errhandler
 
 'Responde al click del usuario sobre el mapa
 Dim FoundChar As Byte
@@ -663,30 +663,30 @@ With UserList(UserIndex)
             .TargetX = X
             .TargetY = Y
             '¿Es un obj?
-            If MapData(Map, X, Y).ObjInfo.ObjIndex > 0 Then
+            If MapData(Map, X, Y).ObjInfo.OBJIndex > 0 Then
                 'Informa el nombre
                 .TargetObjMap = Map
                 .TargetObjX = X
                 .TargetObjY = Y
                 FoundSomething = 1
-            ElseIf MapData(Map, X + 1, Y).ObjInfo.ObjIndex > 0 Then
+            ElseIf MapData(Map, X + 1, Y).ObjInfo.OBJIndex > 0 Then
                 'Informa el nombre
-                If ObjData(MapData(Map, X + 1, Y).ObjInfo.ObjIndex).OBJType = eOBJType.otPuertas Then
+                If ObjData(MapData(Map, X + 1, Y).ObjInfo.OBJIndex).OBJType = eOBJType.otPuertas Then
                     .TargetObjMap = Map
                     .TargetObjX = X + 1
                     .TargetObjY = Y
                     FoundSomething = 1
                 End If
-            ElseIf MapData(Map, X + 1, Y + 1).ObjInfo.ObjIndex > 0 Then
-                If ObjData(MapData(Map, X + 1, Y + 1).ObjInfo.ObjIndex).OBJType = eOBJType.otPuertas Then
+            ElseIf MapData(Map, X + 1, Y + 1).ObjInfo.OBJIndex > 0 Then
+                If ObjData(MapData(Map, X + 1, Y + 1).ObjInfo.OBJIndex).OBJType = eOBJType.otPuertas Then
                     'Informa el nombre
                     .TargetObjMap = Map
                     .TargetObjX = X + 1
                     .TargetObjY = Y + 1
                     FoundSomething = 1
                 End If
-            ElseIf MapData(Map, X, Y + 1).ObjInfo.ObjIndex > 0 Then
-                If ObjData(MapData(Map, X, Y + 1).ObjInfo.ObjIndex).OBJType = eOBJType.otPuertas Then
+            ElseIf MapData(Map, X, Y + 1).ObjInfo.OBJIndex > 0 Then
+                If ObjData(MapData(Map, X, Y + 1).ObjInfo.OBJIndex).OBJType = eOBJType.otPuertas Then
                     'Informa el nombre
                     .TargetObjMap = Map
                     .TargetObjX = X
@@ -696,7 +696,7 @@ With UserList(UserIndex)
             End If
             
             If FoundSomething = 1 Then
-                .TargetObj = MapData(Map, .TargetObjX, .TargetObjY).ObjInfo.ObjIndex
+                .TargetObj = MapData(Map, .TargetObjX, .TargetObjY).ObjInfo.OBJIndex
                 If MostrarCantidad(.TargetObj) Then
                     Call WriteConsoleMsg(UserIndex, ObjData(.TargetObj).Name & " - " & MapData(.TargetObjMap, .TargetObjX, .TargetObjY).ObjInfo.Amount & "", FontTypeNames.FONTTYPE_INFO)
                 Else
@@ -943,7 +943,7 @@ End With
 
 Exit Sub
 
-ErrHandler:
+Errhandler:
     Call LogError("Error en LookAtTile. Error " & Err.Number & " : " & Err.description)
 
 End Sub
@@ -1062,7 +1062,8 @@ Public Function EsObjetoFijo(ByVal OBJType As eOBJType) As Boolean
 '
 '***************************************************
 
-    EsObjetoFijo = OBJType = eOBJType.otForos Or _
+    EsObjetoFijo = (OBJType = eOBJType.otArboles)
+    'OBJType = eOBJType.otForos Or _
                    OBJType = eOBJType.otCarteles Or _
                    OBJType = eOBJType.otArboles Or _
                    OBJType = eOBJType.otYacimiento
@@ -1070,7 +1071,7 @@ End Function
 
 Public Function ItemEsDeMapa(ByVal Map As Integer, ByVal X As Integer, ByVal Y As Integer) As Boolean
 
-    ItemEsDeMapa = ObjData(MapData(Map, X, Y).ObjInfo.ObjIndex).Agarrable Or _
+    ItemEsDeMapa = ObjData(MapData(Map, X, Y).ObjInfo.OBJIndex).Agarrable Or _
                    MapData(Map, X, Y).Blocked
 
 End Function
@@ -1141,7 +1142,7 @@ Private Function RhombLegalPos(ByRef Pos As WorldPos, ByRef vX As Long, ByRef vY
 End Function
 
 Public Function RhombLegalTilePos(ByRef Pos As WorldPos, ByRef vX As Long, ByRef vY As Long, _
-                                  ByVal Distance As Long, ByVal ObjIndex As Integer, ByVal ObjAmount As Long, _
+                                  ByVal Distance As Long, ByVal OBJIndex As Integer, ByVal ObjAmount As Long, _
                                   ByVal PuedeAgua As Boolean, ByVal PuedeTierra As Boolean) As Boolean
 '***************************************************
 'Author: ZaMa
@@ -1150,7 +1151,7 @@ Public Function RhombLegalTilePos(ByRef Pos As WorldPos, ByRef vX As Long, ByRef
 ' which starts at Pos.x - Distance and Pos.y
 ' and searchs for a valid position to drop items
 '***************************************************
-On Error GoTo ErrHandler
+On Error GoTo Errhandler
 
     Dim i As Long
     Dim HayObj As Boolean
@@ -1170,7 +1171,7 @@ On Error GoTo ErrHandler
         If (LegalPos(Pos.Map, X, Y, PuedeAgua, PuedeTierra, True)) Then
             
             ' No hay obj tirado o la suma de lo que hay + lo nuevo <= 10k
-            If Not HayObjeto(Pos.Map, X, Y, ObjIndex, ObjAmount) Then
+            If Not HayObjeto(Pos.Map, X, Y, OBJIndex, ObjAmount) Then
                 vX = X
                 vY = Y
                 
@@ -1192,7 +1193,7 @@ On Error GoTo ErrHandler
         If (LegalPos(Pos.Map, X, Y, PuedeAgua, PuedeTierra, True)) Then
             
             ' No hay obj tirado o la suma de lo que hay + lo nuevo <= 10k
-            If Not HayObjeto(Pos.Map, X, Y, ObjIndex, ObjAmount) Then
+            If Not HayObjeto(Pos.Map, X, Y, OBJIndex, ObjAmount) Then
                 vX = X
                 vY = Y
                 
@@ -1213,7 +1214,7 @@ On Error GoTo ErrHandler
         If (LegalPos(Pos.Map, X, Y, PuedeAgua, PuedeTierra, True)) Then
         
             ' No hay obj tirado o la suma de lo que hay + lo nuevo <= 10k
-            If Not HayObjeto(Pos.Map, X, Y, ObjIndex, ObjAmount) Then
+            If Not HayObjeto(Pos.Map, X, Y, OBJIndex, ObjAmount) Then
                 vX = X
                 vY = Y
                 
@@ -1233,7 +1234,7 @@ On Error GoTo ErrHandler
     
         If (LegalPos(Pos.Map, X, Y, PuedeAgua, PuedeTierra, True)) Then
             ' No hay obj tirado o la suma de lo que hay + lo nuevo <= 10k
-            If Not HayObjeto(Pos.Map, X, Y, ObjIndex, ObjAmount) Then
+            If Not HayObjeto(Pos.Map, X, Y, OBJIndex, ObjAmount) Then
                 vX = X
                 vY = Y
                 
@@ -1247,25 +1248,25 @@ On Error GoTo ErrHandler
     
     Exit Function
     
-ErrHandler:
+Errhandler:
     Call LogError("Error en RhombLegalTilePos. Error: " & Err.Number & " - " & Err.description)
 End Function
 
 
 Public Function HayObjeto(ByVal mapa As Integer, ByVal X As Long, ByVal Y As Long, _
-                          ByVal ObjIndex As Integer, ByVal ObjAmount As Long) As Boolean
+                          ByVal OBJIndex As Integer, ByVal ObjAmount As Long) As Boolean
 '***************************************************
 'Author: ZaMa
 'Last Modification: -
 'Checks if there's space in a tile to add an itemAmount
 '***************************************************
     Dim MapObjIndex As Integer
-    MapObjIndex = MapData(mapa, X, Y).ObjInfo.ObjIndex
+    MapObjIndex = MapData(mapa, X, Y).ObjInfo.OBJIndex
             
     ' Hay un objeto tirado?
     If MapObjIndex <> 0 Then
         ' Es el mismo objeto?
-        If MapObjIndex = ObjIndex Then
+        If MapObjIndex = OBJIndex Then
             ' La suma es menor a 10k?
             HayObjeto = (MapData(mapa, X, Y).ObjInfo.Amount + ObjAmount > MAX_INVENTORY_OBJS)
         Else
