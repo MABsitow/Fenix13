@@ -153,7 +153,7 @@ Public ColoresPJ(0 To 50) As tColor
 Public Type tServerInfo
     Ip As String
     Puerto As Integer
-    desc As String
+    Desc As String
     PassRecPort As Integer
 End Type
 
@@ -236,6 +236,11 @@ Public Const GOLD_OFFER_SLOT As Integer = INV_OFFER_SLOTS + 1
 
 Public Const FOgata As Integer = 1521
 
+Public Enum eFaccion
+    Neutral = 0
+    Real = 1
+    Caos = 2
+End Enum
 
 Public Enum eClass
         Ciudadano = 1
@@ -602,10 +607,6 @@ Public Enum eMessages
     BlockedWithShieldUser
     BlockedWithShieldOther
     UserSwing
-    SafeModeOn
-    SafeModeOff
-    ResuscitationSafeOff
-    ResuscitationSafeOn
     NobilityLost
     CantUseWhileMeditating
     NPCHitUser
@@ -620,6 +621,18 @@ Public Enum eMessages
     GoHome
     CancelGoHome
     FinishHome
+    WrongFaction
+    NeedToKill
+    NeedTournaments
+    HierarchyUpgrade
+    LastHierarchy
+    HierarchyExpelled
+    Neutral
+    OppositeSide
+    AlreadyBelong
+    KillToJoin
+    LevelRequired
+    FactionWelcome
 End Enum
 
 'Inventario
@@ -746,6 +759,7 @@ Public MirandoEstadisticas As Boolean
 'Public MirandoParty As Boolean
 '<-------------------------NUEVO-------------------------->
 
+Public UserFaccion As eFaccion
 Public UserClase As eClass
 Public UserSexo As eGenero
 Public UserRaza As eRaza

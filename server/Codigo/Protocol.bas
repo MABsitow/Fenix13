@@ -138,6 +138,7 @@ Private Enum ServerPacketID
     CancelOfferItem
     SubeClase
     ShowFormClase
+    EligeFaccion
 End Enum
 
 Private Enum ClientPacketID
@@ -622,7 +623,7 @@ Public Sub WriteMultiMessage(ByVal UserIndex As Integer, ByVal MessageIndex As I
 '
 '***************************************************
 
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex).outgoingData
         Call .WriteByte(ServerPacketID.MultiMessage)
         Call .WriteByte(MessageIndex)
@@ -676,7 +677,7 @@ On Error GoTo Errhandler
     End With
 Exit Sub ''
 
-Errhandler:
+ErrHandler:
     If Err.Number = UserList(UserIndex).outgoingData.NotEnoughSpaceErrCode Then
         Call FlushBuffer(UserIndex)
         Resume
@@ -690,7 +691,7 @@ Private Sub HandleGMCommands(ByVal UserIndex As Integer)
 '
 '***************************************************
 
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
 
 Dim Command As Byte
 
@@ -1082,7 +1083,7 @@ End With
 
 Exit Sub
 
-Errhandler:
+ErrHandler:
     Call LogError("Error en GmCommands. Error: " & Err.Number & " - " & Err.description & _
                   ". Paquete: " & Command)
 
@@ -1140,7 +1141,7 @@ Private Sub HandleLoginExistingChar(ByVal UserIndex As Integer)
         Exit Sub
     End If
 
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet...
     Dim buffer As New clsByteQueue
         Call buffer.CopyBuffer(UserList(UserIndex).incomingData)
@@ -1187,7 +1188,7 @@ On Error GoTo Errhandler
     'If we got here then packet is complete, copy data back to original queue
     Call UserList(UserIndex).incomingData.CopyBuffer(buffer)
     
-Errhandler:
+ErrHandler:
     Dim error As Long
     error = Err.Number
 On Error GoTo 0
@@ -1240,7 +1241,7 @@ Private Sub HandleLoginNewChar(ByVal UserIndex As Integer)
         Exit Sub
     End If
 
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet...
     Dim buffer As New clsByteQueue
     Call buffer.CopyBuffer(UserList(UserIndex).incomingData)
@@ -1312,7 +1313,7 @@ On Error GoTo Errhandler
     'If we got here then packet is complete, copy data back to original queue
     Call UserList(UserIndex).incomingData.CopyBuffer(buffer)
     
-Errhandler:
+ErrHandler:
     Dim error As Long
     error = Err.Number
 On Error GoTo 0
@@ -1342,7 +1343,7 @@ Private Sub HandleTalk(ByVal UserIndex As Integer)
         Exit Sub
     End If
     
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex)
     
         'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet...
@@ -1401,7 +1402,7 @@ On Error GoTo Errhandler
         Call .incomingData.CopyBuffer(buffer)
     End With
     
-Errhandler:
+ErrHandler:
     Dim error As Long
     error = Err.Number
 On Error GoTo 0
@@ -1430,7 +1431,7 @@ Private Sub HandleYell(ByVal UserIndex As Integer)
         Exit Sub
     End If
     
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex)
     
         'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet...
@@ -1493,7 +1494,7 @@ On Error GoTo Errhandler
         Call .incomingData.CopyBuffer(buffer)
     End With
     
-Errhandler:
+ErrHandler:
     Dim error As Long
     error = Err.Number
 On Error GoTo 0
@@ -1522,7 +1523,7 @@ Private Sub HandleWhisper(ByVal UserIndex As Integer)
         Exit Sub
     End If
     
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex)
         'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet...
         Dim buffer As New clsByteQueue
@@ -1597,7 +1598,7 @@ On Error GoTo Errhandler
         Call .incomingData.CopyBuffer(buffer)
     End With
     
-Errhandler:
+ErrHandler:
     Dim error As Long
     error = Err.Number
 On Error GoTo 0
@@ -2053,7 +2054,7 @@ Private Sub HandleCommerceChat(ByVal UserIndex As Integer)
         Exit Sub
     End If
     
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex)
     
         'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet...
@@ -2080,7 +2081,7 @@ On Error GoTo Errhandler
         Call .incomingData.CopyBuffer(buffer)
     End With
     
-Errhandler:
+ErrHandler:
     Dim error As Long
     error = Err.Number
 On Error GoTo 0
@@ -3468,7 +3469,7 @@ Private Sub HandleForumPost(ByVal UserIndex As Integer)
         Exit Sub
     End If
     
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex)
         'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet...
         Dim buffer As New clsByteQueue
@@ -3512,7 +3513,7 @@ On Error GoTo Errhandler
         Call .incomingData.CopyBuffer(buffer)
     End With
     
-Errhandler:
+ErrHandler:
     Dim error As Long
     error = Err.Number
 On Error GoTo 0
@@ -4835,7 +4836,7 @@ Private Sub HandleCouncilMessage(ByVal UserIndex As Integer)
         Exit Sub
     End If
     
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex)
         'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet...
         Dim buffer As New clsByteQueue
@@ -4861,7 +4862,7 @@ On Error GoTo Errhandler
         Call .incomingData.CopyBuffer(buffer)
     End With
     
-Errhandler:
+ErrHandler:
     Dim error As Long
     error = Err.Number
 On Error GoTo 0
@@ -4889,7 +4890,7 @@ Private Sub HandleRoleMasterRequest(ByVal UserIndex As Integer)
         Exit Sub
     End If
     
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex)
         'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet...
         Dim buffer As New clsByteQueue
@@ -4911,7 +4912,7 @@ On Error GoTo Errhandler
         Call .incomingData.CopyBuffer(buffer)
     End With
     
-Errhandler:
+ErrHandler:
     Dim error As Long
     error = Err.Number
 On Error GoTo 0
@@ -4965,7 +4966,7 @@ Private Sub HandleBugReport(ByVal UserIndex As Integer)
         Exit Sub
     End If
     
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex)
         'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet...
         Dim buffer As New clsByteQueue
@@ -4992,7 +4993,7 @@ On Error GoTo Errhandler
         Call .incomingData.CopyBuffer(buffer)
     End With
     
-Errhandler:
+ErrHandler:
     Dim error As Long
     error = Err.Number
 On Error GoTo 0
@@ -5020,7 +5021,7 @@ Private Sub HandleChangeDescription(ByVal UserIndex As Integer)
         Exit Sub
     End If
     
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex)
         'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet...
         Dim buffer As New clsByteQueue
@@ -5048,7 +5049,7 @@ On Error GoTo Errhandler
         Call .incomingData.CopyBuffer(buffer)
     End With
     
-Errhandler:
+ErrHandler:
     Dim error As Long
     error = Err.Number
 On Error GoTo 0
@@ -5076,7 +5077,7 @@ Private Sub HandlePunishments(ByVal UserIndex As Integer)
         Exit Sub
     End If
     
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex)
         'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet...
         Dim buffer As New clsByteQueue
@@ -5127,7 +5128,7 @@ On Error GoTo Errhandler
         Call .incomingData.CopyBuffer(buffer)
     End With
     
-Errhandler:
+ErrHandler:
     Dim error As Long
     error = Err.Number
 On Error GoTo 0
@@ -5156,7 +5157,7 @@ Private Sub HandleChangePassword(ByVal UserIndex As Integer)
         Exit Sub
     End If
 
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex)
         'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet...
         Dim buffer As New clsByteQueue
@@ -5190,7 +5191,7 @@ On Error GoTo Errhandler
         Call .incomingData.CopyBuffer(buffer)
     End With
     
-Errhandler:
+ErrHandler:
     Dim error As Long
     error = Err.Number
 On Error GoTo 0
@@ -5513,7 +5514,7 @@ Private Sub HandleDenounce(ByVal UserIndex As Integer)
         Exit Sub
     End If
     
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex)
         'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet...
         Dim buffer As New clsByteQueue
@@ -5536,7 +5537,7 @@ On Error GoTo Errhandler
         Call .incomingData.CopyBuffer(buffer)
     End With
     
-Errhandler:
+ErrHandler:
     Dim error As Long
     error = Err.Number
 On Error GoTo 0
@@ -5564,7 +5565,7 @@ Private Sub HandleGMMessage(ByVal UserIndex As Integer)
         Exit Sub
     End If
     
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex)
         'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet...
         Dim buffer As New clsByteQueue
@@ -5590,7 +5591,7 @@ On Error GoTo Errhandler
         Call .incomingData.CopyBuffer(buffer)
     End With
     
-Errhandler:
+ErrHandler:
     Dim error As Long
     error = Err.Number
 On Error GoTo 0
@@ -5719,7 +5720,7 @@ Private Sub HandleGoNearby(ByVal UserIndex As Integer)
         Exit Sub
     End If
     
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex)
         'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet...
         Dim buffer As New clsByteQueue
@@ -5778,7 +5779,7 @@ On Error GoTo Errhandler
         Call .incomingData.CopyBuffer(buffer)
     End With
     
-Errhandler:
+ErrHandler:
     Dim error As Long
     error = Err.Number
 On Error GoTo 0
@@ -5806,7 +5807,7 @@ Private Sub HandleComment(ByVal UserIndex As Integer)
         Exit Sub
     End If
     
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex)
         'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet...
         Dim buffer As New clsByteQueue
@@ -5827,7 +5828,7 @@ On Error GoTo Errhandler
         Call .incomingData.CopyBuffer(buffer)
     End With
     
-Errhandler:
+ErrHandler:
     Dim error As Long
     error = Err.Number
 On Error GoTo 0
@@ -5878,7 +5879,7 @@ Private Sub HandleWhere(ByVal UserIndex As Integer)
         Exit Sub
     End If
     
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex)
         'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet...
         Dim buffer As New clsByteQueue
@@ -5908,7 +5909,7 @@ On Error GoTo Errhandler
         Call .incomingData.CopyBuffer(buffer)
     End With
     
-Errhandler:
+ErrHandler:
     Dim error As Long
     error = Err.Number
 On Error GoTo 0
@@ -6073,7 +6074,7 @@ Private Sub HandleWarpChar(ByVal UserIndex As Integer)
         Exit Sub
     End If
     
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex)
         'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet...
         Dim buffer As New clsByteQueue
@@ -6118,7 +6119,7 @@ On Error GoTo Errhandler
         Call .incomingData.CopyBuffer(buffer)
     End With
     
-Errhandler:
+ErrHandler:
     Dim error As Long
     error = Err.Number
 On Error GoTo 0
@@ -6148,7 +6149,7 @@ Private Sub HandleSilence(ByVal UserIndex As Integer)
         Exit Sub
     End If
     
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex)
         'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet...
         Dim buffer As New clsByteQueue
@@ -6188,7 +6189,7 @@ On Error GoTo Errhandler
         Call .incomingData.CopyBuffer(buffer)
     End With
     
-Errhandler:
+ErrHandler:
     Dim error As Long
     error = Err.Number
 On Error GoTo 0
@@ -6236,7 +6237,7 @@ Private Sub HandleSOSRemove(ByVal UserIndex As Integer)
         Exit Sub
     End If
     
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex)
         'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet...
         Dim buffer As New clsByteQueue
@@ -6255,7 +6256,7 @@ On Error GoTo Errhandler
         Call .incomingData.CopyBuffer(buffer)
     End With
     
-Errhandler:
+ErrHandler:
     Dim error As Long
     error = Err.Number
 On Error GoTo 0
@@ -6283,7 +6284,7 @@ Private Sub HandleGoToChar(ByVal UserIndex As Integer)
         Exit Sub
     End If
     
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex)
         'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet...
         Dim buffer As New clsByteQueue
@@ -6326,7 +6327,7 @@ On Error GoTo Errhandler
         Call .incomingData.CopyBuffer(buffer)
     End With
     
-Errhandler:
+ErrHandler:
     Dim error As Long
     error = Err.Number
 On Error GoTo 0
@@ -6509,7 +6510,7 @@ Private Sub HandleJail(ByVal UserIndex As Integer)
         Exit Sub
     End If
     
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex)
         'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet...
         Dim buffer As New clsByteQueue
@@ -6571,7 +6572,7 @@ On Error GoTo Errhandler
         Call .incomingData.CopyBuffer(buffer)
     End With
     
-Errhandler:
+ErrHandler:
     Dim error As Long
     error = Err.Number
 On Error GoTo 0
@@ -6643,7 +6644,7 @@ Private Sub HandleWarnUser(ByVal UserIndex As Integer)
         Exit Sub
     End If
     
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex)
         'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet...
         Dim buffer As New clsByteQueue
@@ -6692,7 +6693,7 @@ On Error GoTo Errhandler
         Call .incomingData.CopyBuffer(buffer)
     End With
     
-Errhandler:
+ErrHandler:
     Dim error As Long
     error = Err.Number
 On Error GoTo 0
@@ -6721,7 +6722,7 @@ Private Sub HandleEditChar(ByVal UserIndex As Integer)
         Exit Sub
     End If
     
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex)
         'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet...
         Dim buffer As New clsByteQueue
@@ -7082,7 +7083,7 @@ On Error GoTo Errhandler
         Call .incomingData.CopyBuffer(buffer)
     End With
 
-Errhandler:
+ErrHandler:
     Dim error As Long
     error = Err.Number
 On Error GoTo 0
@@ -7111,7 +7112,7 @@ Private Sub HandleRequestCharInfo(ByVal UserIndex As Integer)
         Exit Sub
     End If
     
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex)
         'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet...
         Dim buffer As New clsByteQueue
@@ -7147,7 +7148,7 @@ On Error GoTo Errhandler
         Call .incomingData.CopyBuffer(buffer)
     End With
     
-Errhandler:
+ErrHandler:
     Dim error As Long
     error = Err.Number
 On Error GoTo 0
@@ -7175,7 +7176,7 @@ Private Sub HandleRequestCharStats(ByVal UserIndex As Integer)
         Exit Sub
     End If
     
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex)
         'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet...
         Dim buffer As New clsByteQueue
@@ -7206,7 +7207,7 @@ On Error GoTo Errhandler
         Call .incomingData.CopyBuffer(buffer)
     End With
 
-Errhandler:
+ErrHandler:
     Dim error As Long
     error = Err.Number
 On Error GoTo 0
@@ -7234,7 +7235,7 @@ Private Sub HandleRequestCharGold(ByVal UserIndex As Integer)
         Exit Sub
     End If
     
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex)
         'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet...
         Dim buffer As New clsByteQueue
@@ -7265,7 +7266,7 @@ On Error GoTo Errhandler
         Call .incomingData.CopyBuffer(buffer)
     End With
 
-Errhandler:
+ErrHandler:
     Dim error As Long
     error = Err.Number
 On Error GoTo 0
@@ -7293,7 +7294,7 @@ Private Sub HandleRequestCharInventory(ByVal UserIndex As Integer)
         Exit Sub
     End If
     
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex)
         'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet...
         Dim buffer As New clsByteQueue
@@ -7325,7 +7326,7 @@ On Error GoTo Errhandler
         Call .incomingData.CopyBuffer(buffer)
     End With
 
-Errhandler:
+ErrHandler:
     Dim error As Long
     error = Err.Number
 On Error GoTo 0
@@ -7353,7 +7354,7 @@ Private Sub HandleRequestCharBank(ByVal UserIndex As Integer)
         Exit Sub
     End If
     
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex)
         'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet...
         Dim buffer As New clsByteQueue
@@ -7385,7 +7386,7 @@ On Error GoTo Errhandler
         Call .incomingData.CopyBuffer(buffer)
     End With
 
-Errhandler:
+ErrHandler:
     Dim error As Long
     error = Err.Number
 On Error GoTo 0
@@ -7413,7 +7414,7 @@ Private Sub HandleRequestCharSkills(ByVal UserIndex As Integer)
         Exit Sub
     End If
     
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex)
         'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet...
         Dim buffer As New clsByteQueue
@@ -7456,7 +7457,7 @@ On Error GoTo Errhandler
         Call .incomingData.CopyBuffer(buffer)
     End With
 
-Errhandler:
+ErrHandler:
     Dim error As Long
     error = Err.Number
 On Error GoTo 0
@@ -7484,7 +7485,7 @@ Private Sub HandleReviveChar(ByVal UserIndex As Integer)
         Exit Sub
     End If
     
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex)
         'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet...
         Dim buffer As New clsByteQueue
@@ -7555,7 +7556,7 @@ On Error GoTo Errhandler
         Call .incomingData.CopyBuffer(buffer)
     End With
 
-Errhandler:
+ErrHandler:
     Dim error As Long
     error = Err.Number
 On Error GoTo 0
@@ -7663,7 +7664,7 @@ Private Sub HandleForgive(ByVal UserIndex As Integer)
         Exit Sub
     End If
     
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex)
         'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet...
         Dim buffer As New clsByteQueue
@@ -7694,7 +7695,7 @@ On Error GoTo Errhandler
         Call .incomingData.CopyBuffer(buffer)
     End With
 
-Errhandler:
+ErrHandler:
     Dim error As Long
     error = Err.Number
 On Error GoTo 0
@@ -7722,7 +7723,7 @@ Private Sub HandleKick(ByVal UserIndex As Integer)
         Exit Sub
     End If
     
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex)
         'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet...
         Dim buffer As New clsByteQueue
@@ -7759,7 +7760,7 @@ On Error GoTo Errhandler
         Call .incomingData.CopyBuffer(buffer)
     End With
 
-Errhandler:
+ErrHandler:
     Dim error As Long
     error = Err.Number
 On Error GoTo 0
@@ -7787,7 +7788,7 @@ Private Sub HandleExecute(ByVal UserIndex As Integer)
         Exit Sub
     End If
     
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex)
         'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet...
         Dim buffer As New clsByteQueue
@@ -7821,7 +7822,7 @@ On Error GoTo Errhandler
         Call .incomingData.CopyBuffer(buffer)
     End With
 
-Errhandler:
+ErrHandler:
     Dim error As Long
     error = Err.Number
 On Error GoTo 0
@@ -7849,7 +7850,7 @@ Private Sub HandleBanChar(ByVal UserIndex As Integer)
         Exit Sub
     End If
     
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex)
         'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet...
         Dim buffer As New clsByteQueue
@@ -7872,7 +7873,7 @@ On Error GoTo Errhandler
         Call .incomingData.CopyBuffer(buffer)
     End With
 
-Errhandler:
+ErrHandler:
     Dim error As Long
     error = Err.Number
 On Error GoTo 0
@@ -7900,7 +7901,7 @@ Private Sub HandleUnbanChar(ByVal UserIndex As Integer)
         Exit Sub
     End If
     
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex)
         'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet...
         Dim buffer As New clsByteQueue
@@ -7945,7 +7946,7 @@ On Error GoTo Errhandler
         Call .incomingData.CopyBuffer(buffer)
     End With
 
-Errhandler:
+ErrHandler:
     Dim error As Long
     error = Err.Number
 On Error GoTo 0
@@ -7999,7 +8000,7 @@ Private Sub HandleSummonChar(ByVal UserIndex As Integer)
         Exit Sub
     End If
     
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex)
         'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet...
         Dim buffer As New clsByteQueue
@@ -8039,7 +8040,7 @@ On Error GoTo Errhandler
         Call .incomingData.CopyBuffer(buffer)
     End With
 
-Errhandler:
+ErrHandler:
     Dim error As Long
     error = Err.Number
 On Error GoTo 0
@@ -8164,7 +8165,7 @@ Private Sub HandleServerMessage(ByVal UserIndex As Integer)
         Exit Sub
     End If
     
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex)
         'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet...
         Dim buffer As New clsByteQueue
@@ -8190,7 +8191,7 @@ On Error GoTo Errhandler
         Call .incomingData.CopyBuffer(buffer)
     End With
 
-Errhandler:
+ErrHandler:
     Dim error As Long
     error = Err.Number
 On Error GoTo 0
@@ -8218,7 +8219,7 @@ Private Sub HandleNickToIP(ByVal UserIndex As Integer)
         Exit Sub
     End If
     
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex)
         'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet...
         Dim buffer As New clsByteQueue
@@ -8271,7 +8272,7 @@ On Error GoTo Errhandler
         Call .incomingData.CopyBuffer(buffer)
     End With
 
-Errhandler:
+ErrHandler:
     Dim error As Long
     error = Err.Number
 On Error GoTo 0
@@ -8497,7 +8498,7 @@ Private Sub HandleSetCharDescription(ByVal UserIndex As Integer)
         Exit Sub
     End If
     
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex)
         'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet...
         Dim buffer As New clsByteQueue
@@ -8524,7 +8525,7 @@ On Error GoTo Errhandler
         Call .incomingData.CopyBuffer(buffer)
     End With
 
-Errhandler:
+ErrHandler:
     Dim error As Long
     error = Err.Number
 On Error GoTo 0
@@ -8641,7 +8642,7 @@ Private Sub HandleRoyalArmyMessage(ByVal UserIndex As Integer)
         Exit Sub
     End If
     
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex)
         'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet...
         Dim buffer As New clsByteQueue
@@ -8662,7 +8663,7 @@ On Error GoTo Errhandler
         Call .incomingData.CopyBuffer(buffer)
     End With
 
-Errhandler:
+ErrHandler:
     Dim error As Long
     error = Err.Number
 On Error GoTo 0
@@ -8690,7 +8691,7 @@ Private Sub HandleChaosLegionMessage(ByVal UserIndex As Integer)
         Exit Sub
     End If
     
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex)
         'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet...
         Dim buffer As New clsByteQueue
@@ -8711,7 +8712,7 @@ On Error GoTo Errhandler
         Call .incomingData.CopyBuffer(buffer)
     End With
 
-Errhandler:
+ErrHandler:
     Dim error As Long
     error = Err.Number
 On Error GoTo 0
@@ -8739,7 +8740,7 @@ Private Sub HandleCitizenMessage(ByVal UserIndex As Integer)
         Exit Sub
     End If
     
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex)
         'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet...
         Dim buffer As New clsByteQueue
@@ -8760,7 +8761,7 @@ On Error GoTo Errhandler
         Call .incomingData.CopyBuffer(buffer)
     End With
 
-Errhandler:
+ErrHandler:
     Dim error As Long
     error = Err.Number
 On Error GoTo 0
@@ -8788,7 +8789,7 @@ Private Sub HandleCriminalMessage(ByVal UserIndex As Integer)
         Exit Sub
     End If
     
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex)
         'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet...
         Dim buffer As New clsByteQueue
@@ -8809,7 +8810,7 @@ On Error GoTo Errhandler
         Call .incomingData.CopyBuffer(buffer)
     End With
 
-Errhandler:
+ErrHandler:
     Dim error As Long
     error = Err.Number
 On Error GoTo 0
@@ -8837,7 +8838,7 @@ Private Sub HandleTalkAsNPC(ByVal UserIndex As Integer)
         Exit Sub
     End If
     
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex)
         'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet...
         Dim buffer As New clsByteQueue
@@ -8863,7 +8864,7 @@ On Error GoTo Errhandler
         Call .incomingData.CopyBuffer(buffer)
     End With
 
-Errhandler:
+ErrHandler:
     Dim error As Long
     error = Err.Number
 On Error GoTo 0
@@ -8929,7 +8930,7 @@ Private Sub HandleAcceptRoyalCouncilMember(ByVal UserIndex As Integer)
         Exit Sub
     End If
     
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex)
         'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet...
         Dim buffer As New clsByteQueue
@@ -8962,7 +8963,7 @@ On Error GoTo Errhandler
         Call .incomingData.CopyBuffer(buffer)
     End With
 
-Errhandler:
+ErrHandler:
     Dim error As Long
     error = Err.Number
 On Error GoTo 0
@@ -8990,7 +8991,7 @@ Private Sub HandleAcceptChaosCouncilMember(ByVal UserIndex As Integer)
         Exit Sub
     End If
     
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex)
         'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet...
         Dim buffer As New clsByteQueue
@@ -9024,7 +9025,7 @@ On Error GoTo Errhandler
         Call .incomingData.CopyBuffer(buffer)
     End With
 
-Errhandler:
+ErrHandler:
     Dim error As Long
     error = Err.Number
 On Error GoTo 0
@@ -9086,7 +9087,7 @@ Private Sub HandleMakeDumb(ByVal UserIndex As Integer)
         Exit Sub
     End If
     
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex)
         'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet...
         Dim buffer As New clsByteQueue
@@ -9114,7 +9115,7 @@ On Error GoTo Errhandler
         Call .incomingData.CopyBuffer(buffer)
     End With
 
-Errhandler:
+ErrHandler:
     Dim error As Long
     error = Err.Number
 On Error GoTo 0
@@ -9142,7 +9143,7 @@ Private Sub HandleMakeDumbNoMore(ByVal UserIndex As Integer)
         Exit Sub
     End If
     
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex)
         'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet...
         Dim buffer As New clsByteQueue
@@ -9171,7 +9172,7 @@ On Error GoTo Errhandler
         Call .incomingData.CopyBuffer(buffer)
     End With
 
-Errhandler:
+ErrHandler:
     Dim error As Long
     error = Err.Number
 On Error GoTo 0
@@ -9220,7 +9221,7 @@ Private Sub HandleCouncilKick(ByVal UserIndex As Integer)
         Exit Sub
     End If
     
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex)
         'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet...
         Dim buffer As New clsByteQueue
@@ -9269,7 +9270,7 @@ On Error GoTo Errhandler
         Call .incomingData.CopyBuffer(buffer)
     End With
 
-Errhandler:
+ErrHandler:
     Dim error As Long
     error = Err.Number
 On Error GoTo 0
@@ -9420,7 +9421,7 @@ Private Sub HandleBanIP(ByVal UserIndex As Integer)
         Exit Sub
     End If
     
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex)
         'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet...
         Dim buffer As New clsByteQueue
@@ -9477,7 +9478,7 @@ On Error GoTo Errhandler
         Call .incomingData.CopyBuffer(buffer)
     End With
 
-Errhandler:
+ErrHandler:
     Dim error As Long
     error = Err.Number
 On Error GoTo 0
@@ -9622,7 +9623,7 @@ Private Sub HandleChaosLegionKick(ByVal UserIndex As Integer)
         Exit Sub
     End If
     
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex)
         'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet...
         Dim buffer As New clsByteQueue
@@ -9669,7 +9670,7 @@ On Error GoTo Errhandler
         Call .incomingData.CopyBuffer(buffer)
     End With
 
-Errhandler:
+ErrHandler:
     Dim error As Long
     error = Err.Number
 On Error GoTo 0
@@ -9697,7 +9698,7 @@ Private Sub HandleRoyalArmyKick(ByVal UserIndex As Integer)
         Exit Sub
     End If
     
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex)
         'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet...
         Dim buffer As New clsByteQueue
@@ -9744,7 +9745,7 @@ On Error GoTo Errhandler
         Call .incomingData.CopyBuffer(buffer)
     End With
 
-Errhandler:
+ErrHandler:
     Dim error As Long
     error = Err.Number
 On Error GoTo 0
@@ -9832,7 +9833,7 @@ Private Sub HandleRemovePunishment(ByVal UserIndex As Integer)
         Exit Sub
     End If
     
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex)
         'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet...
         Dim buffer As New clsByteQueue
@@ -9876,7 +9877,7 @@ On Error GoTo Errhandler
         Call .incomingData.CopyBuffer(buffer)
     End With
 
-Errhandler:
+ErrHandler:
     Dim error As Long
     error = Err.Number
 On Error GoTo 0
@@ -9988,7 +9989,7 @@ Private Sub HandleLastIP(ByVal UserIndex As Integer)
         Exit Sub
     End If
     
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex)
         'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet...
         Dim buffer As New clsByteQueue
@@ -10046,7 +10047,7 @@ On Error GoTo Errhandler
         Call .incomingData.CopyBuffer(buffer)
     End With
 
-Errhandler:
+ErrHandler:
     Dim error As Long
     error = Err.Number
 On Error GoTo 0
@@ -10126,7 +10127,7 @@ Public Sub HandleCheckSlot(ByVal UserIndex As Integer)
         Exit Sub
     End If
 
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex)
         'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet...
         Dim buffer As New clsByteQueue
@@ -10167,7 +10168,7 @@ On Error GoTo Errhandler
         Call .incomingData.CopyBuffer(buffer)
     End With
     
-Errhandler:
+ErrHandler:
     Dim error As Long
     error = Err.Number
 On Error GoTo 0
@@ -10539,7 +10540,7 @@ Public Sub HandleChangeMapInfoRestricted(ByVal UserIndex As Integer)
         Exit Sub
     End If
     
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     Dim tStr As String
     
     With UserList(UserIndex)
@@ -10567,7 +10568,7 @@ On Error GoTo Errhandler
         Call .incomingData.CopyBuffer(buffer)
     End With
 
-Errhandler:
+ErrHandler:
     Dim error As Long
     error = Err.Number
 On Error GoTo 0
@@ -10628,7 +10629,7 @@ Public Sub HandleChangeMapInfoLand(ByVal UserIndex As Integer)
         Exit Sub
     End If
     
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     Dim tStr As String
     
     With UserList(UserIndex)
@@ -10657,7 +10658,7 @@ On Error GoTo Errhandler
         Call .incomingData.CopyBuffer(buffer)
     End With
 
-Errhandler:
+ErrHandler:
     Dim error As Long
     error = Err.Number
 On Error GoTo 0
@@ -10685,7 +10686,7 @@ Public Sub HandleChangeMapInfoZone(ByVal UserIndex As Integer)
         Exit Sub
     End If
     
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     Dim tStr As String
     
     With UserList(UserIndex)
@@ -10714,7 +10715,7 @@ On Error GoTo Errhandler
         Call .incomingData.CopyBuffer(buffer)
     End With
 
-Errhandler:
+ErrHandler:
     Dim error As Long
     error = Err.Number
 On Error GoTo 0
@@ -10829,7 +10830,7 @@ Public Sub HandleAlterName(ByVal UserIndex As Integer)
         Exit Sub
     End If
     
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex)
         'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet...
         Dim buffer As New clsByteQueue
@@ -10893,7 +10894,7 @@ On Error GoTo Errhandler
         Call .incomingData.CopyBuffer(buffer)
     End With
 
-Errhandler:
+ErrHandler:
     Dim error As Long
     error = Err.Number
 On Error GoTo 0
@@ -10921,7 +10922,7 @@ Public Sub HandleAlterMail(ByVal UserIndex As Integer)
         Exit Sub
     End If
     
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex)
         'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet...
         Dim buffer As New clsByteQueue
@@ -10955,7 +10956,7 @@ On Error GoTo Errhandler
         Call .incomingData.CopyBuffer(buffer)
     End With
 
-Errhandler:
+ErrHandler:
     Dim error As Long
     error = Err.Number
 On Error GoTo 0
@@ -10983,7 +10984,7 @@ Public Sub HandleAlterPassword(ByVal UserIndex As Integer)
         Exit Sub
     End If
     
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex)
         'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet...
         Dim buffer As New clsByteQueue
@@ -11020,7 +11021,7 @@ On Error GoTo Errhandler
         Call .incomingData.CopyBuffer(buffer)
     End With
 
-Errhandler:
+ErrHandler:
     Dim error As Long
     error = Err.Number
 On Error GoTo 0
@@ -11294,7 +11295,7 @@ Public Sub HandleTurnCriminal(ByVal UserIndex As Integer)
         Exit Sub
     End If
     
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex)
         'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet...
         Dim buffer As New clsByteQueue
@@ -11320,7 +11321,7 @@ On Error GoTo Errhandler
         Call .incomingData.CopyBuffer(buffer)
     End With
 
-Errhandler:
+ErrHandler:
     Dim error As Long
     error = Err.Number
 On Error GoTo 0
@@ -11348,7 +11349,7 @@ Public Sub HandleResetFactions(ByVal UserIndex As Integer)
         Exit Sub
     End If
     
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex)
         'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet...
         Dim buffer As New clsByteQueue
@@ -11399,7 +11400,7 @@ On Error GoTo Errhandler
         Call .incomingData.CopyBuffer(buffer)
     End With
 
-Errhandler:
+ErrHandler:
     Dim error As Long
     error = Err.Number
 On Error GoTo 0
@@ -11427,7 +11428,7 @@ Public Sub HandleRequestCharMail(ByVal UserIndex As Integer)
         Exit Sub
     End If
     
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex)
         'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet...
         Dim buffer As New clsByteQueue
@@ -11453,7 +11454,7 @@ On Error GoTo Errhandler
         Call .incomingData.CopyBuffer(buffer)
     End With
 
-Errhandler:
+ErrHandler:
     Dim error As Long
     error = Err.Number
 On Error GoTo 0
@@ -11481,7 +11482,7 @@ Public Sub HandleSystemMessage(ByVal UserIndex As Integer)
         Exit Sub
     End If
     
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex)
         'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet...
         Dim buffer As New clsByteQueue
@@ -11503,7 +11504,7 @@ On Error GoTo Errhandler
         Call .incomingData.CopyBuffer(buffer)
     End With
 
-Errhandler:
+ErrHandler:
     Dim error As Long
     error = Err.Number
 On Error GoTo 0
@@ -11534,7 +11535,7 @@ Public Sub HandleSetMOTD(ByVal UserIndex As Integer)
         Exit Sub
     End If
     
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex)
         'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet...
         Dim buffer As New clsByteQueue
@@ -11572,7 +11573,7 @@ On Error GoTo Errhandler
         Call .incomingData.CopyBuffer(buffer)
     End With
 
-Errhandler:
+ErrHandler:
     Dim error As Long
     error = Err.Number
 On Error GoTo 0
@@ -11655,7 +11656,7 @@ Public Sub HandleSetIniVar(ByVal UserIndex As Integer)
         Exit Sub
     End If
 
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
 
     With UserList(UserIndex)
         'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet...
@@ -11700,7 +11701,7 @@ On Error GoTo Errhandler
         Call .incomingData.CopyBuffer(buffer)
     End With
 
-Errhandler:
+ErrHandler:
     Dim error As Long
 
     error = Err.Number
@@ -11728,7 +11729,7 @@ Private Sub HandleWarpToMap(ByVal UserIndex As Integer)
         Exit Sub
     End If
     
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex)
         'Remove packet ID
         Call .incomingData.ReadByte
@@ -11744,7 +11745,7 @@ On Error GoTo Errhandler
         Call LogGM(.Name, "Transportó a " & UserList(UserIndex).Name & " hacia " & "Mapa" & Map & " X:" & 50 & " Y:" & 50)
     End With
     
-Errhandler:
+ErrHandler:
     Dim error As Long
     error = Err.Number
 On Error GoTo 0
@@ -11767,7 +11768,7 @@ Private Sub HandleStaffMessage(ByVal UserIndex As Integer)
         Exit Sub
     End If
     
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex)
         'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet...
         Dim buffer As New clsByteQueue
@@ -11791,7 +11792,7 @@ On Error GoTo Errhandler
         Call .incomingData.CopyBuffer(buffer)
     End With
 
-Errhandler:
+ErrHandler:
     Dim error As Long
     error = Err.Number
 On Error GoTo 0
@@ -11817,7 +11818,7 @@ Private Sub HandleSearchObjs(ByVal UserIndex As Integer)
         Exit Sub
     End If
     
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex)
         'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet...
         Dim buffer As New clsByteQueue
@@ -11855,7 +11856,7 @@ On Error GoTo Errhandler
         Call .incomingData.CopyBuffer(buffer)
     End With
 
-Errhandler:
+ErrHandler:
     Dim error As Long
     error = Err.Number
 On Error GoTo 0
@@ -11879,11 +11880,11 @@ Public Sub WriteLoggedMessage(ByVal UserIndex As Integer)
 'Last Modification: 05/17/06
 'Writes the "Logged" message to the given user's outgoing data buffer
 '***************************************************
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     Call UserList(UserIndex).outgoingData.WriteByte(ServerPacketID.Logged)
 Exit Sub
 
-Errhandler:
+ErrHandler:
     If Err.Number = UserList(UserIndex).outgoingData.NotEnoughSpaceErrCode Then
         Call FlushBuffer(UserIndex)
         Resume
@@ -11902,11 +11903,11 @@ Public Sub WriteRemoveAllDialogs(ByVal UserIndex As Integer)
 'Last Modification: 05/17/06
 'Writes the "RemoveDialogs" message to the given user's outgoing data buffer
 '***************************************************
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     Call UserList(UserIndex).outgoingData.WriteByte(ServerPacketID.RemoveDialogs)
 Exit Sub
 
-Errhandler:
+ErrHandler:
     If Err.Number = UserList(UserIndex).outgoingData.NotEnoughSpaceErrCode Then
         Call FlushBuffer(UserIndex)
         Resume
@@ -11926,11 +11927,11 @@ Public Sub WriteRemoveCharDialog(ByVal UserIndex As Integer, ByVal CharIndex As 
 'Last Modification: 05/17/06
 'Writes the "RemoveCharDialog" message to the given user's outgoing data buffer
 '***************************************************
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     Call UserList(UserIndex).outgoingData.WriteASCIIStringFixed(PrepareMessageRemoveCharDialog(CharIndex))
 Exit Sub
 
-Errhandler:
+ErrHandler:
     If Err.Number = UserList(UserIndex).outgoingData.NotEnoughSpaceErrCode Then
         Call FlushBuffer(UserIndex)
         Resume
@@ -11949,11 +11950,11 @@ Public Sub WriteNavigateToggle(ByVal UserIndex As Integer)
 'Last Modification: 05/17/06
 'Writes the "NavigateToggle" message to the given user's outgoing data buffer
 '***************************************************
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     Call UserList(UserIndex).outgoingData.WriteByte(ServerPacketID.NavigateToggle)
 Exit Sub
 
-Errhandler:
+ErrHandler:
     If Err.Number = UserList(UserIndex).outgoingData.NotEnoughSpaceErrCode Then
         Call FlushBuffer(UserIndex)
         Resume
@@ -11972,11 +11973,11 @@ Public Sub WriteDisconnect(ByVal UserIndex As Integer)
 'Last Modification: 05/17/06
 'Writes the "Disconnect" message to the given user's outgoing data buffer
 '***************************************************
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     Call UserList(UserIndex).outgoingData.WriteByte(ServerPacketID.Disconnect)
 Exit Sub
 
-Errhandler:
+ErrHandler:
     If Err.Number = UserList(UserIndex).outgoingData.NotEnoughSpaceErrCode Then
         Call FlushBuffer(UserIndex)
         Resume
@@ -11995,11 +11996,11 @@ Public Sub WriteUserOfferConfirm(ByVal UserIndex As Integer)
 'Last Modification: 14/12/2009
 'Writes the "UserOfferConfirm" message to the given user's outgoing data buffer
 '***************************************************
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     Call UserList(UserIndex).outgoingData.WriteByte(ServerPacketID.UserOfferConfirm)
 Exit Sub
 
-Errhandler:
+ErrHandler:
     If Err.Number = UserList(UserIndex).outgoingData.NotEnoughSpaceErrCode Then
         Call FlushBuffer(UserIndex)
         Resume
@@ -12019,11 +12020,11 @@ Public Sub WriteCommerceEnd(ByVal UserIndex As Integer)
 'Last Modification: 05/17/06
 'Writes the "CommerceEnd" message to the given user's outgoing data buffer
 '***************************************************
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     Call UserList(UserIndex).outgoingData.WriteByte(ServerPacketID.CommerceEnd)
 Exit Sub
 
-Errhandler:
+ErrHandler:
     If Err.Number = UserList(UserIndex).outgoingData.NotEnoughSpaceErrCode Then
         Call FlushBuffer(UserIndex)
         Resume
@@ -12042,11 +12043,11 @@ Public Sub WriteBankEnd(ByVal UserIndex As Integer)
 'Last Modification: 05/17/06
 'Writes the "BankEnd" message to the given user's outgoing data buffer
 '***************************************************
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     Call UserList(UserIndex).outgoingData.WriteByte(ServerPacketID.BankEnd)
 Exit Sub
 
-Errhandler:
+ErrHandler:
     If Err.Number = UserList(UserIndex).outgoingData.NotEnoughSpaceErrCode Then
         Call FlushBuffer(UserIndex)
         Resume
@@ -12065,11 +12066,11 @@ Public Sub WriteCommerceInit(ByVal UserIndex As Integer)
 'Last Modification: 05/17/06
 'Writes the "CommerceInit" message to the given user's outgoing data buffer
 '***************************************************
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     Call UserList(UserIndex).outgoingData.WriteByte(ServerPacketID.CommerceInit)
 Exit Sub
 
-Errhandler:
+ErrHandler:
     If Err.Number = UserList(UserIndex).outgoingData.NotEnoughSpaceErrCode Then
         Call FlushBuffer(UserIndex)
         Resume
@@ -12088,12 +12089,12 @@ Public Sub WriteBankInit(ByVal UserIndex As Integer)
 'Last Modification: 05/17/06
 'Writes the "BankInit" message to the given user's outgoing data buffer
 '***************************************************
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     Call UserList(UserIndex).outgoingData.WriteByte(ServerPacketID.BankInit)
     Call UserList(UserIndex).outgoingData.WriteLong(UserList(UserIndex).Stats.Banco)
 Exit Sub
 
-Errhandler:
+ErrHandler:
     If Err.Number = UserList(UserIndex).outgoingData.NotEnoughSpaceErrCode Then
         Call FlushBuffer(UserIndex)
         Resume
@@ -12112,12 +12113,12 @@ Public Sub WriteUserCommerceInit(ByVal UserIndex As Integer)
 'Last Modification: 05/17/06
 'Writes the "UserCommerceInit" message to the given user's outgoing data buffer
 '***************************************************
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     Call UserList(UserIndex).outgoingData.WriteByte(ServerPacketID.UserCommerceInit)
     Call UserList(UserIndex).outgoingData.WriteASCIIString(UserList(UserIndex).ComUsu.DestNick)
 Exit Sub
 
-Errhandler:
+ErrHandler:
     If Err.Number = UserList(UserIndex).outgoingData.NotEnoughSpaceErrCode Then
         Call FlushBuffer(UserIndex)
         Resume
@@ -12136,11 +12137,11 @@ Public Sub WriteUserCommerceEnd(ByVal UserIndex As Integer)
 'Last Modification: 05/17/06
 'Writes the "UserCommerceEnd" message to the given user's outgoing data buffer
 '***************************************************
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     Call UserList(UserIndex).outgoingData.WriteByte(ServerPacketID.UserCommerceEnd)
 Exit Sub
 
-Errhandler:
+ErrHandler:
     If Err.Number = UserList(UserIndex).outgoingData.NotEnoughSpaceErrCode Then
         Call FlushBuffer(UserIndex)
         Resume
@@ -12159,11 +12160,11 @@ Public Sub WriteShowBlacksmithForm(ByVal UserIndex As Integer)
 'Last Modification: 05/17/06
 'Writes the "ShowBlacksmithForm" message to the given user's outgoing data buffer
 '***************************************************
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     Call UserList(UserIndex).outgoingData.WriteByte(ServerPacketID.ShowBlacksmithForm)
 Exit Sub
 
-Errhandler:
+ErrHandler:
     If Err.Number = UserList(UserIndex).outgoingData.NotEnoughSpaceErrCode Then
         Call FlushBuffer(UserIndex)
         Resume
@@ -12182,11 +12183,11 @@ Public Sub WriteShowCarpenterForm(ByVal UserIndex As Integer)
 'Last Modification: 05/17/06
 'Writes the "ShowCarpenterForm" message to the given user's outgoing data buffer
 '***************************************************
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     Call UserList(UserIndex).outgoingData.WriteByte(ServerPacketID.ShowCarpenterForm)
 Exit Sub
 
-Errhandler:
+ErrHandler:
     If Err.Number = UserList(UserIndex).outgoingData.NotEnoughSpaceErrCode Then
         Call FlushBuffer(UserIndex)
         Resume
@@ -12205,14 +12206,14 @@ Public Sub WriteUpdateSta(ByVal UserIndex As Integer)
 'Last Modification: 05/17/06
 'Writes the "UpdateMana" message to the given user's outgoing data buffer
 '***************************************************
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex).outgoingData
         Call .WriteByte(ServerPacketID.UpdateSta)
         Call .WriteInteger(UserList(UserIndex).Stats.MinSta)
     End With
 Exit Sub
 
-Errhandler:
+ErrHandler:
     If Err.Number = UserList(UserIndex).outgoingData.NotEnoughSpaceErrCode Then
         Call FlushBuffer(UserIndex)
         Resume
@@ -12231,14 +12232,14 @@ Public Sub WriteUpdateMana(ByVal UserIndex As Integer)
 'Last Modification: 05/17/06
 'Writes the "UpdateMana" message to the given user's outgoing data buffer
 '***************************************************
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex).outgoingData
         Call .WriteByte(ServerPacketID.UpdateMana)
         Call .WriteInteger(UserList(UserIndex).Stats.MinMAN)
     End With
 Exit Sub
 
-Errhandler:
+ErrHandler:
     If Err.Number = UserList(UserIndex).outgoingData.NotEnoughSpaceErrCode Then
         Call FlushBuffer(UserIndex)
         Resume
@@ -12257,14 +12258,14 @@ Public Sub WriteUpdateHP(ByVal UserIndex As Integer)
 'Last Modification: 05/17/06
 'Writes the "UpdateMana" message to the given user's outgoing data buffer
 '***************************************************
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex).outgoingData
         Call .WriteByte(ServerPacketID.UpdateHP)
         Call .WriteInteger(UserList(UserIndex).Stats.MinHp)
     End With
 Exit Sub
 
-Errhandler:
+ErrHandler:
     If Err.Number = UserList(UserIndex).outgoingData.NotEnoughSpaceErrCode Then
         Call FlushBuffer(UserIndex)
         Resume
@@ -12283,14 +12284,14 @@ Public Sub WriteUpdateGold(ByVal UserIndex As Integer)
 'Last Modification: 05/17/06
 'Writes the "UpdateGold" message to the given user's outgoing data buffer
 '***************************************************
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex).outgoingData
         Call .WriteByte(ServerPacketID.UpdateGold)
         Call .WriteLong(UserList(UserIndex).Stats.GLD)
     End With
 Exit Sub
 
-Errhandler:
+ErrHandler:
     If Err.Number = UserList(UserIndex).outgoingData.NotEnoughSpaceErrCode Then
         Call FlushBuffer(UserIndex)
         Resume
@@ -12309,14 +12310,14 @@ Public Sub WriteUpdateBankGold(ByVal UserIndex As Integer)
 'Last Modification: 14/12/2009
 'Writes the "UpdateBankGold" message to the given user's outgoing data buffer
 '***************************************************
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex).outgoingData
         Call .WriteByte(ServerPacketID.UpdateBankGold)
         Call .WriteLong(UserList(UserIndex).Stats.Banco)
     End With
 Exit Sub
 
-Errhandler:
+ErrHandler:
     If Err.Number = UserList(UserIndex).outgoingData.NotEnoughSpaceErrCode Then
         Call FlushBuffer(UserIndex)
         Resume
@@ -12336,14 +12337,14 @@ Public Sub WriteUpdateExp(ByVal UserIndex As Integer)
 'Last Modification: 05/17/06
 'Writes the "UpdateExp" message to the given user's outgoing data buffer
 '***************************************************
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex).outgoingData
         Call .WriteByte(ServerPacketID.UpdateExp)
         Call .WriteLong(UserList(UserIndex).Stats.Exp)
     End With
 Exit Sub
 
-Errhandler:
+ErrHandler:
     If Err.Number = UserList(UserIndex).outgoingData.NotEnoughSpaceErrCode Then
         Call FlushBuffer(UserIndex)
         Resume
@@ -12362,7 +12363,7 @@ Public Sub WriteUpdateStrenghtAndDexterity(ByVal UserIndex As Integer)
 'Last Modification: 11/26/09
 'Writes the "UpdateStrenghtAndDexterity" message to the given user's outgoing data buffer
 '***************************************************
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex).outgoingData
         Call .WriteByte(ServerPacketID.UpdateStrenghtAndDexterity)
         Call .WriteByte(UserList(UserIndex).Stats.UserAtributos(eAtributos.Fuerza))
@@ -12370,7 +12371,7 @@ On Error GoTo Errhandler
     End With
 Exit Sub
 
-Errhandler:
+ErrHandler:
     If Err.Number = UserList(UserIndex).outgoingData.NotEnoughSpaceErrCode Then
         Call FlushBuffer(UserIndex)
         Resume
@@ -12388,14 +12389,14 @@ Public Sub WriteUpdateDexterity(ByVal UserIndex As Integer)
 'Last Modification: 11/26/09
 'Writes the "UpdateStrenghtAndDexterity" message to the given user's outgoing data buffer
 '***************************************************
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex).outgoingData
         Call .WriteByte(ServerPacketID.UpdateDexterity)
         Call .WriteByte(UserList(UserIndex).Stats.UserAtributos(eAtributos.Agilidad))
     End With
 Exit Sub
 
-Errhandler:
+ErrHandler:
     If Err.Number = UserList(UserIndex).outgoingData.NotEnoughSpaceErrCode Then
         Call FlushBuffer(UserIndex)
         Resume
@@ -12413,14 +12414,14 @@ Public Sub WriteUpdateStrenght(ByVal UserIndex As Integer)
 'Last Modification: 11/26/09
 'Writes the "UpdateStrenghtAndDexterity" message to the given user's outgoing data buffer
 '***************************************************
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex).outgoingData
         Call .WriteByte(ServerPacketID.UpdateStrenght)
         Call .WriteByte(UserList(UserIndex).Stats.UserAtributos(eAtributos.Fuerza))
     End With
 Exit Sub
 
-Errhandler:
+ErrHandler:
     If Err.Number = UserList(UserIndex).outgoingData.NotEnoughSpaceErrCode Then
         Call FlushBuffer(UserIndex)
         Resume
@@ -12441,7 +12442,7 @@ Public Sub WriteChangeMap(ByVal UserIndex As Integer, ByVal Map As Integer, ByVa
 'Last Modification: 05/17/06
 'Writes the "ChangeMap" message to the given user's outgoing data buffer
 '***************************************************
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex).outgoingData
         Call .WriteByte(ServerPacketID.ChangeMap)
         Call .WriteInteger(Map)
@@ -12449,7 +12450,7 @@ On Error GoTo Errhandler
     End With
 Exit Sub
 
-Errhandler:
+ErrHandler:
     If Err.Number = UserList(UserIndex).outgoingData.NotEnoughSpaceErrCode Then
         Call FlushBuffer(UserIndex)
         Resume
@@ -12468,7 +12469,7 @@ Public Sub WritePosUpdate(ByVal UserIndex As Integer)
 'Last Modification: 05/17/06
 'Writes the "PosUpdate" message to the given user's outgoing data buffer
 '***************************************************
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex).outgoingData
         Call .WriteByte(ServerPacketID.PosUpdate)
         Call .WriteByte(UserList(UserIndex).Pos.X)
@@ -12476,7 +12477,7 @@ On Error GoTo Errhandler
     End With
 Exit Sub
 
-Errhandler:
+ErrHandler:
     If Err.Number = UserList(UserIndex).outgoingData.NotEnoughSpaceErrCode Then
         Call FlushBuffer(UserIndex)
         Resume
@@ -12498,11 +12499,11 @@ Public Sub WriteChatOverHead(ByVal UserIndex As Integer, ByVal Chat As String, B
 'Last Modification: 05/17/06
 'Writes the "ChatOverHead" message to the given user's outgoing data buffer
 '***************************************************
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     Call UserList(UserIndex).outgoingData.WriteASCIIStringFixed(PrepareMessageChatOverHead(Chat, CharIndex, color))
 Exit Sub
 
-Errhandler:
+ErrHandler:
     If Err.Number = UserList(UserIndex).outgoingData.NotEnoughSpaceErrCode Then
         Call FlushBuffer(UserIndex)
         Resume
@@ -12523,11 +12524,11 @@ Public Sub WriteConsoleMsg(ByVal UserIndex As Integer, ByVal Chat As String, ByV
 'Last Modification: 05/17/06
 'Writes the "ConsoleMsg" message to the given user's outgoing data buffer
 '***************************************************
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     Call UserList(UserIndex).outgoingData.WriteASCIIStringFixed(PrepareMessageConsoleMsg(Chat, FontIndex))
 Exit Sub
 
-Errhandler:
+ErrHandler:
     If Err.Number = UserList(UserIndex).outgoingData.NotEnoughSpaceErrCode Then
         Call FlushBuffer(UserIndex)
         Resume
@@ -12540,11 +12541,11 @@ Public Sub WriteCommerceChat(ByVal UserIndex As Integer, ByVal Chat As String, B
 'Last Modification: 05/17/06
 'Writes the "ConsoleMsg" message to the given user's outgoing data buffer
 '***************************************************
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     Call UserList(UserIndex).outgoingData.WriteASCIIStringFixed(PrepareCommerceConsoleMsg(Chat, FontIndex))
 Exit Sub
 
-Errhandler:
+ErrHandler:
     If Err.Number = UserList(UserIndex).outgoingData.NotEnoughSpaceErrCode Then
         Call FlushBuffer(UserIndex)
         Resume
@@ -12588,14 +12589,14 @@ Public Sub WriteShowMessageBox(ByVal UserIndex As Integer, ByVal message As Stri
 'Last Modification: 05/17/06
 'Writes the "ShowMessageBox" message to the given user's outgoing data buffer
 '***************************************************
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex).outgoingData
         Call .WriteByte(ServerPacketID.ShowMessageBox)
         Call .WriteASCIIString(message)
     End With
 Exit Sub
 
-Errhandler:
+ErrHandler:
     If Err.Number = UserList(UserIndex).outgoingData.NotEnoughSpaceErrCode Then
         Call FlushBuffer(UserIndex)
         Resume
@@ -12614,14 +12615,14 @@ Public Sub WriteUserIndexInServer(ByVal UserIndex As Integer)
 'Last Modification: 05/17/06
 'Writes the "UserIndexInServer" message to the given user's outgoing data buffer
 '***************************************************
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex).outgoingData
         Call .WriteByte(ServerPacketID.UserIndexInServer)
         Call .WriteInteger(UserIndex)
     End With
 Exit Sub
 
-Errhandler:
+ErrHandler:
     If Err.Number = UserList(UserIndex).outgoingData.NotEnoughSpaceErrCode Then
         Call FlushBuffer(UserIndex)
         Resume
@@ -12640,14 +12641,14 @@ Public Sub WriteUserCharIndexInServer(ByVal UserIndex As Integer)
 'Last Modification: 05/17/06
 'Writes the "UserIndexInServer" message to the given user's outgoing data buffer
 '***************************************************
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex).outgoingData
         Call .WriteByte(ServerPacketID.UserCharIndexInServer)
         Call .WriteInteger(UserList(UserIndex).Char.CharIndex)
     End With
 Exit Sub
 
-Errhandler:
+ErrHandler:
     If Err.Number = UserList(UserIndex).outgoingData.NotEnoughSpaceErrCode Then
         Call FlushBuffer(UserIndex)
         Resume
@@ -12683,12 +12684,12 @@ Public Sub WriteCharacterCreate(ByVal UserIndex As Integer, ByVal body As Intege
 'Last Modification: 05/17/06
 'Writes the "CharacterCreate" message to the given user's outgoing data buffer
 '***************************************************
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     Call UserList(UserIndex).outgoingData.WriteASCIIStringFixed(PrepareMessageCharacterCreate(body, Head, heading, CharIndex, X, Y, weapon, shield, FX, FXLoops, _
                                                             helmet, Name, NickColor, Privileges))
 Exit Sub
 
-Errhandler:
+ErrHandler:
     If Err.Number = UserList(UserIndex).outgoingData.NotEnoughSpaceErrCode Then
         Call FlushBuffer(UserIndex)
         Resume
@@ -12708,11 +12709,11 @@ Public Sub WriteCharacterRemove(ByVal UserIndex As Integer, ByVal CharIndex As I
 'Last Modification: 05/17/06
 'Writes the "CharacterRemove" message to the given user's outgoing data buffer
 '***************************************************
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     Call UserList(UserIndex).outgoingData.WriteASCIIStringFixed(PrepareMessageCharacterRemove(CharIndex))
 Exit Sub
 
-Errhandler:
+ErrHandler:
     If Err.Number = UserList(UserIndex).outgoingData.NotEnoughSpaceErrCode Then
         Call FlushBuffer(UserIndex)
         Resume
@@ -12734,11 +12735,11 @@ Public Sub WriteCharacterMove(ByVal UserIndex As Integer, ByVal CharIndex As Int
 'Last Modification: 05/17/06
 'Writes the "CharacterMove" message to the given user's outgoing data buffer
 '***************************************************
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     Call UserList(UserIndex).outgoingData.WriteASCIIStringFixed(PrepareMessageCharacterMove(CharIndex, X, Y))
 Exit Sub
 
-Errhandler:
+ErrHandler:
     If Err.Number = UserList(UserIndex).outgoingData.NotEnoughSpaceErrCode Then
         Call FlushBuffer(UserIndex)
         Resume
@@ -12751,11 +12752,11 @@ Public Sub WriteForceCharMove(ByVal UserIndex, ByVal Direccion As eHeading)
 'Last Modification: 26/03/2009
 'Writes the "ForceCharMove" message to the given user's outgoing data buffer
 '***************************************************
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     Call UserList(UserIndex).outgoingData.WriteASCIIStringFixed(PrepareMessageForceCharMove(Direccion))
 Exit Sub
 
-Errhandler:
+ErrHandler:
     If Err.Number = UserList(UserIndex).outgoingData.NotEnoughSpaceErrCode Then
         Call FlushBuffer(UserIndex)
         Resume
@@ -12785,11 +12786,11 @@ Public Sub WriteCharacterChange(ByVal UserIndex As Integer, ByVal body As Intege
 'Last Modification: 05/17/06
 'Writes the "CharacterChange" message to the given user's outgoing data buffer
 '***************************************************
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     Call UserList(UserIndex).outgoingData.WriteASCIIStringFixed(PrepareMessageCharacterChange(body, Head, heading, CharIndex, weapon, shield, FX, FXLoops, helmet))
 Exit Sub
 
-Errhandler:
+ErrHandler:
     If Err.Number = UserList(UserIndex).outgoingData.NotEnoughSpaceErrCode Then
         Call FlushBuffer(UserIndex)
         Resume
@@ -12811,11 +12812,11 @@ Public Sub WriteObjectCreate(ByVal UserIndex As Integer, ByVal GrhIndex As Integ
 'Last Modification: 05/17/06
 'Writes the "ObjectCreate" message to the given user's outgoing data buffer
 '***************************************************
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     Call UserList(UserIndex).outgoingData.WriteASCIIStringFixed(PrepareMessageObjectCreate(GrhIndex, X, Y))
 Exit Sub
 
-Errhandler:
+ErrHandler:
     If Err.Number = UserList(UserIndex).outgoingData.NotEnoughSpaceErrCode Then
         Call FlushBuffer(UserIndex)
         Resume
@@ -12836,11 +12837,11 @@ Public Sub WriteObjectDelete(ByVal UserIndex As Integer, ByVal X As Byte, ByVal 
 'Last Modification: 05/17/06
 'Writes the "ObjectDelete" message to the given user's outgoing data buffer
 '***************************************************
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     Call UserList(UserIndex).outgoingData.WriteASCIIStringFixed(PrepareMessageObjectDelete(X, Y))
 Exit Sub
 
-Errhandler:
+ErrHandler:
     If Err.Number = UserList(UserIndex).outgoingData.NotEnoughSpaceErrCode Then
         Call FlushBuffer(UserIndex)
         Resume
@@ -12862,7 +12863,7 @@ Public Sub WriteBlockPosition(ByVal UserIndex As Integer, ByVal X As Byte, ByVal
 'Last Modification: 05/17/06
 'Writes the "BlockPosition" message to the given user's outgoing data buffer
 '***************************************************
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex).outgoingData
         Call .WriteByte(ServerPacketID.BlockPosition)
         Call .WriteByte(X)
@@ -12871,7 +12872,7 @@ On Error GoTo Errhandler
     End With
 Exit Sub
 
-Errhandler:
+ErrHandler:
     If Err.Number = UserList(UserIndex).outgoingData.NotEnoughSpaceErrCode Then
         Call FlushBuffer(UserIndex)
         Resume
@@ -12892,11 +12893,11 @@ Public Sub WritePlayMidi(ByVal UserIndex As Integer, ByVal midi As Byte, Optiona
 'Last Modification: 05/17/06
 'Writes the "PlayMidi" message to the given user's outgoing data buffer
 '***************************************************
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     Call UserList(UserIndex).outgoingData.WriteASCIIStringFixed(PrepareMessagePlayMidi(midi, loops))
 Exit Sub
 
-Errhandler:
+ErrHandler:
     If Err.Number = UserList(UserIndex).outgoingData.NotEnoughSpaceErrCode Then
         Call FlushBuffer(UserIndex)
         Resume
@@ -12919,11 +12920,11 @@ Public Sub WritePlayWave(ByVal UserIndex As Integer, ByVal wave As Byte, ByVal X
 'Last Modified by: Rapsodius
 'Added X and Y positions for 3D Sounds
 '***************************************************
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     Call UserList(UserIndex).outgoingData.WriteASCIIStringFixed(PrepareMessagePlayWave(wave, X, Y))
 Exit Sub
 
-Errhandler:
+ErrHandler:
     If Err.Number = UserList(UserIndex).outgoingData.NotEnoughSpaceErrCode Then
         Call FlushBuffer(UserIndex)
         Resume
@@ -12943,7 +12944,7 @@ Public Sub WriteAreaChanged(ByVal UserIndex As Integer)
 'Last Modification: 05/17/06
 'Writes the "AreaChanged" message to the given user's outgoing data buffer
 '***************************************************
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex).outgoingData
         Call .WriteByte(ServerPacketID.AreaChanged)
         Call .WriteByte(UserList(UserIndex).Pos.X)
@@ -12951,7 +12952,7 @@ On Error GoTo Errhandler
     End With
 Exit Sub
 
-Errhandler:
+ErrHandler:
     If Err.Number = UserList(UserIndex).outgoingData.NotEnoughSpaceErrCode Then
         Call FlushBuffer(UserIndex)
         Resume
@@ -12970,11 +12971,11 @@ Public Sub WritePauseToggle(ByVal UserIndex As Integer)
 'Last Modification: 05/17/06
 'Writes the "PauseToggle" message to the given user's outgoing data buffer
 '***************************************************
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     Call UserList(UserIndex).outgoingData.WriteASCIIStringFixed(PrepareMessagePauseToggle())
 Exit Sub
 
-Errhandler:
+ErrHandler:
     If Err.Number = UserList(UserIndex).outgoingData.NotEnoughSpaceErrCode Then
         Call FlushBuffer(UserIndex)
         Resume
@@ -12993,11 +12994,11 @@ Public Sub WriteRainToggle(ByVal UserIndex As Integer)
 'Last Modification: 05/17/06
 'Writes the "RainToggle" message to the given user's outgoing data buffer
 '***************************************************
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     Call UserList(UserIndex).outgoingData.WriteASCIIStringFixed(PrepareMessageRainToggle())
 Exit Sub
 
-Errhandler:
+ErrHandler:
     If Err.Number = UserList(UserIndex).outgoingData.NotEnoughSpaceErrCode Then
         Call FlushBuffer(UserIndex)
         Resume
@@ -13019,11 +13020,11 @@ Public Sub WriteCreateFX(ByVal UserIndex As Integer, ByVal CharIndex As Integer,
 'Last Modification: 05/17/06
 'Writes the "CreateFX" message to the given user's outgoing data buffer
 '***************************************************
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     Call UserList(UserIndex).outgoingData.WriteASCIIStringFixed(PrepareMessageCreateFX(CharIndex, FX, FXLoops))
 Exit Sub
 
-Errhandler:
+ErrHandler:
     If Err.Number = UserList(UserIndex).outgoingData.NotEnoughSpaceErrCode Then
         Call FlushBuffer(UserIndex)
         Resume
@@ -13042,7 +13043,7 @@ Public Sub WriteUpdateUserStats(ByVal UserIndex As Integer)
 'Last Modification: 05/17/06
 'Writes the "UpdateUserStats" message to the given user's outgoing data buffer
 '***************************************************
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex).outgoingData
         Call .WriteByte(ServerPacketID.UpdateUserStats)
         Call .WriteInteger(UserList(UserIndex).Stats.MaxHp)
@@ -13058,7 +13059,7 @@ On Error GoTo Errhandler
     End With
 Exit Sub
 
-Errhandler:
+ErrHandler:
     If Err.Number = UserList(UserIndex).outgoingData.NotEnoughSpaceErrCode Then
         Call FlushBuffer(UserIndex)
         Resume
@@ -13078,14 +13079,14 @@ Public Sub WriteWorkRequestTarget(ByVal UserIndex As Integer, ByVal Skill As eSk
 'Last Modification: 05/17/06
 'Writes the "WorkRequestTarget" message to the given user's outgoing data buffer
 '***************************************************
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex).outgoingData
         Call .WriteByte(ServerPacketID.WorkRequestTarget)
         Call .WriteByte(Skill)
     End With
 Exit Sub
 
-Errhandler:
+ErrHandler:
     If Err.Number = UserList(UserIndex).outgoingData.NotEnoughSpaceErrCode Then
         Call FlushBuffer(UserIndex)
         Resume
@@ -13106,7 +13107,7 @@ Public Sub WriteChangeInventorySlot(ByVal UserIndex As Integer, ByVal Slot As By
 'Writes the "ChangeInventorySlot" message to the given user's outgoing data buffer
 '3/12/09: Budi - Ahora se envia MaxDef y MinDef en lugar de Def
 '***************************************************
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex).outgoingData
         Call .WriteByte(ServerPacketID.ChangeInventorySlot)
         Call .WriteByte(Slot)
@@ -13134,7 +13135,7 @@ On Error GoTo Errhandler
     End With
 Exit Sub
 
-Errhandler:
+ErrHandler:
     If Err.Number = UserList(UserIndex).outgoingData.NotEnoughSpaceErrCode Then
         Call FlushBuffer(UserIndex)
         Resume
@@ -13168,7 +13169,7 @@ Public Sub WriteChangeBankSlot(ByVal UserIndex As Integer, ByVal Slot As Byte)
 'Writes the "ChangeBankSlot" message to the given user's outgoing data buffer
 '12/03/09: Budi - Ahora se envia MaxDef y MinDef en lugar de sólo Def
 '***************************************************
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex).outgoingData
         Call .WriteByte(ServerPacketID.ChangeBankSlot)
         Call .WriteByte(Slot)
@@ -13196,7 +13197,7 @@ On Error GoTo Errhandler
     End With
 Exit Sub
 
-Errhandler:
+ErrHandler:
     If Err.Number = UserList(UserIndex).outgoingData.NotEnoughSpaceErrCode Then
         Call FlushBuffer(UserIndex)
         Resume
@@ -13216,7 +13217,7 @@ Public Sub WriteChangeSpellSlot(ByVal UserIndex As Integer, ByVal Slot As Intege
 'Last Modification: 05/17/06
 'Writes the "ChangeSpellSlot" message to the given user's outgoing data buffer
 '***************************************************
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex).outgoingData
         Call .WriteByte(ServerPacketID.ChangeSpellSlot)
         Call .WriteByte(Slot)
@@ -13230,7 +13231,7 @@ On Error GoTo Errhandler
     End With
 Exit Sub
 
-Errhandler:
+ErrHandler:
     If Err.Number = UserList(UserIndex).outgoingData.NotEnoughSpaceErrCode Then
         Call FlushBuffer(UserIndex)
         Resume
@@ -13249,7 +13250,7 @@ Public Sub WriteAttributes(ByVal UserIndex As Integer)
 'Last Modification: 05/17/06
 'Writes the "Atributes" message to the given user's outgoing data buffer
 '***************************************************
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex).outgoingData
         Call .WriteByte(ServerPacketID.Atributes)
         Call .WriteByte(UserList(UserIndex).Stats.UserAtributos(eAtributos.Fuerza))
@@ -13260,7 +13261,7 @@ On Error GoTo Errhandler
     End With
 Exit Sub
 
-Errhandler:
+ErrHandler:
     If Err.Number = UserList(UserIndex).outgoingData.NotEnoughSpaceErrCode Then
         Call FlushBuffer(UserIndex)
         Resume
@@ -13279,7 +13280,7 @@ Public Sub WriteBlacksmithWeapons(ByVal UserIndex As Integer)
 'Last Modification: 04/15/2008 (NicoNZ) Habia un error al fijarse los skills del personaje
 'Writes the "BlacksmithWeapons" message to the given user's outgoing data buffer
 '***************************************************
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     Dim i As Long
     Dim obj As ObjData
     Dim validIndexes() As Integer
@@ -13314,7 +13315,7 @@ On Error GoTo Errhandler
     End With
 Exit Sub
 
-Errhandler:
+ErrHandler:
     If Err.Number = UserList(UserIndex).outgoingData.NotEnoughSpaceErrCode Then
         Call FlushBuffer(UserIndex)
         Resume
@@ -13333,7 +13334,7 @@ Public Sub WriteBlacksmithArmors(ByVal UserIndex As Integer)
 'Last Modification: 04/15/2008 (NicoNZ) Habia un error al fijarse los skills del personaje
 'Writes the "BlacksmithArmors" message to the given user's outgoing data buffer
 '***************************************************
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     Dim i As Long
     Dim obj As ObjData
     Dim validIndexes() As Integer
@@ -13368,7 +13369,7 @@ On Error GoTo Errhandler
     End With
 Exit Sub
 
-Errhandler:
+ErrHandler:
     If Err.Number = UserList(UserIndex).outgoingData.NotEnoughSpaceErrCode Then
         Call FlushBuffer(UserIndex)
         Resume
@@ -13387,7 +13388,7 @@ Public Sub WriteCarpenterObjects(ByVal UserIndex As Integer)
 'Last Modification: 05/17/06
 'Writes the "CarpenterObjects" message to the given user's outgoing data buffer
 '***************************************************
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     Dim i As Long
     Dim obj As ObjData
     Dim validIndexes() As Integer
@@ -13421,7 +13422,7 @@ On Error GoTo Errhandler
     End With
 Exit Sub
 
-Errhandler:
+ErrHandler:
     If Err.Number = UserList(UserIndex).outgoingData.NotEnoughSpaceErrCode Then
         Call FlushBuffer(UserIndex)
         Resume
@@ -13440,11 +13441,11 @@ Public Sub WriteRestOK(ByVal UserIndex As Integer)
 'Last Modification: 05/17/06
 'Writes the "RestOK" message to the given user's outgoing data buffer
 '***************************************************
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     Call UserList(UserIndex).outgoingData.WriteByte(ServerPacketID.RestOK)
 Exit Sub
 
-Errhandler:
+ErrHandler:
     If Err.Number = UserList(UserIndex).outgoingData.NotEnoughSpaceErrCode Then
         Call FlushBuffer(UserIndex)
         Resume
@@ -13464,11 +13465,11 @@ Public Sub WriteErrorMsg(ByVal UserIndex As Integer, ByVal message As String)
 'Last Modification: 05/17/06
 'Writes the "ErrorMsg" message to the given user's outgoing data buffer
 '***************************************************
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     Call UserList(UserIndex).outgoingData.WriteASCIIStringFixed(PrepareMessageErrorMsg(message))
 Exit Sub
 
-Errhandler:
+ErrHandler:
     If Err.Number = UserList(UserIndex).outgoingData.NotEnoughSpaceErrCode Then
         Call FlushBuffer(UserIndex)
         Resume
@@ -13487,11 +13488,11 @@ Public Sub WriteBlind(ByVal UserIndex As Integer)
 'Last Modification: 05/17/06
 'Writes the "Blind" message to the given user's outgoing data buffer
 '***************************************************
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     Call UserList(UserIndex).outgoingData.WriteByte(ServerPacketID.Blind)
 Exit Sub
 
-Errhandler:
+ErrHandler:
     If Err.Number = UserList(UserIndex).outgoingData.NotEnoughSpaceErrCode Then
         Call FlushBuffer(UserIndex)
         Resume
@@ -13510,11 +13511,11 @@ Public Sub WriteDumb(ByVal UserIndex As Integer)
 'Last Modification: 05/17/06
 'Writes the "Dumb" message to the given user's outgoing data buffer
 '***************************************************
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     Call UserList(UserIndex).outgoingData.WriteByte(ServerPacketID.Dumb)
 Exit Sub
 
-Errhandler:
+ErrHandler:
     If Err.Number = UserList(UserIndex).outgoingData.NotEnoughSpaceErrCode Then
         Call FlushBuffer(UserIndex)
         Resume
@@ -13534,7 +13535,7 @@ Public Sub WriteShowSignal(ByVal UserIndex As Integer, ByVal OBJIndex As Integer
 'Last Modification: 05/17/06
 'Writes the "ShowSignal" message to the given user's outgoing data buffer
 '***************************************************
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex).outgoingData
         Call .WriteByte(ServerPacketID.ShowSignal)
         Call .WriteASCIIString(ObjData(OBJIndex).texto)
@@ -13542,7 +13543,7 @@ On Error GoTo Errhandler
     End With
 Exit Sub
 
-Errhandler:
+ErrHandler:
     If Err.Number = UserList(UserIndex).outgoingData.NotEnoughSpaceErrCode Then
         Call FlushBuffer(UserIndex)
         Resume
@@ -13566,7 +13567,7 @@ Public Sub WriteChangeNPCInventorySlot(ByVal UserIndex As Integer, ByVal Slot As
 'Writes the "ChangeNPCInventorySlot" message to the given user's outgoing data buffer
 '12/03/09: Budi - Ahora se envia MaxDef y MinDef en lugar de sólo Def
 '***************************************************
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     Dim ObjInfo As ObjData
     
     If obj.OBJIndex >= LBound(ObjData()) And obj.OBJIndex <= UBound(ObjData()) Then
@@ -13589,7 +13590,7 @@ On Error GoTo Errhandler
     End With
 Exit Sub
 
-Errhandler:
+ErrHandler:
     If Err.Number = UserList(UserIndex).outgoingData.NotEnoughSpaceErrCode Then
         Call FlushBuffer(UserIndex)
         Resume
@@ -13608,7 +13609,7 @@ Public Sub WriteUpdateHungerAndThirst(ByVal UserIndex As Integer)
 'Last Modification: 05/17/06
 'Writes the "UpdateHungerAndThirst" message to the given user's outgoing data buffer
 '***************************************************
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex).outgoingData
         Call .WriteByte(ServerPacketID.UpdateHungerAndThirst)
         Call .WriteByte(UserList(UserIndex).Stats.MaxAGU)
@@ -13618,7 +13619,7 @@ On Error GoTo Errhandler
     End With
 Exit Sub
 
-Errhandler:
+ErrHandler:
     If Err.Number = UserList(UserIndex).outgoingData.NotEnoughSpaceErrCode Then
         Call FlushBuffer(UserIndex)
         Resume
@@ -13637,7 +13638,7 @@ Public Sub WriteFame(ByVal UserIndex As Integer)
 'Last Modification: 05/17/06
 'Writes the "Fame" message to the given user's outgoing data buffer
 '***************************************************
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex).outgoingData
         Call .WriteByte(ServerPacketID.Fame)
         
@@ -13651,7 +13652,7 @@ On Error GoTo Errhandler
     End With
 Exit Sub
 
-Errhandler:
+ErrHandler:
     If Err.Number = UserList(UserIndex).outgoingData.NotEnoughSpaceErrCode Then
         Call FlushBuffer(UserIndex)
         Resume
@@ -13670,7 +13671,7 @@ Public Sub WriteMiniStats(ByVal UserIndex As Integer)
 'Last Modification: 05/17/06
 'Writes the "MiniStats" message to the given user's outgoing data buffer
 '***************************************************
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex).outgoingData
         Call .WriteByte(ServerPacketID.MiniStats)
         
@@ -13687,7 +13688,7 @@ On Error GoTo Errhandler
     End With
 Exit Sub
 
-Errhandler:
+ErrHandler:
     If Err.Number = UserList(UserIndex).outgoingData.NotEnoughSpaceErrCode Then
         Call FlushBuffer(UserIndex)
         Resume
@@ -13706,14 +13707,14 @@ Public Sub WriteLevelUp(ByVal UserIndex As Integer, ByVal skillPoints As Integer
 'Last Modification: 05/17/06
 'Writes the "LevelUp" message to the given user's outgoing data buffer
 '***************************************************
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex).outgoingData
         Call .WriteByte(ServerPacketID.LevelUp)
         Call .WriteInteger(skillPoints)
     End With
 Exit Sub
 
-Errhandler:
+ErrHandler:
     If Err.Number = UserList(UserIndex).outgoingData.NotEnoughSpaceErrCode Then
         Call FlushBuffer(UserIndex)
         Resume
@@ -13735,7 +13736,7 @@ Public Sub WriteAddForumMsg(ByVal UserIndex As Integer, ByVal ForumType As eForu
 'Writes the "AddForumMsg" message to the given user's outgoing data buffer
 '02/01/2010: ZaMa - Now sends Author and forum type
 '***************************************************
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex).outgoingData
         Call .WriteByte(ServerPacketID.AddForumMsg)
         Call .WriteByte(ForumType)
@@ -13745,7 +13746,7 @@ On Error GoTo Errhandler
     End With
 Exit Sub
 
-Errhandler:
+ErrHandler:
     If Err.Number = UserList(UserIndex).outgoingData.NotEnoughSpaceErrCode Then
         Call FlushBuffer(UserIndex)
         Resume
@@ -13764,7 +13765,7 @@ Public Sub WriteShowForumForm(ByVal UserIndex As Integer)
 'Last Modification: 05/17/06
 'Writes the "ShowForumForm" message to the given user's outgoing data buffer
 '***************************************************
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
 
     Dim Visibilidad As Byte
     Dim CanMakeSticky As Byte
@@ -13797,7 +13798,7 @@ On Error GoTo Errhandler
     End With
 Exit Sub
 
-Errhandler:
+ErrHandler:
     If Err.Number = UserList(UserIndex).outgoingData.NotEnoughSpaceErrCode Then
         Call FlushBuffer(UserIndex)
         Resume
@@ -13818,11 +13819,11 @@ Public Sub WriteSetInvisible(ByVal UserIndex As Integer, ByVal CharIndex As Inte
 'Last Modification: 05/17/06
 'Writes the "SetInvisible" message to the given user's outgoing data buffer
 '***************************************************
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     Call UserList(UserIndex).outgoingData.WriteASCIIStringFixed(PrepareMessageSetInvisible(CharIndex, invisible))
 Exit Sub
 
-Errhandler:
+ErrHandler:
     If Err.Number = UserList(UserIndex).outgoingData.NotEnoughSpaceErrCode Then
         Call FlushBuffer(UserIndex)
         Resume
@@ -13841,7 +13842,7 @@ Public Sub WriteDiceRoll(ByVal UserIndex As Integer)
 'Last Modification: 05/17/06
 'Writes the "DiceRoll" message to the given user's outgoing data buffer
 '***************************************************
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex).outgoingData
         Call .WriteByte(ServerPacketID.DiceRoll)
         
@@ -13853,7 +13854,7 @@ On Error GoTo Errhandler
     End With
 Exit Sub
 
-Errhandler:
+ErrHandler:
     If Err.Number = UserList(UserIndex).outgoingData.NotEnoughSpaceErrCode Then
         Call FlushBuffer(UserIndex)
         Resume
@@ -13872,11 +13873,11 @@ Public Sub WriteMeditateToggle(ByVal UserIndex As Integer)
 'Last Modification: 05/17/06
 'Writes the "MeditateToggle" message to the given user's outgoing data buffer
 '***************************************************
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     Call UserList(UserIndex).outgoingData.WriteByte(ServerPacketID.MeditateToggle)
 Exit Sub
 
-Errhandler:
+ErrHandler:
     If Err.Number = UserList(UserIndex).outgoingData.NotEnoughSpaceErrCode Then
         Call FlushBuffer(UserIndex)
         Resume
@@ -13895,11 +13896,11 @@ Public Sub WriteBlindNoMore(ByVal UserIndex As Integer)
 'Last Modification: 05/17/06
 'Writes the "BlindNoMore" message to the given user's outgoing data buffer
 '***************************************************
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     Call UserList(UserIndex).outgoingData.WriteByte(ServerPacketID.BlindNoMore)
 Exit Sub
 
-Errhandler:
+ErrHandler:
     If Err.Number = UserList(UserIndex).outgoingData.NotEnoughSpaceErrCode Then
         Call FlushBuffer(UserIndex)
         Resume
@@ -13918,11 +13919,11 @@ Public Sub WriteDumbNoMore(ByVal UserIndex As Integer)
 'Last Modification: 05/17/06
 'Writes the "DumbNoMore" message to the given user's outgoing data buffer
 '***************************************************
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     Call UserList(UserIndex).outgoingData.WriteByte(ServerPacketID.DumbNoMore)
 Exit Sub
 
-Errhandler:
+ErrHandler:
     If Err.Number = UserList(UserIndex).outgoingData.NotEnoughSpaceErrCode Then
         Call FlushBuffer(UserIndex)
         Resume
@@ -13942,7 +13943,7 @@ Public Sub WriteSendSkills(ByVal UserIndex As Integer)
 'Writes the "SendSkills" message to the given user's outgoing data buffer
 '11/19/09: Pato - Now send the percentage of progress of the skills.
 '***************************************************
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     Dim i As Long
     
     With UserList(UserIndex)
@@ -13955,7 +13956,7 @@ On Error GoTo Errhandler
     End With
 Exit Sub
 
-Errhandler:
+ErrHandler:
     If Err.Number = UserList(UserIndex).outgoingData.NotEnoughSpaceErrCode Then
         Call FlushBuffer(UserIndex)
         Resume
@@ -13975,7 +13976,7 @@ Public Sub WriteTrainerCreatureList(ByVal UserIndex As Integer, ByVal NpcIndex A
 'Last Modification: 05/17/06
 'Writes the "TrainerCreatureList" message to the given user's outgoing data buffer
 '***************************************************
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     Dim i As Long
     Dim str As String
     
@@ -13993,7 +13994,7 @@ On Error GoTo Errhandler
     End With
 Exit Sub
 
-Errhandler:
+ErrHandler:
     If Err.Number = UserList(UserIndex).outgoingData.NotEnoughSpaceErrCode Then
         Call FlushBuffer(UserIndex)
         Resume
@@ -14014,12 +14015,12 @@ Public Sub WriteParalizeOK(ByVal UserIndex As Integer)
 'Writes the "ParalizeOK" message to the given user's outgoing data buffer
 'And updates user position
 '***************************************************
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     Call UserList(UserIndex).outgoingData.WriteByte(ServerPacketID.ParalizeOK)
     Call WritePosUpdate(UserIndex)
 Exit Sub
 
-Errhandler:
+ErrHandler:
     If Err.Number = UserList(UserIndex).outgoingData.NotEnoughSpaceErrCode Then
         Call FlushBuffer(UserIndex)
         Resume
@@ -14039,7 +14040,7 @@ Public Sub WriteShowUserRequest(ByVal UserIndex As Integer, ByVal details As Str
 'Last Modification: 05/17/06
 'Writes the "ShowUserRequest" message to the given user's outgoing data buffer
 '***************************************************
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex).outgoingData
         Call .WriteByte(ServerPacketID.ShowUserRequest)
         
@@ -14047,7 +14048,7 @@ On Error GoTo Errhandler
     End With
 Exit Sub
 
-Errhandler:
+ErrHandler:
     If Err.Number = UserList(UserIndex).outgoingData.NotEnoughSpaceErrCode Then
         Call FlushBuffer(UserIndex)
         Resume
@@ -14066,11 +14067,11 @@ Public Sub WriteTradeOK(ByVal UserIndex As Integer)
 'Last Modification: 05/17/06
 'Writes the "TradeOK" message to the given user's outgoing data buffer
 '***************************************************
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     Call UserList(UserIndex).outgoingData.WriteByte(ServerPacketID.TradeOK)
 Exit Sub
 
-Errhandler:
+ErrHandler:
     If Err.Number = UserList(UserIndex).outgoingData.NotEnoughSpaceErrCode Then
         Call FlushBuffer(UserIndex)
         Resume
@@ -14089,11 +14090,11 @@ Public Sub WriteBankOK(ByVal UserIndex As Integer)
 'Last Modification: 05/17/06
 'Writes the "BankOK" message to the given user's outgoing data buffer
 '***************************************************
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     Call UserList(UserIndex).outgoingData.WriteByte(ServerPacketID.BankOK)
 Exit Sub
 
-Errhandler:
+ErrHandler:
     If Err.Number = UserList(UserIndex).outgoingData.NotEnoughSpaceErrCode Then
         Call FlushBuffer(UserIndex)
         Resume
@@ -14116,7 +14117,7 @@ Public Sub WriteChangeUserTradeSlot(ByVal UserIndex As Integer, ByVal OfferSlot 
 '25/11/2009: ZaMa - Now sends the specific offer slot to be modified.
 '12/03/09: Budi - Ahora se envia MaxDef y MinDef en lugar de sólo Def
 '***************************************************
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex).outgoingData
         Call .WriteByte(ServerPacketID.ChangeUserTradeSlot)
         
@@ -14147,7 +14148,7 @@ On Error GoTo Errhandler
 Exit Sub
 
 
-Errhandler:
+ErrHandler:
     If Err.Number = UserList(UserIndex).outgoingData.NotEnoughSpaceErrCode Then
         Call FlushBuffer(UserIndex)
         Resume
@@ -14166,14 +14167,14 @@ Public Sub WriteSendNight(ByVal UserIndex As Integer, ByVal night As Boolean)
 'Last Modification: 01/08/07
 'Writes the "SendNight" message to the given user's outgoing data buffer
 '***************************************************
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex).outgoingData
         Call .WriteByte(ServerPacketID.SendNight)
         Call .WriteBoolean(night)
     End With
 Exit Sub
 
-Errhandler:
+ErrHandler:
     If Err.Number = UserList(UserIndex).outgoingData.NotEnoughSpaceErrCode Then
         Call FlushBuffer(UserIndex)
         Resume
@@ -14193,7 +14194,7 @@ Public Sub WriteSpawnList(ByVal UserIndex As Integer, ByRef npcNames() As String
 'Last Modification: 05/17/06
 'Writes the "SpawnList" message to the given user's outgoing data buffer
 '***************************************************
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     Dim i As Long
     Dim Tmp As String
     
@@ -14211,7 +14212,7 @@ On Error GoTo Errhandler
     End With
 Exit Sub
 
-Errhandler:
+ErrHandler:
     If Err.Number = UserList(UserIndex).outgoingData.NotEnoughSpaceErrCode Then
         Call FlushBuffer(UserIndex)
         Resume
@@ -14230,7 +14231,7 @@ Public Sub WriteShowSOSForm(ByVal UserIndex As Integer)
 'Last Modification: 05/17/06
 'Writes the "ShowSOSForm" message to the given user's outgoing data buffer
 '***************************************************
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     Dim i As Long
     Dim Tmp As String
     
@@ -14248,7 +14249,7 @@ On Error GoTo Errhandler
     End With
 Exit Sub
 
-Errhandler:
+ErrHandler:
     If Err.Number = UserList(UserIndex).outgoingData.NotEnoughSpaceErrCode Then
         Call FlushBuffer(UserIndex)
         Resume
@@ -14269,7 +14270,7 @@ Public Sub WriteShowMOTDEditionForm(ByVal UserIndex As Integer, ByVal currentMOT
 'Last Modification: 05/17/06
 'Writes the "ShowMOTDEditionForm" message to the given user's outgoing data buffer
 '***************************************************
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex).outgoingData
         Call .WriteByte(ServerPacketID.ShowMOTDEditionForm)
         
@@ -14277,7 +14278,7 @@ On Error GoTo Errhandler
     End With
 Exit Sub
 
-Errhandler:
+ErrHandler:
     If Err.Number = UserList(UserIndex).outgoingData.NotEnoughSpaceErrCode Then
         Call FlushBuffer(UserIndex)
         Resume
@@ -14296,11 +14297,11 @@ Public Sub WriteShowGMPanelForm(ByVal UserIndex As Integer)
 'Last Modification: 05/17/06
 'Writes the "ShowGMPanelForm" message to the given user's outgoing data buffer
 '***************************************************
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     Call UserList(UserIndex).outgoingData.WriteByte(ServerPacketID.ShowGMPanelForm)
 Exit Sub
 
-Errhandler:
+ErrHandler:
     If Err.Number = UserList(UserIndex).outgoingData.NotEnoughSpaceErrCode Then
         Call FlushBuffer(UserIndex)
         Resume
@@ -14321,7 +14322,7 @@ Public Sub WriteUserNameList(ByVal UserIndex As Integer, ByRef userNamesList() A
 'Last Modification: 05/17/06 NIGO:
 'Writes the "UserNameList" message to the given user's outgoing data buffer
 '***************************************************
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     Dim i As Long
     Dim Tmp As String
     
@@ -14340,7 +14341,7 @@ On Error GoTo Errhandler
     End With
 Exit Sub
 
-Errhandler:
+ErrHandler:
     If Err.Number = UserList(UserIndex).outgoingData.NotEnoughSpaceErrCode Then
         Call FlushBuffer(UserIndex)
         Resume
@@ -14359,11 +14360,11 @@ Public Sub WritePong(ByVal UserIndex As Integer)
 'Last Modification: 05/17/06
 'Writes the "Pong" message to the given user's outgoing data buffer
 '***************************************************
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     Call UserList(UserIndex).outgoingData.WriteByte(ServerPacketID.Pong)
 Exit Sub
 
-Errhandler:
+ErrHandler:
     If Err.Number = UserList(UserIndex).outgoingData.NotEnoughSpaceErrCode Then
         Call FlushBuffer(UserIndex)
         Resume
@@ -14941,13 +14942,13 @@ Public Sub WriteStopWorking(ByVal UserIndex As Integer)
 'Last Modification: 21/02/2010
 '
 '***************************************************
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     
     Call UserList(UserIndex).outgoingData.WriteByte(ServerPacketID.StopWorking)
         
 Exit Sub
 
-Errhandler:
+ErrHandler:
     If Err.Number = UserList(UserIndex).outgoingData.NotEnoughSpaceErrCode Then
         Call FlushBuffer(UserIndex)
         Resume
@@ -14966,7 +14967,7 @@ Public Sub WriteCancelOfferItem(ByVal UserIndex As Integer, ByVal Slot As Byte)
 'Last Modification: 05/03/2010
 '
 '***************************************************
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex).outgoingData
         Call .WriteByte(ServerPacketID.CancelOfferItem)
         Call .WriteByte(Slot)
@@ -14974,15 +14975,33 @@ On Error GoTo Errhandler
     
 Exit Sub
 
-Errhandler:
+ErrHandler:
     If Err.Number = UserList(UserIndex).outgoingData.NotEnoughSpaceErrCode Then
         Call FlushBuffer(UserIndex)
         Resume
     End If
 End Sub
 
+Public Sub WriteEligeFaccion(ByVal UserIndex As Integer, ByVal Show As Boolean)
+On Error GoTo ErrHandler
+
+    With UserList(UserIndex).outgoingData
+        
+        Call .WriteByte(ServerPacketID.EligeFaccion)
+        Call .WriteBoolean(Show)
+        
+    End With
+Exit Sub
+
+ErrHandler:
+    If Err.Number = UserList(UserIndex).outgoingData.NotEnoughSpaceErrCode Then
+        Call FlushBuffer(UserIndex)
+        Resume
+    End If
+    
+End Sub
 Public Sub WriteSubeClase(ByVal UserIndex As Integer, ByVal Show As Boolean)
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
 
     With UserList(UserIndex).outgoingData
         
@@ -14992,7 +15011,7 @@ On Error GoTo Errhandler
     End With
 Exit Sub
 
-Errhandler:
+ErrHandler:
     If Err.Number = UserList(UserIndex).outgoingData.NotEnoughSpaceErrCode Then
         Call FlushBuffer(UserIndex)
         Resume
@@ -15001,7 +15020,7 @@ Errhandler:
 End Sub
 
 Public Sub WriteShowClaseForm(ByVal UserIndex As Integer, ByVal Clase As Byte)
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
 
         With UserList(UserIndex).outgoingData
         
@@ -15011,7 +15030,7 @@ On Error GoTo Errhandler
         End With
 Exit Sub
 
-Errhandler:
+ErrHandler:
     If Err.Number = UserList(UserIndex).outgoingData.NotEnoughSpaceErrCode Then
         Call FlushBuffer(UserIndex)
         Resume

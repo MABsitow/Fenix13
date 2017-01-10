@@ -1131,23 +1131,21 @@ Public Type UserCounters
     AsignedSkills As Byte
 End Type
 
-'Cosas faccionarias.
+Public Enum eFaccion
+    Neutral = 0
+    Real = 1
+    Caos = 2
+End Enum
+
 Public Type tFacciones
-    ArmadaReal As Byte
-    FuerzasCaos As Byte
-    CriminalesMatados As Long
-    CiudadanosMatados As Long
-    RecompensasReal As Long
-    RecompensasCaos As Long
-    RecibioExpInicialReal As Byte
-    RecibioExpInicialCaos As Byte
-    RecibioArmaduraReal As Byte
-    RecibioArmaduraCaos As Byte
-    Reenlistadas As Byte
-    NivelIngreso As Integer
-    FechaIngreso As String
-    MatadosIngreso As Integer 'Para Armadas nada mas
-    NextRecompensa As Integer
+    Bando As eFaccion
+    BandoOriginal As eFaccion
+    Matados(0 To 2) As Integer
+    Ataco(1 To 2) As Byte
+    Jerarquia As Byte
+    'Quests As Integer 'todo
+    Torneos As Integer
+    RMSG As Byte
 End Type
 
 Public Type tCrafting
@@ -1553,10 +1551,6 @@ Public Enum eMessages
     BlockedWithShieldUser
     BlockedWithShieldother
     UserSwing
-    SafeModeOn
-    SafeModeOff
-    ResuscitationSafeOff
-    ResuscitationSafeOn
     NobilityLost
     CantUseWhileMeditating
     NPCHitUser
@@ -1571,6 +1565,18 @@ Public Enum eMessages
     Home
     CancelHome
     FinishHome
+    WrongFaction
+    NeedToKill
+    NeedTournaments
+    HierarchyUpgradre
+    LastHierarchy
+    HierarchyExpelled
+    Neutral
+    OppositeSide
+    AlreadyBelong
+    KillToJoin
+    LevelRequired
+    FactionWelcome
 End Enum
 
 Public Enum eGMCommands

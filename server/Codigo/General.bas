@@ -323,6 +323,8 @@ On Error Resume Next
     
     Call GenerarArray
     
+    Call InitFacciones
+    
     frmCargando.Show
     
     'Call PlayWaveAPI(App.Path & "\wav\harp3.wav")

@@ -36,10 +36,10 @@ Public Sub CargarSpawnList()
 '
 '***************************************************
 
-    Dim N As Integer, LoopC As Integer
-    N = val(GetVar(App.path & "\Dat\Invokar.dat", "INIT", "NumNPCs"))
-    ReDim SpawnList(N) As tCriaturasEntrenador
-    For LoopC = 1 To N
+    Dim n As Integer, LoopC As Integer
+    n = val(GetVar(App.path & "\Dat\Invokar.dat", "INIT", "NumNPCs"))
+    ReDim SpawnList(n) As tCriaturasEntrenador
+    For LoopC = 1 To n
         SpawnList(LoopC).NpcIndex = val(GetVar(App.path & "\Dat\Invokar.dat", "LIST", "NI" & LoopC))
         SpawnList(LoopC).NpcName = GetVar(App.path & "\Dat\Invokar.dat", "LIST", "NN" & LoopC)
     Next LoopC
@@ -177,15 +177,15 @@ Public Function TxtDimension(ByVal Name As String) As Long
 '
 '***************************************************
 
-    Dim N As Integer, cad As String, Tam As Long
-    N = FreeFile(1)
-    Open Name For Input As #N
+    Dim n As Integer, cad As String, Tam As Long
+    n = FreeFile(1)
+    Open Name For Input As #n
     Tam = 0
-    Do While Not EOF(N)
+    Do While Not EOF(n)
         Tam = Tam + 1
-        Line Input #N, cad
+        Line Input #n, cad
     Loop
-    Close N
+    Close n
     TxtDimension = Tam
 End Function
 
@@ -197,15 +197,15 @@ Public Sub CargarForbidenWords()
 '***************************************************
 
     ReDim ForbidenNames(1 To TxtDimension(DatPath & "NombresInvalidos.txt"))
-    Dim N As Integer, i As Integer
-    N = FreeFile(1)
-    Open DatPath & "NombresInvalidos.txt" For Input As #N
+    Dim n As Integer, i As Integer
+    n = FreeFile(1)
+    Open DatPath & "NombresInvalidos.txt" For Input As #n
     
     For i = 1 To UBound(ForbidenNames)
-        Line Input #N, ForbidenNames(i)
+        Line Input #n, ForbidenNames(i)
     Next i
     
-    Close N
+    Close n
 
 End Sub
 
@@ -485,13 +485,13 @@ Sub LoadArmasHerreria()
 '
 '***************************************************
 
-    Dim N As Integer, lc As Integer
+    Dim n As Integer, lc As Integer
     
-    N = val(GetVar(DatPath & "ArmasHerrero.dat", "INIT", "NumArmas"))
+    n = val(GetVar(DatPath & "ArmasHerrero.dat", "INIT", "NumArmas"))
     
-    ReDim Preserve ArmasHerrero(1 To N) As Integer
+    ReDim Preserve ArmasHerrero(1 To n) As Integer
     
-    For lc = 1 To N
+    For lc = 1 To n
         ArmasHerrero(lc) = val(GetVar(DatPath & "ArmasHerrero.dat", "Arma" & lc, "Index"))
     Next lc
 
@@ -504,13 +504,13 @@ Sub LoadArmadurasHerreria()
 '
 '***************************************************
 
-    Dim N As Integer, lc As Integer
+    Dim n As Integer, lc As Integer
     
-    N = val(GetVar(DatPath & "ArmadurasHerrero.dat", "INIT", "NumArmaduras"))
+    n = val(GetVar(DatPath & "ArmadurasHerrero.dat", "INIT", "NumArmaduras"))
     
-    ReDim Preserve ArmadurasHerrero(1 To N) As Integer
+    ReDim Preserve ArmadurasHerrero(1 To n) As Integer
     
-    For lc = 1 To N
+    For lc = 1 To n
         ArmadurasHerrero(lc) = val(GetVar(DatPath & "ArmadurasHerrero.dat", "Armadura" & lc, "Index"))
     Next lc
 
@@ -572,13 +572,13 @@ Sub LoadObjCarpintero()
 '
 '***************************************************
 
-    Dim N As Integer, lc As Integer
+    Dim n As Integer, lc As Integer
     
-    N = val(GetVar(DatPath & "ObjCarpintero.dat", "INIT", "NumObjs"))
+    n = val(GetVar(DatPath & "ObjCarpintero.dat", "INIT", "NumObjs"))
     
-    ReDim Preserve ObjCarpintero(1 To N) As Integer
+    ReDim Preserve ObjCarpintero(1 To n) As Integer
     
-    For lc = 1 To N
+    For lc = 1 To n
         ObjCarpintero(lc) = val(GetVar(DatPath & "ObjCarpintero.dat", "Obj" & lc, "Index"))
     Next lc
 
@@ -1835,22 +1835,11 @@ End Sub
 Function criminal(ByVal UserIndex As Integer) As Boolean
 '***************************************************
 'Author: Unknown
-'Last Modification: -
+'Last Modification: 10/1/2017 - GoDKeR
 '
 '***************************************************
 
-    Dim L As Long
-    
-    With UserList(UserIndex).Reputacion
-        L = (-.AsesinoRep) + _
-            (-.BandidoRep) + _
-            .BurguesRep + _
-            (-.LadronesRep) + _
-            .NobleRep + _
-            .PlebeRep
-        L = L / 6
-        criminal = (L < 0)
-    End With
+    criminal = (UserList(UserIndex).Faccion.Bando = eFaccion.Caos)
 
 End Function
 

@@ -101,7 +101,7 @@ AumentoHit(eClass.Ladron) = 2
 
 End Sub
 
-Public Function ClaseBase(Clase As eClass) As Boolean
+Public Function ClaseBase(ByVal Clase As eClass) As Boolean
 
 ClaseBase = (Clase = eClass.Ciudadano Or Clase = eClass.Trabajador Or Clase = eClass.Experto_Minerales Or _
             Clase = eClass.Experto_Madera Or Clase = eClass.Luchador Or Clase = eClass.Con_Mana Or _
@@ -111,7 +111,17 @@ ClaseBase = (Clase = eClass.Ciudadano Or Clase = eClass.Trabajador Or Clase = eC
 
 End Function
 
-Function PuedeSubirClase(UserIndex As Integer) As Boolean
+Public Function PuedeFaccion(ByVal UserIndex As Integer)
+    
+    With UserList(UserIndex)
+    
+        PuedeFaccion = Not EsNewbie(UserIndex) And _
+        (.Faccion.BandoOriginal = eFaccion.Neutral) And _
+        (.flags.Privilegios And PlayerType.User) 'and (.guilindex > 0)
+    
+    End With
+End Function
+Public Function PuedeSubirClase(ByVal UserIndex As Integer) As Boolean
 
     With UserList(UserIndex)
         PuedeSubirClase = (.Stats.ELV >= 3 And .Clase = eClass.Ciudadano) Or _

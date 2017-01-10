@@ -433,7 +433,7 @@ Sub CloseSocket(ByVal UserIndex As Integer)
 '
 '***************************************************
 
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     
     If UserIndex = LastUser Then
         Do Until UserList(LastUser).flags.UserLogged
@@ -445,6 +445,8 @@ On Error GoTo Errhandler
     'Call SecurityIp.IpRestarConexion(GetLongIp(UserList(UserIndex).ip))
     
     If (EsGM(UserIndex) Or EsAdmin(UserIndex)) Then Call DesConectarAdmin(UserIndex)
+    
+    If UserList(UserIndex).Faccion.Bando <> eFaccion.Neutral Then QuitarMiembroFaccion UserIndex
     
     If UserList(UserIndex).ConnID <> -1 Then
         Call CloseSocketSL(UserIndex)
@@ -483,7 +485,7 @@ On Error GoTo Errhandler
     
 Exit Sub
 
-Errhandler:
+ErrHandler:
     UserList(UserIndex).ConnID = -1
     UserList(UserIndex).ConnIDValida = False
     Call ResetUserSlot(UserIndex)
@@ -523,11 +525,11 @@ Public Function EnviarDatosASlot(ByVal UserIndex As Integer, ByRef Datos As Stri
     '<EhHeader>
     On Error GoTo EnviarDatosASlot_Err
     '</EhHeader>
-        Dim Ret As Long
+        Dim ret As Long
     
-100     Ret = WsApiEnviar(UserIndex, Datos)
+100     ret = WsApiEnviar(UserIndex, Datos)
     
-105     If Ret <> 0 And Ret <> WSAEWOULDBLOCK Then
+105     If ret <> 0 And ret <> WSAEWOULDBLOCK Then
             ' Close the socket avoiding any critical error
 110         Call CloseSocketSL(UserIndex)
 115         Call Cerrar_Usuario(UserIndex)
@@ -624,7 +626,7 @@ Sub ConnectUser(ByVal UserIndex As Integer, ByRef Name As String, ByRef Password
 '11/27/2009: Budi - Se envian los InvStats del personaje y su Fuerza y Agilidad
 '03/12/2009: Budi - Optimización del código
 '***************************************************
-Dim N As Integer
+Dim n As Integer
 
 With UserList(UserIndex)
 
@@ -746,6 +748,13 @@ With UserList(UserIndex)
     Call LoadUserReputacion(UserIndex, Leer)
     
     Set Leer = Nothing
+    
+    If EnTesting And .Stats.ELV >= 18 Then
+        Call WriteErrorMsg(UserIndex, "Servidor en Testing por unos minutos, conectese con PJs de nivel menor a 18. No se conecte con Pjs que puedan resultar importantes por ahora pues pueden arruinarse.")
+        Call FlushBuffer(UserIndex)
+        Call CloseSocket(UserIndex)
+        Exit Sub
+    End If
     
     If .Invent.EscudoEqpSlot = 0 Then .Char.ShieldAnim = NingunEscudo
     If .Invent.CascoEqpSlot = 0 Then .Char.CascoAnim = NingunCasco
@@ -943,12 +952,7 @@ With UserList(UserIndex)
         Call WriteConsoleMsg(UserIndex, "Servidor> Lo sentimos mucho pero el servidor se encuentra actualmente detenido. Intenta ingresar más tarde.", FontTypeNames.FONTTYPE_SERVER)
     End If
     
-    If EnTesting And .Stats.ELV >= 18 Then
-        Call WriteErrorMsg(UserIndex, "Servidor en Testing por unos minutos, conectese con PJs de nivel menor a 18. No se conecte con Pjs que puedan resultar importantes por ahora pues pueden arruinarse.")
-        Call FlushBuffer(UserIndex)
-        Call CloseSocket(UserIndex)
-        Exit Sub
-    End If
+    If UserList(UserIndex).Faccion.Bando <> eFaccion.Neutral Then AgregarMiembroFaccion UserIndex
     
     'Actualiza el Num de usuarios
     'DE ACA EN ADELANTE GRABA EL CHARFILE, OJO!
@@ -991,13 +995,6 @@ With UserList(UserIndex)
         Call WriteNavigateToggle(UserIndex)
     End If
     
-    If criminal(UserIndex) Then
-        Call WriteMultiMessage(UserIndex, eMessages.SafeModeOff) 'Call WriteSafeModeOff(UserIndex)
-        .flags.Seguro = False
-    Else
-        .flags.Seguro = True
-        Call WriteMultiMessage(UserIndex, eMessages.SafeModeOn) 'Call WriteSafeModeOn(UserIndex)
-    End If
     
    ' If .GuildIndex > 0 Then
    '     'welcome to the show baby...
@@ -1010,6 +1007,7 @@ With UserList(UserIndex)
     
     Call WriteLoggedMessage(UserIndex)
     
+    If PuedeFaccion(UserIndex) Then Call WriteEligeFaccion(UserIndex, True)
     If PuedeSubirClase(UserIndex) Then Call WriteSubeClase(UserIndex, True)
     
    ' Call modGuilds.SendGuildNews(UserIndex)
@@ -1029,16 +1027,16 @@ With UserList(UserIndex)
 
     Call MostrarNumUsers
     
-    N = FreeFile
-    Open App.path & "\logs\numusers.log" For Output As N
-    Print #N, NumUsers
-    Close #N
+    n = FreeFile
+    Open App.path & "\logs\numusers.log" For Output As n
+    Print #n, NumUsers
+    Close #n
     
-    N = FreeFile
+    n = FreeFile
     'Log
-    Open App.path & "\logs\Connect.log" For Append Shared As #N
-    Print #N, .Name & " ha entrado al juego. UserIndex:" & UserIndex & " " & time & " " & Date
-    Close #N
+    Open App.path & "\logs\Connect.log" For Append Shared As #n
+    Print #n, .Name & " ha entrado al juego. UserIndex:" & UserIndex & " " & time & " " & Date
+    Close #n
 
 End With
 End Sub
@@ -1390,9 +1388,9 @@ Sub CloseUser(ByVal UserIndex As Integer)
 '
 '***************************************************
 
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
 
-Dim N As Integer
+Dim n As Integer
 Dim Map As Integer
 Dim Name As String
 Dim i As Integer
@@ -1473,14 +1471,14 @@ Call ResetUserSlot(UserIndex)
 
 Call MostrarNumUsers
 
-N = FreeFile(1)
-Open App.path & "\logs\Connect.log" For Append Shared As #N
-Print #N, Name & " ha dejado el juego. " & "User Index:" & UserIndex & " " & time & " " & Date
-Close #N
+n = FreeFile(1)
+Open App.path & "\logs\Connect.log" For Append Shared As #n
+Print #n, Name & " ha dejado el juego. " & "User Index:" & UserIndex & " " & time & " " & Date
+Close #n
 
 Exit Sub
 
-Errhandler:
+ErrHandler:
 Call LogError("Error en CloseUser. Número " & Err.Number & " Descripción: " & Err.description)
 
 End Sub
@@ -1492,7 +1490,7 @@ Sub ReloadSokcet()
 '
 '***************************************************
 
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
 
     Call LogApiSock("ReloadSokcet() " & NumUsers & " " & LastUser & " " & MaxUsers)
     
@@ -1505,7 +1503,7 @@ On Error GoTo Errhandler
 
 
 Exit Sub
-Errhandler:
+ErrHandler:
     Call LogError("Error en CheckSocketState " & Err.Number & ": " & Err.description)
 
 End Sub
