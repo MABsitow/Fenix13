@@ -55,8 +55,8 @@ Public Enum SendTarget
     ToCaos
     ToCiudadanosYRMs
     ToCriminalesYRMs
-    ToRealYRMs
-    ToCaosYRMs
+    'ToRealYRMs
+    'ToCaosYRMs
     ToHigherAdmins
     ToGMsAreaButRmsOrCounselors
     ToUsersAreaButGMs
@@ -193,84 +193,87 @@ On Error Resume Next
             Exit Sub
         
         Case SendTarget.ToCiudadanos
-            For LoopC = 1 To LastUser
-                If (UserList(LoopC).ConnID <> -1) Then
-                    If Not criminal(LoopC) Then
-                        Call EnviarDatosASlot(LoopC, sndData)
-                    End If
-                End If
-            Next LoopC
+            'For LoopC = 1 To LastUser
+            '    If (UserList(LoopC).ConnID <> -1) Then
+            '        If Not criminal(LoopC) Then
+            '            Call EnviarDatosASlot(LoopC, sndData)
+            '        End If
+            '    End If
+            'Next LoopC
+            
+            Call EnviarDatosFaccion(eFaccion.Real, sndData)
             Exit Sub
         
         Case SendTarget.ToCriminales
-            For LoopC = 1 To LastUser
-                If (UserList(LoopC).ConnID <> -1) Then
-                    If criminal(LoopC) Then
-                        Call EnviarDatosASlot(LoopC, sndData)
-                    End If
-                End If
-            Next LoopC
+            'For LoopC = 1 To LastUser
+            '    If (UserList(LoopC).ConnID <> -1) Then
+            '        If criminal(LoopC) Then
+            '            Call EnviarDatosASlot(LoopC, sndData)
+            '        End If
+            '    End If
+            'Next LoopC
+            Call EnviarDatosFaccion(eFaccion.Caos, sndData)
             Exit Sub
         
-        Case SendTarget.ToReal
-            For LoopC = 1 To LastUser
-                If (UserList(LoopC).ConnID <> -1) Then
-                    If UserList(LoopC).Faccion.ArmadaReal = 1 Then
-                        Call EnviarDatosASlot(LoopC, sndData)
-                    End If
-                End If
-            Next LoopC
-            Exit Sub
+        'Case SendTarget.ToReal
+        '    For LoopC = 1 To LastUser
+        '        If (UserList(LoopC).ConnID <> -1) Then
+        '            If UserList(LoopC).Faccion.ArmadaReal = 1 Then
+        '                Call EnviarDatosASlot(LoopC, sndData)
+        '            End If
+        '        End If
+        '    Next LoopC
+        '    Exit Sub
         
-        Case SendTarget.ToCaos
-            For LoopC = 1 To LastUser
-                If (UserList(LoopC).ConnID <> -1) Then
-                    If UserList(LoopC).Faccion.FuerzasCaos = 1 Then
-                        Call EnviarDatosASlot(LoopC, sndData)
-                    End If
-                End If
-            Next LoopC
-            Exit Sub
+        'Case SendTarget.ToCaos
+        '    For LoopC = 1 To LastUser
+        '        If (UserList(LoopC).ConnID <> -1) Then
+        '            If UserList(LoopC).Faccion.FuerzasCaos = 1 Then
+        '                Call EnviarDatosASlot(LoopC, sndData)
+        '            End If
+        '        End If
+        '    Next LoopC
+        '    Exit Sub
         
-        Case SendTarget.ToCiudadanosYRMs
-            For LoopC = 1 To LastUser
-                If (UserList(LoopC).ConnID <> -1) Then
-                    If Not criminal(LoopC) Or (UserList(LoopC).flags.Privilegios And PlayerType.RoleMaster) <> 0 Then
-                        Call EnviarDatosASlot(LoopC, sndData)
-                    End If
-                End If
-            Next LoopC
-            Exit Sub
+        'Case SendTarget.ToCiudadanosYRMs
+        '    For LoopC = 1 To LastUser
+        '        If (UserList(LoopC).ConnID <> -1) Then
+        '            If Not criminal(LoopC) Or (UserList(LoopC).flags.Privilegios And PlayerType.RoleMaster) <> 0 Then
+        '                Call EnviarDatosASlot(LoopC, sndData)
+        '            End If
+        '        End If
+        '    Next LoopC
+        '    Exit Sub
         
-        Case SendTarget.ToCriminalesYRMs
-            For LoopC = 1 To LastUser
-                If (UserList(LoopC).ConnID <> -1) Then
-                    If criminal(LoopC) Or (UserList(LoopC).flags.Privilegios And PlayerType.RoleMaster) <> 0 Then
-                        Call EnviarDatosASlot(LoopC, sndData)
-                    End If
-                End If
-            Next LoopC
-            Exit Sub
+        'Case SendTarget.ToCriminalesYRMs
+        '    For LoopC = 1 To LastUser
+        '        If (UserList(LoopC).ConnID <> -1) Then
+        '            If criminal(LoopC) Or (UserList(LoopC).flags.Privilegios And PlayerType.RoleMaster) <> 0 Then
+        '                Call EnviarDatosASlot(LoopC, sndData)
+        '            End If
+        '        End If
+        '    Next LoopC
+        '    Exit Sub
         
-        Case SendTarget.ToRealYRMs
-            For LoopC = 1 To LastUser
-                If (UserList(LoopC).ConnID <> -1) Then
-                    If UserList(LoopC).Faccion.ArmadaReal = 1 Or (UserList(LoopC).flags.Privilegios And PlayerType.RoleMaster) <> 0 Then
-                        Call EnviarDatosASlot(LoopC, sndData)
-                    End If
-                End If
-            Next LoopC
-            Exit Sub
+        'Case SendTarget.ToRealYRMs
+        '    For LoopC = 1 To LastUser
+        '        If (UserList(LoopC).ConnID <> -1) Then
+        '            If UserList(LoopC).Faccion.ArmadaReal = 1 Or (UserList(LoopC).flags.Privilegios And PlayerType.RoleMaster) <> 0 Then
+        '                Call EnviarDatosASlot(LoopC, sndData)
+        '            End If
+        '        End If
+        '    Next LoopC
+        '    Exit Sub
         
-        Case SendTarget.ToCaosYRMs
-            For LoopC = 1 To LastUser
-                If (UserList(LoopC).ConnID <> -1) Then
-                    If UserList(LoopC).Faccion.FuerzasCaos = 1 Or (UserList(LoopC).flags.Privilegios And PlayerType.RoleMaster) <> 0 Then
-                        Call EnviarDatosASlot(LoopC, sndData)
-                    End If
-                End If
-            Next LoopC
-            Exit Sub
+        'Case SendTarget.ToCaosYRMs
+        '    For LoopC = 1 To LastUser
+        '        If (UserList(LoopC).ConnID <> -1) Then
+        '            If UserList(LoopC).Faccion.FuerzasCaos = 1 Or (UserList(LoopC).flags.Privilegios And PlayerType.RoleMaster) <> 0 Then
+        '                Call EnviarDatosASlot(LoopC, sndData)
+        '            End If
+        '        End If
+        '    Next LoopC
+        '    Exit Sub
         
         Case SendTarget.ToHigherAdmins
             For LoopC = 1 To LastUser

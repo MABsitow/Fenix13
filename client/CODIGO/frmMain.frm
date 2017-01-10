@@ -1,8 +1,9 @@
 VERSION 5.00
-Object = "{3B7C8863-D78F-101B-B9B5-04021C009402}#1.2#0"; "Richtx32.ocx"
+Object = "{3B7C8863-D78F-101B-B9B5-04021C009402}#1.2#0"; "RICHTX32.OCX"
 Object = "{33101C00-75C3-11CF-A8A0-444553540000}#1.0#0"; "CSWSK32.OCX"
-Object = "{248DD890-BB45-11CF-9ABC-0080C7E7B78D}#1.0#0"; "MSWINSCK.ocx"
+Object = "{248DD890-BB45-11CF-9ABC-0080C7E7B78D}#1.0#0"; "MSWINSCK.OCX"
 Begin VB.Form frmMain 
+   BackColor       =   &H00404040&
    BorderStyle     =   0  'None
    ClientHeight    =   8970
    ClientLeft      =   360
@@ -184,7 +185,6 @@ Begin VB.Form frmMain
       _Version        =   393217
       BackColor       =   0
       BorderStyle     =   0
-      Enabled         =   -1  'True
       ReadOnly        =   -1  'True
       ScrollBars      =   2
       DisableNoScroll =   -1  'True
@@ -209,6 +209,18 @@ Begin VB.Form frmMain
       Top             =   2400
       Visible         =   0   'False
       Width           =   2565
+   End
+   Begin VB.Label lblFaccion 
+      AutoSize        =   -1  'True
+      BackStyle       =   0  'Transparent
+      Caption         =   "F"
+      ForeColor       =   &H00FFFFFF&
+      Height          =   195
+      Left            =   10920
+      TabIndex        =   31
+      Top             =   1200
+      Visible         =   0   'False
+      Width           =   105
    End
    Begin VB.Label lblClase 
       AutoSize        =   -1  'True
