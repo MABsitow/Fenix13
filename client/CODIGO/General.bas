@@ -651,7 +651,7 @@ On Error GoTo errorH
     
     ReDim ServersLst(1 To c) As tServerInfo
     For i = 1 To c
-        ServersLst(i).desc = GetVar(f, "S" & i, "Desc")
+        ServersLst(i).Desc = GetVar(f, "S" & i, "Desc")
         ServersLst(i).Ip = Trim$(GetVar(f, "S" & i, "Ip"))
         ServersLst(i).PassRecPort = CInt(GetVar(f, "S" & i, "P2"))
         ServersLst(i).Puerto = CInt(GetVar(f, "S" & i, "PJ"))
@@ -685,7 +685,7 @@ On Error Resume Next
         cur$ = ReadField(i, RawServersList, Asc(";"))
         ServersLst(i).Ip = ReadField(1, cur$, Asc(":"))
         ServersLst(i).Puerto = ReadField(2, cur$, Asc(":"))
-        ServersLst(i).desc = ReadField(4, cur$, Asc(":"))
+        ServersLst(i).Desc = ReadField(4, cur$, Asc(":"))
         ServersLst(i).PassRecPort = ReadField(3, cur$, Asc(":"))
     Next i
     
@@ -862,6 +862,10 @@ UserMap = 1
             lFrameTimer = GetTickCount
         End If
         
+       ' If GetTickCount - Count = 1000 Then
+        '        Call SendData(SendTarget.toMap, UserIndex, PrepareMessageCountdown(Count))
+        '        GetTickCount = Count
+        '    End If
         ' If there is anything to be sent, we send it
         Call FlushBuffer
         
@@ -1330,7 +1334,7 @@ End Function
 
 
 
-Public Sub LogError(desc As String)
+Public Sub LogError(Desc As String)
 '***************************************************
 'Author: Unknown
 'Last Modification: -
@@ -1342,7 +1346,7 @@ On Error GoTo Errhandler
     Dim nfile As Integer
     nfile = FreeFile ' obtenemos un canal
     Open App.path & "\errores.log" For Append Shared As #nfile
-    Print #nfile, Date & " " & time & " " & desc
+    Print #nfile, Date & " " & time & " " & Desc
     Close #nfile
     
     Exit Sub

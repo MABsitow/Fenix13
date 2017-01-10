@@ -826,7 +826,7 @@ Public Type ObjData
     NoSeCae As Integer
 End Type
 
-Public Type obj
+Public Type Obj
     OBJIndex As Integer
     Amount As Integer
 End Type
@@ -835,7 +835,7 @@ End Type
 Public Type Recompensa
     SubeHP As Integer
     SubeMP As Integer
-    obj(1 To 2) As obj
+    Obj(1 To 2) As Obj
 End Type
 
 '[Pablo ToxicWaste]
@@ -1148,6 +1148,13 @@ Public Type tFacciones
     RMSG As Byte
 End Type
 
+Public Type tEvents
+        EnTorneo As Byte
+        Torneos As Byte
+        Quests As Byte
+End Type
+
+
 Public Type tCrafting
     Cantidad As Long
     PorCiclo As Integer
@@ -1194,7 +1201,7 @@ Public Type User
     
     Stats As UserStats
     flags As UserFlags
-    
+    Events As tEvents
     Reputacion As tReputacion
     
     Faccion As tFacciones
@@ -1396,7 +1403,7 @@ Public Type MapBlock
     Graphic(1 To 4) As Integer
     UserIndex As Integer
     NpcIndex As Integer
-    ObjInfo As obj
+    ObjInfo As Obj
     TileExit As WorldPos
     trigger As eTrigger
 End Type
@@ -1652,7 +1659,7 @@ Public Enum eGMCommands
     BannedIPReload          '/BANIPRELOAD
     BanIP                   '/BANIP
     UnbanIP                 '/UNBANIP
-    CreateItem              '/CI
+    CreateItem              '/ITEM
     DestroyItems            '/DEST
     ChaosLegionKick         '/NOCAOS
     RoyalArmyKick           '/NOREAL
@@ -1671,7 +1678,7 @@ Public Enum eGMCommands
     ImperialArmour          '/AI1 - 4
     ChaosArmour             '/AC1 - 4
     NavigateToggle          '/NAVE
-    ServerOpenToUsersToggle '/HABILITAR
+    ServerOpenToUsersToggle '/RESTRINGIR
     TurnOffServer           '/APAGAR
     TurnCriminal            '/CONDEN
     ResetFactions           '/RAJAR
@@ -1706,6 +1713,11 @@ Public Enum eGMCommands
     WarpToMap               '/GO
     StaffMessage            '/STAFF
     SearchObjs              '/BUSCAR
+    Countdown               '/CUENTA
+    WinTournament           '/GANOTORNEO
+    LoseTournament          '/PERDIOTORNEO
+    WinQuest                '/GANOQUEST
+    LoseQuest               '/PERDIOQUEST
 End Enum
 
 Public Const GOHOME_PENALTY As Integer = 5

@@ -2023,7 +2023,7 @@ Private Sub CharRender(ByVal CharIndex As Long, ByVal PixelOffsetX As Integer, B
     Dim line As String
     Dim color As Long
     
-    With charlist(CharIndex)
+With charlist(CharIndex)
         If .Moving Then
             'If needed, move left and right
             If .scrollDirectionX <> 0 Then
@@ -2040,8 +2040,7 @@ Private Sub CharRender(ByVal CharIndex As Long, ByVal PixelOffsetX As Integer, B
                 moved = True
                 
                 'Check if we already got there
-                If (Sgn(.scrollDirectionX) = 1 And .MoveOffsetX >= 0) Or _
-                        (Sgn(.scrollDirectionX) = -1 And .MoveOffsetX <= 0) Then
+                If (Sgn(.scrollDirectionX) = 1 And .MoveOffsetX >= 0) Or (Sgn(.scrollDirectionX) = -1 And .MoveOffsetX <= 0) Then
                     .MoveOffsetX = 0
                     .scrollDirectionX = 0
                 End If
@@ -2062,8 +2061,7 @@ Private Sub CharRender(ByVal CharIndex As Long, ByVal PixelOffsetX As Integer, B
                 moved = True
                 
                 'Check if we already got there
-                If (Sgn(.scrollDirectionY) = 1 And .MoveOffsetY >= 0) Or _
-                        (Sgn(.scrollDirectionY) = -1 And .MoveOffsetY <= 0) Then
+                If (Sgn(.scrollDirectionY) = 1 And .MoveOffsetY >= 0) Or (Sgn(.scrollDirectionY) = -1 And .MoveOffsetY <= 0) Then
                     .MoveOffsetY = 0
                     .scrollDirectionY = 0
                 End If
@@ -2091,32 +2089,37 @@ Private Sub CharRender(ByVal CharIndex As Long, ByVal PixelOffsetX As Integer, B
         If .Head.Head(.Heading).GrhIndex Then
             If Not .invisible Then
                 'Draw Body
-                If .Body.Walk(.Heading).GrhIndex Then _
-                    Call DDrawTransGrhtoSurface(.Body.Walk(.Heading), PixelOffsetX, PixelOffsetY, 1, 1)
+                If .Body.Walk(.Heading).GrhIndex Then Call DDrawTransGrhtoSurface(.Body.Walk(.Heading), PixelOffsetX, PixelOffsetY, 1, 1)
             
                 'Draw Head
-                If .Head.Head(.Heading).GrhIndex Then
-                    Call DDrawTransGrhtoSurface(.Head.Head(.Heading), PixelOffsetX + .Body.HeadOffset.X, PixelOffsetY + .Body.HeadOffset.Y, 1, 0)
+                If .Head.Head(.Heading).GrhIndex Then Call DDrawTransGrhtoSurface(.Head.Head(.Heading), PixelOffsetX + .Body.HeadOffset.X, PixelOffsetY + .Body.HeadOffset.Y, 1, 0)
                     
-                    'Draw Helmet
-                    If .Casco.Head(.Heading).GrhIndex Then _
-                        Call DDrawTransGrhtoSurface(.Casco.Head(.Heading), PixelOffsetX + .Body.HeadOffset.X, PixelOffsetY + .Body.HeadOffset.Y + OFFSET_HEAD, 1, 0)
-                    
-                    'Draw Weapon
-                    If .Arma.WeaponWalk(.Heading).GrhIndex Then _
-                        Call DDrawTransGrhtoSurface(.Arma.WeaponWalk(.Heading), PixelOffsetX, PixelOffsetY, 1, 1)
-                    
-                    'Draw Shield
-                    If .Escudo.ShieldWalk(.Heading).GrhIndex Then _
-                        Call DDrawTransGrhtoSurface(.Escudo.ShieldWalk(.Heading), PixelOffsetX, PixelOffsetY, 1, 1)
+                'Draw Helmet
+                If .Casco.Head(.Heading).GrhIndex Then Call DDrawTransGrhtoSurface(.Casco.Head(.Heading), PixelOffsetX + .Body.HeadOffset.X, PixelOffsetY + .Body.HeadOffset.Y, 1, 0)
+                    ' Call DDrawTransGrhtoSurface(.Casco.Head(.Heading), PixelOffsetX + .Body.HeadOffset.X, PixelOffsetY + .Body.HeadOffset.Y + OFFSET_HEAD, 1, 0)
                 
+                'Draw Weapon
+                If .Arma.WeaponWalk(.Heading).GrhIndex Then Call DDrawTransGrhtoSurface(.Arma.WeaponWalk(.Heading), PixelOffsetX, PixelOffsetY, 1, 1)
+                    
+                'Draw Shield
+                If .Escudo.ShieldWalk(.Heading).GrhIndex Then Call DDrawTransGrhtoSurface(.Escudo.ShieldWalk(.Heading), PixelOffsetX, PixelOffsetY, 1, 1)
                 
-                    'Draw name over head
-                    If LenB(.Nombre) > 0 Then
-                        If Nombres And (esGM(UserCharIndex) Or Abs(MouseTileX - .Pos.X) < 2 And (Abs(MouseTileY - .Pos.Y)) < 2) Then
-                            Pos = getTagPosition(.Nombre)
+                If LenB(.Nombre) > 0 Then
+                    If Nombres And (esGM(UserCharIndex) Or Abs(MouseTileX - .Pos.X) < 2 And (Abs(MouseTileY - .Pos.Y)) < 2) Then
+                        Pos = getTagPosition(.Nombre)
                             'Pos = InStr(.Nombre, "<")
                             'If Pos = 0 Then Pos = Len(.Nombre) + 2
+<<<<<<< HEAD
+                        If .priv = 0 Then
+                            If .Atacable Then
+                                color = RGB(ColoresPJ(48).R, ColoresPJ(48).g, ColoresPJ(48).b)
+                            Else
+                                If .Criminal Then
+                                    color = RGB(ColoresPJ(50).R, ColoresPJ(50).g, ColoresPJ(50).b)
+                                Else
+                                    color = RGB(ColoresPJ(49).R, ColoresPJ(49).g, ColoresPJ(49).b)
+                                End If
+=======
                             
                             If .priv = 0 Then
                                 If .Atacable Then
@@ -2130,7 +2133,11 @@ Private Sub CharRender(ByVal CharIndex As Long, ByVal PixelOffsetX As Integer, B
                                 End If
                             Else
                                 color = RGB(ColoresPJ(.priv).R, ColoresPJ(.priv).g, ColoresPJ(.priv).b)
+>>>>>>> origin/master
                             End If
+                        Else
+                        color = RGB(ColoresPJ(.priv).R, ColoresPJ(.priv).g, ColoresPJ(.priv).b)
+                        End If
                             
                             'Nick
                             line = Left$(.Nombre, Pos - 2)
@@ -2139,7 +2146,6 @@ Private Sub CharRender(ByVal CharIndex As Long, ByVal PixelOffsetX As Integer, B
                             'Clan
                          '   line = mid$(.Nombre, Pos)
                            ' Call RenderTextCentered(PixelOffsetX + TilePixelWidth \ 2 + 5, PixelOffsetY + 45, line, color, frmMain.font)
-                        End If
                     End If
                 End If
             End If
@@ -2148,24 +2154,19 @@ Private Sub CharRender(ByVal CharIndex As Long, ByVal PixelOffsetX As Integer, B
             If .Body.Walk(.Heading).GrhIndex Then _
                 Call DDrawTransGrhtoSurface(.Body.Walk(.Heading), PixelOffsetX, PixelOffsetY, 1, 1)
         End If
-
         
         'Update dialogs
-        Call Dialogos.UpdateDialogPos(PixelOffsetX + .Body.HeadOffset.X, PixelOffsetY + .Body.HeadOffset.Y + OFFSET_HEAD, CharIndex) '34 son los pixeles del grh de la cabeza que quedan superpuestos al cuerpo
+        'Call Dialogos.UpdateDialogPos(PixelOffsetX + .Body.HeadOffset.X, PixelOffsetY + .Body.HeadOffset.Y + OFFSET_HEAD, CharIndex) '34 son los pixeles del grh de la cabeza que quedan superpuestos al cuerpo
+        Call Dialogos.UpdateDialogPos(PixelOffsetX + .Body.HeadOffset.X, PixelOffsetY + .Body.HeadOffset.Y, CharIndex)
         
         'Draw FX
         If .FxIndex <> 0 Then
-#If (ConAlfaB = 1) Then
-            Call DDrawTransGrhtoSurfaceAlpha(.fX, PixelOffsetX + FxData(.FxIndex).OffsetX, PixelOffsetY + FxData(.FxIndex).OffsetY, 1, 1)
-#Else
-            Call DDrawTransGrhtoSurface(.fX, PixelOffsetX + FxData(.FxIndex).OffsetX, PixelOffsetY + FxData(.FxIndex).OffsetY, 1, 1)
-#End If
-            
             'Check if animation is over
-            If .fX.Started = 0 Then _
-                .FxIndex = 0
+            If .fX.Started = 0 Then .FxIndex = 0
         End If
-    End With
+        
+End With
+
 End Sub
 
 Public Sub SetCharacterFx(ByVal CharIndex As Integer, ByVal fX As Integer, ByVal Loops As Integer)

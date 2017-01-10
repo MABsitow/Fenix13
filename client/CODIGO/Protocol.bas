@@ -2377,11 +2377,11 @@ On Error GoTo Errhandler
         
         If privs <> 0 Then
             'If the player belongs to a council AND is an admin, only whos as an admin
-            If (privs And PlayerType.ChaosCouncil) <> 0 And (privs And PlayerType.User) = 0 Then
+            If (privs And PlayerType.ChaosCouncil) <> 0 And (privs And PlayerType.user) = 0 Then
                 privs = privs Xor PlayerType.ChaosCouncil
             End If
             
-            If (privs And PlayerType.RoyalCouncil) <> 0 And (privs And PlayerType.User) = 0 Then
+            If (privs And PlayerType.RoyalCouncil) <> 0 And (privs And PlayerType.user) = 0 Then
                 privs = privs Xor PlayerType.RoyalCouncil
             End If
             
@@ -7369,7 +7369,7 @@ End Sub
 ' @param    itemIndex The index of the item to be created.
 ' @remarks  The data is not actually sent until the buffer is properly flushed.
 
-Public Sub WriteCreateItem(ByVal ItemIndex As Long)
+Public Sub WriteCreateItem(ByVal ItemIndex As Integer, ByVal CantidadItem As Integer)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
@@ -7379,6 +7379,7 @@ Public Sub WriteCreateItem(ByVal ItemIndex As Long)
         Call .WriteByte(ClientPacketID.GMCommands)
         Call .WriteByte(eGMCommands.CreateItem)
         Call .WriteInteger(ItemIndex)
+        Call .WriteInteger(CantidadItem)
     End With
 End Sub
 
@@ -8387,20 +8388,123 @@ End Sub
 ''
 ' Writes the "SearchObjs" message to the outgoing data buffer.
 '
-' @param    obj The message to be sent to players.
+' @param    obj The object to search.
 ' @remarks  The data is not actually sent until the buffer is properly flushed.
 
 Public Sub WriteSearchObjs(ByVal Obj As String)
 '***************************************************
 'Author: Lorenzo Rivero (Rhynne)
 'Last Modification: 06/01/2017
-'Writes the "StaffMessage" message to the outgoing data buffer
+'Writes the "SearchObjs" message to the outgoing data buffer
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.GMCommands)
         Call .WriteByte(eGMCommands.SearchObjs)
         
         Call .WriteASCIIString(Obj)
+<<<<<<< HEAD
+    End With
+End Sub
+
+''
+' Writes the "SearchObjs" message to the outgoing data buffer.
+'
+' @param    count The countdown will sent for players.
+' @remarks  The data is not actually sent until the buffer is properly flushed.
+
+Public Sub WriteCountdown(ByVal Count As Byte)
+'***************************************************
+'Author: Lorenzo Rivero (Rhynne)
+'Last Modification: 07/01/2017
+'Writes the "Countdown" message to the outgoing data buffer
+'***************************************************
+    With outgoingData
+        Call .WriteByte(ClientPacketID.GMCommands)
+        Call .WriteByte(eGMCommands.Countdown)
+        
+        Call .WriteByte(Count)
+    End With
+End Sub
+
+''
+' Writes the "WinTournament" message to the outgoing data buffer.
+'
+' @param    user The object to search.
+' @remarks  The data is not actually sent until the buffer is properly flushed.
+
+Public Sub WriteWinTournament(ByVal user As String)
+'***************************************************
+'Author: Lorenzo Rivero (Rhynne)
+'Last Modification: 08/01/2017
+'Writes the "WinTournament" message to the outgoing data buffer
+'***************************************************
+    With outgoingData
+        Call .WriteByte(ClientPacketID.GMCommands)
+        Call .WriteByte(eGMCommands.WinTournament)
+        
+        Call .WriteASCIIString(user)
+    End With
+End Sub
+
+''
+' Writes the "LoseTournament" message to the outgoing data buffer.
+'
+' @param    user The object to search.
+' @remarks  The data is not actually sent until the buffer is properly flushed.
+
+Public Sub WriteLoseTournament(ByVal user As String)
+'***************************************************
+'Author: Lorenzo Rivero (Rhynne)
+'Last Modification: 08/01/2017
+'Writes the "LoseTournament" message to the outgoing data buffer
+'***************************************************
+    With outgoingData
+        Call .WriteByte(ClientPacketID.GMCommands)
+        Call .WriteByte(eGMCommands.LoseTournament)
+        
+        Call .WriteASCIIString(user)
+    End With
+End Sub
+
+''
+' Writes the "WinQuest" message to the outgoing data buffer.
+'
+' @param    user The object to search.
+' @remarks  The data is not actually sent until the buffer is properly flushed.
+
+Public Sub WriteWinQuest(ByVal user As String)
+'***************************************************
+'Author: Lorenzo Rivero (Rhynne)
+'Last Modification: 08/01/2017
+'Writes the "WinQuest" message to the outgoing data buffer
+'***************************************************
+    With outgoingData
+        Call .WriteByte(ClientPacketID.GMCommands)
+        Call .WriteByte(eGMCommands.WinQuest)
+        
+        Call .WriteASCIIString(user)
+    End With
+End Sub
+
+''
+' Writes the "LoseQuest" message to the outgoing data buffer.
+'
+' @param    user The object to search.
+' @remarks  The data is not actually sent until the buffer is properly flushed.
+
+Public Sub WriteLoseQuest(ByVal user As String)
+'***************************************************
+'Author: Lorenzo Rivero (Rhynne)
+'Last Modification: 08/01/2017
+'Writes the "LoseQuest" message to the outgoing data buffer
+'***************************************************
+    With outgoingData
+        Call .WriteByte(ClientPacketID.GMCommands)
+        Call .WriteByte(eGMCommands.LoseQuest)
+        
+        Call .WriteASCIIString(user)
+=======
+>>>>>>> origin/master
     End With
 End Sub
 

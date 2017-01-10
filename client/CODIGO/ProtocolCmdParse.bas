@@ -1057,17 +1057,24 @@ Public Sub ParseUserCommand(ByVal RawCommand As String)
                     Call ShowConsoleMsg("Faltan parámetros. Utilice /unbanip IP.")
                 End If
                 
-            Case "/CI"
-                If notNullArguments Then
-                    If ValidNumber(ArgumentosAll(0), eNumber_Types.ent_Long) Then
-                        Call WriteCreateItem(ArgumentosAll(0))
+            Case "/ITEM"
+                If CantidadArgumentos = 2 Then
+                    If ValidNumber(ArgumentosAll(0), eNumber_Types.ent_Integer) And ValidNumber(ArgumentosAll(1), eNumber_Types.ent_Integer) Then
+                        Call WriteCreateItem(ArgumentosAll(0), ArgumentosAll(1))
                     Else
-                        'No es numerico
-                        Call ShowConsoleMsg("Objeto incorrecto. Utilice /ci OBJETO.")
+                        Call ShowConsoleMsg("Objeto incorrecto. Utilice /ITEM OBJETO.")
+                    
+                    End If
+                ElseIf CantidadArgumentos = 1 Then
+                    If ValidNumber(ArgumentosAll(0), eNumber_Types.ent_Integer) Then
+                        Call WriteCreateItem(ArgumentosAll(0), 1)
+                    Else
+                        Call ShowConsoleMsg("Objeto incorrecto. Utilice /ITEM OBJETO.")
+                    
                     End If
                 Else
                     'Avisar que falta el parametro
-                    Call ShowConsoleMsg("Faltan parámetros. Utilice /ci OBJETO.")
+                    Call ShowConsoleMsg("Faltan parámetros. Utilice /ITEM OBJETO.")
                 End If
                 
             Case "/DEST"
@@ -1212,7 +1219,7 @@ Public Sub ParseUserCommand(ByVal RawCommand As String)
             Case "/NAVE"
                 Call WriteNavigateToggle
         
-            Case "/HABILITAR"
+            Case "/RESTRINGIR"
                 Call WriteServerOpenToUsersToggle
             
             Case "/APAGAR"
@@ -1431,6 +1438,46 @@ Public Sub ParseUserCommand(ByVal RawCommand As String)
                     Call ShowConsoleMsg("Faltan parámetros. Utilice /BUSCAR objeto.")
                 End If
             
+            Case "/CUENTA"
+                If notNullArguments Then
+                    Call WriteCountdown(ArgumentosAll(0))
+                Else
+                    'Avisar que falta el parametro
+                    Call ShowConsoleMsg("Faltan parámetros. Utilice /CUENTA segundos.")
+                End If
+            
+            Case "/GANOTORNEO"
+                If notNullArguments Then
+                    Call WriteWinTournament(ArgumentosRaw)
+                Else
+                    'Avisar que falta el parametro
+                    Call ShowConsoleMsg("Faltan parámetros. Utilice /GANOTORNEO nick.")
+                End If
+               
+            Case "/PERDIOTORNEO"
+                If notNullArguments Then
+                    Call WriteLoseTournament(ArgumentosRaw)
+                Else
+                    'Avisar que falta el parametro
+                    Call ShowConsoleMsg("Faltan parámetros. Utilice /PERDIOTORNEO nick.")
+                End If
+            
+            Case "/GANOQUEST"
+                If notNullArguments Then
+                    Call WriteWinQuest(ArgumentosRaw)
+                Else
+                    'Avisar que falta el parametro
+                    Call ShowConsoleMsg("Faltan parámetros. Utilice /GANOQUEST nick.")
+                End If
+               
+            Case "/PERDIOQUEST"
+                If notNullArguments Then
+                    Call WriteLoseQuest(ArgumentosRaw)
+                Else
+                    'Avisar que falta el parametro
+                    Call ShowConsoleMsg("Faltan parámetros. Utilice /PERDIOQUEST nick.")
+                End If
+                
             Case "/HOGAR"
                 Call WriteHome
         End Select
