@@ -2557,7 +2557,7 @@ Private Sub HandleObjectCreate()
     Y = incomingData.ReadByte()
     
     MapData(X, Y).ObjGrh.GrhIndex = incomingData.ReadInteger()
-    
+
     Call InitGrh(MapData(X, Y).ObjGrh, MapData(X, Y).ObjGrh.GrhIndex)
 End Sub
 
@@ -8347,6 +8347,7 @@ Public Sub WriteSearchObjs(ByVal Obj As String)
         Call .WriteByte(eGMCommands.SearchObjs)
         
         Call .WriteASCIIString(Obj)
+<<<<<<< HEAD
     End With
 End Sub
 
@@ -8447,6 +8448,8 @@ Public Sub WriteLoseQuest(ByVal user As String)
         Call .WriteByte(eGMCommands.LoseQuest)
         
         Call .WriteASCIIString(user)
+=======
+>>>>>>> origin/master
     End With
 End Sub
 

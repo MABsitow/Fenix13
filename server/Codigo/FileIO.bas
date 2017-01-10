@@ -1247,8 +1247,8 @@ Public Sub CargarInfoMapas(ByVal path As String)
 120             .Name = reader.GetValue("Mapa" & i, "Name")
 125             .Music = reader.GetValue("Mapa" & i, "MusicNum")
             
-                'no voy a adaptar todo el drama de "toppunto" y "leftpunto" solo por que los mapeadores de fenix son un desastre
-130             .Pk = val(reader.GetValue("Mapa" & i, "Pk"))
+                'no voy a adaptar todo el drama de "toppunto" y "leftpunto" solo por que el we de fenix sea un desastre
+130             .Pk = val(reader.GetValue("Mapa" & i, "Pk")) = 0
 135             .MagiaSinEfecto = val(reader.GetValue("Mapa" & i, "NoMagia"))
             
 140             .Terreno = reader.GetValue("Mapa" & i, "Terreno")

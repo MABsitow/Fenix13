@@ -625,7 +625,7 @@ Public Sub InitGrh(ByRef Grh As Grh, ByVal GrhIndex As Integer, Optional ByVal S
     On Error GoTo InitGrh_Err
     '</EhHeader>
         If GrhIndex = 0 Then Exit Sub
-        
+
 100     Grh.GrhIndex = GrhIndex
     
 105     If Started = 2 Then
@@ -2109,6 +2109,7 @@ With charlist(CharIndex)
                         Pos = getTagPosition(.Nombre)
                             'Pos = InStr(.Nombre, "<")
                             'If Pos = 0 Then Pos = Len(.Nombre) + 2
+<<<<<<< HEAD
                         If .priv = 0 Then
                             If .Atacable Then
                                 color = RGB(ColoresPJ(48).R, ColoresPJ(48).g, ColoresPJ(48).b)
@@ -2118,6 +2119,21 @@ With charlist(CharIndex)
                                 Else
                                     color = RGB(ColoresPJ(49).R, ColoresPJ(49).g, ColoresPJ(49).b)
                                 End If
+=======
+                            
+                            If .priv = 0 Then
+                                If .Atacable Then
+                                    color = RGB(ColoresPJ(48).R, ColoresPJ(48).g, ColoresPJ(48).b)
+                                Else
+                                    If .Criminal Then
+                                        color = RGB(ColoresPJ(50).R, ColoresPJ(50).g, ColoresPJ(50).b)
+                                    Else
+                                        color = RGB(ColoresPJ(49).R, ColoresPJ(49).g, ColoresPJ(49).b)
+                                    End If
+                                End If
+                            Else
+                                color = RGB(ColoresPJ(.priv).R, ColoresPJ(.priv).g, ColoresPJ(.priv).b)
+>>>>>>> origin/master
                             End If
                         Else
                         color = RGB(ColoresPJ(.priv).R, ColoresPJ(.priv).g, ColoresPJ(.priv).b)

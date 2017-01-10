@@ -521,7 +521,8 @@ Sub SwitchMap(ByVal Map As Integer)
                 .Blocked = ByFlags And 1
                     
                 .Graphic(1).GrhIndex = reader.getInteger
-                    
+                Call InitGrh(.Graphic(1), .Graphic(1).GrhIndex)
+                
                 For i = 2 To 4
                     If ByFlags And (2 ^ (i - 1)) Then
                         .Graphic(i).GrhIndex = reader.getInteger
@@ -535,8 +536,6 @@ Sub SwitchMap(ByVal Map As Integer)
                     If (ByFlags And 2 ^ i) Then .Trigger = .Trigger Or 2 ^ (i - 4)
                 Next
                 
-                Call InitGrh(.Graphic(1), .Graphic(1).GrhIndex)
-                
                 'Erase NPCs
                 If MapData(X, Y).CharIndex > 0 Then
                     Call EraseChar(MapData(X, Y).CharIndex)
@@ -548,8 +547,6 @@ Sub SwitchMap(ByVal Map As Integer)
             End With
         Next X
     Next Y
-    
-    Close handle
     
     MapInfo.Name = ""
     MapInfo.Music = ""
@@ -792,7 +789,7 @@ UserMap = 1
     Audio.SoundActivated = Not ClientSetup.bNoSound
     Audio.SoundEffectsActivated = Not ClientSetup.bNoSoundEffects
     'Inicializamos el inventario gráfico
-    Call Inventario.Initialize(DirectDraw, frmMain.PicInv, MAX_INVENTORY_SLOTS)
+    Call Inventario.Initialize(DirectDraw, frmMain.picInv, MAX_INVENTORY_SLOTS)
     
     Call Audio.MusicMP3Play(App.path & "\MP3\" & MP3_Inicio & ".mp3")
     
