@@ -27,7 +27,7 @@ Begin VB.Form frmPanelGm
          CausesValidation=   0   'False
          Height          =   315
          Left            =   1320
-         TabIndex        =   87
+         TabIndex        =   85
          Top             =   1320
          Width           =   1095
       End
@@ -36,7 +36,7 @@ Begin VB.Form frmPanelGm
          CausesValidation=   0   'False
          Height          =   315
          Left            =   2040
-         TabIndex        =   86
+         TabIndex        =   84
          Top             =   6480
          Width           =   1815
       End
@@ -45,7 +45,7 @@ Begin VB.Form frmPanelGm
          CausesValidation=   0   'False
          Height          =   315
          Left            =   120
-         TabIndex        =   85
+         TabIndex        =   83
          Top             =   6480
          Width           =   1815
       End
@@ -54,7 +54,7 @@ Begin VB.Form frmPanelGm
          CausesValidation=   0   'False
          Height          =   675
          Left            =   2520
-         TabIndex        =   84
+         TabIndex        =   82
          Top             =   6960
          Width           =   1335
       End
@@ -63,7 +63,7 @@ Begin VB.Form frmPanelGm
          CausesValidation=   0   'False
          Height          =   315
          Left            =   120
-         TabIndex        =   83
+         TabIndex        =   81
          Top             =   7320
          Width           =   2295
       End
@@ -72,7 +72,7 @@ Begin VB.Form frmPanelGm
          CausesValidation=   0   'False
          Height          =   315
          Left            =   120
-         TabIndex        =   82
+         TabIndex        =   80
          Top             =   6960
          Width           =   2295
       End
@@ -80,7 +80,7 @@ Begin VB.Form frmPanelGm
          Height          =   315
          Left            =   120
          Sorted          =   -1  'True
-         TabIndex        =   54
+         TabIndex        =   52
          Top             =   480
          Width           =   3675
       End
@@ -89,7 +89,7 @@ Begin VB.Form frmPanelGm
          CausesValidation=   0   'False
          Height          =   255
          Left            =   120
-         TabIndex        =   53
+         TabIndex        =   51
          Top             =   120
          Width           =   3675
       End
@@ -98,7 +98,7 @@ Begin VB.Form frmPanelGm
          CausesValidation=   0   'False
          Height          =   315
          Left            =   120
-         TabIndex        =   52
+         TabIndex        =   50
          Top             =   960
          Width           =   1095
       End
@@ -107,7 +107,7 @@ Begin VB.Form frmPanelGm
          CausesValidation=   0   'False
          Height          =   315
          Left            =   120
-         TabIndex        =   51
+         TabIndex        =   49
          Top             =   1320
          Width           =   1095
       End
@@ -117,7 +117,7 @@ Begin VB.Form frmPanelGm
          Height          =   315
          Left            =   120
          Style           =   1  'Graphical
-         TabIndex        =   50
+         TabIndex        =   48
          Top             =   3480
          Width           =   1095
       End
@@ -126,7 +126,7 @@ Begin VB.Form frmPanelGm
          CausesValidation=   0   'False
          Height          =   315
          Left            =   1320
-         TabIndex        =   49
+         TabIndex        =   47
          Top             =   960
          Width           =   1095
       End
@@ -135,7 +135,7 @@ Begin VB.Form frmPanelGm
          CausesValidation=   0   'False
          Height          =   315
          Left            =   1320
-         TabIndex        =   48
+         TabIndex        =   46
          Top             =   3840
          Width           =   1095
       End
@@ -144,7 +144,7 @@ Begin VB.Form frmPanelGm
          CausesValidation=   0   'False
          Height          =   315
          Left            =   2520
-         TabIndex        =   47
+         TabIndex        =   45
          Top             =   1320
          Width           =   1095
       End
@@ -153,7 +153,7 @@ Begin VB.Form frmPanelGm
          CausesValidation=   0   'False
          Height          =   315
          Left            =   1320
-         TabIndex        =   46
+         TabIndex        =   44
          Top             =   3480
          Width           =   1095
       End
@@ -162,7 +162,7 @@ Begin VB.Form frmPanelGm
          CausesValidation=   0   'False
          Height          =   315
          Left            =   2520
-         TabIndex        =   45
+         TabIndex        =   43
          Top             =   3480
          Width           =   1335
       End
@@ -171,7 +171,7 @@ Begin VB.Form frmPanelGm
          CausesValidation=   0   'False
          Height          =   315
          Left            =   120
-         TabIndex        =   44
+         TabIndex        =   42
          Top             =   1920
          Width           =   1095
       End
@@ -180,7 +180,7 @@ Begin VB.Form frmPanelGm
          CausesValidation=   0   'False
          Height          =   315
          Left            =   1320
-         TabIndex        =   43
+         TabIndex        =   41
          Top             =   1920
          Width           =   1095
       End
@@ -189,7 +189,7 @@ Begin VB.Form frmPanelGm
          CausesValidation=   0   'False
          Height          =   315
          Left            =   2520
-         TabIndex        =   42
+         TabIndex        =   40
          Top             =   1920
          Width           =   1095
       End
@@ -198,7 +198,7 @@ Begin VB.Form frmPanelGm
          CausesValidation=   0   'False
          Height          =   315
          Left            =   120
-         TabIndex        =   41
+         TabIndex        =   39
          Top             =   2280
          Width           =   1095
       End
@@ -207,7 +207,7 @@ Begin VB.Form frmPanelGm
          CausesValidation=   0   'False
          Height          =   315
          Left            =   1320
-         TabIndex        =   40
+         TabIndex        =   38
          Top             =   2280
          Width           =   1095
       End
@@ -216,7 +216,7 @@ Begin VB.Form frmPanelGm
          CausesValidation=   0   'False
          Height          =   315
          Left            =   2520
-         TabIndex        =   39
+         TabIndex        =   37
          Top             =   2280
          Width           =   1095
       End
@@ -225,17 +225,8 @@ Begin VB.Form frmPanelGm
          CausesValidation=   0   'False
          Height          =   315
          Left            =   120
-         TabIndex        =   38
+         TabIndex        =   36
          Top             =   4800
-         Width           =   1095
-      End
-      Begin VB.CommandButton cmdPERDON 
-         Caption         =   "/PERDON"
-         CausesValidation=   0   'False
-         Height          =   315
-         Left            =   1320
-         TabIndex        =   37
-         Top             =   5160
          Width           =   1095
       End
       Begin VB.CommandButton cmdECHAR 
@@ -243,7 +234,7 @@ Begin VB.Form frmPanelGm
          CausesValidation=   0   'False
          Height          =   315
          Left            =   120
-         TabIndex        =   36
+         TabIndex        =   35
          Top             =   3840
          Width           =   1095
       End
@@ -252,7 +243,7 @@ Begin VB.Form frmPanelGm
          CausesValidation=   0   'False
          Height          =   315
          Left            =   1320
-         TabIndex        =   35
+         TabIndex        =   34
          Top             =   4800
          Width           =   1095
       End
@@ -261,7 +252,7 @@ Begin VB.Form frmPanelGm
          CausesValidation=   0   'False
          Height          =   315
          Left            =   120
-         TabIndex        =   34
+         TabIndex        =   33
          Top             =   4200
          Width           =   1095
       End
@@ -270,7 +261,7 @@ Begin VB.Form frmPanelGm
          CausesValidation=   0   'False
          Height          =   315
          Left            =   1320
-         TabIndex        =   33
+         TabIndex        =   32
          Top             =   4200
          Width           =   1095
       End
@@ -279,7 +270,7 @@ Begin VB.Form frmPanelGm
          CausesValidation=   0   'False
          Height          =   315
          Left            =   2520
-         TabIndex        =   32
+         TabIndex        =   31
          Top             =   960
          Width           =   1095
       End
@@ -288,7 +279,7 @@ Begin VB.Form frmPanelGm
          CausesValidation=   0   'False
          Height          =   315
          Left            =   120
-         TabIndex        =   31
+         TabIndex        =   30
          Top             =   2880
          Width           =   1095
       End
@@ -297,7 +288,7 @@ Begin VB.Form frmPanelGm
          CausesValidation=   0   'False
          Height          =   315
          Left            =   120
-         TabIndex        =   30
+         TabIndex        =   29
          Top             =   5760
          Width           =   1095
       End
@@ -306,7 +297,7 @@ Begin VB.Form frmPanelGm
          CausesValidation=   0   'False
          Height          =   315
          Left            =   1320
-         TabIndex        =   29
+         TabIndex        =   28
          Top             =   5760
          Width           =   1335
       End
@@ -315,7 +306,7 @@ Begin VB.Form frmPanelGm
          CausesValidation=   0   'False
          Height          =   315
          Left            =   2520
-         TabIndex        =   28
+         TabIndex        =   27
          Top             =   3840
          Width           =   1335
       End
@@ -324,17 +315,8 @@ Begin VB.Form frmPanelGm
          CausesValidation=   0   'False
          Height          =   315
          Left            =   1320
-         TabIndex        =   27
-         Top             =   2880
-         Width           =   1095
-      End
-      Begin VB.CommandButton cmdCONDEN 
-         Caption         =   "/CONDEN"
-         CausesValidation=   0   'False
-         Height          =   315
-         Left            =   120
          TabIndex        =   26
-         Top             =   5160
+         Top             =   2880
          Width           =   1095
       End
       Begin VB.CommandButton cmdRAJAR 
@@ -469,7 +451,7 @@ Begin VB.Form frmPanelGm
       Height          =   2415
       Index           =   5
       Left            =   120
-      TabIndex        =   55
+      TabIndex        =   53
       Top             =   360
       Width           =   3975
       Begin VB.CommandButton cmdCC 
@@ -477,7 +459,7 @@ Begin VB.Form frmPanelGm
          CausesValidation=   0   'False
          Height          =   315
          Left            =   720
-         TabIndex        =   72
+         TabIndex        =   70
          Top             =   720
          Width           =   2655
       End
@@ -486,7 +468,7 @@ Begin VB.Form frmPanelGm
          CausesValidation=   0   'False
          Height          =   315
          Left            =   2280
-         TabIndex        =   71
+         TabIndex        =   69
          Top             =   120
          Width           =   1095
       End
@@ -495,7 +477,7 @@ Begin VB.Form frmPanelGm
          CausesValidation=   0   'False
          Height          =   315
          Left            =   720
-         TabIndex        =   70
+         TabIndex        =   68
          Top             =   1200
          Width           =   1095
       End
@@ -504,7 +486,7 @@ Begin VB.Form frmPanelGm
          CausesValidation=   0   'False
          Height          =   315
          Left            =   2280
-         TabIndex        =   69
+         TabIndex        =   67
          Top             =   1200
          Width           =   1095
       End
@@ -513,7 +495,7 @@ Begin VB.Form frmPanelGm
          CausesValidation=   0   'False
          Height          =   315
          Left            =   720
-         TabIndex        =   68
+         TabIndex        =   66
          Top             =   120
          Width           =   1095
       End
@@ -522,7 +504,7 @@ Begin VB.Form frmPanelGm
          CausesValidation=   0   'False
          Height          =   315
          Left            =   2280
-         TabIndex        =   67
+         TabIndex        =   65
          Top             =   2040
          Width           =   1095
       End
@@ -531,7 +513,7 @@ Begin VB.Form frmPanelGm
          CausesValidation=   0   'False
          Height          =   315
          Left            =   720
-         TabIndex        =   66
+         TabIndex        =   64
          Top             =   2040
          Width           =   1095
       End
@@ -540,7 +522,7 @@ Begin VB.Form frmPanelGm
          CausesValidation=   0   'False
          Height          =   315
          Left            =   720
-         TabIndex        =   65
+         TabIndex        =   63
          Top             =   1680
          Width           =   1095
       End
@@ -549,7 +531,7 @@ Begin VB.Form frmPanelGm
          CausesValidation=   0   'False
          Height          =   315
          Left            =   2280
-         TabIndex        =   64
+         TabIndex        =   62
          Top             =   1680
          Width           =   1095
       End
@@ -649,7 +631,7 @@ Begin VB.Form frmPanelGm
       Height          =   1815
       Index           =   6
       Left            =   120
-      TabIndex        =   56
+      TabIndex        =   54
       Top             =   360
       Width           =   3975
       Begin VB.CommandButton cmdSHOWCMSG 
@@ -657,7 +639,7 @@ Begin VB.Form frmPanelGm
          CausesValidation=   0   'False
          Height          =   315
          Left            =   480
-         TabIndex        =   80
+         TabIndex        =   78
          Top             =   1080
          Width           =   1335
       End
@@ -666,7 +648,7 @@ Begin VB.Form frmPanelGm
          CausesValidation=   0   'False
          Height          =   315
          Left            =   480
-         TabIndex        =   79
+         TabIndex        =   77
          Top             =   1440
          Width           =   3015
       End
@@ -675,7 +657,7 @@ Begin VB.Form frmPanelGm
          CausesValidation=   0   'False
          Height          =   315
          Left            =   1920
-         TabIndex        =   78
+         TabIndex        =   76
          Top             =   1080
          Width           =   1575
       End
@@ -684,7 +666,7 @@ Begin VB.Form frmPanelGm
          CausesValidation=   0   'False
          Height          =   315
          Left            =   1440
-         TabIndex        =   77
+         TabIndex        =   75
          Top             =   480
          Width           =   2295
       End
@@ -693,7 +675,7 @@ Begin VB.Form frmPanelGm
          CausesValidation=   0   'False
          Height          =   315
          Left            =   240
-         TabIndex        =   76
+         TabIndex        =   74
          Top             =   480
          Width           =   1095
       End
@@ -702,7 +684,7 @@ Begin VB.Form frmPanelGm
          CausesValidation=   0   'False
          Height          =   315
          Left            =   240
-         TabIndex        =   75
+         TabIndex        =   73
          Top             =   120
          Width           =   1095
       End
@@ -711,7 +693,7 @@ Begin VB.Form frmPanelGm
          CausesValidation=   0   'False
          Height          =   315
          Left            =   1440
-         TabIndex        =   74
+         TabIndex        =   72
          Top             =   120
          Width           =   975
       End
@@ -720,7 +702,7 @@ Begin VB.Form frmPanelGm
          CausesValidation=   0   'False
          Height          =   315
          Left            =   2520
-         TabIndex        =   73
+         TabIndex        =   71
          Top             =   120
          Width           =   1215
       End
@@ -738,7 +720,7 @@ Begin VB.Form frmPanelGm
          CausesValidation=   0   'False
          Height          =   315
          Left            =   2280
-         TabIndex        =   63
+         TabIndex        =   61
          Top             =   600
          Width           =   1215
       End
@@ -747,7 +729,7 @@ Begin VB.Form frmPanelGm
          CausesValidation=   0   'False
          Height          =   315
          Left            =   600
-         TabIndex        =   62
+         TabIndex        =   60
          Top             =   1560
          Width           =   2895
       End
@@ -756,7 +738,7 @@ Begin VB.Form frmPanelGm
          CausesValidation=   0   'False
          Height          =   315
          Left            =   600
-         TabIndex        =   61
+         TabIndex        =   59
          Top             =   120
          Width           =   1215
       End
@@ -765,7 +747,7 @@ Begin VB.Form frmPanelGm
          CausesValidation=   0   'False
          Height          =   315
          Left            =   2280
-         TabIndex        =   60
+         TabIndex        =   58
          Top             =   1080
          Width           =   1215
       End
@@ -774,7 +756,7 @@ Begin VB.Form frmPanelGm
          CausesValidation=   0   'False
          Height          =   315
          Left            =   600
-         TabIndex        =   59
+         TabIndex        =   57
          Top             =   600
          Width           =   1215
       End
@@ -783,7 +765,7 @@ Begin VB.Form frmPanelGm
          CausesValidation=   0   'False
          Height          =   315
          Left            =   600
-         TabIndex        =   58
+         TabIndex        =   56
          Top             =   1080
          Width           =   1215
       End
@@ -792,7 +774,7 @@ Begin VB.Form frmPanelGm
          CausesValidation=   0   'False
          Height          =   315
          Left            =   2280
-         TabIndex        =   57
+         TabIndex        =   55
          Top             =   120
          Width           =   1215
       End
@@ -801,7 +783,7 @@ Begin VB.Form frmPanelGm
       CausesValidation=   0   'False
       Height          =   1935
       Left            =   0
-      TabIndex        =   81
+      TabIndex        =   79
       Top             =   0
       Width           =   4215
       _ExtentX        =   7435
@@ -1052,17 +1034,6 @@ Private Sub cmdCIUMSG_Click()
     tStr = InputBox("Escriba un Mensaje.", "Mensaje por consola Ciudadanos")
     If LenB(tStr) <> 0 Then _
         Call WriteCitizenMessage(tStr)
-End Sub
-
-Private Sub cmdCONDEN_Click()
-    '/CONDEN
-    Dim Nick As String
-
-    Nick = cboListaUsus.Text
-    
-    If LenB(Nick) <> 0 Then _
-        If MsgBox("¿Seguro desea volver criminal a " & Nick & "?", vbYesNo, "Atencion!") = vbYes Then _
-            Call WriteTurnCriminal(Nick)
 End Sub
 
 Private Sub cmdConsulta_Click()
@@ -1354,16 +1325,6 @@ Private Sub cmdPENAS_Click()
     
     If LenB(Nick) <> 0 Then _
         Call WritePunishments(Nick)
-End Sub
-
-Private Sub cmdPERDON_Click()
-    '/PERDON
-    Dim Nick As String
-
-    Nick = cboListaUsus.Text
-    
-    If LenB(Nick) <> 0 Then _
-        Call WriteForgive(Nick)
 End Sub
 
 Private Sub cmdPISO_Click()

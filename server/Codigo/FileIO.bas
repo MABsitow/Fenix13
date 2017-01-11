@@ -36,10 +36,10 @@ Public Sub CargarSpawnList()
 '
 '***************************************************
 
-    Dim n As Integer, LoopC As Integer
-    n = val(GetVar(App.path & "\Dat\Invokar.dat", "INIT", "NumNPCs"))
-    ReDim SpawnList(n) As tCriaturasEntrenador
-    For LoopC = 1 To n
+    Dim N As Integer, LoopC As Integer
+    N = val(GetVar(App.path & "\Dat\Invokar.dat", "INIT", "NumNPCs"))
+    ReDim SpawnList(N) As tCriaturasEntrenador
+    For LoopC = 1 To N
         SpawnList(LoopC).NpcIndex = val(GetVar(App.path & "\Dat\Invokar.dat", "LIST", "NI" & LoopC))
         SpawnList(LoopC).NpcName = GetVar(App.path & "\Dat\Invokar.dat", "LIST", "NN" & LoopC)
     Next LoopC
@@ -177,15 +177,15 @@ Public Function TxtDimension(ByVal Name As String) As Long
 '
 '***************************************************
 
-    Dim n As Integer, cad As String, Tam As Long
-    n = FreeFile(1)
-    Open Name For Input As #n
+    Dim N As Integer, cad As String, Tam As Long
+    N = FreeFile(1)
+    Open Name For Input As #N
     Tam = 0
-    Do While Not EOF(n)
+    Do While Not EOF(N)
         Tam = Tam + 1
-        Line Input #n, cad
+        Line Input #N, cad
     Loop
-    Close n
+    Close N
     TxtDimension = Tam
 End Function
 
@@ -197,15 +197,15 @@ Public Sub CargarForbidenWords()
 '***************************************************
 
     ReDim ForbidenNames(1 To TxtDimension(DatPath & "NombresInvalidos.txt"))
-    Dim n As Integer, i As Integer
-    n = FreeFile(1)
-    Open DatPath & "NombresInvalidos.txt" For Input As #n
+    Dim N As Integer, i As Integer
+    N = FreeFile(1)
+    Open DatPath & "NombresInvalidos.txt" For Input As #N
     
     For i = 1 To UBound(ForbidenNames)
-        Line Input #n, ForbidenNames(i)
+        Line Input #N, ForbidenNames(i)
     Next i
     
-    Close n
+    Close N
 
 End Sub
 
@@ -230,7 +230,7 @@ Public Sub CargarHechizos()
 '
 '###################################################
 
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
 
     If frmMain.Visible Then frmMain.txStatus.Caption = "Cargando Hechizos."
     
@@ -347,7 +347,7 @@ On Error GoTo Errhandler
     
     Exit Sub
 
-Errhandler:
+ErrHandler:
     MsgBox "Error cargando hechizos.dat " & Err.Number & ": " & Err.description
  
 End Sub
@@ -485,13 +485,13 @@ Sub LoadArmasHerreria()
 '
 '***************************************************
 
-    Dim n As Integer, lc As Integer
+    Dim N As Integer, lc As Integer
     
-    n = val(GetVar(DatPath & "ArmasHerrero.dat", "INIT", "NumArmas"))
+    N = val(GetVar(DatPath & "ArmasHerrero.dat", "INIT", "NumArmas"))
     
-    ReDim Preserve ArmasHerrero(1 To n) As Integer
+    ReDim Preserve ArmasHerrero(1 To N) As Integer
     
-    For lc = 1 To n
+    For lc = 1 To N
         ArmasHerrero(lc) = val(GetVar(DatPath & "ArmasHerrero.dat", "Arma" & lc, "Index"))
     Next lc
 
@@ -504,13 +504,13 @@ Sub LoadArmadurasHerreria()
 '
 '***************************************************
 
-    Dim n As Integer, lc As Integer
+    Dim N As Integer, lc As Integer
     
-    n = val(GetVar(DatPath & "ArmadurasHerrero.dat", "INIT", "NumArmaduras"))
+    N = val(GetVar(DatPath & "ArmadurasHerrero.dat", "INIT", "NumArmaduras"))
     
-    ReDim Preserve ArmadurasHerrero(1 To n) As Integer
+    ReDim Preserve ArmadurasHerrero(1 To N) As Integer
     
-    For lc = 1 To n
+    For lc = 1 To N
         ArmadurasHerrero(lc) = val(GetVar(DatPath & "ArmadurasHerrero.dat", "Armadura" & lc, "Index"))
     Next lc
 
@@ -557,11 +557,6 @@ Sub LoadBalance()
     
     'Extra
     PorcentajeRecuperoMana = val(GetVar(DatPath & "Balance.dat", "EXTRA", "PorcentajeRecuperoMana"))
-   
-    ' Recompensas faccionarias
-    For i = 1 To NUM_RANGOS_FACCION
-        RecompensaFacciones(i - 1) = val(GetVar(DatPath & "Balance.dat", "RECOMPENSAFACCION", "Rango" & i))
-    Next i
     
 End Sub
 
@@ -572,13 +567,13 @@ Sub LoadObjCarpintero()
 '
 '***************************************************
 
-    Dim n As Integer, lc As Integer
+    Dim N As Integer, lc As Integer
     
-    n = val(GetVar(DatPath & "ObjCarpintero.dat", "INIT", "NumObjs"))
+    N = val(GetVar(DatPath & "ObjCarpintero.dat", "INIT", "NumObjs"))
     
-    ReDim Preserve ObjCarpintero(1 To n) As Integer
+    ReDim Preserve ObjCarpintero(1 To N) As Integer
     
-    For lc = 1 To n
+    For lc = 1 To N
         ObjCarpintero(lc) = val(GetVar(DatPath & "ObjCarpintero.dat", "Obj" & lc, "Index"))
     Next lc
 
@@ -830,7 +825,7 @@ Sub LoadOBJData()
     
     Exit Sub
 
-Errhandler:
+ErrHandler:
     MsgBox "error cargando objetos " & Err.Number & ": " & Err.description
 
 
@@ -900,25 +895,6 @@ With UserList(UserIndex)
 End With
 End Sub
 
-Sub LoadUserReputacion(ByVal UserIndex As Integer, ByRef UserFile As clsIniReader)
-'***************************************************
-'Author: Unknown
-'Last Modification: -
-'
-'***************************************************
-
-    With UserList(UserIndex).Reputacion
-        .AsesinoRep = val(UserFile.GetValue("REP", "Asesino"))
-        .BandidoRep = val(UserFile.GetValue("REP", "Bandido"))
-        .BurguesRep = val(UserFile.GetValue("REP", "Burguesia"))
-        .LadronesRep = val(UserFile.GetValue("REP", "Ladrones"))
-        .NobleRep = val(UserFile.GetValue("REP", "Nobles"))
-        .PlebeRep = val(UserFile.GetValue("REP", "Plebe"))
-        .Promedio = val(UserFile.GetValue("REP", "Promedio"))
-    End With
-    
-End Sub
-
 Sub LoadUserInit(ByVal UserIndex As Integer, ByRef UserFile As clsIniReader)
 '*************************************************
 'Author: Unknown
@@ -932,21 +908,16 @@ Sub LoadUserInit(ByVal UserIndex As Integer, ByRef UserFile As clsIniReader)
     
     With UserList(UserIndex)
         With .Faccion
-            .ArmadaReal = CByte(UserFile.GetValue("FACCIONES", "EjercitoReal"))
-            .FuerzasCaos = CByte(UserFile.GetValue("FACCIONES", "EjercitoCaos"))
-            .CiudadanosMatados = CLng(UserFile.GetValue("FACCIONES", "CiudMatados"))
-            .CriminalesMatados = CLng(UserFile.GetValue("FACCIONES", "CrimMatados"))
-            .RecibioArmaduraCaos = CByte(UserFile.GetValue("FACCIONES", "rArCaos"))
-            .RecibioArmaduraReal = CByte(UserFile.GetValue("FACCIONES", "rArReal"))
-            .RecibioExpInicialCaos = CByte(UserFile.GetValue("FACCIONES", "rExCaos"))
-            .RecibioExpInicialReal = CByte(UserFile.GetValue("FACCIONES", "rExReal"))
-            .RecompensasCaos = CLng(UserFile.GetValue("FACCIONES", "recCaos"))
-            .RecompensasReal = CLng(UserFile.GetValue("FACCIONES", "recReal"))
-            .Reenlistadas = CByte(UserFile.GetValue("FACCIONES", "Reenlistadas"))
-            .NivelIngreso = CInt(UserFile.GetValue("FACCIONES", "NivelIngreso"))
-            .FechaIngreso = UserFile.GetValue("FACCIONES", "FechaIngreso")
-            .MatadosIngreso = CInt(UserFile.GetValue("FACCIONES", "MatadosIngreso"))
-            .NextRecompensa = CInt(UserFile.GetValue("FACCIONES", "NextRecompensa"))
+            .Bando = val(UserFile.GetValue("FACCIONES", "Bando"))
+            .BandoOriginal = val(UserFile.GetValue("FACCIONES", "BandoOriginal"))
+            .Matados(0) = val(UserFile.GetValue("FACCIONES", "Matados0"))
+            .Matados(1) = val(UserFile.GetValue("FACCIONES", "Matados1"))
+            .Matados(2) = val(UserFile.GetValue("FACCIONES", "Matados2"))
+            .Jerarquia = val(UserFile.GetValue("FACCIONES", "Jerarquia"))
+            .Ataco(1) = val(UserFile.GetValue("FACCIONES", "Ataco1"))
+            .Ataco(2) = val(UserFile.GetValue("FACCIONES", "Ataco2"))
+            '.Quests = val(UserFile.GetValue("FACCIONES", "Quests"))
+            .Torneos = val(UserFile.GetValue("FACCIONES", "Torneos"))
         End With
         
         With .flags
@@ -1397,33 +1368,6 @@ Sub LoadSini()
     PuedeCrearPersonajes = val(GetVar(IniPath & "Server.ini", "INIT", "PuedeCrearPersonajes"))
     ServerSoloGMs = val(GetVar(IniPath & "Server.ini", "init", "ServerSoloGMs"))
     
-    ArmaduraImperial1 = val(GetVar(IniPath & "Server.ini", "INIT", "ArmaduraImperial1"))
-    ArmaduraImperial2 = val(GetVar(IniPath & "Server.ini", "INIT", "ArmaduraImperial2"))
-    ArmaduraImperial3 = val(GetVar(IniPath & "Server.ini", "INIT", "ArmaduraImperial3"))
-    TunicaMagoImperial = val(GetVar(IniPath & "Server.ini", "INIT", "TunicaMagoImperial"))
-    TunicaMagoImperialEnanos = val(GetVar(IniPath & "Server.ini", "INIT", "TunicaMagoImperialEnanos"))
-    ArmaduraCaos1 = val(GetVar(IniPath & "Server.ini", "INIT", "ArmaduraCaos1"))
-    ArmaduraCaos2 = val(GetVar(IniPath & "Server.ini", "INIT", "ArmaduraCaos2"))
-    ArmaduraCaos3 = val(GetVar(IniPath & "Server.ini", "INIT", "ArmaduraCaos3"))
-    TunicaMagoCaos = val(GetVar(IniPath & "Server.ini", "INIT", "TunicaMagoCaos"))
-    TunicaMagoCaosEnanos = val(GetVar(IniPath & "Server.ini", "INIT", "TunicaMagoCaosEnanos"))
-    
-    VestimentaImperialHumano = val(GetVar(IniPath & "Server.ini", "INIT", "VestimentaImperialHumano"))
-    VestimentaImperialEnano = val(GetVar(IniPath & "Server.ini", "INIT", "VestimentaImperialEnano"))
-    TunicaConspicuaHumano = val(GetVar(IniPath & "Server.ini", "INIT", "TunicaConspicuaHumano"))
-    TunicaConspicuaEnano = val(GetVar(IniPath & "Server.ini", "INIT", "TunicaConspicuaEnano"))
-    ArmaduraNobilisimaHumano = val(GetVar(IniPath & "Server.ini", "INIT", "ArmaduraNobilisimaHumano"))
-    ArmaduraNobilisimaEnano = val(GetVar(IniPath & "Server.ini", "INIT", "ArmaduraNobilisimaEnano"))
-    ArmaduraGranSacerdote = val(GetVar(IniPath & "Server.ini", "INIT", "ArmaduraGranSacerdote"))
-    
-    VestimentaLegionHumano = val(GetVar(IniPath & "Server.ini", "INIT", "VestimentaLegionHumano"))
-    VestimentaLegionEnano = val(GetVar(IniPath & "Server.ini", "INIT", "VestimentaLegionEnano"))
-    TunicaLobregaHumano = val(GetVar(IniPath & "Server.ini", "INIT", "TunicaLobregaHumano"))
-    TunicaLobregaEnano = val(GetVar(IniPath & "Server.ini", "INIT", "TunicaLobregaEnano"))
-    TunicaEgregiaHumano = val(GetVar(IniPath & "Server.ini", "INIT", "TunicaEgregiaHumano"))
-    TunicaEgregiaEnano = val(GetVar(IniPath & "Server.ini", "INIT", "TunicaEgregiaEnano"))
-    SacerdoteDemoniaco = val(GetVar(IniPath & "Server.ini", "INIT", "SacerdoteDemoniaco"))
-    
     MAPA_PRETORIANO = val(GetVar(IniPath & "Server.ini", "INIT", "MapaPretoriano"))
     
     EnTesting = val(GetVar(IniPath & "Server.ini", "INIT", "Testing"))
@@ -1522,6 +1466,18 @@ Sub LoadSini()
     'PorcentajeRecuperoMana = val(GetVar(IniPath & "Server.ini", "BALANCE", "PorcentajeRecuperoMana"))
     
     ''&&&&&&&&&&&&&&&&&&&&& FIN BALANCE &&&&&&&&&&&&&&&&&&&&&&&
+    
+    Dim i As Long, j As Long, k As Long, l As Long
+    
+    For i = 1 To UBound(Armaduras, 1)
+        For j = 1 To UBound(Armaduras, 2)
+            For k = 1 To UBound(Armaduras, 3)
+                For l = 1 To UBound(Armaduras, 4)
+                    Armaduras(i, j, k, l) = val(GetVar(IniPath & "Server.ini", "INIT", "Armadura" & i & j & k & l))
+                Next
+            Next
+        Next
+    Next
 
     Ullathorpe.Map = GetVar(DatPath & "Ciudades.dat", "Ullathorpe", "Mapa")
     Ullathorpe.X = GetVar(DatPath & "Ciudades.dat", "Ullathorpe", "X")
@@ -1575,7 +1531,7 @@ Sub SaveUser(ByVal UserIndex As Integer, ByVal UserFile As String)
 '12/01/2010: ZaMa - Los druidas pierden la inmunidad de ser atacados cuando pierden el efecto del mimetismo.
 '*************************************************
 
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
 
 Dim OldUserHead As Long
 
@@ -1635,22 +1591,19 @@ With UserList(UserIndex)
     Call WriteVar(UserFile, "COUNTERS", "Pena", CStr(.Counters.Pena))
     Call WriteVar(UserFile, "COUNTERS", "SkillsAsignados", CStr(.Counters.AsignedSkills))
     
-    Call WriteVar(UserFile, "FACCIONES", "EjercitoReal", CStr(.Faccion.ArmadaReal))
-    Call WriteVar(UserFile, "FACCIONES", "EjercitoCaos", CStr(.Faccion.FuerzasCaos))
-    Call WriteVar(UserFile, "FACCIONES", "CiudMatados", CStr(.Faccion.CiudadanosMatados))
-    Call WriteVar(UserFile, "FACCIONES", "CrimMatados", CStr(.Faccion.CriminalesMatados))
-    Call WriteVar(UserFile, "FACCIONES", "rArCaos", CStr(.Faccion.RecibioArmaduraCaos))
-    Call WriteVar(UserFile, "FACCIONES", "rArReal", CStr(.Faccion.RecibioArmaduraReal))
-    Call WriteVar(UserFile, "FACCIONES", "rExCaos", CStr(.Faccion.RecibioExpInicialCaos))
-    Call WriteVar(UserFile, "FACCIONES", "rExReal", CStr(.Faccion.RecibioExpInicialReal))
-    Call WriteVar(UserFile, "FACCIONES", "recCaos", CStr(.Faccion.RecompensasCaos))
-    Call WriteVar(UserFile, "FACCIONES", "recReal", CStr(.Faccion.RecompensasReal))
-    Call WriteVar(UserFile, "FACCIONES", "Reenlistadas", CStr(.Faccion.Reenlistadas))
-    Call WriteVar(UserFile, "FACCIONES", "NivelIngreso", CStr(.Faccion.NivelIngreso))
-    Call WriteVar(UserFile, "FACCIONES", "FechaIngreso", .Faccion.FechaIngreso)
-    Call WriteVar(UserFile, "FACCIONES", "MatadosIngreso", CStr(.Faccion.MatadosIngreso))
-    Call WriteVar(UserFile, "FACCIONES", "NextRecompensa", CStr(.Faccion.NextRecompensa))
+    Call WriteVar(UserFile, "FACCIONES", "Bando", val(.Faccion.Bando))
+    Call WriteVar(UserFile, "FACCIONES", "BandoOriginal", val(.Faccion.BandoOriginal))
+    Call WriteVar(UserFile, "FACCIONES", "Matados0", val(.Faccion.Matados(0)))
+    Call WriteVar(UserFile, "FACCIONES", "Matados1", val(.Faccion.Matados(1)))
+    Call WriteVar(UserFile, "FACCIONES", "Matados2", val(.Faccion.Matados(2)))
     
+    Call WriteVar(UserFile, "FACCIONES", "Jerarquia", val(.Faccion.Jerarquia))
+    Call WriteVar(UserFile, "FACCIONES", "Ataco1", (.Faccion.Ataco(1) = 1))
+    Call WriteVar(UserFile, "FACCIONES", "Ataco2", (.Faccion.Ataco(2) = 1))
+    
+    'Call WriteVar(UserFile, "FACCIONES", "Quests", val(.Faccion.Quests))
+    Call WriteVar(UserFile, "FACCIONES", "Torneos", val(.Faccion.Torneos))
+
     
     '¿Fueron modificados los atributos del usuario?
     If Not .flags.TomoPocion Then
@@ -1778,25 +1731,6 @@ With UserList(UserIndex)
     
     Call WriteVar(UserFile, "Inventory", "AnilloSlot", CStr(.Invent.AnilloEqpSlot))
     
-    
-    'Reputacion
-    Call WriteVar(UserFile, "REP", "Asesino", CStr(.Reputacion.AsesinoRep))
-    Call WriteVar(UserFile, "REP", "Bandido", CStr(.Reputacion.BandidoRep))
-    Call WriteVar(UserFile, "REP", "Burguesia", CStr(.Reputacion.BurguesRep))
-    Call WriteVar(UserFile, "REP", "Ladrones", CStr(.Reputacion.LadronesRep))
-    Call WriteVar(UserFile, "REP", "Nobles", CStr(.Reputacion.NobleRep))
-    Call WriteVar(UserFile, "REP", "Plebe", CStr(.Reputacion.PlebeRep))
-    
-    Dim L As Long
-    L = (-.Reputacion.AsesinoRep) + _
-        (-.Reputacion.BandidoRep) + _
-        .Reputacion.BurguesRep + _
-        (-.Reputacion.LadronesRep) + _
-        .Reputacion.NobleRep + _
-        .Reputacion.PlebeRep
-    L = L / 6
-    Call WriteVar(UserFile, "REP", "Promedio", CStr(L))
-    
     Dim cad As String
     
     For LoopC = 1 To MAXUSERHECHIZOS
@@ -1835,7 +1769,7 @@ End With
 
 Exit Sub
 
-Errhandler:
+ErrHandler:
 Call LogError("Error en SaveUser")
 
 End Sub
@@ -2168,102 +2102,3 @@ For X = 15 To 87
     Next Y
 Next X
 End Function
-
-
-Public Sub LoadArmadurasFaccion()
-'***************************************************
-'Author: ZaMa
-'Last Modification: 15/04/2010
-'
-'***************************************************
-    Dim ClassIndex As Long
-    
-    Dim ArmaduraIndex As Integer
-    
-    
-    For ClassIndex = 1 To NUMCLASES
-    
-        ' Defensa minima para armadas altos
-        ArmaduraIndex = val(GetVar(DatPath & "ArmadurasFaccionarias.dat", "CLASE" & ClassIndex, "DefMinArmyAlto"))
-        
-        ArmadurasFaccion(ClassIndex, eRaza.Drow).Armada(eTipoDefArmors.ieBaja) = ArmaduraIndex
-        ArmadurasFaccion(ClassIndex, eRaza.Elfo).Armada(eTipoDefArmors.ieBaja) = ArmaduraIndex
-        ArmadurasFaccion(ClassIndex, eRaza.Humano).Armada(eTipoDefArmors.ieBaja) = ArmaduraIndex
-        
-        ' Defensa minima para armadas bajos
-        ArmaduraIndex = val(GetVar(DatPath & "ArmadurasFaccionarias.dat", "CLASE" & ClassIndex, "DefMinArmyBajo"))
-        
-        ArmadurasFaccion(ClassIndex, eRaza.Enano).Armada(eTipoDefArmors.ieBaja) = ArmaduraIndex
-        ArmadurasFaccion(ClassIndex, eRaza.Gnomo).Armada(eTipoDefArmors.ieBaja) = ArmaduraIndex
-        
-        ' Defensa minima para caos altos
-        ArmaduraIndex = val(GetVar(DatPath & "ArmadurasFaccionarias.dat", "CLASE" & ClassIndex, "DefMinCaosAlto"))
-        
-        ArmadurasFaccion(ClassIndex, eRaza.Drow).Caos(eTipoDefArmors.ieBaja) = ArmaduraIndex
-        ArmadurasFaccion(ClassIndex, eRaza.Elfo).Caos(eTipoDefArmors.ieBaja) = ArmaduraIndex
-        ArmadurasFaccion(ClassIndex, eRaza.Humano).Caos(eTipoDefArmors.ieBaja) = ArmaduraIndex
-        
-        ' Defensa minima para caos bajos
-        ArmaduraIndex = val(GetVar(DatPath & "ArmadurasFaccionarias.dat", "CLASE" & ClassIndex, "DefMinCaosBajo"))
-        
-        ArmadurasFaccion(ClassIndex, eRaza.Enano).Caos(eTipoDefArmors.ieBaja) = ArmaduraIndex
-        ArmadurasFaccion(ClassIndex, eRaza.Gnomo).Caos(eTipoDefArmors.ieBaja) = ArmaduraIndex
-    
-    
-        ' Defensa media para armadas altos
-        ArmaduraIndex = val(GetVar(DatPath & "ArmadurasFaccionarias.dat", "CLASE" & ClassIndex, "DefMedArmyAlto"))
-        
-        ArmadurasFaccion(ClassIndex, eRaza.Drow).Armada(eTipoDefArmors.ieMedia) = ArmaduraIndex
-        ArmadurasFaccion(ClassIndex, eRaza.Elfo).Armada(eTipoDefArmors.ieMedia) = ArmaduraIndex
-        ArmadurasFaccion(ClassIndex, eRaza.Humano).Armada(eTipoDefArmors.ieMedia) = ArmaduraIndex
-        
-        ' Defensa media para armadas bajos
-        ArmaduraIndex = val(GetVar(DatPath & "ArmadurasFaccionarias.dat", "CLASE" & ClassIndex, "DefMedArmyBajo"))
-        
-        ArmadurasFaccion(ClassIndex, eRaza.Enano).Armada(eTipoDefArmors.ieMedia) = ArmaduraIndex
-        ArmadurasFaccion(ClassIndex, eRaza.Gnomo).Armada(eTipoDefArmors.ieMedia) = ArmaduraIndex
-        
-        ' Defensa media para caos altos
-        ArmaduraIndex = val(GetVar(DatPath & "ArmadurasFaccionarias.dat", "CLASE" & ClassIndex, "DefMedCaosAlto"))
-        
-        ArmadurasFaccion(ClassIndex, eRaza.Drow).Caos(eTipoDefArmors.ieMedia) = ArmaduraIndex
-        ArmadurasFaccion(ClassIndex, eRaza.Elfo).Caos(eTipoDefArmors.ieMedia) = ArmaduraIndex
-        ArmadurasFaccion(ClassIndex, eRaza.Humano).Caos(eTipoDefArmors.ieMedia) = ArmaduraIndex
-        
-        ' Defensa media para caos bajos
-        ArmaduraIndex = val(GetVar(DatPath & "ArmadurasFaccionarias.dat", "CLASE" & ClassIndex, "DefMedCaosBajo"))
-        
-        ArmadurasFaccion(ClassIndex, eRaza.Enano).Caos(eTipoDefArmors.ieMedia) = ArmaduraIndex
-        ArmadurasFaccion(ClassIndex, eRaza.Gnomo).Caos(eTipoDefArmors.ieMedia) = ArmaduraIndex
-    
-    
-        ' Defensa alta para armadas altos
-        ArmaduraIndex = val(GetVar(DatPath & "ArmadurasFaccionarias.dat", "CLASE" & ClassIndex, "DefAltaArmyAlto"))
-        
-        ArmadurasFaccion(ClassIndex, eRaza.Drow).Armada(eTipoDefArmors.ieAlta) = ArmaduraIndex
-        ArmadurasFaccion(ClassIndex, eRaza.Elfo).Armada(eTipoDefArmors.ieAlta) = ArmaduraIndex
-        ArmadurasFaccion(ClassIndex, eRaza.Humano).Armada(eTipoDefArmors.ieAlta) = ArmaduraIndex
-        
-        ' Defensa alta para armadas bajos
-        ArmaduraIndex = val(GetVar(DatPath & "ArmadurasFaccionarias.dat", "CLASE" & ClassIndex, "DefAltaArmyBajo"))
-        
-        ArmadurasFaccion(ClassIndex, eRaza.Enano).Armada(eTipoDefArmors.ieAlta) = ArmaduraIndex
-        ArmadurasFaccion(ClassIndex, eRaza.Gnomo).Armada(eTipoDefArmors.ieAlta) = ArmaduraIndex
-        
-        ' Defensa alta para caos altos
-        ArmaduraIndex = val(GetVar(DatPath & "ArmadurasFaccionarias.dat", "CLASE" & ClassIndex, "DefAltaCaosAlto"))
-        
-        ArmadurasFaccion(ClassIndex, eRaza.Drow).Caos(eTipoDefArmors.ieAlta) = ArmaduraIndex
-        ArmadurasFaccion(ClassIndex, eRaza.Elfo).Caos(eTipoDefArmors.ieAlta) = ArmaduraIndex
-        ArmadurasFaccion(ClassIndex, eRaza.Humano).Caos(eTipoDefArmors.ieAlta) = ArmaduraIndex
-        
-        ' Defensa alta para caos bajos
-        ArmaduraIndex = val(GetVar(DatPath & "ArmadurasFaccionarias.dat", "CLASE" & ClassIndex, "DefAltaCaosBajo"))
-        
-        ArmadurasFaccion(ClassIndex, eRaza.Enano).Caos(eTipoDefArmors.ieAlta) = ArmaduraIndex
-        ArmadurasFaccion(ClassIndex, eRaza.Gnomo).Caos(eTipoDefArmors.ieAlta) = ArmaduraIndex
-    
-    Next ClassIndex
-    
-End Sub
-
