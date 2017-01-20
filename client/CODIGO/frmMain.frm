@@ -185,6 +185,7 @@ Begin VB.Form frmMain
       _Version        =   393217
       BackColor       =   0
       BorderStyle     =   0
+      Enabled         =   -1  'True
       ReadOnly        =   -1  'True
       ScrollBars      =   2
       DisableNoScroll =   -1  'True
@@ -1147,11 +1148,6 @@ Private Sub Form_KeyUp(KeyCode As Integer, Shift As Integer)
                         Call WriteRequestPositionUpdate
                         Beep
                     End If
-                Case CustomKeys.BindedKey(eKeyType.mKeyToggleSafeMode)
-                    Call WriteSafeToggle
-
-                Case CustomKeys.BindedKey(eKeyType.mKeyToggleResuscitationSafe)
-                    Call WriteResuscitationToggle
             End Select
         Else
             Select Case KeyCode
@@ -1365,6 +1361,10 @@ End Sub
 
 Private Sub lblCerrar_Click()
     prgRun = False
+End Sub
+
+Private Sub lblFaccion_Click()
+    Call writerequestfaccionform
 End Sub
 
 Private Sub lblMinimizar_Click()

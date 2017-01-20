@@ -132,3 +132,26 @@ Public Function PuedeSubirClase(ByVal UserIndex As Integer) As Boolean
     End With
     
 End Function
+
+Function TipoClase(UserIndex As Integer) As Byte
+
+Select Case UserList(UserIndex).Clase
+    Case eClass.Paladin, eClass.Asesino, eClass.Cazador
+        TipoClase = 2
+    Case eClass.Clerigo, eClass.Bardo, eClass.Ladron
+        TipoClase = 3
+    Case eClass.Mago, eClass.Nigromante, eClass.Druida
+        TipoClase = 4
+    Case Else
+        TipoClase = 1
+End Select
+
+End Function
+Public Function TipoRaza(UserIndex As Integer) As Byte
+
+If UserList(UserIndex).raza = eRaza.Enano Or UserList(UserIndex).raza = eRaza.Gnomo Then
+    TipoRaza = 2
+Else: TipoRaza = 1
+End If
+
+End Function

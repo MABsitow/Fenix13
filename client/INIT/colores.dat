@@ -14,11 +14,18 @@ R=0
 G=128
 B=255
 
-'Atacables
-[At]
-R=139
-G=0
-B=255
+'Neutrales
+[Ne]
+R=190
+G=190
+B=190
+
+'Newbies
+[Nw]
+R=0
+G=240
+B=0
+
 
 [0]
 R=0

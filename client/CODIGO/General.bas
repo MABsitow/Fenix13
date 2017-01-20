@@ -124,7 +124,7 @@ On Error Resume Next
     
     Dim i As Long
     
-    For i = 0 To 48 '49 y 50 reservados para ciudadano y criminal
+    For i = 0 To 46 '49 y 50 reservados para ciudadano y criminal
         ColoresPJ(i).R = CByte(GetVar(archivoC, CStr(i), "R"))
         ColoresPJ(i).g = CByte(GetVar(archivoC, CStr(i), "G"))
         ColoresPJ(i).b = CByte(GetVar(archivoC, CStr(i), "B"))
@@ -140,10 +140,15 @@ On Error Resume Next
     ColoresPJ(49).g = CByte(GetVar(archivoC, "CI", "G"))
     ColoresPJ(49).b = CByte(GetVar(archivoC, "CI", "B"))
     
-    ' Atacable
-    ColoresPJ(48).R = CByte(GetVar(archivoC, "AT", "R"))
-    ColoresPJ(48).g = CByte(GetVar(archivoC, "AT", "G"))
-    ColoresPJ(48).b = CByte(GetVar(archivoC, "AT", "B"))
+    ' Neutral
+    ColoresPJ(48).R = CByte(GetVar(archivoC, "NE", "R"))
+    ColoresPJ(48).g = CByte(GetVar(archivoC, "NE", "G"))
+    ColoresPJ(48).b = CByte(GetVar(archivoC, "NE", "B"))
+    
+    ColoresPJ(47).R = CByte(GetVar(archivoC, "NW", "R"))
+    ColoresPJ(47).g = CByte(GetVar(archivoC, "NW", "G"))
+    ColoresPJ(47).b = CByte(GetVar(archivoC, "NW", "B"))
+    
 End Sub
 
 Sub CargarAnimEscudos()

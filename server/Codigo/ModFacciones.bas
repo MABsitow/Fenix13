@@ -6,10 +6,10 @@ Public MiembrosAlianza                      As Collection
 
 Private Const NIVEL_MINIMO_INGRESAR         As Byte = 25
 
-Private Const REQUIERE_MATADOS_PRIMERA      As Integer = 100
-Private Const REQUIERE_MATADOS_SEGUNDA      As Integer = 500
-Private Const REQUIERE_MATADOS_TERCERA      As Integer = 1000
-Private Const REQUIERE_MATADOS_CUARTA       As Integer = 1500
+Public Const REQUIERE_MATADOS_PRIMERA       As Integer = 100
+Public Const REQUIERE_MATADOS_SEGUNDA       As Integer = 500
+Public Const REQUIERE_MATADOS_TERCERA       As Integer = 1000
+Public Const REQUIERE_MATADOS_CUARTA        As Integer = 1500
 
 Private Const REQUIERE_TORNEOS_SEGUNDA      As Integer = 1
 Private Const REQUIERE_TORNEOS_TERCERA      As Integer = 5
@@ -17,6 +17,26 @@ Private Const REQUIERE_TORNEOS_CUARTA       As Integer = 10
 
 Public Mensajes(1 To 2, 1 To 23) As String
 Public Armaduras(1 To 2, 1 To 3, 1 To 4, 1 To 2) As Integer
+
+Public Sub EnviarFaccion(ByVal UserIndex As Integer)
+    
+    If UserList(UserIndex).flags.Muerto = 0 Then 'es necesario que este vivo para hacerlo??
+        Call WriteShowFaccionForm(UserIndex)
+    End If
+End Sub
+
+Public Function Enemigo(ByVal Bando As eFaccion) As Byte
+
+Select Case Bando
+    Case eFaccion.Neutral
+        Enemigo = 3
+    Case eFaccion.Real
+        Enemigo = Caos
+    Case eFaccion.Caos
+        Enemigo = Real
+End Select
+
+End Function
 
 Public Sub InitFacciones()
 
@@ -54,7 +74,7 @@ Public Sub QuitarMiembroFaccion(ByVal UserIndex As Integer)
     Select Case Faccion
     
         Case eFaccion.Caos
-            For i = 1 To MiembrosCaos.Count
+            For i = 1 To MiembrosCaos.count
                 If MiembrosCaos.Item(i) = UserIndex Then
                     MiembrosCaos.Remove i
                     Exit For
@@ -62,7 +82,7 @@ Public Sub QuitarMiembroFaccion(ByVal UserIndex As Integer)
             Next
             Exit Sub
         Case eFaccion.Real
-            For i = 1 To MiembrosAlianza.Count
+            For i = 1 To MiembrosAlianza.count
                 If MiembrosAlianza.Item(i) = UserIndex Then
                     MiembrosAlianza.Remove i
                     Exit For
@@ -74,30 +94,61 @@ Public Sub QuitarMiembroFaccion(ByVal UserIndex As Integer)
     
 End Sub
 
-Public Sub EnviarDatosFaccion(ByVal Faccion As eFaccion, ByVal Data As String)
+Public Sub EnviarDatosJerarquia(ByVal Faccion As eFaccion, ByVal data As String)
 Dim i As Long
     
     Select Case Faccion
     
         Case eFaccion.Caos
             
-            For i = 1 To MiembrosCaos.Count
-                Call EnviarDatosASlot(MiembrosCaos.Item(i), Data)
+            For i = 1 To MiembrosCaos.count
+                If EsCaos(MiembrosCaos.Item(i)) Then
+                    Call EnviarDatosASlot(MiembrosCaos.Item(i), data)
+                End If
             Next
             Exit Sub
         
         Case eFaccion.Real
-            For i = 1 To MiembrosAlianza.Count
-                Call EnviarDatosASlot(MiembrosAlianza.Item(i), Data)
+            For i = 1 To MiembrosAlianza.count
+                If EsArmada(MiembrosAlianza.items(i)) Then
+                    Call EnviarDatosASlot(MiembrosAlianza.Item(i), data)
+                End If
             Next
             Exit Sub
 
     End Select
 End Sub
 
+Public Sub EnviarDatosFaccion(ByVal Faccion As eFaccion, ByVal data As String)
+Dim i As Long
+    
+    Select Case Faccion
+    
+        Case eFaccion.Caos
+            
+            For i = 1 To MiembrosCaos.count
+                Call EnviarDatosASlot(MiembrosCaos.Item(i), data)
+            Next
+            Exit Sub
+        
+        Case eFaccion.Real
+            For i = 1 To MiembrosAlianza.count
+                Call EnviarDatosASlot(MiembrosAlianza.Item(i), data)
+            Next
+            Exit Sub
+
+    End Select
+End Sub
+
+Public Function ClaseTrabajadora(ByVal Clase As eClass) As Boolean
+
+ClaseTrabajadora = (Clase > eClass.Ciudadano And Clase < eClass.Luchador)
+
+End Function
+
 Public Sub Recompensado(ByVal UserIndex As Integer)
 Dim Fuerzas As Byte
-Dim MiObj As obj
+Dim MiObj As Obj
 
 With UserList(UserIndex)
     Fuerzas = .Faccion.Bando
@@ -109,13 +160,13 @@ With UserList(UserIndex)
     End If
     
     If .Faccion.Jerarquia = 1 Then
-        If .Faccion.Matados(enemigo(Fuerzas)) < REQUIERE_MATADOS_SEGUNDA Then
-            Call WriteMultiMessage(UserIndex, eMessages.NeedToKill, REQUIERE_MATADOS_SEGUNDA, .Faccion.Matados(enemigo(Fuerzas)))
+        If .Faccion.Matados(Enemigo(Fuerzas)) < REQUIERE_MATADOS_SEGUNDA Then
+            Call WriteMultiMessage(UserIndex, eMessages.NeedToKill, REQUIERE_MATADOS_SEGUNDA, .Faccion.Matados(Enemigo(Fuerzas)))
             Exit Sub
         End If
         
         If .Faccion.Torneos < REQUIERE_TORNEOS_SEGUNDA Then
-            Call WriteMultiMessage(UserIndex, eMessages.NeedTournaments, REQUIERE_TORNEOS_PRIMERA, .Faccion.Torneos)
+            Call WriteMultiMessage(UserIndex, eMessages.NeedTournaments, REQUIERE_TORNEOS_SEGUNDA, .Faccion.Torneos)
             Exit Sub
         End If
         
@@ -129,13 +180,13 @@ With UserList(UserIndex)
         'Call SendData(ToIndex, UserIndex, 0, Mensajes(Fuerzas, 15) & Titulo(UserIndex))
         Call WriteMultiMessage(UserIndex, eMessages.HierarchyUpgradre, Titulo(UserIndex))
     ElseIf .Faccion.Jerarquia = 2 Then
-        If .Faccion.Matados(enemigo(Fuerzas)) < REQUIERE_MATADOS_TERCERA Then
-            Call WriteMultiMessage(UserIndex, eMessages.NeedToKill, REQUIERE_MATADOS_TERCERA, .Faccion.Matados(enemigo(Fuerzas)))
+        If .Faccion.Matados(Enemigo(Fuerzas)) < REQUIERE_MATADOS_TERCERA Then
+            Call WriteMultiMessage(UserIndex, eMessages.NeedToKill, REQUIERE_MATADOS_TERCERA, .Faccion.Matados(Enemigo(Fuerzas)))
             Exit Sub
         End If
 
         If .Faccion.Torneos < REQUIERE_TORNEOS_TERCERA Then
-            Call WriteMultiMessage(UserIndex, eMessages.NeedTournaments, REQUIERE_TORNEOS_SEGUNDA, .Faccion.Torneos)
+            Call WriteMultiMessage(UserIndex, eMessages.NeedTournaments, REQUIERE_TORNEOS_TERCERA, .Faccion.Torneos)
             Exit Sub
         End If
         
@@ -147,13 +198,13 @@ With UserList(UserIndex)
         .Faccion.Jerarquia = 3
         Call WriteMultiMessage(UserIndex, eMessages.HierarchyUpgradre, Titulo(UserIndex))
     ElseIf .Faccion.Jerarquia = 3 Then
-        If .Faccion.Matados(enemigo(Fuerzas)) < REQUIERE_MATADOS_CUARTA Then
-            Call WriteMultiMessage(UserIndex, eMessages.NeedToKill, REQUIERE_MATADOS_CUARTA, .Faccion.Matados(enemigo(Fuerzas)))
+        If .Faccion.Matados(Enemigo(Fuerzas)) < REQUIERE_MATADOS_CUARTA Then
+            Call WriteMultiMessage(UserIndex, eMessages.NeedToKill, REQUIERE_MATADOS_CUARTA, .Faccion.Matados(Enemigo(Fuerzas)))
             Exit Sub
         End If
         
         If .Faccion.Torneos < REQUIERE_TORNEOS_CUARTA Then
-            Call WriteMultiMessage(UserIndex, eMessages.NeedTournaments, REQUIERE_TORNEOS_TERCERA, .Faccion.Torneos)
+            Call WriteMultiMessage(UserIndex, eMessages.NeedTournaments, REQUIERE_TORNEOS_CUARTA, .Faccion.Torneos)
             Exit Sub
         End If
         
@@ -184,11 +235,12 @@ Public Sub Expulsar(ByVal UserIndex As Integer)
 
 Call WriteMultiMessage(UserIndex, eMessages.HierarchyExpelled)
 UserList(UserIndex).Faccion.Bando = eFaccion.Neutral
-Call refreshchar(UserIndex)
+UserList(UserIndex).Faccion.Jerarquia = 0
+Call RefreshCharStatus(UserIndex)
 
 End Sub
 Public Sub Enlistar(ByVal UserIndex As Integer, ByVal Fuerzas As Byte)
-Dim MiObj As obj
+Dim MiObj As Obj
 
 With UserList(UserIndex)
     If .Faccion.Bando = eFaccion.Neutral Then
@@ -197,7 +249,7 @@ With UserList(UserIndex)
         Exit Sub
     End If
     
-    If .Faccion.Bando = enemigo(Fuerzas) Then
+    If .Faccion.Bando = Enemigo(Fuerzas) Then
         'Call SendData(ToIndex, UserIndex, 0, Mensajes(Fuerzas, 2) & str(Npclist(.flags.TargetNPC).Char.CharIndex))
         Call WriteMultiMessage(UserIndex, eMessages.OppositeSide, Npclist(.flags.TargetNPC).Char.CharIndex)
         Exit Sub
@@ -221,9 +273,9 @@ With UserList(UserIndex)
         Exit Sub
     End If
     
-    If .Faccion.Matados(enemigo(Fuerzas)) < REQUIERE_MATADOS_PRIMERA Then
+    If .Faccion.Matados(Enemigo(Fuerzas)) < REQUIERE_MATADOS_PRIMERA Then
         'Call SendData(ToIndex, UserIndex, 0, Mensajes(Fuerzas, 5) & .Faccion.Matados(enemigo(Fuerzas)) & "!°" & str(Npclist(.flags.TargetNPC).Char.CharIndex))
-        Call WriteMultiMessage(UserIndex, eMessages.KillToJoin, REQUIERE_MATADOS_PRIMERA, .Faccion.Matados(enemigo(Fuerzas)), Npclist(.flags.TargetNPC).Char.CharIndex)
+        Call WriteMultiMessage(UserIndex, eMessages.KillToJoin, REQUIERE_MATADOS_PRIMERA, .Faccion.Matados(Enemigo(Fuerzas)), Npclist(.flags.TargetNPC).Char.CharIndex)
         Exit Sub
     End If
     
@@ -278,6 +330,4 @@ Select Case UserList(UserIndex).Faccion.Bando
 End Select
 
 End Function
-
-End Sub
 

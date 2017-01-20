@@ -50,7 +50,7 @@ Option Explicit
 
 ''
 'Number of Customizable Keys
-Private Const NUM_CUSTOM_KEYS As Byte = 27
+Private Const NUM_CUSTOM_KEYS As Byte = 24
 
 ''
 'Error Raised in case the key file doesn't exist
@@ -109,8 +109,6 @@ Public Enum eKeyType
     mKeyEquipObject
     mKeyTamAnimal
     mKeySteal
-    mKeyToggleSafeMode
-    mKeyToggleResuscitationSafe
     mKeyHide
     mKeyDropObject
     mKeyUseObject
@@ -355,8 +353,6 @@ Public Sub LoadDefaults()
     mappedKeys(eKeyType.mKeyEquipObject) = KeyCodeConstants.vbKeyE
     mappedKeys(eKeyType.mKeyTamAnimal) = KeyCodeConstants.vbKeyD
     mappedKeys(eKeyType.mKeySteal) = KeyCodeConstants.vbKeyR
-    mappedKeys(eKeyType.mKeyToggleSafeMode) = KeyCodeConstants.vbKeyMultiply
-    mappedKeys(eKeyType.mKeyToggleResuscitationSafe) = KeyCodeConstants.vbKeyEnd
     mappedKeys(eKeyType.mKeyHide) = KeyCodeConstants.vbKeyO
     mappedKeys(eKeyType.mKeyDropObject) = KeyCodeConstants.vbKeyT
     mappedKeys(eKeyType.mKeyUseObject) = KeyCodeConstants.vbKeyU

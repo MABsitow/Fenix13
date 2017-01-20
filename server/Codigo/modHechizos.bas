@@ -93,9 +93,6 @@ With UserList(UserIndex)
             'Muere
             If .Stats.MinHp < 1 Then
                 .Stats.MinHp = 0
-                If Npclist(NpcIndex).NPCtype = eNPCType.GuardiaReal Then
-                    RestarCriminalidad (UserIndex)
-                End If
                 Call UserDie(UserIndex)
                 '[Barrin 1-12-03]
                 If Npclist(NpcIndex).MaestroUser > 0 Then
@@ -197,7 +194,7 @@ Function TieneHechizo(ByVal i As Integer, ByVal UserIndex As Integer) As Boolean
 '
 '***************************************************
 
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     
     Dim j As Integer
     For j = 1 To MAXUSERHECHIZOS
@@ -208,7 +205,7 @@ On Error GoTo Errhandler
     Next
 
 Exit Function
-Errhandler:
+ErrHandler:
 
 End Function
 
@@ -692,7 +689,7 @@ Sub LanzarHechizo(ByVal SpellIndex As Integer, ByVal UserIndex As Integer)
 '24/01/2007 ZaMa - Optimizacion de codigo.
 '02/16/2010: Marco - Now .flags.hechizo makes reference to global spell index instead of user's spell index
 '***************************************************
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
 
 With UserList(UserIndex)
     
@@ -758,7 +755,7 @@ End With
 
 Exit Sub
 
-Errhandler:
+ErrHandler:
     Call LogError("Error en LanzarHechizo. Error " & Err.Number & " : " & Err.description & _
         " Hechizo: " & Hechizos(SpellIndex).Nombre & "(" & SpellIndex & _
         "). Casteado por: " & UserList(UserIndex).Name & "(" & UserIndex & ").")
@@ -1025,13 +1022,6 @@ With UserList(UserIndex)
     ' <-------- Revive ---------->
     If Hechizos(HechizoIndex).Revivir = 1 Then
         If UserList(TargetIndex).flags.Muerto = 1 Then
-            
-            'Seguro de resurreccion (solo afecta a los hechizos, no al sacerdote ni al comando de GM)
-            If UserList(TargetIndex).flags.SeguroResu Then
-                Call WriteConsoleMsg(UserIndex, "¡El espíritu no tiene intenciones de regresar al mundo de los vivos!", FontTypeNames.FONTTYPE_INFO)
-                HechizoCasteado = False
-                Exit Sub
-            End If
         
             'No podemos resucitar si nuestra barra de energía no está llena. (GD: 29/04/07)
             If .Stats.MaxSta <> .Stats.MinSta Then
@@ -1068,22 +1058,6 @@ With UserList(UserIndex)
             ' Chequea si el status permite ayudar al otro usuario
             HechizoCasteado = CanSupportUser(UserIndex, TargetIndex, True)
             If Not HechizoCasteado Then Exit Sub
-    
-            Dim EraCriminal As Boolean
-            EraCriminal = criminal(UserIndex)
-            
-            If Not criminal(TargetIndex) Then
-                If TargetIndex <> UserIndex Then
-                    .Reputacion.NobleRep = .Reputacion.NobleRep + 500
-                    If .Reputacion.NobleRep > MAXREP Then _
-                        .Reputacion.NobleRep = MAXREP
-                    Call WriteConsoleMsg(UserIndex, "¡Los Dioses te sonríen, has ganado 500 puntos de nobleza!", FontTypeNames.FONTTYPE_INFO)
-                End If
-            End If
-            
-            If EraCriminal And Not criminal(UserIndex) Then
-                Call RefreshCharStatus(UserIndex)
-            End If
             
             With UserList(TargetIndex)
                 'Pablo Toxic Waste (GD: 29/04/07)
@@ -1257,7 +1231,7 @@ With Npclist(NpcIndex)
                 HechizoCasteado = True
             Else
                 If .NPCtype = eNPCType.GuardiaReal Then
-                    If esArmada(UserIndex) Then
+                    If EsArmada(UserIndex) Then
                         Call InfoHechizo(UserIndex)
                         .flags.Paralizado = 0
                         .Contadores.Paralisis = 0
@@ -1274,7 +1248,7 @@ With Npclist(NpcIndex)
                     Exit Sub
                 Else
                     If .NPCtype = eNPCType.Guardiascaos Then
-                        If esCaos(UserIndex) Then
+                        If EsCaos(UserIndex) Then
                             Call InfoHechizo(UserIndex)
                             .flags.Paralizado = 0
                             .Contadores.Paralisis = 0
@@ -1861,7 +1835,7 @@ Public Function CanSupportUser(ByVal CasterIndex As Integer, ByVal TargetIndex A
 'Checks if caster can cast support magic on target user.
 '***************************************************
      
- On Error GoTo Errhandler
+ On Error GoTo ErrHandler
  
     With UserList(CasterIndex)
         
@@ -1890,29 +1864,17 @@ Public Function CanSupportUser(ByVal CasterIndex As Integer, ByVal TargetIndex A
             If Not criminal(CasterIndex) Then
             
                 ' Armadas no pueden ayudar
-                If esArmada(CasterIndex) Then
+                If EsArmada(CasterIndex) Then
                     Call WriteConsoleMsg(CasterIndex, "Los miembros del ejército real no pueden ayudar a los criminales.", FontTypeNames.FONTTYPE_INFO)
                     Exit Function
                 End If
                 
-                ' Si el ciuda tiene el seguro puesto no puede ayudar
-                If .flags.Seguro Then
-                    Call WriteConsoleMsg(CasterIndex, "Para ayudar criminales debes sacarte el seguro ya que te volverás criminal como ellos.", FontTypeNames.FONTTYPE_INFO)
-                    Exit Function
-                Else
-                    ' Penalizacion
-                    If DoCriminal Then
-                        Call VolverCriminal(CasterIndex)
-                    Else
-                        Call DisNobAuBan(CasterIndex, .Reputacion.NobleRep * 0.5, 10000)
-                    End If
-                End If
             End If
             
         ' Victima ciuda o army
         Else
             ' Casteador es caos? => No Pueden ayudar ciudas
-            If esCaos(CasterIndex) Then
+            If EsCaos(CasterIndex) Then
                 Call WriteConsoleMsg(CasterIndex, "Los miembros de la legión oscura no pueden ayudar a los ciudadanos.", FontTypeNames.FONTTYPE_INFO)
                 Exit Function
                 
@@ -1926,17 +1888,9 @@ Public Function CanSupportUser(ByVal CasterIndex As Integer, ByVal TargetIndex A
                     If UserList(TargetIndex).flags.AtacablePor <> CasterIndex Then
                     
                         ' Si es armada no puede ayudar
-                        If esArmada(CasterIndex) Then
+                        If EsArmada(CasterIndex) Then
                             Call WriteConsoleMsg(CasterIndex, "Los miembros del ejército real no pueden ayudar a ciudadanos en estado atacable.", FontTypeNames.FONTTYPE_INFO)
                             Exit Function
-                        End If
-    
-                        ' Seguro puesto?
-                        If .flags.Seguro Then
-                            Call WriteConsoleMsg(CasterIndex, "Para ayudar ciudadanos en estado atacable debes sacarte el seguro, pero te puedes volver criminal.", FontTypeNames.FONTTYPE_INFO)
-                            Exit Function
-                        Else
-                            Call DisNobAuBan(CasterIndex, .Reputacion.NobleRep * 0.5, 10000)
                         End If
                     End If
                 End If
@@ -1949,7 +1903,7 @@ Public Function CanSupportUser(ByVal CasterIndex As Integer, ByVal TargetIndex A
 
     Exit Function
     
-Errhandler:
+ErrHandler:
     Call LogError("Error en CanSupportUser, Error: " & Err.Number & " - " & Err.description & _
                   " CasterIndex: " & CasterIndex & ", TargetIndex: " & TargetIndex)
 
@@ -2040,42 +1994,6 @@ With UserList(UserIndex)
     End If
 End With
 
-End Sub
-
-Public Sub DisNobAuBan(ByVal UserIndex As Integer, NoblePts As Long, BandidoPts As Long)
-'***************************************************
-'Author: Unknown
-'Last Modification: -
-'
-'***************************************************
-
-    'disminuye la nobleza NoblePts puntos y aumenta el bandido BandidoPts puntos
-    Dim EraCriminal As Boolean
-    EraCriminal = criminal(UserIndex)
-    
-    With UserList(UserIndex)
-        'Si estamos en la arena no hacemos nada
-        If MapData(.Pos.Map, .Pos.X, .Pos.Y).trigger = 6 Then Exit Sub
-        
-        If .flags.Privilegios And (PlayerType.User Or PlayerType.Consejero) Then
-            'pierdo nobleza...
-            .Reputacion.NobleRep = .Reputacion.NobleRep - NoblePts
-            If .Reputacion.NobleRep < 0 Then
-                .Reputacion.NobleRep = 0
-            End If
-            
-            'gano bandido...
-            .Reputacion.BandidoRep = .Reputacion.BandidoRep + BandidoPts
-            If .Reputacion.BandidoRep > MAXREP Then _
-                .Reputacion.BandidoRep = MAXREP
-            Call WriteMultiMessage(UserIndex, eMessages.NobilityLost) 'Call WriteNobilityLost(UserIndex)
-            If criminal(UserIndex) Then If .Faccion.ArmadaReal = 1 Then Call ExpulsarFaccionReal(UserIndex)
-        End If
-        
-        If Not EraCriminal And criminal(UserIndex) Then
-            Call RefreshCharStatus(UserIndex)
-        End If
-    End With
 End Sub
 
 Public Sub AprenderHechizo(ByVal UserIndex As Integer, ByVal HechizoEspecial As Integer)

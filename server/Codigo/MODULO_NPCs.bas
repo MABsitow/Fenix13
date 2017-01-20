@@ -82,7 +82,7 @@ Sub MuereNpc(ByVal NpcIndex As Integer, ByVal UserIndex As Integer)
 '22/06/06: (Nacho) Chequeamos si es pretoriano
 '24/01/2007: Pablo (ToxicWaste): Agrego para actualización de tag si cambia de status.
 '********************************************************
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     Dim MiNPC As npc
     MiNPC = Npclist(NpcIndex)
     Dim EraCriminal As Boolean
@@ -161,49 +161,6 @@ On Error GoTo Errhandler
             If .Stats.NPCsMuertos < 32000 Then _
                 .Stats.NPCsMuertos = .Stats.NPCsMuertos + 1
             
-            EraCriminal = criminal(UserIndex)
-            
-            If MiNPC.Stats.Alineacion = 0 Then
-            
-                If MiNPC.Numero = Guardias Then
-                    .Reputacion.NobleRep = 0
-                    .Reputacion.PlebeRep = 0
-                    .Reputacion.AsesinoRep = .Reputacion.AsesinoRep + 500
-                    If .Reputacion.AsesinoRep > MAXREP Then _
-                        .Reputacion.AsesinoRep = MAXREP
-                End If
-                
-                If MiNPC.MaestroUser = 0 Then
-                    .Reputacion.AsesinoRep = .Reputacion.AsesinoRep + vlASESINO
-                    If .Reputacion.AsesinoRep > MAXREP Then _
-                        .Reputacion.AsesinoRep = MAXREP
-                End If
-            ElseIf MiNPC.Stats.Alineacion = 1 Then
-                .Reputacion.PlebeRep = .Reputacion.PlebeRep + vlCAZADOR
-                If .Reputacion.PlebeRep > MAXREP Then _
-                    .Reputacion.PlebeRep = MAXREP
-                    
-            ElseIf MiNPC.Stats.Alineacion = 2 Then
-                .Reputacion.NobleRep = .Reputacion.NobleRep + vlASESINO / 2
-                If .Reputacion.NobleRep > MAXREP Then _
-                    .Reputacion.NobleRep = MAXREP
-                    
-            ElseIf MiNPC.Stats.Alineacion = 4 Then
-                .Reputacion.PlebeRep = .Reputacion.PlebeRep + vlCAZADOR
-                If .Reputacion.PlebeRep > MAXREP Then _
-                    .Reputacion.PlebeRep = MAXREP
-                    
-            End If
-            
-            If criminal(UserIndex) And esArmada(UserIndex) Then Call ExpulsarFaccionReal(UserIndex)
-            If Not criminal(UserIndex) And esCaos(UserIndex) Then Call ExpulsarFaccionCaos(UserIndex)
-            
-            If EraCriminal And Not criminal(UserIndex) Then
-                Call RefreshCharStatus(UserIndex)
-            ElseIf Not EraCriminal And criminal(UserIndex) Then
-                Call RefreshCharStatus(UserIndex)
-            End If
-            
             Call CheckUserLevel(UserIndex)
             
         End With
@@ -222,7 +179,7 @@ On Error GoTo Errhandler
     
 Exit Sub
 
-Errhandler:
+ErrHandler:
     Call LogError("Error en MuereNpc - Error: " & Err.Number & " - Desc: " & Err.description)
 End Sub
 
@@ -392,7 +349,7 @@ Public Sub QuitarNPC(ByVal NpcIndex As Integer)
 'Last Modification: 16/11/2009
 '16/11/2009: ZaMa - Now npcs lose their owner
 '***************************************************
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
 
     With Npclist(NpcIndex)
         .flags.NPCActive = False
@@ -425,7 +382,7 @@ On Error GoTo Errhandler
     End If
 Exit Sub
 
-Errhandler:
+ErrHandler:
     Call LogError("Error en QuitarNPC")
 End Sub
 
@@ -435,7 +392,7 @@ Public Sub QuitarPet(ByVal UserIndex As Integer, ByVal NpcIndex As Integer)
 'Last Modification: 18/11/2009
 'Kills a pet
 '***************************************************
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
 
     Dim i As Integer
     Dim PetIndex As Integer
@@ -461,7 +418,7 @@ On Error GoTo Errhandler
     
     Exit Sub
 
-Errhandler:
+ErrHandler:
     Call LogError("Error en QuitarPet. Error: " & Err.Number & " Desc: " & Err.description & " NpcIndex: " & NpcIndex & " UserIndex: " & UserIndex & " PetIndex: " & PetIndex)
 End Sub
 
@@ -745,7 +702,7 @@ Function NextOpenNPC() As Integer
 '
 '***************************************************
 
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     Dim LoopC As Long
       
     For LoopC = 1 To MAXNPCS + 1
@@ -756,7 +713,7 @@ On Error GoTo Errhandler
     NextOpenNPC = LoopC
 Exit Function
 
-Errhandler:
+ErrHandler:
     Call LogError("Error en NextOpenNPC")
 End Function
 

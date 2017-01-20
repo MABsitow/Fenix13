@@ -152,7 +152,6 @@ Public Type Char
     FxIndex As Integer
     
     Criminal As Byte
-    Atacable As Boolean
     
     Nombre As String
     
@@ -323,6 +322,7 @@ Public Enum PlayLoop
     plLluviain = 1
     plLluviaout = 2
 End Enum
+
 '[END]'
 '
 '       [END]
@@ -576,7 +576,6 @@ Sub ResetCharInfo(ByVal CharIndex As Integer)
     With charlist(CharIndex)
         .Active = 0
         .Criminal = 0
-        .Atacable = False
         .FxIndex = 0
         .invisible = False
         
@@ -2105,38 +2104,25 @@ With charlist(CharIndex)
                 If .Escudo.ShieldWalk(.Heading).GrhIndex Then Call DDrawTransGrhtoSurface(.Escudo.ShieldWalk(.Heading), PixelOffsetX, PixelOffsetY, 1, 1)
                 
                 If LenB(.Nombre) > 0 Then
-                    If Nombres And (esGM(UserCharIndex) Or Abs(MouseTileX - .Pos.X) < 2 And (Abs(MouseTileY - .Pos.Y)) < 2) Then
+                    If Nombres Then
                         Pos = getTagPosition(.Nombre)
                             'Pos = InStr(.Nombre, "<")
                             'If Pos = 0 Then Pos = Len(.Nombre) + 2
-<<<<<<< HEAD
+
                         If .priv = 0 Then
-                            If .Atacable Then
-                                color = RGB(ColoresPJ(48).R, ColoresPJ(48).g, ColoresPJ(48).b)
-                            Else
-                                If .Criminal Then
-                                    color = RGB(ColoresPJ(50).R, ColoresPJ(50).g, ColoresPJ(50).b)
-                                Else
-                                    color = RGB(ColoresPJ(49).R, ColoresPJ(49).g, ColoresPJ(49).b)
-                                End If
-=======
+                            Select Case .Criminal
                             
-                            If .priv = 0 Then
-                                If .Atacable Then
+                                Case 2 'ciuda
+                                    color = RGB(ColoresPJ(49).R, ColoresPJ(49).g, ColoresPJ(49).b)
+                                Case 3
+                                    color = RGB(ColoresPJ(50).R, ColoresPJ(50).g, ColoresPJ(50).b)
+                                Case 4
+                                    color = RGB(ColoresPJ(47).R, ColoresPJ(47).g, ColoresPJ(47).b)
+                                Case 5
                                     color = RGB(ColoresPJ(48).R, ColoresPJ(48).g, ColoresPJ(48).b)
-                                Else
-                                    If .Criminal Then
-                                        color = RGB(ColoresPJ(50).R, ColoresPJ(50).g, ColoresPJ(50).b)
-                                    Else
-                                        color = RGB(ColoresPJ(49).R, ColoresPJ(49).g, ColoresPJ(49).b)
-                                    End If
-                                End If
-                            Else
-                                color = RGB(ColoresPJ(.priv).R, ColoresPJ(.priv).g, ColoresPJ(.priv).b)
->>>>>>> origin/master
-                            End If
+                            End Select
                         Else
-                        color = RGB(ColoresPJ(.priv).R, ColoresPJ(.priv).g, ColoresPJ(.priv).b)
+                            color = RGB(ColoresPJ(.priv).R, ColoresPJ(.priv).g, ColoresPJ(.priv).b)
                         End If
                             
                             'Nick

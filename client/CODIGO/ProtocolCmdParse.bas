@@ -743,14 +743,6 @@ Public Sub ParseUserCommand(ByVal RawCommand As String)
                     Call WriteOnlineMap(UserMap)
                 End If
                 
-            Case "/PERDON"
-                If notNullArguments Then
-                    Call WriteForgive(ArgumentosRaw)
-                Else
-                    'Avisar que falta el parametro
-                    Call ShowConsoleMsg("Faltan parámetros. Utilice /perdon NICKNAME.")
-                End If
-                
             Case "/ECHAR"
                 If notNullArguments Then
                     Call WriteKick(ArgumentosRaw)
@@ -1189,32 +1181,6 @@ Public Sub ParseUserCommand(ByVal RawCommand As String)
                     'Avisar que falta el parametro
                     Call ShowConsoleMsg("Faltan parámetros. Utilice /racc NPC.")
                 End If
-        
-            Case "/AI" ' 1 - 4
-                If notNullArguments And CantidadArgumentos >= 2 Then
-                    If ValidNumber(ArgumentosAll(0), eNumber_Types.ent_Byte) And ValidNumber(ArgumentosAll(1), eNumber_Types.ent_Integer) Then
-                        Call WriteImperialArmour(ArgumentosAll(0), ArgumentosAll(1))
-                    Else
-                        'No es numerico
-                        Call ShowConsoleMsg("Valor incorrecto. Utilice /ai ARMADURA OBJETO.")
-                    End If
-                Else
-                    'Avisar que falta el parametro
-                    Call ShowConsoleMsg("Faltan parámetros. Utilice /ai ARMADURA OBJETO.")
-                End If
-                
-            Case "/AC" ' 1 - 4
-                If notNullArguments And CantidadArgumentos >= 2 Then
-                    If ValidNumber(ArgumentosAll(0), eNumber_Types.ent_Byte) And ValidNumber(ArgumentosAll(1), eNumber_Types.ent_Integer) Then
-                        Call WriteChaosArmour(ArgumentosAll(0), ArgumentosAll(1))
-                    Else
-                        'No es numerico
-                        Call ShowConsoleMsg("Valor incorrecto. Utilice /ac ARMADURA OBJETO.")
-                    End If
-                Else
-                    'Avisar que falta el parametro
-                    Call ShowConsoleMsg("Faltan parámetros. Utilice /ac ARMADURA OBJETO.")
-                End If
                 
             Case "/NAVE"
                 Call WriteNavigateToggle
@@ -1224,14 +1190,6 @@ Public Sub ParseUserCommand(ByVal RawCommand As String)
             
             Case "/APAGAR"
                 Call WriteTurnOffServer
-                
-            Case "/CONDEN"
-                If notNullArguments Then
-                    Call WriteTurnCriminal(ArgumentosRaw)
-                Else
-                    'Avisar que falta el parametro
-                    Call ShowConsoleMsg("Faltan parámetros. Utilice /conden NICKNAME.")
-                End If
                 
             Case "/RAJAR"
                 If notNullArguments Then
