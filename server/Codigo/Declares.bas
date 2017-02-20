@@ -673,7 +673,7 @@ Public Type Position
 End Type
 
 Public Type WorldPos
-    Map As Integer
+    map As Integer
     X As Integer
     Y As Integer
 End Type
@@ -838,17 +838,14 @@ Public Type Recompensa
     Obj(1 To 2) As Obj
 End Type
 
-'[Pablo ToxicWaste]
-Public Type ModClase
-    Evasion As Double
-    AtaqueArmas As Double
-    AtaqueProyectiles As Double
-    AtaqueWrestling As Double
-    DañoArmas As Double
-    DañoProyectiles As Double
-    DañoWrestling As Double
-    Escudo As Double
-End Type
+Public Enum eMods
+        EVASION = 1
+        CUERPOACUERPO
+        CONARCOS
+        EVAESCUDO
+        DañoCuerpoACuerpo
+        DañoConArcos
+End Enum
 
 Public Type ModRaza
     Fuerza As Single
@@ -1503,7 +1500,7 @@ Public ObjCarpintero() As Integer
 Public MD5s() As String
 Public BanIps As New Collection
 'Public Parties(1 To MAX_PARTIES) As clsParty
-Public ModClase(1 To NUMCLASES) As ModClase
+Public Mods(1 To 6, 1 To NUMCLASES) As Single
 Public ModRaza(1 To NUMRAZAS) As ModRaza
 Public ModVida(1 To NUMCLASES) As Double
 Public Ciudades(1 To NUMCIUDADES) As WorldPos

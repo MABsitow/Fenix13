@@ -66,12 +66,7 @@ Public Type BITMAPINFO
 End Type
 
 Private Const BI_RGB As Long = 0
-Private Const BI_RLE8 As Long = 1
-Private Const BI_RLE4 As Long = 2
 Private Const BI_BITFIELDS As Long = 3
-Private Const BI_JPG As Long = 4
-Private Const BI_PNG As Long = 5
-
 
 'To get free bytes in drive
 Private Declare Function GetDiskFreeSpace Lib "kernel32" Alias "GetDiskFreeSpaceExA" (ByVal lpRootPathName As String, FreeBytesToCaller As Currency, bytesTotal As Currency, FreeBytesTotal As Currency) As Long
@@ -197,7 +192,7 @@ Private Function Get_InfoHeader(ByRef ResourcePath As String, ByRef FileName As 
     Dim ResourceFilePath As String
     Dim FileHead As FILEHEADER
     
-On Local Error GoTo Errhandler
+On Local Error GoTo ErrHandler
 
     ResourceFilePath = ResourcePath & GRH_RESOURCE_FILE
     
@@ -225,7 +220,7 @@ On Local Error GoTo Errhandler
     Close ResourceFile
 Exit Function
 
-Errhandler:
+ErrHandler:
     Close ResourceFile
     
     Call MsgBox("Error al intentar leer el archivo " & ResourceFilePath & ". Razón: " & Err.number & " : " & Err.Description, vbOKOnly, "Error")
@@ -245,7 +240,6 @@ Private Sub Compress_Data(ByRef data() As Byte)
     Dim Dimensions As Long
     Dim DimBuffer As Long
     Dim BufTemp() As Byte
-    Dim loopc As Long
     
     Dimensions = UBound(data) + 1
     
@@ -315,9 +309,9 @@ Public Function Compress_Files(ByRef SourcePath As String, ByRef OutputPath As S
     Dim SourceData() As Byte
     Dim FileHead As FILEHEADER
     Dim InfoHead() As INFOHEADER
-    Dim loopc As Long
+    Dim loopC As Long
 
-On Local Error GoTo Errhandler
+On Local Error GoTo ErrHandler
     OutputFilePath = OutputPath & GRH_RESOURCE_FILE
     SourceFileName = Dir(SourcePath & "*" & GRH_SOURCE_FILE_EXT, vbNormal)
     
@@ -361,13 +355,13 @@ On Local Error GoTo Errhandler
         Seek OutputFile, FileHead.lngFileSize + 1
         
         ' Process every file!
-        For loopc = 0 To FileHead.lngNumFiles - 1
+        For loopC = 0 To FileHead.lngNumFiles - 1
 
             SourceFile = FreeFile()
-            Open SourcePath & InfoHead(loopc).strFileName For Binary Access Read Lock Write As SourceFile
+            Open SourcePath & InfoHead(loopC).strFileName For Binary Access Read Lock Write As SourceFile
                 
                 'Find out how large the file is and resize the data array appropriately
-                InfoHead(loopc).lngFileSizeUncompressed = LOF(SourceFile)
+                InfoHead(loopC).lngFileSizeUncompressed = LOF(SourceFile)
                 ReDim SourceData(LOF(SourceFile) - 1)
                 
                 'Get the data from the file
@@ -379,7 +373,7 @@ On Local Error GoTo Errhandler
                 'Store it in the resource file
                 Put OutputFile, , SourceData
                 
-                With InfoHead(loopc)
+                With InfoHead(loopC)
                     'Set up the info headers
                     .lngFileSize = UBound(SourceData) + 1
                     .lngFileStart = FileHead.lngFileSize + 1
@@ -395,7 +389,7 @@ On Local Error GoTo Errhandler
             'Update progress bar
             If Not prgBar Is Nothing Then prgBar.Value = prgBar.Value + 1
             DoEvents
-        Next loopc
+        Next loopC
         'Store the headers in the file
         Seek OutputFile, 1
         Put OutputFile, , FileHead
@@ -410,7 +404,7 @@ On Local Error GoTo Errhandler
     Compress_Files = True
 Exit Function
 
-Errhandler:
+ErrHandler:
     Erase SourceData
     Erase InfoHead
     Close OutputFile
@@ -439,7 +433,7 @@ Public Function Get_File_RawData(ByRef ResourcePath As String, ByRef InfoHead As
     Dim ResourceFilePath As String
     Dim ResourceFile As Integer
     
-On Local Error GoTo Errhandler
+On Local Error GoTo ErrHandler
     ResourceFilePath = ResourcePath & GRH_RESOURCE_FILE
     
     'Size the Data array
@@ -456,7 +450,7 @@ On Local Error GoTo Errhandler
     Get_File_RawData = True
 Exit Function
 
-Errhandler:
+ErrHandler:
     Close ResourceFile
 End Function
 
@@ -477,7 +471,7 @@ Public Function Extract_File(ByRef ResourcePath As String, ByRef InfoHead As INF
 'Last Modify Date: 08/20/2007
 'Extract the specific file from a resource file
 '*****************************************************************
-On Local Error GoTo Errhandler
+On Local Error GoTo ErrHandler
     
     If Get_File_RawData(ResourcePath, InfoHead, data) Then
         'Decompress all data
@@ -489,7 +483,7 @@ On Local Error GoTo Errhandler
     End If
 Exit Function
 
-Errhandler:
+ErrHandler:
     Call MsgBox("Error al intentar decodificar recursos. Razon: " & Err.number & " : " & Err.Description, vbOKOnly, "Error")
 End Function
 
@@ -508,7 +502,7 @@ Public Function Extract_Files(ByRef ResourcePath As String, ByRef OutputPath As 
 'Last Modify Date: 08/20/2007
 'Extracts all files from a resource file
 '*****************************************************************
-    Dim loopc As Long
+    Dim loopC As Long
     Dim ResourceFile As Integer
     Dim ResourceFilePath As String
     Dim OutputFile As Integer
@@ -517,7 +511,7 @@ Public Function Extract_Files(ByRef ResourcePath As String, ByRef OutputPath As 
     Dim InfoHead() As INFOHEADER
     Dim RequiredSpace As Currency
     
-On Local Error GoTo Errhandler
+On Local Error GoTo ErrHandler
     ResourceFilePath = ResourcePath & GRH_RESOURCE_FILE
     
     'Open the binary file
@@ -540,9 +534,9 @@ On Local Error GoTo Errhandler
         Get ResourceFile, , InfoHead
         
         'Check if there is enough hard drive space to extract all files
-        For loopc = 0 To UBound(InfoHead)
-            RequiredSpace = RequiredSpace + InfoHead(loopc).lngFileSizeUncompressed
-        Next loopc
+        For loopC = 0 To UBound(InfoHead)
+            RequiredSpace = RequiredSpace + InfoHead(loopC).lngFileSizeUncompressed
+        Next loopC
         
         If RequiredSpace >= General_Drive_Get_Free_Bytes(Left$(App.path, 3)) Then
             Erase InfoHead
@@ -559,17 +553,17 @@ On Local Error GoTo Errhandler
     End If
     
     'Extract all of the files from the binary file
-    For loopc = 0 To UBound(InfoHead)
+    For loopC = 0 To UBound(InfoHead)
         'Extract this file
-        If Extract_File(ResourcePath, InfoHead(loopc), SourceData) Then
+        If Extract_File(ResourcePath, InfoHead(loopC), SourceData) Then
             'Destroy file if it previuosly existed
-            If FileExist(OutputPath & InfoHead(loopc).strFileName, vbNormal) Then
-                Call Kill(OutputPath & InfoHead(loopc).strFileName)
+            If FileExist(OutputPath & InfoHead(loopC).strFileName, vbNormal) Then
+                Call Kill(OutputPath & InfoHead(loopC).strFileName)
             End If
             
             'Save it!
             OutputFile = FreeFile()
-            Open OutputPath & InfoHead(loopc).strFileName For Binary As OutputFile
+            Open OutputPath & InfoHead(loopC).strFileName For Binary As OutputFile
                 Put OutputFile, , SourceData
             Close OutputFile
             
@@ -578,20 +572,20 @@ On Local Error GoTo Errhandler
             Erase SourceData
             Erase InfoHead
             
-            Call MsgBox("No se pudo extraer el archivo " & InfoHead(loopc).strFileName, vbOKOnly, "Error")
+            Call MsgBox("No se pudo extraer el archivo " & InfoHead(loopC).strFileName, vbOKOnly, "Error")
             Exit Function
         End If
             
         'Update progress bar
         If Not prgBar Is Nothing Then prgBar.Value = prgBar.Value + 1
         DoEvents
-    Next loopc
+    Next loopC
     
     Erase InfoHead
     Extract_Files = True
 Exit Function
 
-Errhandler:
+ErrHandler:
     Close ResourceFile
     Erase SourceData
     Erase InfoHead
@@ -1010,7 +1004,7 @@ Public Function Make_Patch(ByRef NewResourcePath As String, ByRef OldResourcePat
     Make_Patch = True
 Exit Function
 
-Errhandler:
+ErrHandler:
     Close OutputFile
     Close NewResourceFile
     Close OldResourceFile
@@ -1052,7 +1046,7 @@ Public Function Apply_Patch(ByRef ResourcePath As String, ByRef PatchPath As Str
     Dim WrittenFiles As Long
     Dim DataOutputPos As Long
 
-On Local Error GoTo Errhandler
+On Local Error GoTo ErrHandler
 
     ResourceFilePath = ResourcePath & GRH_RESOURCE_FILE
     PatchFilePath = PatchPath & GRH_PATCH_FILE
@@ -1146,7 +1140,7 @@ On Local Error GoTo Errhandler
                         Case PatchInstruction.Delete_File
                             If InfoHead.strFileName <> PatchInfoHead.strFileName Then
                                 Err.Description = "Incongruencia en archivos de recurso"
-                                GoTo Errhandler
+                                GoTo ErrHandler
                             End If
                         
                         'Create
@@ -1172,7 +1166,7 @@ On Local Error GoTo Errhandler
                                 If Not prgBar Is Nothing Then prgBar.Value = WrittenFiles
                             Else
                                 Err.Description = "Incongruencia en archivos de recurso"
-                                GoTo Errhandler
+                                GoTo ErrHandler
                             End If
                         
                         'Modify
@@ -1194,7 +1188,7 @@ On Local Error GoTo Errhandler
                                 If Not prgBar Is Nothing Then prgBar.Value = WrittenFiles
                             Else
                                 Err.Description = "Incongruencia en archivos de recurso"
-                                GoTo Errhandler
+                                GoTo ErrHandler
                             End If
                     End Select
                     
@@ -1235,13 +1229,13 @@ On Local Error GoTo Errhandler
             Name OutputFilePath As ResourceFilePath
     Else
         Err.Description = "Falla al procesar parche"
-        GoTo Errhandler
+        GoTo ErrHandler
     End If
     
     Apply_Patch = True
 Exit Function
 
-Errhandler:
+ErrHandler:
     Close OutputFile
     Close PatchFile
     Close ResourceFile

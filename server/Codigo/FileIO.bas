@@ -419,7 +419,7 @@ Public Sub DoBackUp()
 End Sub
 
 'CSEH: ErrLog
-Public Sub GrabarMapa(ByVal Map As Long, ByVal MAPFILE As String)
+Public Sub GrabarMapa(ByVal map As Long, ByVal MAPFILE As String)
     '***************************************************
     'Author: Unknown
     'Last Modification: -
@@ -448,10 +448,10 @@ Public Sub GrabarMapa(ByVal Map As Long, ByVal MAPFILE As String)
         'Write .bkp file
 130     For Y = YMinMapSize To YMaxMapSize
 135         For X = XMinMapSize To XMaxMapSize
-140             With MapData(Map, X, Y)
+140             With MapData(map, X, Y)
 145                 If .ObjInfo.OBJIndex Then
 150                     If Not ObjData(.ObjInfo.OBJIndex).OBJType = eOBJType.otFogata Then
-155                         If Not ItemEsDeMapa(Map, X, Y) Then
+155                         If Not ItemEsDeMapa(map, X, Y) Then
 160                             Call writer.putByte(X)
 165                             Call writer.putByte(Y)
 170                             Call writer.putInteger(.ObjInfo.OBJIndex)
@@ -524,20 +524,15 @@ Sub LoadBalance()
 '***************************************************
 
     Dim i As Long
+    Dim j As Long
     
-    'Modificadores de Clase
     For i = 1 To NUMCLASES
-        With ModClase(i)
-            .Evasion = val(GetVar(DatPath & "Balance.dat", "MODEVASION", ListaClases(i)))
-            .AtaqueArmas = val(GetVar(DatPath & "Balance.dat", "MODATAQUEARMAS", ListaClases(i)))
-            .AtaqueProyectiles = val(GetVar(DatPath & "Balance.dat", "MODATAQUEPROYECTILES", ListaClases(i)))
-            .AtaqueWrestling = val(GetVar(DatPath & "Balance.dat", "MODATAQUEWRESTLING", ListaClases(i)))
-            .DañoArmas = val(GetVar(DatPath & "Balance.dat", "MODDAÑOARMAS", ListaClases(i)))
-            .DañoProyectiles = val(GetVar(DatPath & "Balance.dat", "MODDAÑOPROYECTILES", ListaClases(i)))
-            .DañoWrestling = val(GetVar(DatPath & "Balance.dat", "MODDAÑOWRESTLING", ListaClases(i)))
-            .Escudo = val(GetVar(DatPath & "Balance.dat", "MODESCUDO", ListaClases(i)))
-        End With
-    Next i
+        If Len(ListaClases(i)) > 0 Then
+            For j = 1 To UBound(Mods, i)
+                Mods(j, i) = Int(GetVar(DatPath & "Balance.dat", ListaClases(i), "Mod" & j)) / 100
+            Next
+        End If
+    Next
     
     'Modificadores de Raza
     For i = 1 To NUMRAZAS
@@ -983,7 +978,7 @@ Sub LoadUserInit(ByVal UserIndex As Integer, ByRef UserFile As clsIniReader)
         
         .desc = UserFile.GetValue("INIT", "Desc")
         
-        .Pos.Map = CInt(ReadField(1, UserFile.GetValue("INIT", "Position"), 45))
+        .Pos.map = CInt(ReadField(1, UserFile.GetValue("INIT", "Position"), 45))
         .Pos.X = CInt(ReadField(2, UserFile.GetValue("INIT", "Position"), 45))
         .Pos.Y = CInt(ReadField(3, UserFile.GetValue("INIT", "Position"), 45))
         
@@ -1111,7 +1106,7 @@ Sub CargarBackUp()
 
 100     If frmMain.Visible Then frmMain.txStatus.Caption = "Cargando backup."
     
-        Dim Map As Integer
+        Dim map As Integer
         Dim tFileName As String
         
 105         NumMaps = val(GetVar(DatPath & "Map.dat", "INIT", "NumMaps"))
@@ -1129,22 +1124,22 @@ Sub CargarBackUp()
         
 145         Call CargarInfoMapas(MapPath)
         
-150         For Map = 1 To NumMaps
-155             If val(GetVar(App.path & MapPath & "Mapa" & Map & ".Dat", "Mapa" & Map, "BackUp")) <> 0 Then
-160                 tFileName = App.path & "\WorldBackUp\Mapa" & Map
+150         For map = 1 To NumMaps
+155             If val(GetVar(App.path & MapPath & "Mapa" & map & ".Dat", "Mapa" & map, "BackUp")) <> 0 Then
+160                 tFileName = App.path & "\WorldBackUp\Mapa" & map
                 
 165                 If Not FileExist(tFileName & ".*") Then 'Miramos que exista al menos uno de los 3 archivos, sino lo cargamos de la carpeta de los mapas
-170                     tFileName = App.path & MapPath & "Mapa" & Map
+170                     tFileName = App.path & MapPath & "Mapa" & map
                     End If
                 Else
-175                 tFileName = App.path & MapPath & "Mapa" & Map
+175                 tFileName = App.path & MapPath & "Mapa" & map
                 End If
             
-180             Call CargarMapa(Map, tFileName)
+180             Call CargarMapa(map, tFileName)
             
 185             frmCargando.cargar.value = frmCargando.cargar.value + 1
 190             DoEvents
-195         Next Map
+195         Next map
     '<EhFooter>
     Exit Sub
 
@@ -1166,7 +1161,7 @@ Sub LoadMapData()
 
 100     If frmMain.Visible Then frmMain.txStatus.Caption = "Cargando mapas..."
     
-        Dim Map As Integer
+        Dim map As Integer
         Dim tFileName As String
     
 105         NumMaps = val(GetVar(DatPath & "Map.dat", "INIT", "NumMaps"))
@@ -1184,14 +1179,14 @@ Sub LoadMapData()
         
 145         Call CargarInfoMapas(MapPath)
         
-150         For Map = 1 To NumMaps
+150         For map = 1 To NumMaps
             
-155             tFileName = App.path & MapPath & "Mapa" & Map
-160             Call CargarMapa(Map, tFileName)
+155             tFileName = App.path & MapPath & "Mapa" & map
+160             Call CargarMapa(map, tFileName)
             
 165             frmCargando.cargar.value = frmCargando.cargar.value + 1
 170             DoEvents
-175         Next Map
+175         Next map
 
     '<EhFooter>
     Exit Sub
@@ -1241,7 +1236,7 @@ CargarInfoMapas_Err:
     '</EhFooter>
 End Sub
 'CSEH: ErrLog
-Public Sub CargarMapa(ByVal Map As Long, ByVal MAPFl As String)
+Public Sub CargarMapa(ByVal map As Long, ByVal MAPFl As String)
     '***************************************************
     'Author: Unknown
     'Last Modification: -
@@ -1274,11 +1269,11 @@ Public Sub CargarMapa(ByVal Map As Long, ByVal MAPFl As String)
     
 130     Call mapReader.initializeReader(data)
     
-135     MapInfo(Map).MapVersion = mapReader.getInteger
+135     MapInfo(map).MapVersion = mapReader.getInteger
     
 140     For Y = YMinMapSize To YMaxMapSize
 145         For X = XMinMapSize To XMaxMapSize
-150             With MapData(Map, X, Y)
+150             With MapData(map, X, Y)
 
                 
 155                 ByFlags = mapReader.getByte
@@ -1300,18 +1295,18 @@ Public Sub CargarMapa(ByVal Map As Long, ByVal MAPFl As String)
                             'original la guardamos
 205                         If val(GetVar(npcfile, "NPC" & .NpcIndex, "PosOrig")) = 1 Then
 210                             .NpcIndex = OpenNPC(.NpcIndex)
-215                             Npclist(.NpcIndex).Orig.Map = Map
+215                             Npclist(.NpcIndex).Orig.map = map
 220                             Npclist(.NpcIndex).Orig.X = X
 225                             Npclist(.NpcIndex).Orig.Y = Y
                             Else
 230                             .NpcIndex = OpenNPC(.NpcIndex)
                             End If
                         
-235                         Npclist(.NpcIndex).Pos.Map = Map
+235                         Npclist(.NpcIndex).Pos.map = map
 240                         Npclist(.NpcIndex).Pos.X = X
 245                         Npclist(.NpcIndex).Pos.Y = Y
                         
-250                         Call MakeNPCChar(True, 0, .NpcIndex, Map, X, Y)
+250                         Call MakeNPCChar(True, 0, .NpcIndex, map, X, Y)
                         End If
                     End If
                     
@@ -1327,7 +1322,7 @@ Public Sub CargarMapa(ByVal Map As Long, ByVal MAPFl As String)
                     End If
                 
 285                 If ByFlags And 128 Then
-290                     .TileExit.Map = mapReader.getInteger
+290                     .TileExit.map = mapReader.getInteger
 295                     .TileExit.X = mapReader.getInteger
 300                     .TileExit.Y = mapReader.getInteger
                     End If
@@ -1340,7 +1335,7 @@ Public Sub CargarMapa(ByVal Map As Long, ByVal MAPFl As String)
     Exit Sub
 
 CargarMapa_Err:
-        Call LogError("Error en CargarMapa " & Map & ": " & X & ": " & Y & "** " & Erl & " - " & Err.description)
+        Call LogError("Error en CargarMapa " & map & ": " & X & ": " & Y & "** " & Erl & " - " & Err.description)
     '</EhFooter>
 End Sub
 
@@ -1467,35 +1462,35 @@ Sub LoadSini()
     
     ''&&&&&&&&&&&&&&&&&&&&& FIN BALANCE &&&&&&&&&&&&&&&&&&&&&&&
     
-    Dim i As Long, j As Long, k As Long, l As Long
+    Dim i As Long, j As Long, k As Long, L As Long
     
     For i = 1 To UBound(Armaduras, 1)
         For j = 1 To UBound(Armaduras, 2)
             For k = 1 To UBound(Armaduras, 3)
-                For l = 1 To UBound(Armaduras, 4)
-                    Armaduras(i, j, k, l) = val(GetVar(IniPath & "Server.ini", "INIT", "Armadura" & i & j & k & l))
+                For L = 1 To UBound(Armaduras, 4)
+                    Armaduras(i, j, k, L) = val(GetVar(IniPath & "Server.ini", "INIT", "Armadura" & i & j & k & L))
                 Next
             Next
         Next
     Next
 
-    Ullathorpe.Map = GetVar(DatPath & "Ciudades.dat", "Ullathorpe", "Mapa")
+    Ullathorpe.map = GetVar(DatPath & "Ciudades.dat", "Ullathorpe", "Mapa")
     Ullathorpe.X = GetVar(DatPath & "Ciudades.dat", "Ullathorpe", "X")
     Ullathorpe.Y = GetVar(DatPath & "Ciudades.dat", "Ullathorpe", "Y")
     
-    Nix.Map = GetVar(DatPath & "Ciudades.dat", "Nix", "Mapa")
+    Nix.map = GetVar(DatPath & "Ciudades.dat", "Nix", "Mapa")
     Nix.X = GetVar(DatPath & "Ciudades.dat", "Nix", "X")
     Nix.Y = GetVar(DatPath & "Ciudades.dat", "Nix", "Y")
     
-    Banderbill.Map = GetVar(DatPath & "Ciudades.dat", "Banderbill", "Mapa")
+    Banderbill.map = GetVar(DatPath & "Ciudades.dat", "Banderbill", "Mapa")
     Banderbill.X = GetVar(DatPath & "Ciudades.dat", "Banderbill", "X")
     Banderbill.Y = GetVar(DatPath & "Ciudades.dat", "Banderbill", "Y")
     
-    Lindos.Map = GetVar(DatPath & "Ciudades.dat", "Lindos", "Mapa")
+    Lindos.map = GetVar(DatPath & "Ciudades.dat", "Lindos", "Mapa")
     Lindos.X = GetVar(DatPath & "Ciudades.dat", "Lindos", "X")
     Lindos.Y = GetVar(DatPath & "Ciudades.dat", "Lindos", "Y")
     
-    Arghal.Map = GetVar(DatPath & "Ciudades.dat", "Arghal", "Mapa")
+    Arghal.map = GetVar(DatPath & "Ciudades.dat", "Arghal", "Mapa")
     Arghal.X = GetVar(DatPath & "Ciudades.dat", "Arghal", "X")
     Arghal.Y = GetVar(DatPath & "Ciudades.dat", "Arghal", "Y")
     
@@ -1668,7 +1663,7 @@ With UserList(UserIndex)
     
     
     
-    Call WriteVar(UserFile, "INIT", "Position", .Pos.Map & "-" & .Pos.X & "-" & .Pos.Y)
+    Call WriteVar(UserFile, "INIT", "Position", .Pos.map & "-" & .Pos.X & "-" & .Pos.Y)
     
     
     Call WriteVar(UserFile, "STATS", "GLD", CStr(.Stats.GLD))
@@ -2025,13 +2020,13 @@ For j = 1 To NUMCIUDADES
     For i = 1 To 4
         Select Case i
             Case eHeading.NORTH
-                Call setDistance(getLimit(Ciudades(j).Map, eHeading.NORTH), j, i, 0, 1)
+                Call setDistance(getLimit(Ciudades(j).map, eHeading.NORTH), j, i, 0, 1)
             Case eHeading.EAST
-                Call setDistance(getLimit(Ciudades(j).Map, eHeading.EAST), j, i, 1, 0)
+                Call setDistance(getLimit(Ciudades(j).map, eHeading.EAST), j, i, 1, 0)
             Case eHeading.SOUTH
-                Call setDistance(getLimit(Ciudades(j).Map, eHeading.SOUTH), j, i, 0, 1)
+                Call setDistance(getLimit(Ciudades(j).map, eHeading.SOUTH), j, i, 0, 1)
             Case eHeading.WEST
-                Call setDistance(getLimit(Ciudades(j).Map, eHeading.WEST), j, i, -1, 0)
+                Call setDistance(getLimit(Ciudades(j).map, eHeading.WEST), j, i, -1, 0)
         End Select
     Next i
 Next j
@@ -2052,7 +2047,7 @@ If mapa <= 0 Or mapa > NumMaps Then Exit Sub
 
 If distanceToCities(mapa).distanceToCity(city) >= 0 Then Exit Sub
 
-If mapa = Ciudades(city).Map Then
+If mapa = Ciudades(city).map Then
     distanceToCities(mapa).distanceToCity(city) = 0
 Else
     distanceToCities(mapa).distanceToCity(city) = Abs(X) + Abs(Y)
@@ -2090,13 +2085,13 @@ For X = 15 To 87
     For Y = 0 To 3
         Select Case side
             Case eHeading.NORTH
-                getLimit = MapData(mapa, X, 7 + Y).TileExit.Map
+                getLimit = MapData(mapa, X, 7 + Y).TileExit.map
             Case eHeading.EAST
-                getLimit = MapData(mapa, 92 - Y, X).TileExit.Map
+                getLimit = MapData(mapa, 92 - Y, X).TileExit.map
             Case eHeading.SOUTH
-                getLimit = MapData(mapa, X, 94 - Y).TileExit.Map
+                getLimit = MapData(mapa, X, 94 - Y).TileExit.map
             Case eHeading.WEST
-                getLimit = MapData(mapa, 9 + Y, X).TileExit.Map
+                getLimit = MapData(mapa, 9 + Y, X).TileExit.map
         End Select
         If getLimit > 0 Then Exit Function
     Next Y

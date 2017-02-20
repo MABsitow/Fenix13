@@ -90,7 +90,7 @@ Private Type SoundBuffer
     X As Byte
     Y As Byte
     normalFq As Long
-    Buffer As DirectSoundBuffer
+    Buffer As DirectSoundSecondaryBuffer8
 End Type
 
 ''
@@ -111,9 +111,8 @@ Dim inited As Boolean
 
 ''
 'The one and only DirectSound object
-Dim DirectSound As DirectSound
+Dim DirectSound As DirectSound8
 
-''
 'Array of all existing sound buffers
 Dim DSBuffers(1 To NumSoundBuffers) As SoundBuffer
 
@@ -127,19 +126,19 @@ Dim SndVolume As Long
 
 ''
 'DirectMusic's Performance object
-Dim Performance As DirectMusicPerformance
+Dim Performance As DirectMusicPerformance8
 
 ''
 'Currently loaded segment
-Dim Segment As DirectMusicSegment
+Dim Segment As DirectMusicSegment8
 
 ''
 'The one and only DirectMusic Loader
-Dim Loader As DirectMusicLoader
+Dim Loader As DirectMusicLoader8
 
 ''
 'State of the currently loaded segment
-Dim SegState As DirectMusicSegmentState
+Dim SegState As DirectMusicSegmentState8
 
 ''
 'States wether music is supported by hardware or not
@@ -173,6 +172,10 @@ Dim lastPosY As Integer
 'States wether sound effects are currently activated or not
 Dim sEffectsActivated As Boolean
 
+''
+'Determines wether last music played was a MP3 or not.
+Private LastPlayMP3 As Boolean
+
 '**** Used By MP3 Playing. *****
 Dim IMC   As IMediaControl
 Dim IBA   As IBasicAudio
@@ -201,11 +204,22 @@ Private Sub Class_Terminate()
 '12/31/09 - Pato: Use StopWave method to prevent errors.
 '***************************************************
 On Local Error Resume Next
+
+    Dim loopC As Long
+   
+    'Stop every channel being used and destroy the buffer
+    For loopC = 1 To NumSoundBuffers
+        If LenB(DSBuffers(loopC).FileName) <> 0 Then ' GSZAO
+            Call DSBuffers(loopC).Buffer.Stop
+        End If
+        Set DSBuffers(loopC).Buffer = Nothing
+    Next loopC
+   
     'Stop every channel being used and destroy the buffer
     Call StopWave
     
     'Stop music
-    Call Performance.Stop(Segment, SegState, 0, 0)
+    If Not Segment Is Nothing Then Call Performance.StopEx(Segment, 0, DMUS_SEGF_DEFAULT)
     
     Call Performance.CloseDown
     
@@ -228,7 +242,7 @@ End Sub
 '
 ' @return   True if no errors occured, false otherwise.
 
-Public Function Initialize(ByRef dX As DirectX7, ByVal hWnd As Long, ByVal sound_path As String, ByVal music_path As String) As Boolean
+Public Function Initialize(ByRef dX As DirectX8, ByVal hwnd As Long, ByVal sound_path As String, ByVal music_path As String) As Boolean
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 16/03/04
@@ -245,7 +259,7 @@ On Error GoTo ErrHandler
     'Initialize DirectSound
     Set DirectSound = dX.DirectSoundCreate("")
     
-    Call DirectSound.SetCooperativeLevel(hWnd, DSSCL_PRIORITY)
+    Call DirectSound.SetCooperativeLevel(hwnd, DSSCL_PRIORITY)
     
     'Set sound path
     SoundPath = sound_path
@@ -254,7 +268,7 @@ On Error GoTo ErrHandler
     SndVolume = 0
     
     'Initialize DirectMusic
-    Music = InitializedirectMusic(dX, hWnd)
+    Music = InitializedirectMusic(dX, hwnd)
     
     'Set music path
     MusicPath = music_path
@@ -284,26 +298,29 @@ End Function
 '
 ' @return   True if no errors occured, false otherwise.
 
-Private Function InitializedirectMusic(ByRef dX As DirectX7, ByVal hWnd As Long) As Boolean
+Private Function InitializedirectMusic(ByRef dX As DirectX8, ByVal hwnd As Long) As Boolean
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 16/03/04
 'Initialize DM. Returns false if music isn't supported by HW
 '***************************************************
 On Error GoTo ErrHandler
+    Dim mus_Params As DMUS_AUDIOPARAMS
     Set Loader = DirectX.DirectMusicLoaderCreate()
     
     Set Performance = dX.DirectMusicPerformanceCreate()
-    Call Performance.Init(DirectSound, hWnd)
+    Call Performance.InitAudio(hwnd, DMUS_AUDIOF_ALL, mus_Params, Nothing, DMUS_APATH_DYNAMIC_STEREO, 128)
     Call Performance.SetMasterAutoDownload(True)        'Enable auto download of instruments
     
     'Set to port default, 1 channel group is enough for MIDIs
-    Call Performance.SetPort(-1, 1)
+    Performance.SetMasterTempo 1
+    Performance.SetMasterVolume 1
     
     InitializedirectMusic = True
 Exit Function
 
 ErrHandler:
+    
 End Function
 
 ''
@@ -481,10 +498,8 @@ End Sub
 Private Function LoadWave(ByVal FileName As String, ByVal looping As LoopStyle) As Long
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
-'Last Modification: 04/28/09
-'Last Modification by: Marco Vanotti (MarKoxX)
-'Loads a new wave into memory (if it's not already loaded) and returns
-'the buffer index
+'Last Modification: 30/10/2012 - ^[GS]^
+'Loads a new wave into memory (if it's not already loaded) and returns the buffer index
 '***************************************************
 On Error GoTo ErrHandler
     Dim bufferDesc As DSBUFFERDESC
@@ -551,7 +566,7 @@ On Error GoTo ErrHandler
     
     waveFormat.nFormatTag = WAVE_FORMAT_PCM
     waveFormat.nChannels = 2
-    waveFormat.lSamplesPerSec = 22050
+    waveFormat.lSamplesPerSec = 44100 '22050 (44k GSZAO TEST)
     waveFormat.nBitsPerSample = 16
     waveFormat.nBlockAlign = waveFormat.nBitsPerSample / 8 * waveFormat.nChannels
     waveFormat.lAvgBytesPerSec = waveFormat.lSamplesPerSec * waveFormat.nBlockAlign
@@ -562,7 +577,7 @@ On Error GoTo ErrHandler
         .FileName = FileName
         .looping = (looping = LoopStyle.Enabled)
         
-        Set .Buffer = DirectSound.CreateSoundBufferFromFile(SoundPath & FileName, bufferDesc, waveFormat)
+        Set .Buffer = DirectSound.CreateSoundBufferFromFile(SoundPath & FileName, bufferDesc)
     End With
     
     LoadWave = i
@@ -674,12 +689,17 @@ End Property
 Public Function PlayMIDI(Optional ByVal file As String = "", Optional ByVal Loops As Long = -1) As Boolean
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
-'Last Modification: 16/03/04
+'Last Modification: 22/08/2013 - ^[GS]^
 'Loads a midi and start to play it
 '***************************************************
 On Error GoTo ErrHandler
+
+    If CurrentMusicFile = file Then Exit Function ' No cargar nuevamnete el tema que ya estaba
+
     If LenB(file) > 0 Then _
         CurrentMusicFile = file
+    
+    LastPlayMP3 = False
     
     If Not MusicActivated Then Exit Function
     
@@ -698,9 +718,9 @@ On Error GoTo ErrHandler
     
     'Play it
     Call Segment.SetRepeats(Loops)
-    
-    Set SegState = Performance.PlaySegment(Segment, 0, 0)
-    
+
+    Set SegState = Performance.PlaySegmentEx(Segment, DMUS_SEGF_DEFAULT, 0)
+   
     PlayMIDI = True
 Exit Function
 
@@ -753,7 +773,7 @@ Public Sub StopMidi()
 '***************************************************
 On Error GoTo ErrHandler
     If PlayingMusic Then
-        Call Performance.Stop(Segment, SegState, 0, 0)
+        Call Performance.StopEx(Segment, 0, DMUS_SEGF_DEFAULT)
     End If
 Exit Sub
 
@@ -846,22 +866,6 @@ Public Property Get PlayingMusic() As Boolean
 End Property
 
 ''
-' Retrieves the music's length.
-'
-' @return   Current music's length.
-
-Public Property Get MusicLenght() As Long
-'***************************************************
-'Author: Juan Martín Sotuyo Dodero (Maraxus)
-'Last Modification: 16/03/04
-'Returns the lenght of the current midi
-'***************************************************
-    If Not Music Then Exit Property
-    
-    MusicLenght = Segment.GetLength()
-End Property
-
-''
 ' Destroy the MP3 objects.
 '
 ' @return   True If the objects were destroy.
@@ -899,7 +903,7 @@ End Function
 Public Function MusicMP3Load(ByVal FilePath As String, Optional ByVal Volume As Long = 0, Optional ByVal Balance As Long = 0) As Boolean '**** Loads a MP3 *****
 '**************************************
 '* Created by: Fredrik Alexandersson  *
-'* Modify Date: 20/5/2003             *
+'Last Modification: 05/11/2011 - ^[GS]^
 '**************************************
     On Error GoTo ErrorHandl
     
@@ -912,7 +916,7 @@ Public Function MusicMP3Load(ByVal FilePath As String, Optional ByVal Volume As 
     
     Set IBA = IMC
     
-    If SoundVolume > 0 Then SoundVolume = 0
+    If Volume > 0 Then Volume = 0
     If Volume < -4000 Then Volume = -4000
     
     IBA.Volume = Volume
@@ -945,9 +949,14 @@ End Function
 Public Function MusicMP3Play(Optional ByVal FilePath As String = "") As Boolean
 '**************************************
 '* Created by: Fredrik Alexandersson  *
-'* Modify Date: 20/5/2003             *
+'Last Modification: 05/11/2011 - ^[GS]^
 '**************************************
     On Error GoTo ErrorHandl
+    
+    If LenB(FilePath) > 0 Then _
+        CurrentMusicFile = FilePath
+    
+    LastPlayMP3 = True
     
     If Not MusicActivated Then Exit Function
     
@@ -989,13 +998,15 @@ End Sub
 
 Public Function MusicMP3Stop() As Boolean
 '**************************************
-'* Created by: Fredrik Alexandersson  *
-'* Modify Date: 20/5/2003             *
+'* Created by: Fredrik Alexandersson
+'* Modify Date: 09/09/2012 - ^[GS]^
 '**************************************
     On Error GoTo ErrorHandl
-    
-    IMC.Stop
-    IMPos.CurrentPosition = 0
+       
+    If ObjPtr(IMC) > 0 Then
+        IMC.Stop
+        IMPos.CurrentPosition = 0
+    End If
     
     MusicMP3Stop = True
     Exit Function
@@ -1028,20 +1039,20 @@ End Function
 ''
 ' Set the volume to the current MP3.
 '
-' @param    SoundVolume The new volume to the current MP3.
+' @param    Volume The new volume to the current MP3.
 ' @return   True    If the volume was properly change, False otherwise.
 
-Public Function MusicMP3VolumeSet(ByVal SoundVolume As Long) As Boolean
+Public Function MusicMP3VolumeSet(ByVal Volume As Long) As Boolean
 '**************************************
 '* Created by: Fredrik Alexandersson  *
-'* Modify Date: 20/5/2003             *
+'Last Modification: 05/11/2011 - ^[GS]^
 '**************************************
     On Error GoTo ErrorHandl
     
-    If SoundVolume > 0 Then SoundVolume = 0
-    If SoundVolume < -4000 Then SoundVolume = -4000
+    If Volume > 0 Then Volume = 0
+    If Volume < -4000 Then Volume = -4000
     
-    IBA.Volume = SoundVolume
+    IBA.Volume = Volume
 
     MusicMP3VolumeSet = True
     Exit Function
@@ -1072,7 +1083,7 @@ End Property
 Public Property Let MusicActivated(ByVal nValue As Boolean)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
-'Last Modification: 03/03/07
+'Last Modification: 05/11/2011 - ^[GS]^
 'Sets wether the music is activated or not
 '***************************************************
     If mActivated = nValue Then Exit Property
@@ -1080,9 +1091,17 @@ Public Property Let MusicActivated(ByVal nValue As Boolean)
     mActivated = nValue
     
     If nValue Then
-        Call PlayMIDI(CurrentMusicFile)
+        If LastPlayMP3 Then
+            Call MusicMP3Play(CurrentMusicFile)
+        Else
+            Call PlayMIDI(CurrentMusicFile)
+        End If
     Else
-        Call StopMidi
+        If LastPlayMP3 Then
+            Call MusicMP3Stop
+        Else
+            Call StopMidi
+        End If
     End If
 End Property
 
@@ -1152,3 +1171,5 @@ Public Property Get SoundEffectsActivated() As Boolean
 '***************************************************
     SoundEffectsActivated = sEffectsActivated
 End Property
+
+

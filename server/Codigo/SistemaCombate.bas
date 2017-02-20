@@ -37,6 +37,8 @@ Attribute VB_Name = "SistemaCombate"
 
 Option Explicit
 
+Public Declare Function PoderAtaqueWrestling Lib "aolib.dll" Alias "PoderAtaqueWresterling" (ByVal Skill As Byte, ByVal Agilidad As Integer, Clase As Byte, ByVal Nivel As Byte) As Integer
+
 Public Const MAXDISTANCIAARCO As Byte = 18
 
 Public Function MinimoInt(ByVal a As Integer, ByVal b As Integer) As Integer
@@ -62,7 +64,7 @@ Private Function PoderEvasionEscudo(ByVal UserIndex As Integer) As Long
 '
 '***************************************************
 
-    PoderEvasionEscudo = (UserList(UserIndex).Stats.UserSkills(eSkill.Defensa) * ModClase(UserList(UserIndex).Clase).Escudo) / 2
+    PoderEvasionEscudo = (UserList(UserIndex).Stats.UserSkills(eSkill.Defensa) * Mods(eMods.EVAESCUDO, UserList(UserIndex).Clase)) / 2
 End Function
 
 Private Function PoderEvasion(ByVal UserIndex As Integer) As Long
@@ -71,12 +73,19 @@ Private Function PoderEvasion(ByVal UserIndex As Integer) As Long
 'Last Modification: -
 '
 '***************************************************
-    Dim lTemp As Long
     With UserList(UserIndex)
-        lTemp = (.Stats.UserSkills(eSkill.Tacticas) + _
-          .Stats.UserSkills(eSkill.Tacticas) / 33 * .Stats.UserAtributos(eAtributos.Agilidad)) * ModClase(.Clase).Evasion
-       
-        PoderEvasion = (lTemp + (2.5 * MaximoInt(.Stats.ELV - 12, 0)))
+        Select Case .Stats.UserSkills(Tacticas)
+            Case Is < 31
+                PoderEvasion = .Stats.UserSkills(Tacticas) * Mods(eMods.EVASION, .Clase)
+            Case Is < 61
+                PoderEvasion = (.Stats.UserSkills(Tacticas) + .Stats.UserAtributos(Agilidad)) * Mods(eMods.EVASION, .Clase)
+            Case Is < 91
+                PoderEvasion = (.Stats.UserSkills(Tacticas) + 2 * .Stats.UserAtributos(Agilidad)) * Mods(eMods.EVASION, .Clase)
+            Case Else
+                PoderEvasion = (.Stats.UserSkills(Tacticas) + 3 * .Stats.UserAtributos(Agilidad)) * Mods(eMods.EVASION, .Clase)
+        End Select
+        
+        PoderEvasion = PoderEvasion + (2.5 * MaximoInt(.Stats.ELV - 12, 0))
     End With
 End Function
 
@@ -86,21 +95,19 @@ Private Function PoderAtaqueArma(ByVal UserIndex As Integer) As Long
 'Last Modification: -
 '
 '***************************************************
-
-    Dim PoderAtaqueTemp As Long
-    
     With UserList(UserIndex)
-        If .Stats.UserSkills(eSkill.Armas) < 31 Then
-            PoderAtaqueTemp = .Stats.UserSkills(eSkill.Armas) * ModClase(.Clase).AtaqueArmas
-        ElseIf .Stats.UserSkills(eSkill.Armas) < 61 Then
-            PoderAtaqueTemp = (.Stats.UserSkills(eSkill.Armas) + .Stats.UserAtributos(eAtributos.Agilidad)) * ModClase(.Clase).AtaqueArmas
-        ElseIf .Stats.UserSkills(eSkill.Armas) < 91 Then
-            PoderAtaqueTemp = (.Stats.UserSkills(eSkill.Armas) + 2 * .Stats.UserAtributos(eAtributos.Agilidad)) * ModClase(.Clase).AtaqueArmas
-        Else
-           PoderAtaqueTemp = (.Stats.UserSkills(eSkill.Armas) + 3 * .Stats.UserAtributos(eAtributos.Agilidad)) * ModClase(.Clase).AtaqueArmas
-        End If
+        Select Case .Stats.UserSkills(Armas)
+            Case Is < 31
+                PoderAtaqueArma = .Stats.UserSkills(Armas) * Mods(eMods.CUERPOACUERPO, .Clase)
+            Case Is < 61
+                PoderAtaqueArma = (.Stats.UserSkills(Armas) + .Stats.UserAtributos(Agilidad)) * Mods(eMods.CUERPOACUERPO, .Clase)
+            Case Is < 91
+                PoderAtaqueArma = (.Stats.UserSkills(Armas) + 2 * .Stats.UserAtributos(Agilidad)) * Mods(eMods.CUERPOACUERPO, .Clase)
+            Case Else
+                PoderAtaqueArma = (.Stats.UserSkills(Armas) + 3 * .Stats.UserAtributos(Agilidad)) * Mods(eMods.CUERPOACUERPO, .Clase)
+        End Select
         
-        PoderAtaqueArma = (PoderAtaqueTemp + (2.5 * MaximoInt(.Stats.ELV - 12, 0)))
+        PoderAtaqueArma = PoderAtaqueArma + 2.5 * MaximoInt(.Stats.ELV - 12, 0)
     End With
 End Function
 
@@ -114,41 +121,19 @@ Private Function PoderAtaqueProyectil(ByVal UserIndex As Integer) As Long
     Dim PoderAtaqueTemp As Long
     
     With UserList(UserIndex)
-        If .Stats.UserSkills(eSkill.Proyectiles) < 31 Then
-            PoderAtaqueTemp = .Stats.UserSkills(eSkill.Proyectiles) * ModClase(.Clase).AtaqueProyectiles
-        ElseIf .Stats.UserSkills(eSkill.Proyectiles) < 61 Then
-            PoderAtaqueTemp = (.Stats.UserSkills(eSkill.Proyectiles) + .Stats.UserAtributos(eAtributos.Agilidad)) * ModClase(.Clase).AtaqueProyectiles
-        ElseIf .Stats.UserSkills(eSkill.Proyectiles) < 91 Then
-            PoderAtaqueTemp = (.Stats.UserSkills(eSkill.Proyectiles) + 2 * .Stats.UserAtributos(eAtributos.Agilidad)) * ModClase(.Clase).AtaqueProyectiles
-        Else
-            PoderAtaqueTemp = (.Stats.UserSkills(eSkill.Proyectiles) + 3 * .Stats.UserAtributos(eAtributos.Agilidad)) * ModClase(.Clase).AtaqueProyectiles
-        End If
+        Select Case .Stats.UserSkills(Proyectiles)
+            Case Is < 31
+                PoderAtaqueProyectil = .Stats.UserSkills(Proyectiles) * Mods(CONARCOS, .Clase)
+            Case Is < 61
+                PoderAtaqueProyectil = (.Stats.UserSkills(Proyectiles) + .Stats.UserAtributos(Agilidad)) * Mods(eMods.CONARCOS, .Clase)
+            Case Is < 91
+                PoderAtaqueProyectil = (.Stats.UserSkills(Proyectiles) + 2 * .Stats.UserAtributos(Agilidad)) * Mods(eMods.CONARCOS, .Clase)
+            Case Else
+                PoderAtaqueProyectil = (.Stats.UserSkills(Proyectiles) + 3 * .Stats.UserAtributos(Agilidad)) * Mods(eMods.CONARCOS, .Clase)
+        End Select
         
-        PoderAtaqueProyectil = (PoderAtaqueTemp + (2.5 * MaximoInt(.Stats.ELV - 12, 0)))
-    End With
-End Function
+        PoderAtaqueProyectil = (PoderAtaqueProyectil + (2.5 * MaximoInt(.Stats.ELV - 12, 0)))
 
-Private Function PoderAtaqueWrestling(ByVal UserIndex As Integer) As Long
-'***************************************************
-'Author: Unknown
-'Last Modification: -
-'
-'***************************************************
-
-    Dim PoderAtaqueTemp As Long
-    
-    With UserList(UserIndex)
-        If .Stats.UserSkills(eSkill.Wrestling) < 31 Then
-            PoderAtaqueTemp = .Stats.UserSkills(eSkill.Wrestling) * ModClase(.Clase).AtaqueWrestling
-        ElseIf .Stats.UserSkills(eSkill.Wrestling) < 61 Then
-            PoderAtaqueTemp = (.Stats.UserSkills(eSkill.Wrestling) + .Stats.UserAtributos(eAtributos.Agilidad)) * ModClase(.Clase).AtaqueWrestling
-        ElseIf .Stats.UserSkills(eSkill.Wrestling) < 91 Then
-            PoderAtaqueTemp = (.Stats.UserSkills(eSkill.Wrestling) + 2 * .Stats.UserAtributos(eAtributos.Agilidad)) * ModClase(.Clase).AtaqueWrestling
-        Else
-            PoderAtaqueTemp = (.Stats.UserSkills(eSkill.Wrestling) + 3 * .Stats.UserAtributos(eAtributos.Agilidad)) * ModClase(.Clase).AtaqueWrestling
-        End If
-        
-        PoderAtaqueWrestling = (PoderAtaqueTemp + (2.5 * MaximoInt(.Stats.ELV - 12, 0)))
     End With
 End Function
 
@@ -175,7 +160,7 @@ Public Function UserImpactoNpc(ByVal UserIndex As Integer, ByVal NpcIndex As Int
             Skill = eSkill.Armas
         End If
     Else 'Peleando con puños
-        PoderAtaque = PoderAtaqueWrestling(UserIndex)
+        PoderAtaque = PoderAtaqueWrestling(18, UserList(UserIndex).Stats.UserAtributos(eAtributos.Agilidad), DameClaseFenix(UserList(UserIndex).Clase), UserList(UserIndex).Stats.ELV) \ 4
         Skill = eSkill.Wrestling
     End If
     
@@ -265,7 +250,7 @@ Public Function CalcularDaño(ByVal UserIndex As Integer, Optional ByVal NpcIndex
             ' Ataca a un npc?
             If NpcIndex > 0 Then
                 If Arma.proyectil = 1 Then
-                    ModifClase = ModClase(.Clase).DañoProyectiles
+                    ModifClase = Mods(eMods.DañoConArcos, .Clase)
                     DañoArma = RandomNumber(Arma.MinHIT, Arma.MaxHIT)
                     DañoMaxArma = Arma.MaxHIT
                     
@@ -276,7 +261,7 @@ Public Function CalcularDaño(ByVal UserIndex As Integer, Optional ByVal NpcIndex
                         'DañoMaxArma = DañoMaxArma + proyectil.MaxHIT
                     End If
                 Else
-                    ModifClase = ModClase(.Clase).DañoArmas
+                    ModifClase = Mods(eMods.DañoCuerpoACuerpo, .Clase)
                     
                     If .Invent.WeaponEqpObjIndex = EspadaMataDragonesIndex Then ' Usa la mata Dragones?
                         If Npclist(NpcIndex).NPCtype = DRAGON Then 'Ataca Dragon?
@@ -294,7 +279,7 @@ Public Function CalcularDaño(ByVal UserIndex As Integer, Optional ByVal NpcIndex
                 End If
             Else ' Ataca usuario
                 If Arma.proyectil = 1 Then
-                    ModifClase = ModClase(.Clase).DañoProyectiles
+                    ModifClase = Mods(eMods.DañoConArcos, .Clase)
                     DañoArma = RandomNumber(Arma.MinHIT, Arma.MaxHIT)
                     DañoMaxArma = Arma.MaxHIT
                      
@@ -305,10 +290,10 @@ Public Function CalcularDaño(ByVal UserIndex As Integer, Optional ByVal NpcIndex
                         'DañoMaxArma = DañoMaxArma + proyectil.MaxHIT
                     End If
                 Else
-                    ModifClase = ModClase(.Clase).DañoArmas
+                    ModifClase = Mods(eMods.DañoCuerpoACuerpo, .Clase)
                     
                     If .Invent.WeaponEqpObjIndex = EspadaMataDragonesIndex Then
-                        ModifClase = ModClase(.Clase).DañoArmas
+                        'ModifClase = ModClase(.Clase).DañoArmas
                         DañoArma = 1 ' Si usa la espada mataDragones daño es 1
                         DañoMaxArma = 1
                     Else
@@ -317,23 +302,6 @@ Public Function CalcularDaño(ByVal UserIndex As Integer, Optional ByVal NpcIndex
                     End If
                 End If
             End If
-        Else
-            ModifClase = ModClase(.Clase).DañoWrestling
-            
-            ' Daño sin guantes
-            DañoMinArma = 4
-            DañoMaxArma = 9
-            
-            ' Plus de guantes (en slot de anillo)
-            OBJIndex = .Invent.AnilloEqpObjIndex
-            If OBJIndex > 0 Then
-                If ObjData(OBJIndex).Guante = 1 Then
-                    DañoMinArma = DañoMinArma + ObjData(OBJIndex).MinHIT
-                    DañoMaxArma = DañoMaxArma + ObjData(OBJIndex).MaxHIT
-                End If
-            End If
-            
-            DañoArma = RandomNumber(DañoMinArma, DañoMaxArma)
             
         End If
         
@@ -796,7 +764,7 @@ Public Sub UsuarioAtaca(ByVal UserIndex As Integer)
             Exit Sub
         End If
         
-        index = MapData(AttackPos.Map, AttackPos.X, AttackPos.Y).UserIndex
+        index = MapData(AttackPos.map, AttackPos.X, AttackPos.Y).UserIndex
         
         'Look for user
         If index > 0 Then
@@ -806,12 +774,12 @@ Public Sub UsuarioAtaca(ByVal UserIndex As Integer)
             Exit Sub
         End If
         
-        index = MapData(AttackPos.Map, AttackPos.X, AttackPos.Y).NpcIndex
+        index = MapData(AttackPos.map, AttackPos.X, AttackPos.Y).NpcIndex
         
         'Look for NPC
         If index > 0 Then
             If Npclist(index).Attackable Then
-                If Npclist(index).MaestroUser > 0 And MapInfo(Npclist(index).Pos.Map).Pk = False Then
+                If Npclist(index).MaestroUser > 0 And MapInfo(Npclist(index).Pos.map).Pk = False Then
                     Call WriteConsoleMsg(UserIndex, "No puedes atacar mascotas en zona segura.", FontTypeNames.FONTTYPE_FIGHT)
                     Exit Sub
                 End If
@@ -871,6 +839,7 @@ On Error GoTo ErrHandler
         UserPoderEvasionEscudo = 0
     End If
     
+    'todo: check damages
     'Esta usando un arma ???
     If UserList(AtacanteIndex).Invent.WeaponEqpObjIndex > 0 Then
         If ObjData(Arma).proyectil = 1 Then
@@ -881,7 +850,7 @@ On Error GoTo ErrHandler
             Skill = eSkill.Armas
         End If
     Else
-        PoderAtaque = PoderAtaqueWrestling(AtacanteIndex)
+        PoderAtaque = PoderAtaqueWrestling(18, UserList(AtacanteIndex).Stats.UserAtributos(eAtributos.Agilidad), DameClaseFenix(UserList(AtacanteIndex).Clase), UserList(AtacanteIndex).Stats.ELV)
         Skill = eSkill.Wrestling
     End If
     
@@ -889,10 +858,10 @@ On Error GoTo ErrHandler
     ProbExito = MaximoInt(10, MinimoInt(90, 50 + (PoderAtaque - UserPoderEvasion) * 0.4))
     
     ' Se reduce la evasion un 25%
-    If UserList(VictimaIndex).flags.Meditando = True Then
-        ProbEvadir = (100 - ProbExito) * 0.75
-        ProbExito = MinimoInt(90, 100 - ProbEvadir)
-    End If
+    'If UserList(VictimaIndex).flags.Meditando = True Then
+    '    ProbEvadir = (100 - ProbExito) * 0.75
+    '    ProbExito = MinimoInt(90, 100 - ProbEvadir)
+    'End If
     
     UsuarioImpacto = (RandomNumber(1, 100) <= ProbExito)
     
@@ -1287,15 +1256,15 @@ On Error GoTo ErrHandler
     End If
     
     'Estas en un Mapa Seguro?
-    If MapInfo(UserList(VictimIndex).Pos.Map).Pk = False Then
+    If MapInfo(UserList(VictimIndex).Pos.map).Pk = False Then
         Call WriteConsoleMsg(AttackerIndex, "Esta es una zona segura, aquí no puedes atacar a otros usuarios.", FontTypeNames.FONTTYPE_WARNING)
         PuedeAtacar = False
         Exit Function
     End If
     
     'Estas atacando desde un trigger seguro? o tu victima esta en uno asi?
-    If MapData(UserList(VictimIndex).Pos.Map, UserList(VictimIndex).Pos.X, UserList(VictimIndex).Pos.Y).trigger = eTrigger.ZONASEGURA Or _
-        MapData(UserList(AttackerIndex).Pos.Map, UserList(AttackerIndex).Pos.X, UserList(AttackerIndex).Pos.Y).trigger = eTrigger.ZONASEGURA Then
+    If MapData(UserList(VictimIndex).Pos.map, UserList(VictimIndex).Pos.X, UserList(VictimIndex).Pos.Y).trigger = eTrigger.ZONASEGURA Or _
+        MapData(UserList(AttackerIndex).Pos.map, UserList(AttackerIndex).Pos.X, UserList(AttackerIndex).Pos.Y).trigger = eTrigger.ZONASEGURA Then
         Call WriteConsoleMsg(AttackerIndex, "No puedes pelear aquí.", FontTypeNames.FONTTYPE_WARNING)
         PuedeAtacar = False
         Exit Function
@@ -1658,8 +1627,8 @@ On Error GoTo ErrHandler
     Dim tOrg As eTrigger
     Dim tDst As eTrigger
     
-    tOrg = MapData(UserList(Origen).Pos.Map, UserList(Origen).Pos.X, UserList(Origen).Pos.Y).trigger
-    tDst = MapData(UserList(Destino).Pos.Map, UserList(Destino).Pos.X, UserList(Destino).Pos.Y).trigger
+    tOrg = MapData(UserList(Origen).Pos.map, UserList(Origen).Pos.X, UserList(Origen).Pos.Y).trigger
+    tDst = MapData(UserList(Destino).Pos.map, UserList(Destino).Pos.X, UserList(Destino).Pos.Y).trigger
     
     If tOrg = eTrigger.ZONAPELEA Or tDst = eTrigger.ZONAPELEA Then
         If tOrg = tDst Then

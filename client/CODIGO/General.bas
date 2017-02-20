@@ -93,7 +93,7 @@ End Function
 Sub CargarAnimArmas()
 On Error Resume Next
 
-    Dim loopc As Long
+    Dim loopC As Long
     Dim arch As String
     
     arch = App.path & "\init\" & "armas.dat"
@@ -102,12 +102,12 @@ On Error Resume Next
     
     ReDim WeaponAnimData(1 To NumWeaponAnims) As WeaponAnimData
     
-    For loopc = 1 To NumWeaponAnims
-        InitGrh WeaponAnimData(loopc).WeaponWalk(1), Val(GetVar(arch, "ARMA" & loopc, "Dir1")), 0
-        InitGrh WeaponAnimData(loopc).WeaponWalk(2), Val(GetVar(arch, "ARMA" & loopc, "Dir2")), 0
-        InitGrh WeaponAnimData(loopc).WeaponWalk(3), Val(GetVar(arch, "ARMA" & loopc, "Dir3")), 0
-        InitGrh WeaponAnimData(loopc).WeaponWalk(4), Val(GetVar(arch, "ARMA" & loopc, "Dir4")), 0
-    Next loopc
+    For loopC = 1 To NumWeaponAnims
+        InitGrh WeaponAnimData(loopC).WeaponWalk(1), Val(GetVar(arch, "ARMA" & loopC, "Dir1")), 0
+        InitGrh WeaponAnimData(loopC).WeaponWalk(2), Val(GetVar(arch, "ARMA" & loopC, "Dir2")), 0
+        InitGrh WeaponAnimData(loopC).WeaponWalk(3), Val(GetVar(arch, "ARMA" & loopC, "Dir3")), 0
+        InitGrh WeaponAnimData(loopC).WeaponWalk(4), Val(GetVar(arch, "ARMA" & loopC, "Dir4")), 0
+    Next loopC
 End Sub
 
 Sub CargarColores()
@@ -125,36 +125,34 @@ On Error Resume Next
     Dim i As Long
     
     For i = 0 To 46 '49 y 50 reservados para ciudadano y criminal
-        ColoresPJ(i).R = CByte(GetVar(archivoC, CStr(i), "R"))
-        ColoresPJ(i).g = CByte(GetVar(archivoC, CStr(i), "G"))
-        ColoresPJ(i).b = CByte(GetVar(archivoC, CStr(i), "B"))
+        ColoresPJ(i) = RGB(CInt(GetVar(archivoC, CStr(i), "R")), CInt(GetVar(archivoC, CStr(i), "G")), CInt(GetVar(archivoC, CStr(i), "B")))
     Next i
     
     ' Crimi
-    ColoresPJ(50).R = CByte(GetVar(archivoC, "CR", "R"))
-    ColoresPJ(50).g = CByte(GetVar(archivoC, "CR", "G"))
-    ColoresPJ(50).b = CByte(GetVar(archivoC, "CR", "B"))
+    ColoresPJ(50) = RGB(CInt(GetVar(archivoC, "CR", "R")), _
+    CInt(GetVar(archivoC, "CR", "G")), _
+    CInt(GetVar(archivoC, "CR", "B")))
     
     ' Ciuda
-    ColoresPJ(49).R = CByte(GetVar(archivoC, "CI", "R"))
-    ColoresPJ(49).g = CByte(GetVar(archivoC, "CI", "G"))
-    ColoresPJ(49).b = CByte(GetVar(archivoC, "CI", "B"))
+    ColoresPJ(49) = RGB(CInt(GetVar(archivoC, "CI", "R")), _
+    CInt(GetVar(archivoC, "CI", "G")), _
+    CInt(GetVar(archivoC, "CI", "B")))
     
     ' Neutral
-    ColoresPJ(48).R = CByte(GetVar(archivoC, "NE", "R"))
-    ColoresPJ(48).g = CByte(GetVar(archivoC, "NE", "G"))
-    ColoresPJ(48).b = CByte(GetVar(archivoC, "NE", "B"))
+    ColoresPJ(48) = RGB(CInt(GetVar(archivoC, "NE", "R")), _
+    CInt(GetVar(archivoC, "NE", "G")), _
+    CInt(GetVar(archivoC, "NE", "B")))
     
-    ColoresPJ(47).R = CByte(GetVar(archivoC, "NW", "R"))
-    ColoresPJ(47).g = CByte(GetVar(archivoC, "NW", "G"))
-    ColoresPJ(47).b = CByte(GetVar(archivoC, "NW", "B"))
+    ColoresPJ(47) = RGB(CInt(GetVar(archivoC, "NW", "R")), _
+    CInt(GetVar(archivoC, "NW", "G")), _
+    CInt(GetVar(archivoC, "NW", "B")))
     
 End Sub
 
 Sub CargarAnimEscudos()
 On Error Resume Next
 
-    Dim loopc As Long
+    Dim loopC As Long
     Dim arch As String
     
     arch = App.path & "\init\" & "escudos.dat"
@@ -163,12 +161,12 @@ On Error Resume Next
     
     ReDim ShieldAnimData(1 To NumEscudosAnims) As ShieldAnimData
     
-    For loopc = 1 To NumEscudosAnims
-        InitGrh ShieldAnimData(loopc).ShieldWalk(1), Val(GetVar(arch, "ESC" & loopc, "Dir1")), 0
-        InitGrh ShieldAnimData(loopc).ShieldWalk(2), Val(GetVar(arch, "ESC" & loopc, "Dir2")), 0
-        InitGrh ShieldAnimData(loopc).ShieldWalk(3), Val(GetVar(arch, "ESC" & loopc, "Dir3")), 0
-        InitGrh ShieldAnimData(loopc).ShieldWalk(4), Val(GetVar(arch, "ESC" & loopc, "Dir4")), 0
-    Next loopc
+    For loopC = 1 To NumEscudosAnims
+        InitGrh ShieldAnimData(loopC).ShieldWalk(1), Val(GetVar(arch, "ESC" & loopC, "Dir1")), 0
+        InitGrh ShieldAnimData(loopC).ShieldWalk(2), Val(GetVar(arch, "ESC" & loopC, "Dir2")), 0
+        InitGrh ShieldAnimData(loopC).ShieldWalk(3), Val(GetVar(arch, "ESC" & loopC, "Dir3")), 0
+        InitGrh ShieldAnimData(loopC).ShieldWalk(4), Val(GetVar(arch, "ESC" & loopC, "Dir4")), 0
+    Next loopC
 End Sub
 
 Sub AddtoRichTextBox(ByRef RichTextBox As RichTextBox, ByVal Text As String, Optional ByVal red As Integer = -1, Optional ByVal green As Integer, Optional ByVal blue As Integer, Optional ByVal bold As Boolean = False, Optional ByVal italic As Boolean = False, Optional ByVal bCrLf As Boolean = True)
@@ -209,13 +207,13 @@ Public Sub RefreshAllChars()
 'Goes through the charlist and replots all the characters on the map
 'Used to make sure everyone is visible
 '*****************************************************************
-    Dim loopc As Long
+    Dim loopC As Long
     
-    For loopc = 1 To LastChar
-        If charlist(loopc).Active = 1 Then
-            MapData(charlist(loopc).Pos.X, charlist(loopc).Pos.Y).CharIndex = loopc
+    For loopC = 1 To LastChar
+        If charlist(loopC).Active = 1 Then
+            MapData(charlist(loopC).Pos.x, charlist(loopC).Pos.y).CharIndex = loopC
         End If
-    Next loopc
+    Next loopC
 End Sub
 
 Sub SaveGameini()
@@ -246,7 +244,7 @@ End Function
 
 Function CheckUserData(ByVal checkemail As Boolean) As Boolean
     'Validamos los datos del user
-    Dim loopc As Long
+    Dim loopC As Long
     Dim CharAscii As Integer
     
     If checkemail And UserEmail = "" Then
@@ -259,13 +257,13 @@ Function CheckUserData(ByVal checkemail As Boolean) As Boolean
         Exit Function
     End If
     
-    For loopc = 1 To Len(UserPassword)
-        CharAscii = Asc(mid$(UserPassword, loopc, 1))
+    For loopC = 1 To Len(UserPassword)
+        CharAscii = Asc(mid$(UserPassword, loopC, 1))
         If Not LegalCharacter(CharAscii) Then
             MsgBox ("Password inválido. El caractér " & Chr$(CharAscii) & " no está permitido.")
             Exit Function
         End If
-    Next loopc
+    Next loopC
     
     If UserName = "" Then
         MsgBox ("Ingrese un nombre de personaje.")
@@ -277,13 +275,13 @@ Function CheckUserData(ByVal checkemail As Boolean) As Boolean
         Exit Function
     End If
     
-    For loopc = 1 To Len(UserName)
-        CharAscii = Asc(mid$(UserName, loopc, 1))
+    For loopC = 1 To Len(UserName)
+        CharAscii = Asc(mid$(UserName, loopC, 1))
         If Not LegalCharacter(CharAscii) Then
             MsgBox ("Nombre inválido. El caractér " & Chr$(CharAscii) & " no está permitido.")
             Exit Function
         End If
-    Next loopc
+    Next loopC
     
     CheckUserData = True
 End Function
@@ -368,13 +366,13 @@ Sub MoveTo(ByVal Direccion As E_Heading)
     
     Select Case Direccion
         Case E_Heading.NORTH
-            LegalOk = MoveToLegalPos(UserPos.X, UserPos.Y - 1)
+            LegalOk = MoveToLegalPos(UserPos.x, UserPos.y - 1)
         Case E_Heading.EAST
-            LegalOk = MoveToLegalPos(UserPos.X + 1, UserPos.Y)
+            LegalOk = MoveToLegalPos(UserPos.x + 1, UserPos.y)
         Case E_Heading.SOUTH
-            LegalOk = MoveToLegalPos(UserPos.X, UserPos.Y + 1)
+            LegalOk = MoveToLegalPos(UserPos.x, UserPos.y + 1)
         Case E_Heading.WEST
-            LegalOk = MoveToLegalPos(UserPos.X - 1, UserPos.Y)
+            LegalOk = MoveToLegalPos(UserPos.x - 1, UserPos.y)
     End Select
     
     If LegalOk And Not UserParalizado Then
@@ -382,6 +380,7 @@ Sub MoveTo(ByVal Direccion As E_Heading)
         If Not UserDescansar And Not UserMeditar Then
             MoveCharbyHead UserCharIndex, Direccion
             MoveScreen Direccion
+            'MoveCamera Direccion
         End If
     Else
         If charlist(UserCharIndex).Heading <> Direccion Then
@@ -392,7 +391,7 @@ Sub MoveTo(ByVal Direccion As E_Heading)
     If frmMain.macrotrabajo.Enabled Then Call frmMain.DesactivarMacroTrabajo
     
     ' Update 3D sounds!
-    Call Audio.MoveListener(UserPos.X, UserPos.Y)
+    'call 'audio.MoveListener(UserPos.X, UserPos.Y)
 End Sub
 
 Sub RandomMove()
@@ -439,7 +438,7 @@ Private Sub CheckKeys()
             If GetKeyState(CustomKeys.BindedKey(eKeyType.mKeyUp)) < 0 Then
                 If frmMain.TrainingMacro.Enabled Then frmMain.DesactivarMacroHechizos
                 Call MoveTo(NORTH)
-                frmMain.Coord.Caption = UserMap & " X: " & UserPos.X & " Y: " & UserPos.Y
+                frmMain.Coord.Caption = UserMap & " X: " & UserPos.x & " Y: " & UserPos.y
                 Exit Sub
             End If
             
@@ -448,7 +447,7 @@ Private Sub CheckKeys()
                 If frmMain.TrainingMacro.Enabled Then frmMain.DesactivarMacroHechizos
                 Call MoveTo(EAST)
                 'frmMain.Coord.Caption = "(" & UserMap & "," & UserPos.x & "," & UserPos.y & ")"
-                frmMain.Coord.Caption = UserMap & " X: " & UserPos.X & " Y: " & UserPos.Y
+                frmMain.Coord.Caption = UserMap & " X: " & UserPos.x & " Y: " & UserPos.y
                 Exit Sub
             End If
         
@@ -456,7 +455,7 @@ Private Sub CheckKeys()
             If GetKeyState(CustomKeys.BindedKey(eKeyType.mKeyDown)) < 0 Then
                 If frmMain.TrainingMacro.Enabled Then frmMain.DesactivarMacroHechizos
                 Call MoveTo(SOUTH)
-                frmMain.Coord.Caption = UserMap & " X: " & UserPos.X & " Y: " & UserPos.Y
+                frmMain.Coord.Caption = UserMap & " X: " & UserPos.x & " Y: " & UserPos.y
                 Exit Sub
             End If
         
@@ -464,12 +463,12 @@ Private Sub CheckKeys()
             If GetKeyState(CustomKeys.BindedKey(eKeyType.mKeyLeft)) < 0 Then
                 If frmMain.TrainingMacro.Enabled Then frmMain.DesactivarMacroHechizos
                 Call MoveTo(WEST)
-                frmMain.Coord.Caption = UserMap & " X: " & UserPos.X & " Y: " & UserPos.Y
+                frmMain.Coord.Caption = UserMap & " X: " & UserPos.x & " Y: " & UserPos.y
                 Exit Sub
             End If
             
             ' We haven't moved - Update 3D sounds!
-            Call Audio.MoveListener(UserPos.X, UserPos.Y)
+            'call 'audio.MoveListener(UserPos.X, UserPos.Y)
         Else
             Dim kp As Boolean
             kp = (GetKeyState(CustomKeys.BindedKey(eKeyType.mKeyUp)) < 0) Or _
@@ -481,21 +480,20 @@ Private Sub CheckKeys()
                 Call RandomMove
             Else
                 ' We haven't moved - Update 3D sounds!
-                Call Audio.MoveListener(UserPos.X, UserPos.Y)
+                'call 'audio.MoveListener(UserPos.X, UserPos.Y)
             End If
             
             If frmMain.TrainingMacro.Enabled Then frmMain.DesactivarMacroHechizos
             'frmMain.Coord.Caption = "(" & UserPos.x & "," & UserPos.y & ")"
-            frmMain.Coord.Caption = "X: " & UserPos.X & " Y: " & UserPos.Y
+            frmMain.Coord.Caption = "X: " & UserPos.x & " Y: " & UserPos.y
         End If
     End If
 End Sub
 
 'CSEH: ErrLog
 Sub SwitchMap(ByVal Map As Integer)
-    Dim Y As Long
-    Dim X As Long
-    Dim tempint As Integer
+    Dim y As Long
+    Dim x As Long
     Dim handle As Integer
     Dim reader As New clsByteBuffer
     Dim data() As Byte
@@ -517,10 +515,10 @@ Sub SwitchMap(ByVal Map As Integer)
     Dim i As Long
     
     'Load arrays
-    For Y = YMinMapSize To YMaxMapSize
-        For X = XMinMapSize To XMaxMapSize
+    For y = YMinMapSize To YMaxMapSize
+        For x = XMinMapSize To XMaxMapSize
         
-            With MapData(X, Y)
+            With MapData(x, y)
                 ByFlags = reader.getByte
                     
                 .Blocked = ByFlags And 1
@@ -542,16 +540,16 @@ Sub SwitchMap(ByVal Map As Integer)
                 Next
                 
                 'Erase NPCs
-                If MapData(X, Y).CharIndex > 0 Then
-                    Call EraseChar(MapData(X, Y).CharIndex)
+                If MapData(x, y).CharIndex > 0 Then
+                    Call EraseChar(MapData(x, y).CharIndex)
                 End If
                 
                 'Erase OBJs
-                MapData(X, Y).ObjGrh.GrhIndex = 0
+                MapData(x, y).ObjGrh.GrhIndex = 0
                 
             End With
-        Next X
-    Next Y
+        Next x
+    Next y
     
     MapInfo.Name = ""
     MapInfo.Music = ""
@@ -710,12 +708,7 @@ Sub Main()
     
     'Load ao.dat config file
     Call LoadClientSetup
-    
-    If ClientSetup.bDinamic Then
-        Set SurfaceDB = New clsSurfaceManDyn
-    Else
-        Set SurfaceDB = New clsSurfaceManStatic
-    End If
+
     
     'Read command line. Do it AFTER config file is loaded to prevent this from
     'canceling the effects of "/nores" option.
@@ -741,7 +734,7 @@ Sub Main()
     frmCargando.Show
     frmCargando.Refresh
     
-    frmConnect.version = "v" & App.Major & "." & App.Minor & " Build: " & App.Revision
+    'frmConnect.version = "v" & App.Major & "." & App.Minor & " Build: " & App.Revision
     Call AddtoRichTextBox(frmCargando.Status, "Buscando servidores... ", 255, 255, 255, True, False, True)
 
     Call CargarServidores
@@ -757,20 +750,22 @@ Sub Main()
     Call Protocol.InitFonts
     
     With frmConnect
-        .txtNombre = Config_Inicio.Name
-        .txtNombre.SelStart = 0
-        .txtNombre.SelLength = Len(.txtNombre)
+        '.txtNombre = Config_Inicio.Name
+        '.txtNombre.SelStart = 0
+        '.txtNombre.SelLength = Len(.txtNombre)
     End With
     
     Call AddtoRichTextBox(frmCargando.Status, "Hecho", 255, 0, 0, True, False, False)
     
     Call AddtoRichTextBox(frmCargando.Status, "Iniciando motor gráfico... ", 255, 255, 255, True, False, True)
     
-    If Not InitTileEngine(frmMain.hwnd, 149, 13, 32, 32, 13, 17, 9, 8, 8, 0.018) Then
+    prgRun = True
+    
+    If Not InitTileEngine(frmMain.hwnd, 149, 13, 32, 32, 17, 23, 7, 8, 8, 0.018) Then
         Call CloseClient
     End If
     
-    Call AddtoRichTextBox(frmCargando.Status, "Hecho", 255, 0, 0, True, False, False)
+    'Call AddtoRichTextBox(frmCargando.Status, "Hecho", 255, 0, 0, True, False, False)
     
     Call AddtoRichTextBox(frmCargando.Status, "Creando animaciones extra... ", 255, 255, 255, True, False, True)
     
@@ -788,15 +783,15 @@ UserMap = 1
     Call AddtoRichTextBox(frmCargando.Status, "Iniciando DirectSound... ", 255, 255, 255, True, False, True)
     
     'Inicializamos el sonido
-    Call Audio.Initialize(DirectX, frmMain.hwnd, App.path & "\" & Config_Inicio.DirSonidos & "\", App.path & "\" & Config_Inicio.DirMusica & "\")
+    'call 'audio.Initialize(DirectX, frmMain.hwnd, App.path & "\" & Config_Inicio.DirSonidos & "\", App.path & "\" & Config_Inicio.DirMusica & "\")
     'Enable / Disable audio
-    Audio.MusicActivated = Not ClientSetup.bNoMusic
-    Audio.SoundActivated = Not ClientSetup.bNoSound
-    Audio.SoundEffectsActivated = Not ClientSetup.bNoSoundEffects
+    'audio.MusicActivated = Not ClientSetup.bNoMusic
+    'audio.SoundActivated = Not ClientSetup.bNoSound
+    'audio.SoundEffectsActivated = Not ClientSetup.bNoSoundEffects
     'Inicializamos el inventario gráfico
-    Call Inventario.Initialize(DirectDraw, frmMain.picInv, MAX_INVENTORY_SLOTS)
+    Call Inventario.Initialize(frmMain.picInv, MAX_INVENTORY_SLOTS)
     
-    Call Audio.MusicMP3Play(App.path & "\MP3\" & MP3_Inicio & ".mp3")
+    'call 'audio.MusicMP3Play(App.path & "\MP3\" & MP3_Inicio & ".mp3")
     
     Call AddtoRichTextBox(frmCargando.Status, "Hecho", 255, 0, 0, True, False, False)
     
@@ -807,15 +802,12 @@ UserMap = 1
     
     Unload frmCargando
         
-#If UsarWrench = 1 Then
     frmMain.Socket1.Startup
-#End If
 
     frmConnect.Visible = True
     
     'Inicialización de variables globales
     PrimeraVez = True
-    prgRun = True
     pausa = False
     
     'Set the intervals of timers
@@ -842,7 +834,7 @@ UserMap = 1
     Call MainTimer.Start(TimersIndex.CastAttack)
     
     'Set the dialog's font
-    Dialogos.font = frmMain.font
+    Dialogos.Font = frmMain.Font
     'DialogosClanes.font = frmMain.font
     
     lFrameTimer = GetTickCount
@@ -943,11 +935,11 @@ Private Function CMSValidateChar_(ByVal iAsc As Integer) As Boolean
 End Function
 
 'TODO : como todo lo relativo a mapas, no tiene nada que hacer acá....
-Function HayAgua(ByVal X As Integer, ByVal Y As Integer) As Boolean
-    HayAgua = ((MapData(X, Y).Graphic(1).GrhIndex >= 1505 And MapData(X, Y).Graphic(1).GrhIndex <= 1520) Or _
-            (MapData(X, Y).Graphic(1).GrhIndex >= 5665 And MapData(X, Y).Graphic(1).GrhIndex <= 5680) Or _
-            (MapData(X, Y).Graphic(1).GrhIndex >= 13547 And MapData(X, Y).Graphic(1).GrhIndex <= 13562)) And _
-                MapData(X, Y).Graphic(2).GrhIndex = 0
+Function HayAgua(ByVal x As Integer, ByVal y As Integer) As Boolean
+    HayAgua = ((MapData(x, y).Graphic(1).GrhIndex >= 1505 And MapData(x, y).Graphic(1).GrhIndex <= 1520) Or _
+            (MapData(x, y).Graphic(1).GrhIndex >= 5665 And MapData(x, y).Graphic(1).GrhIndex <= 5680) Or _
+            (MapData(x, y).Graphic(1).GrhIndex >= 13547 And MapData(x, y).Graphic(1).GrhIndex <= 13562)) And _
+                MapData(x, y).Graphic(2).GrhIndex = 0
                 
 End Function
 
@@ -980,8 +972,7 @@ Public Sub LeerLineaComandos()
     Dim i As Long
     
     Dim UpToDate As Boolean
-    Dim Patch As String
-    
+
     'Parseo los comandos
     T = Split(Command, " ")
     For i = LBound(T) To UBound(T)
@@ -994,52 +985,6 @@ Public Sub LeerLineaComandos()
     Next i
     
     'Call AoUpdate(UpToDate, NoRes) ' www.gs-zone.org
-End Sub
-
-''
-' Runs AoUpdate if we haven't updated yet, patches aoupdate and runs Client normally if we are updated.
-'
-' @param UpToDate Specifies if we have checked for updates or not
-' @param NoREs Specifies if we have to set nores arg when running the client once again (if the AoUpdate is executed).
-
-Private Sub AoUpdate(ByVal UpToDate As Boolean, ByVal NoRes As Boolean)
-'*************************************************
-'Author: BrianPr
-'Created: 25/11/2008
-'Last modified: 25/11/2008
-'
-'*************************************************
-On Error GoTo error
-    Dim extraArgs As String
-    If Not UpToDate Then
-        'No recibe update, ejecutar AU
-        'Ejecuto el AoUpdate, sino me voy
-        If Dir(App.path & "\AoUpdate.exe", vbArchive) = vbNullString Then
-            MsgBox "No se encuentra el archivo de actualización AoUpdate.exe por favor descarguelo y vuelva a intentar", vbCritical
-            End
-        Else
-            FileCopy App.path & "\AoUpdate.exe", App.path & "\AoUpdateTMP.exe"
-            
-            If NoRes Then
-                extraArgs = " /nores"
-            End If
-            
-            Call ShellExecute(0, "Open", App.path & "\AoUpdateTMP.exe", App.EXEName & ".exe" & extraArgs, App.path, SW_SHOWNORMAL)
-            End
-        End If
-    Else
-        If FileExist(App.path & "\AoUpdateTMP.exe", vbArchive) Then Kill App.path & "\AoUpdateTMP.exe"
-    End If
-Exit Sub
-
-error:
-    If Err.number = 75 Then 'Si el archivo AoUpdateTMP.exe está en uso, entonces esperamos 5 ms y volvemos a intentarlo hasta que nos deje.
-        Sleep 5
-        Resume
-    Else
-        MsgBox Err.Description & vbCrLf, vbInformation, "[ " & Err.number & " ]" & " Error "
-        End
-    End If
 End Sub
 
 Private Sub LoadClientSetup()
@@ -1084,9 +1029,9 @@ Private Sub SaveClientSetup()
     
     fHandle = FreeFile
     
-    ClientSetup.bNoMusic = Not Audio.MusicActivated
-    ClientSetup.bNoSound = Not Audio.SoundActivated
-    ClientSetup.bNoSoundEffects = Not Audio.SoundEffectsActivated
+    'ClientSetup.bNoMusic = Not 'audio.MusicActivated
+    'ClientSetup.bNoSound = Not 'audio.SoundActivated
+    'ClientSetup.bNoSoundEffects = Not 'audio.SoundEffectsActivated
    ' ClientSetup.bGuildNews = Not ClientSetup.bGuildNews
   '  ClientSetup.bGldMsgConsole = Not DialogosClanes.Activo
     'ClientSetup.bCantMsgs = DialogosClanes.CantidadDialogos
@@ -1207,8 +1152,6 @@ Public Sub CloseClient()
     frmCargando.Show
     Call AddtoRichTextBox(frmCargando.Status, "Liberando recursos...", 0, 0, 0, 0, 0, 0)
     
-    Call Resolution.ResetResolution
-    
     'Stop tile engine
     Call DeinitTileEngine
     
@@ -1217,10 +1160,10 @@ Public Sub CloseClient()
     'Destruimos los objetos públicos creados
     Set CustomMessages = Nothing
     Set CustomKeys = Nothing
-    Set SurfaceDB = Nothing
+    'Set SurfaceDB = Nothing
     Set Dialogos = Nothing
   '  Set DialogosClanes = Nothing
-    Set Audio = Nothing
+    'Set Audio = Nothing
     Set Inventario = Nothing
     Set MainTimer = Nothing
     Set incomingData = Nothing
@@ -1337,8 +1280,6 @@ Public Function ForumAlignment(ByVal yForumType As Byte) As Byte
     
 End Function
 
-
-
 Public Sub LogError(Desc As String)
 '***************************************************
 'Author: Unknown
@@ -1346,7 +1287,7 @@ Public Sub LogError(Desc As String)
 '
 '***************************************************
 
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
 
     Dim nfile As Integer
     nfile = FreeFile ' obtenemos un canal
@@ -1356,6 +1297,26 @@ On Error GoTo Errhandler
     
     Exit Sub
 
-Errhandler:
+ErrHandler:
 
 End Sub
+
+Public Function ReadFile(FileName As String, Optional Size As Long = -1) As Byte()
+
+    Dim wFile As Integer
+
+    wFile = FreeFile
+    Open FileName For Binary Access Read As wFile
+
+    If LOF(wFile) > 0 Then
+        
+        Size = LOF(wFile)
+        ReDim ReadFile(0 To LOF(wFile) - 1)
+        Get wFile, , ReadFile
+
+    End If
+
+    Close #wFile
+
+End Function
+

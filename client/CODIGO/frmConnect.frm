@@ -3,10 +3,10 @@ Begin VB.Form frmConnect
    BackColor       =   &H00E0E0E0&
    BorderStyle     =   0  'None
    Caption         =   "Argentum Online"
-   ClientHeight    =   9000
+   ClientHeight    =   11520
    ClientLeft      =   0
    ClientTop       =   0
-   ClientWidth     =   12000
+   ClientWidth     =   15360
    ClipControls    =   0   'False
    ControlBox      =   0   'False
    FillColor       =   &H00000040&
@@ -16,104 +16,23 @@ Begin VB.Form frmConnect
    MaxButton       =   0   'False
    MinButton       =   0   'False
    PaletteMode     =   1  'UseZOrder
-   ScaleHeight     =   600
+   ScaleHeight     =   768
    ScaleMode       =   3  'Pixel
-   ScaleWidth      =   800
+   ScaleWidth      =   1024
    StartUpPosition =   2  'CenterScreen
    Visible         =   0   'False
-   Begin VB.TextBox txtPasswd 
-      BackColor       =   &H00000000&
+   Begin VB.PictureBox Render 
+      BackColor       =   &H00000040&
       BorderStyle     =   0  'None
-      BeginProperty Font 
-         Name            =   "MS Sans Serif"
-         Size            =   8.25
-         Charset         =   0
-         Weight          =   700
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      ForeColor       =   &H00FFFFFF&
-      Height          =   225
-      IMEMode         =   3  'DISABLE
-      Left            =   4920
-      PasswordChar    =   "*"
-      TabIndex        =   1
-      Top             =   3720
-      Width           =   2460
-   End
-   Begin VB.TextBox txtNombre 
-      BackColor       =   &H00000000&
-      BorderStyle     =   0  'None
-      BeginProperty Font 
-         Name            =   "MS Sans Serif"
-         Size            =   8.25
-         Charset         =   0
-         Weight          =   700
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      ForeColor       =   &H00FFFFFF&
-      Height          =   225
-      Left            =   4905
+      Height          =   11520
+      Left            =   0
+      ScaleHeight     =   768
+      ScaleMode       =   3  'Pixel
+      ScaleWidth      =   1024
       TabIndex        =   0
-      Top             =   3210
-      Width           =   2460
-   End
-   Begin VB.Image imgTeclas 
-      Height          =   375
-      Left            =   6120
-      Top             =   3960
-      Width           =   1335
-   End
-   Begin VB.Image imgConectarse 
-      Height          =   375
-      Left            =   4800
-      Top             =   3960
-      Width           =   1335
-   End
-   Begin VB.Image imgSalir 
-      Height          =   375
-      Left            =   9960
-      Top             =   8400
-      Width           =   1335
-   End
-   Begin VB.Image imgBorrarPj 
-      Height          =   375
-      Left            =   8400
-      Top             =   8400
-      Width           =   1335
-   End
-   Begin VB.Image imgCodigoFuente 
-      Height          =   375
-      Left            =   6840
-      Top             =   8400
-      Width           =   1335
-   End
-   Begin VB.Image imgReglamento 
-      Height          =   375
-      Left            =   5280
-      Top             =   8400
-      Width           =   1335
-   End
-   Begin VB.Image imgManual 
-      Height          =   375
-      Left            =   3720
-      Top             =   8400
-      Width           =   1335
-   End
-   Begin VB.Image imgRecuperar 
-      Height          =   375
-      Left            =   2160
-      Top             =   8400
-      Width           =   1335
-   End
-   Begin VB.Image imgCrearPj 
-      Height          =   375
-      Left            =   600
-      Top             =   8400
-      Width           =   1335
+      TabStop         =   0   'False
+      Top             =   0
+      Width           =   15360
    End
    Begin VB.Image imgServArgentina 
       Height          =   795
@@ -122,26 +41,6 @@ Begin VB.Form frmConnect
       Top             =   9240
       Visible         =   0   'False
       Width           =   2595
-   End
-   Begin VB.Label version 
-      AutoSize        =   -1  'True
-      BackStyle       =   0  'Transparent
-      Caption         =   "Label1"
-      BeginProperty Font 
-         Name            =   "Tahoma"
-         Size            =   8.25
-         Charset         =   0
-         Weight          =   700
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      ForeColor       =   &H000000FF&
-      Height          =   195
-      Left            =   240
-      TabIndex        =   2
-      Top             =   240
-      Width           =   555
    End
 End
 Attribute VB_Name = "frmConnect"
@@ -190,18 +89,6 @@ Attribute VB_Exposed = False
 
 Option Explicit
 
-Private cBotonCrearPj As clsGraphicalButton
-Private cBotonRecuperarPass As clsGraphicalButton
-Private cBotonManual As clsGraphicalButton
-Private cBotonReglamento As clsGraphicalButton
-Private cBotonCodigoFuente As clsGraphicalButton
-Private cBotonBorrarPj As clsGraphicalButton
-Private cBotonSalir As clsGraphicalButton
-Private cBotonLeerMas As clsGraphicalButton
-Private cBotonForo As clsGraphicalButton
-Private cBotonConectarse As clsGraphicalButton
-Private cBotonTeclas As clsGraphicalButton
-
 Public LastPressed As clsGraphicalButton
 
 
@@ -221,7 +108,7 @@ Private Sub Form_Load()
     '  El código para mostrar la versión se genera acá para
     ' evitar que por X razones luego desaparezca, como suele
     ' pasar a veces :)
-       version.Caption = "v" & App.Major & "." & App.Minor & " Build: " & App.Revision
+     '  version.Caption = "v" & App.Major & "." & App.Minor & " Build: " & App.Revision
     '[END]'
     
     Me.Picture = LoadPicture(App.path & "\graficos\VentanaConectar.jpg")
@@ -235,57 +122,7 @@ Private Sub LoadButtons()
     Dim GrhPath As String
     
     GrhPath = DirGraficos
-    
-    Set cBotonCrearPj = New clsGraphicalButton
-    Set cBotonRecuperarPass = New clsGraphicalButton
-    Set cBotonManual = New clsGraphicalButton
-    Set cBotonReglamento = New clsGraphicalButton
-    Set cBotonCodigoFuente = New clsGraphicalButton
-    Set cBotonBorrarPj = New clsGraphicalButton
-    Set cBotonSalir = New clsGraphicalButton
-    Set cBotonLeerMas = New clsGraphicalButton
-    Set cBotonForo = New clsGraphicalButton
-    Set cBotonConectarse = New clsGraphicalButton
-    Set cBotonTeclas = New clsGraphicalButton
-    
-    Set LastPressed = New clsGraphicalButton
-
-        
-    Call cBotonCrearPj.Initialize(imgCrearPj, GrhPath & "BotonCrearPersonajeConectar.jpg", _
-                                    GrhPath & "BotonCrearPersonajeRolloverConectar.jpg", _
-                                    GrhPath & "BotonCrearPersonajeClickConectar.jpg", Me)
                                     
-    Call cBotonRecuperarPass.Initialize(imgRecuperar, GrhPath & "BotonRecuperarPass.jpg", _
-                                    GrhPath & "BotonRecuperarPassRollover.jpg", _
-                                    GrhPath & "BotonRecuperarPassClick.jpg", Me)
-                                    
-    Call cBotonManual.Initialize(imgManual, GrhPath & "BotonManual.jpg", _
-                                    GrhPath & "BotonManualRollover.jpg", _
-                                    GrhPath & "BotonManualClick.jpg", Me)
-                                    
-    Call cBotonReglamento.Initialize(imgReglamento, GrhPath & "BotonReglamento.jpg", _
-                                    GrhPath & "BotonReglamentoRollover.jpg", _
-                                    GrhPath & "BotonReglamentoClick.jpg", Me)
-                                    
-    Call cBotonCodigoFuente.Initialize(imgCodigoFuente, GrhPath & "BotonCodigoFuente.jpg", _
-                                    GrhPath & "BotonCodigoFuenteRollover.jpg", _
-                                    GrhPath & "BotonCodigoFuenteClick.jpg", Me)
-                                    
-    Call cBotonBorrarPj.Initialize(imgBorrarPj, GrhPath & "BotonBorrarPersonaje.jpg", _
-                                    GrhPath & "BotonBorrarPersonajeRollover.jpg", _
-                                    GrhPath & "BotonBorrarPersonajeClick.jpg", Me)
-                                    
-    Call cBotonSalir.Initialize(imgSalir, GrhPath & "BotonSalirConnect.jpg", _
-                                    GrhPath & "BotonBotonSalirRolloverConnect.jpg", _
-                                    GrhPath & "BotonSalirClickConnect.jpg", Me)
-                                    
-    Call cBotonConectarse.Initialize(imgConectarse, GrhPath & "BotonConectarse.jpg", _
-                                    GrhPath & "BotonConectarseRollover.jpg", _
-                                    GrhPath & "BotonConectarseClick.jpg", Me)
-                                    
-    Call cBotonTeclas.Initialize(imgTeclas, GrhPath & "BotonTeclas.jpg", _
-                                    GrhPath & "BotonTeclasRollover.jpg", _
-                                    GrhPath & "BotonTeclasClick.jpg", Me)
 
 End Sub
 
@@ -294,50 +131,28 @@ Private Sub Form_MouseMove(Button As Integer, Shift As Integer, X As Single, Y A
 End Sub
 
 
-Private Sub imgBorrarPj_Click()
-
-On Error GoTo errH
-    Call Shell(App.path & "\RECUPERAR.EXE", vbNormalFocus)
-
-    Exit Sub
-
-errH:
-    Call MsgBox("No se encuentra el programa recuperar.exe", vbCritical, "Argentum Online")
-End Sub
-
 Private Sub imgConectarse_Click()
     
-#If UsarWrench = 1 Then
     If frmMain.Socket1.Connected Then
         frmMain.Socket1.Disconnect
         frmMain.Socket1.Cleanup
         DoEvents
     End If
-#Else
-    If frmMain.Winsock1.State <> sckClosed Then
-        frmMain.Winsock1.Close
-        DoEvents
-    End If
-#End If
     
     'update user info
-    UserName = txtNombre.Text
+    UserName = "clases" 'txtNombre.Text
     
     Dim aux As String
-    aux = txtPasswd.Text
+    aux = "asd" 'txtPasswd.Text
 
     UserPassword = aux
 
     If CheckUserData(False) = True Then
         EstadoLogin = Normal
         
-#If UsarWrench = 1 Then
     frmMain.Socket1.HostName = CurServerIP
     frmMain.Socket1.RemotePort = CurServerPort
     frmMain.Socket1.Connect
-#Else
-    frmMain.Winsock1.Connect CurServerIP, CurServerPort
-#End If
 
     End If
     
@@ -346,7 +161,7 @@ End Sub
 Private Sub imgCrearPj_Click()
     
     EstadoLogin = E_MODO.Dados
-#If UsarWrench = 1 Then
+
     If frmMain.Socket1.Connected Then
         frmMain.Socket1.Disconnect
         frmMain.Socket1.Cleanup
@@ -355,49 +170,13 @@ Private Sub imgCrearPj_Click()
     frmMain.Socket1.HostName = CurServerIP
     frmMain.Socket1.RemotePort = CurServerPort
     frmMain.Socket1.Connect
-#Else
-    If frmMain.Winsock1.State <> sckClosed Then
-        frmMain.Winsock1.Close
-        DoEvents
-    End If
-    frmMain.Winsock1.Connect CurServerIP, CurServerPort
-#End If
 
-End Sub
-
-Private Sub imgLeerMas_Click()
-    Call ShellExecute(0, "Open", "http://ao.alkon.com.ar", "", App.path, SW_SHOWNORMAL)
-End Sub
-
-Private Sub imgManual_Click()
-    Call ShellExecute(0, "Open", "http://ao.alkon.com.ar/manual/", "", App.path, SW_SHOWNORMAL)
-End Sub
-
-Private Sub imgRecuperar_Click()
-On Error GoTo errH
-
-    Call Audio.PlayWave(SND_CLICK)
-    Call Shell(App.path & "\RECUPERAR.EXE", vbNormalFocus)
-    Exit Sub
-errH:
-    Call MsgBox("No se encuentra el programa recuperar.exe", vbCritical, "Argentum Online")
-End Sub
-
-Private Sub imgReglamento_Click()
-    Call ShellExecute(0, "Open", "http://ao.alkon.com.ar/reglamento.html", "", App.path, SW_SHOWNORMAL)
-End Sub
-
-Private Sub imgSalir_Click()
-    prgRun = False
-End Sub
-
-Private Sub imgTeclas_Click()
-    Load frmKeypad
-    frmKeypad.Show vbModal
-    Unload frmKeypad
-    txtPasswd.SetFocus
 End Sub
 
 Private Sub txtPasswd_KeyPress(KeyAscii As Integer)
     If KeyAscii = vbKeyReturn Then imgConectarse_Click
+End Sub
+
+Private Sub Render_Click()
+    imgConectarse_Click
 End Sub

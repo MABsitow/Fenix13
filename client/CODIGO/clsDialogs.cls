@@ -74,12 +74,12 @@ Private Const MS_ADD_EXTRA As Integer = 5000
 '                           (used to skip dialogs from people outside render area).
 Private Type dialog
     textLine()  As String
-    x           As Integer
-    y           As Integer
+    X           As Integer
+    Y           As Integer
     startTime   As Long
     lifeTime    As Long
     CharIndex   As Integer
-    color       As Long
+    Color       As Long
     renderable  As Boolean
 End Type
 
@@ -166,7 +166,7 @@ End Function
 ' @remarks  If there are no more free slots, and the char didn't have a previous dialog,
 '           the chat is ignored.
 
-Public Sub CreateDialog(ByRef chat As String, ByVal CharIndex As Integer, ByVal color As Long)
+Public Sub CreateDialog(ByRef chat As String, ByVal CharIndex As Integer, ByVal Color As Long)
 '**************************************************************
 'Author: Juan Martín Sotuyo Dodero
 'Last Modification: 08/29/07 by Rapsodius
@@ -174,7 +174,7 @@ Public Sub CreateDialog(ByRef chat As String, ByVal CharIndex As Integer, ByVal 
 'depending on the number of chars
 '**************************************************************
     Dim slot As Integer
-    Dim i As Long
+    Dim I As Long
     
     slot = BinarySearch(CharIndex)
     
@@ -184,16 +184,16 @@ Public Sub CreateDialog(ByRef chat As String, ByVal CharIndex As Integer, ByVal 
         'We need to add it. Get insertion index and move list backwards.
         slot = Not slot
         
-        For i = dialogCount To slot + 1 Step -1
-            dialogs(i) = dialogs(i - 1)
-        Next i
+        For I = dialogCount To slot + 1 Step -1
+            dialogs(I) = dialogs(I - 1)
+        Next I
         
         dialogCount = dialogCount + 1
     End If
     
     With dialogs(slot)
         .CharIndex = CharIndex
-        .color = color
+        .Color = Color
         .renderable = False
         .startTime = GetTickCount()
         .textLine = FormatChat(chat)
@@ -218,7 +218,7 @@ Private Function FormatChat(ByRef chat As String) As String()
 '**************************************************************
     Dim word As String
     Dim curPos As Long
-    Dim length As Long
+    Dim Length As Long
     Dim acumLength As Long
     Dim lineLength As Long
     Dim wordLength As Long
@@ -228,13 +228,13 @@ Private Function FormatChat(ByRef chat As String) As String()
     'Initialize variables
     curLine = 0
     curPos = 1
-    length = Len(chat)
+    Length = Len(chat)
     acumLength = 0
     lineLength = -1
     ReDim chatLines(FieldCount(chat, 32)) As String
     
     'Start formating
-    Do While acumLength < length
+    Do While acumLength < Length
         word = ReadField(curPos, chat, 32)
         
         wordLength = Len(word)
@@ -268,8 +268,8 @@ Private Function FormatChat(ByRef chat As String) As String()
     Loop
     
     ' If it's only one line, center text
-    If curLine = 0 And length < MAX_LENGTH Then
-        chatLines(curLine) = String((MAX_LENGTH - length) \ 2 + 1, " ") & chatLines(curLine)
+    If curLine = 0 And Length < MAX_LENGTH Then
+        chatLines(curLine) = String((MAX_LENGTH - Length) \ 2 + 1, " ") & chatLines(curLine)
     End If
     
     'Resize array to fit
@@ -285,7 +285,7 @@ End Function
 ' @param    y           The Y coord where to start rendering.
 ' @param    charIndex   The character whose dialog's position is being updated.
 
-Public Sub UpdateDialogPos(ByVal x As Integer, ByVal y As Integer, ByVal CharIndex As Integer)
+Public Sub UpdateDialogPos(ByVal X As Integer, ByVal Y As Integer, ByVal CharIndex As Integer)
 '**************************************************************
 'Author: Juan Martín Sotuyo Dodero
 'Last Modify Date: 07/28/07
@@ -297,8 +297,8 @@ Public Sub UpdateDialogPos(ByVal x As Integer, ByVal y As Integer, ByVal CharInd
     
     If slot >= 0 Then
         With dialogs(slot)
-            .x = x - (MAX_LENGTH \ 2) * 3
-            .y = y - (UBound(.textLine()) * 3)
+            .X = X - (MAX_LENGTH \ 2) * 3
+            .Y = Y - (UBound(.textLine()) * 3)
             .renderable = True
         End With
     End If
@@ -313,33 +313,33 @@ Public Sub Render()
 'Last Modification: 08/29/07 by Rapsodius
 'Changed the way it gets rid of older dialogs.
 '**************************************************************
-    Dim i As Long
-    Dim j As Long
+    Dim I As Long
+    Dim J As Long
     Dim offset As Integer
     Dim removedDialogs As Long
     
-    For i = 0 To dialogCount - 1
+    For I = 0 To dialogCount - 1
         'Decrease index to prevent jumping over a dialog
         'Crappy VB will cache the limit of the For loop, so even if it changed, it won't matter
-        With dialogs(i - removedDialogs)
+        With dialogs(I - removedDialogs)
             If (GetTickCount() - .startTime) >= .lifeTime Then
                 Call RemoveDialog(.CharIndex)
                 
                 removedDialogs = removedDialogs + 1
             ElseIf .renderable Then
-                offset = -(usedFont.Size + 2) * UBound(.textLine())
+                offset = -(usedFont.size + 2) * UBound(.textLine())
                 
                 'Render it
-                For j = 0 To UBound(.textLine())
-                    Call RenderText(.x, .y + offset, .textLine(j), .color, usedFont)
-                    offset = offset + usedFont.Size + 5
-                Next j
+                For J = 0 To UBound(.textLine())
+                    'Call Text_Draw(.X, .Y + offset, .textLine(J), .Color)
+                    offset = offset + usedFont.size + 5
+                Next J
                 
                 'Won't render it unless it's updated in next frmae
                 .renderable = False
             End If
         End With
-    Next i
+    Next I
 End Sub
 
 ''
@@ -354,15 +354,15 @@ Public Sub RemoveDialog(ByVal CharIndex As Integer)
 'Removes the dialog from the requested char.
 '**************************************************************
     Dim slot As Integer
-    Dim i As Long
+    Dim I As Long
     
     slot = BinarySearch(CharIndex)
     
     If slot < 0 Then Exit Sub
     
-    For i = slot To MAX_DIALOGS - 2
-        dialogs(i) = dialogs(i + 1)
-    Next i
+    For I = slot To MAX_DIALOGS - 2
+        dialogs(I) = dialogs(I + 1)
+    Next I
     
     dialogCount = dialogCount - 1
 End Sub
@@ -380,25 +380,11 @@ Public Sub RemoveAllDialogs()
 End Sub
 
 ''
-' Retrieves the font being used to render dialogs.
-'
-' @return   The font being used to render dialogs.
-
-Public Property Get font() As StdFont
-'**************************************************************
-'Author: Juan Martín Sotuyo Dodero
-'Last Modify Date: 07/28/07
-'Retrieves the font being used to render dialogs.
-'**************************************************************
-    font = usedFont
-End Property
-
-''
 ' Sets the font being used to render dialogs.
 '
 ' @param    nValue  The new font to be used to render dialogs.
 
-Public Property Let font(ByRef nValue As StdFont)
+Public Property Let Font(ByRef nValue As StdFont)
 '**************************************************************
 'Author: Juan Martín Sotuyo Dodero
 'Last Modify Date: 07/28/07
