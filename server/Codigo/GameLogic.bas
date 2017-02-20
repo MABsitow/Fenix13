@@ -39,22 +39,22 @@ Public Function EsNewbie(ByVal UserIndex As Integer) As Boolean
     EsNewbie = UserList(UserIndex).Stats.ELV <= LimiteNewbie
 End Function
 
-Public Function esArmada(ByVal UserIndex As Integer) As Boolean
+Public Function EsArmada(ByVal UserIndex As Integer) As Boolean
 '***************************************************
 'Autor: Pablo (ToxicWaste)
 'Last Modification: 23/01/2007
 '***************************************************
 
-    esArmada = (UserList(UserIndex).Faccion.ArmadaReal = 1)
+    EsArmada = (Not criminal(UserIndex) And UserList(UserIndex).Faccion.Jerarquia > 1)
 End Function
 
-Public Function esCaos(ByVal UserIndex As Integer) As Boolean
+Public Function EsCaos(ByVal UserIndex As Integer) As Boolean
 '***************************************************
 'Autor: Pablo (ToxicWaste)
 'Last Modification: 23/01/2007
 '***************************************************
 
-    esCaos = (UserList(UserIndex).Faccion.FuerzasCaos = 1)
+    EsCaos = (criminal(UserIndex) And UserList(UserIndex).Faccion.Jerarquia > 1)
 End Function
 
 Public Function EsGM(ByVal UserIndex As Integer) As Boolean
@@ -82,7 +82,7 @@ Public Sub DoTileEvents(ByVal UserIndex As Integer, ByVal Map As Integer, ByVal 
     Dim TelepRadio As Integer
     Dim DestPos As WorldPos
     
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     'Controla las salidas
     If InMapBounds(Map, X, Y) Then
         With MapData(Map, X, Y)
@@ -179,7 +179,7 @@ On Error GoTo Errhandler
     End If
 Exit Sub
 
-Errhandler:
+ErrHandler:
     Call LogError("Error en DotileEvents. Error: " & Err.Number & " - Desc: " & Err.description)
 End Sub
 
@@ -243,7 +243,7 @@ Sub ClosestLegalPos(Pos As WorldPos, ByRef nPos As WorldPos, Optional PuedeAgua 
 'Encuentra la posicion legal mas cercana y la guarda en nPos
 '*****************************************************************
 
-    Dim found As Boolean
+    Dim Found As Boolean
     Dim LoopC As Integer
     Dim tX As Long
     Dim tY As Long
@@ -256,15 +256,15 @@ Sub ClosestLegalPos(Pos As WorldPos, ByRef nPos As WorldPos, Optional PuedeAgua 
     
     ' La primera posicion es valida?
     If LegalPos(Pos.Map, nPos.X, nPos.Y, PuedeAgua, PuedeTierra, CheckExitTile) Then
-        found = True
+        Found = True
     
     ' Busca en las demas posiciones, en forma de "rombo"
     Else
-        While (Not found) And LoopC <= 12
+        While (Not Found) And LoopC <= 12
             If RhombLegalPos(Pos, tX, tY, LoopC, PuedeAgua, PuedeTierra, CheckExitTile) Then
                 nPos.X = tX
                 nPos.Y = tY
-                found = True
+                Found = True
             End If
         
             LoopC = LoopC + 1
@@ -272,7 +272,7 @@ Sub ClosestLegalPos(Pos As WorldPos, ByRef nPos As WorldPos, Optional PuedeAgua 
         
     End If
     
-    If Not found Then
+    If Not Found Then
         nPos.X = 0
         nPos.Y = 0
     End If
@@ -641,7 +641,7 @@ Sub LookatTile(ByVal UserIndex As Integer, ByVal Map As Integer, ByVal X As Inte
 '13/02/2009: ZaMa - EL nombre del gm que aparece por consola al clickearlo, tiene el color correspondiente a su rango
 '***************************************************
 
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
 
 'Responde al click del usuario sobre el mapa
 Dim FoundChar As Byte
@@ -778,14 +778,21 @@ With UserList(UserIndex)
                             ElseIf .flags.Privilegios = (PlayerType.RoleMaster Or PlayerType.Consejero) Or .flags.Privilegios = (PlayerType.RoleMaster Or PlayerType.Dios) Then
                                 ft = FontTypeNames.FONTTYPE_GM
                             End If
-                            
-                        ElseIf criminal(TempCharIndex) Then
+                        
+                        ElseIf EsNewbie(TempCharIndex) Then
+                            Stat = Stat & " <Newbie>"
+                            ft = FontTypeNames.FONTTYPE_NEWBIE
+                        ElseIf .Faccion.Bando = eFaccion.Caos Then
                             Stat = Stat & " <Criminal>"
                             ft = FontTypeNames.FONTTYPE_FIGHT
-                        Else
+                        ElseIf .Faccion.Bando = eFaccion.Real Then
                             Stat = Stat & " <Ciudadano>"
                             ft = FontTypeNames.FONTTYPE_CITIZEN
+                        ElseIf .Faccion.Bando = eFaccion.Neutral Then
+                            Stat = Stat & " <Neutral>"
+                            ft = FontTypeNames.FONTTYPE_NEUTRAL
                         End If
+                        
                     Else  'Si tiene descRM la muestro siempre.
                         Stat = .DescRM
                         ft = FontTypeNames.FONTTYPE_INFOBOLD
@@ -939,7 +946,7 @@ End With
 
 Exit Sub
 
-Errhandler:
+ErrHandler:
     Call LogError("Error en LookAtTile. Error " & Err.Number & " : " & Err.description)
 
 End Sub
@@ -1147,7 +1154,7 @@ Public Function RhombLegalTilePos(ByRef Pos As WorldPos, ByRef vX As Long, ByRef
 ' which starts at Pos.x - Distance and Pos.y
 ' and searchs for a valid position to drop items
 '***************************************************
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
 
     Dim i As Long
     Dim HayObj As Boolean
@@ -1244,7 +1251,7 @@ On Error GoTo Errhandler
     
     Exit Function
     
-Errhandler:
+ErrHandler:
     Call LogError("Error en RhombLegalTilePos. Error: " & Err.Number & " - " & Err.description)
 End Function
 

@@ -873,9 +873,10 @@ End Type
 
 ' Determina el color del nick
 Public Enum eNickColor
-    ieCriminal = &H1
-    ieCiudadano = &H2
-    ieAtacable = &H4
+    ieCiudadano = 2
+    ieCriminal = 3
+    ieNewbie = 4
+    ieNeutral = 5
 End Enum
 
 '*******
@@ -927,16 +928,6 @@ End Type
 '*********************************************************
 '*********************************************************
 '*********************************************************
-
-Public Type tReputacion 'Fama del usuario
-    NobleRep As Long
-    BurguesRep As Long
-    PlebeRep As Long
-    LadronesRep As Long
-    BandidoRep As Long
-    AsesinoRep As Long
-    Promedio As Long
-End Type
 
 'Estadisticas de los usuarios
 Public Type UserStats
@@ -1008,8 +999,6 @@ Public Type UserFlags
     
     Vuela As Byte
     Navegando As Byte
-    Seguro As Boolean
-    SeguroResu As Boolean
     
     DuracionEfecto As Long
     TargetNPC As Integer ' Npc señalado por el usuario
@@ -1202,7 +1191,6 @@ Public Type User
     Stats As UserStats
     flags As UserFlags
     Events As tEvents
-    Reputacion As tReputacion
     
     Faccion As tFacciones
     
@@ -1434,6 +1422,7 @@ Public ULTIMAVERSION As String
 Public ListaRazas(1 To NUMRAZAS) As String
 Public SkillsNames(1 To NUMSKILLS) As String
 Public ListaClases(1 To NUMCLASES) As String
+Public ListaBandos(0 To 2) As String
 Public ListaAtributos(1 To NUMATRIBUTOS) As String
 
 
@@ -1620,7 +1609,6 @@ Public Enum eGMCommands
     ReviveChar              '/REVIVIR
     OnlineGM                '/ONLINEGM
     OnlineMap               '/ONLINEMAP
-    Forgive                 '/PERDON
     Kick                    '/ECHAR
     Execute                 '/EJECUTAR
     BanChar                 '/BAN
@@ -1675,12 +1663,9 @@ Public Enum eGMCommands
     SystemMessage           '/SMSG
     CreateNPC               '/ACC
     CreateNPCWithRespawn    '/RACC
-    ImperialArmour          '/AI1 - 4
-    ChaosArmour             '/AC1 - 4
     NavigateToggle          '/NAVE
     ServerOpenToUsersToggle '/RESTRINGIR
     TurnOffServer           '/APAGAR
-    TurnCriminal            '/CONDEN
     ResetFactions           '/RAJAR
     RequestCharMail         '/LASTEMAIL
     AlterPassword           '/APASS

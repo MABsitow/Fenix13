@@ -485,12 +485,6 @@ Public Sub NpcDaño(ByVal NpcIndex As Integer, ByVal UserIndex As Integer)
         If .Stats.MinHp <= 0 Then
             Call WriteMultiMessage(UserIndex, eMessages.NPCKillUser) 'Call WriteNPCKillUser(UserIndex) ' Le informamos que ha muerto ;)
             
-            'Si lo mato un guardia
-            If criminal(UserIndex) And Npclist(NpcIndex).NPCtype = eNPCType.GuardiaReal Then
-                Call RestarCriminalidad(UserIndex)
-                If Not criminal(UserIndex) And .Faccion.FuerzasCaos = 1 Then Call ExpulsarFaccionCaos(UserIndex)
-            End If
-            
             If Npclist(NpcIndex).MaestroUser > 0 Then
                 Call AllFollowAmo(Npclist(NpcIndex).MaestroUser)
             Else
@@ -505,31 +499,6 @@ Public Sub NpcDaño(ByVal NpcIndex As Integer, ByVal UserIndex As Integer)
             Call UserDie(UserIndex)
         End If
     End With
-End Sub
-
-Public Sub RestarCriminalidad(ByVal UserIndex As Integer)
-'***************************************************
-'Author: Unknown
-'Last Modification: -
-'
-'***************************************************
-
-    Dim EraCriminal As Boolean
-    EraCriminal = criminal(UserIndex)
-    
-    With UserList(UserIndex).Reputacion
-        If .BandidoRep > 0 Then
-             .BandidoRep = .BandidoRep - vlASALTO
-             If .BandidoRep < 0 Then .BandidoRep = 0
-        ElseIf .LadronesRep > 0 Then
-             .LadronesRep = .LadronesRep - (vlCAZADOR * 10)
-             If .LadronesRep < 0 Then .LadronesRep = 0
-        End If
-    End With
-    
-    If EraCriminal And Not criminal(UserIndex) Then
-        Call RefreshCharStatus(UserIndex)
-    End If
 End Sub
 
 Public Sub CheckPets(ByVal NpcIndex As Integer, ByVal UserIndex As Integer, Optional ByVal CheckElementales As Boolean = True)
@@ -753,7 +722,7 @@ Public Function UsuarioAtacaNpc(ByVal UserIndex As Integer, ByVal NpcIndex As In
 '14/01/2010: ZaMa - Lo transformo en función, para que no se pierdan municiones al atacar targets inválidos.
 '***************************************************
 
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
 
     If Not PuedeAtacarNPC(UserIndex, NpcIndex) Then Exit Function
     
@@ -779,7 +748,7 @@ On Error GoTo Errhandler
     
     Exit Function
     
-Errhandler:
+ErrHandler:
     Call LogError("Error en UsuarioAtacaNpc. Error " & Err.Number & " : " & Err.description)
     
 End Function
@@ -873,7 +842,7 @@ Public Function UsuarioImpacto(ByVal AtacanteIndex As Integer, ByVal VictimaInde
 '
 '***************************************************
 
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
 
     Dim ProbRechazo As Long
     Dim Rechazo As Boolean
@@ -954,7 +923,7 @@ On Error GoTo Errhandler
     
     Exit Function
     
-Errhandler:
+ErrHandler:
     Dim AtacanteNick As String
     Dim VictimaNick As String
     
@@ -973,7 +942,7 @@ Public Function UsuarioAtacaUsuario(ByVal AtacanteIndex As Integer, ByVal Victim
 '                    inválidos, y evitar un doble chequeo innecesario
 '***************************************************
 
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
 
     If Not PuedeAtacar(AtacanteIndex, VictimaIndex) Then Exit Function
     
@@ -1023,7 +992,7 @@ On Error GoTo Errhandler
     
     Exit Function
     
-Errhandler:
+ErrHandler:
     Call LogError("Error en UsuarioAtacaUsuario. Error " & Err.Number & " : " & Err.description)
 End Function
 
@@ -1035,7 +1004,7 @@ Public Sub UserDañoUser(ByVal AtacanteIndex As Integer, ByVal VictimaIndex As In
 '11/03/2010: ZaMa - Ahora no cuenta la muerte si estaba en estado atacable, y no se vuelve criminal
 '***************************************************
     
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
 
     Dim daño As Long
     Dim Lugar As Byte
@@ -1152,7 +1121,7 @@ On Error GoTo Errhandler
     
     Exit Sub
     
-Errhandler:
+ErrHandler:
     Dim AtacanteNick As String
     Dim VictimaNick As String
     
@@ -1177,14 +1146,6 @@ Sub UsuarioAtacadoPorUsuario(ByVal AttackerIndex As Integer, ByVal VictimIndex A
     Dim EraCriminal As Boolean
     Dim VictimaEsAtacable As Boolean
     
-    If Not criminal(AttackerIndex) Then
-        If Not criminal(VictimIndex) Then
-            ' Si la victima no es atacable por el agresor, entonces se hace pk
-            VictimaEsAtacable = UserList(VictimIndex).flags.AtacablePor = AttackerIndex
-            If Not VictimaEsAtacable Then Call VolverCriminal(AttackerIndex)
-        End If
-    End If
-    
     With UserList(VictimIndex)
         If .flags.Meditando Then
             .flags.Meditando = False
@@ -1195,32 +1156,6 @@ Sub UsuarioAtacadoPorUsuario(ByVal AttackerIndex As Integer, ByVal VictimIndex A
             Call SendData(SendTarget.ToPCArea, VictimIndex, PrepareMessageCreateFX(.Char.CharIndex, 0, 0))
         End If
     End With
-    
-    EraCriminal = criminal(AttackerIndex)
-    
-    ' Si ataco a un atacable, no suma puntos de bandido
-    If Not VictimaEsAtacable Then
-        With UserList(AttackerIndex).Reputacion
-            If Not criminal(VictimIndex) Then
-                .BandidoRep = .BandidoRep + vlASALTO
-                If .BandidoRep > MAXREP Then .BandidoRep = MAXREP
-                
-                .NobleRep = .NobleRep * 0.5
-                If .NobleRep < 0 Then .NobleRep = 0
-            Else
-                .NobleRep = .NobleRep + vlNoble
-                If .NobleRep > MAXREP Then .NobleRep = MAXREP
-            End If
-        End With
-    End If
-    
-    If criminal(AttackerIndex) Then
-        If UserList(AttackerIndex).Faccion.ArmadaReal = 1 Then Call ExpulsarFaccionReal(AttackerIndex)
-        
-        If Not EraCriminal Then Call RefreshCharStatus(AttackerIndex)
-    ElseIf EraCriminal Then
-        Call RefreshCharStatus(AttackerIndex)
-    End If
     
     Call AllMascotasAtacanUser(AttackerIndex, VictimIndex)
     Call AllMascotasAtacanUser(VictimIndex, AttackerIndex)
@@ -1257,7 +1192,7 @@ Public Function PuedeAtacar(ByVal AttackerIndex As Integer, ByVal VictimIndex As
 '24/02/2009: ZaMa - Los usuarios pueden atacarse entre si.
 '02/04/2010: ZaMa - Los armadas no pueden atacar nunca a los ciudas, salvo que esten atacables.
 '***************************************************
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
 
     'MUY importante el orden de estos "IF"...
     
@@ -1311,9 +1246,9 @@ On Error GoTo Errhandler
         ' El atacante es ciuda?
         If Not criminal(AttackerIndex) Then
             ' El atacante es armada?
-            If esArmada(AttackerIndex) Then
+            If EsArmada(AttackerIndex) Then
                 ' La victima es armada?
-                If esArmada(VictimIndex) Then
+                If EsArmada(VictimIndex) Then
                     ' No puede
                     Call WriteConsoleMsg(AttackerIndex, "Los soldados del ejército real tienen prohibido atacar ciudadanos.", FontTypeNames.FONTTYPE_WARNING)
                     Exit Function
@@ -1332,54 +1267,27 @@ On Error GoTo Errhandler
     ' Ataca a un criminal
     Else
         'Sos un Caos atacando otro caos?
-        If esCaos(VictimIndex) Then
-            If esCaos(AttackerIndex) Then
+        If EsCaos(VictimIndex) Then
+            If EsCaos(AttackerIndex) Then
                 Call WriteConsoleMsg(AttackerIndex, "Los miembros de la legión oscura tienen prohibido atacarse entre sí.", FontTypeNames.FONTTYPE_WARNING)
                 Exit Function
             End If
         End If
     End If
     
-    'Tenes puesto el seguro?
-    If UserList(AttackerIndex).flags.Seguro Then
-        If Not criminal(VictimIndex) Then
-            Call WriteConsoleMsg(AttackerIndex, "No puedes atacar ciudadanos, para hacerlo debes desactivar el seguro.", FontTypeNames.FONTTYPE_WARNING)
+    ' Un ciuda es atacado
+    If Not criminal(VictimIndex) Then
+        ' Por un armada sin seguro
+        If EsArmada(AttackerIndex) Then
+            ' No puede
+            Call WriteConsoleMsg(AttackerIndex, "Los soldados del ejército real tienen prohibido atacar ciudadanos.", FontTypeNames.FONTTYPE_WARNING)
             PuedeAtacar = False
             Exit Function
-        End If
-    Else
-        ' Un ciuda es atacado
-        If Not criminal(VictimIndex) Then
-            ' Por un armada sin seguro
-            If esArmada(AttackerIndex) Then
-                ' No puede
-                Call WriteConsoleMsg(AttackerIndex, "Los soldados del ejército real tienen prohibido atacar ciudadanos.", FontTypeNames.FONTTYPE_WARNING)
-                PuedeAtacar = False
-                Exit Function
-            End If
         End If
     End If
     
     'Estas en un Mapa Seguro?
     If MapInfo(UserList(VictimIndex).Pos.Map).Pk = False Then
-        If esArmada(AttackerIndex) Then
-            If UserList(AttackerIndex).Faccion.RecompensasReal > 11 Then
-                If UserList(VictimIndex).Pos.Map = 58 Or UserList(VictimIndex).Pos.Map = 59 Or UserList(VictimIndex).Pos.Map = 60 Then
-                Call WriteConsoleMsg(VictimIndex, "¡Huye de la ciudad! Estás siendo atacado y no podrás defenderte.", FontTypeNames.FONTTYPE_WARNING)
-                PuedeAtacar = True 'Beneficio de Armadas que atacan en su ciudad.
-                Exit Function
-                End If
-            End If
-        End If
-        If esCaos(AttackerIndex) Then
-            If UserList(AttackerIndex).Faccion.RecompensasCaos > 11 Then
-                If UserList(VictimIndex).Pos.Map = 151 Or UserList(VictimIndex).Pos.Map = 156 Then
-                Call WriteConsoleMsg(VictimIndex, "¡Huye de la ciudad! Estás siendo atacado y no podrás defenderte.", FontTypeNames.FONTTYPE_WARNING)
-                PuedeAtacar = True 'Beneficio de Caos que atacan en su ciudad.
-                Exit Function
-                End If
-            End If
-        End If
         Call WriteConsoleMsg(AttackerIndex, "Esta es una zona segura, aquí no puedes atacar a otros usuarios.", FontTypeNames.FONTTYPE_WARNING)
         PuedeAtacar = False
         Exit Function
@@ -1396,7 +1304,7 @@ On Error GoTo Errhandler
     PuedeAtacar = True
 Exit Function
 
-Errhandler:
+ErrHandler:
     Call LogError("Error en PuedeAtacar. Error " & Err.Number & " : " & Err.description)
 End Function
 
@@ -1450,25 +1358,15 @@ Public Function PuedeAtacarNPC(ByVal AttackerIndex As Integer, ByVal NpcIndex As
         'Es Guardia del Caos?
         If Npclist(NpcIndex).NPCtype = eNPCType.Guardiascaos Then
             'Lo quiere atacar un caos?
-            If esCaos(AttackerIndex) Then
+            If EsCaos(AttackerIndex) Then
                 Call WriteConsoleMsg(AttackerIndex, "No puedes atacar Guardias del Caos siendo de la legión oscura.", FontTypeNames.FONTTYPE_INFO)
                 Exit Function
             End If
         'Es guardia Real?
         ElseIf Npclist(NpcIndex).NPCtype = eNPCType.GuardiaReal Then
             'Lo quiere atacar un Armada?
-            If esArmada(AttackerIndex) Then
+            If EsArmada(AttackerIndex) Then
                 Call WriteConsoleMsg(AttackerIndex, "No puedes atacar Guardias Reales siendo del ejército real.", FontTypeNames.FONTTYPE_INFO)
-                Exit Function
-            End If
-            'Tienes el seguro puesto?
-            If UserList(AttackerIndex).flags.Seguro Then
-                Call WriteConsoleMsg(AttackerIndex, "Para poder atacar Guardias Reales debes quitarte el seguro.", FontTypeNames.FONTTYPE_INFO)
-                Exit Function
-            Else
-                Call WriteConsoleMsg(AttackerIndex, "¡Atacaste un Guardia Real! Eres un criminal.", FontTypeNames.FONTTYPE_INFO)
-                Call VolverCriminal(AttackerIndex)
-                PuedeAtacarNPC = True
                 Exit Function
             End If
     
@@ -1479,23 +1377,13 @@ Public Function PuedeAtacarNPC(ByVal AttackerIndex As Integer, ByVal NpcIndex As
             If Not criminal(AttackerIndex) Then
                 
                 ' Si sos armada no podes atacarlo directamente
-                If esArmada(AttackerIndex) Then
+                If EsArmada(AttackerIndex) Then
                     Call WriteConsoleMsg(AttackerIndex, "Los miembros del ejército real no pueden atacar npcs no hostiles.", FontTypeNames.FONTTYPE_INFO)
                     Exit Function
                 End If
-            
-                'Sos ciudadano, tenes el seguro puesto?
-                If UserList(AttackerIndex).flags.Seguro Then
-                    Call WriteConsoleMsg(AttackerIndex, "Para atacar a este NPC debes quitarte el seguro.", FontTypeNames.FONTTYPE_INFO)
-                    Exit Function
-                Else
-                    'No tiene seguro puesto. Puede atacar pero es penalizado.
-                    Call WriteConsoleMsg(AttackerIndex, "Atacaste un NPC no-hostil. Continúa haciéndolo y te podrás convertir en criminal.", FontTypeNames.FONTTYPE_INFO)
-                    'NicoNZ: Cambio para que al atacar npcs no hostiles no bajen puntos de nobleza
-                    Call DisNobAuBan(AttackerIndex, 0, 1000)
-                    PuedeAtacarNPC = True
-                    Exit Function
-                End If
+
+                PuedeAtacarNPC = True
+                Exit Function
             End If
         End If
     End If
@@ -1505,38 +1393,17 @@ Public Function PuedeAtacarNPC(ByVal AttackerIndex As Integer, ByVal NpcIndex As
         If Not criminal(Npclist(NpcIndex).MaestroUser) Then
         
             'Es mascota de un Ciudadano.
-            If esArmada(AttackerIndex) Then
+            If EsArmada(AttackerIndex) Then
                 'El atacante es Armada y esta intentando atacar mascota de un Ciudadano
                 Call WriteConsoleMsg(AttackerIndex, "Los miembros del ejército real no pueden atacar mascotas de ciudadanos.", FontTypeNames.FONTTYPE_INFO)
                 Exit Function
             End If
             
-            If Not criminal(AttackerIndex) Then
-                
-                'El atacante es Ciudadano y esta intentando atacar mascota de un Ciudadano.
-                If UserList(AttackerIndex).flags.Seguro Then
-                    'El atacante tiene el seguro puesto. No puede atacar.
-                    Call WriteConsoleMsg(AttackerIndex, "Para atacar mascotas de ciudadanos debes quitarte el seguro.", FontTypeNames.FONTTYPE_INFO)
-                    Exit Function
-                Else
-                    'El atacante no tiene el seguro puesto. Recibe penalización.
-                    Call WriteConsoleMsg(AttackerIndex, "Has atacado la Mascota de un ciudadano. Eres un criminal.", FontTypeNames.FONTTYPE_INFO)
-                    Call VolverCriminal(AttackerIndex)
-                    PuedeAtacarNPC = True
-                    Exit Function
-                End If
-            Else
-                'El atacante es criminal y quiere atacar un elemental ciuda, pero tiene el seguro puesto (NicoNZ)
-                If UserList(AttackerIndex).flags.Seguro Then
-                    Call WriteConsoleMsg(AttackerIndex, "Para atacar mascotas de ciudadanos debes quitarte el seguro.", FontTypeNames.FONTTYPE_INFO)
-                    Exit Function
-                End If
-            End If
         Else
             'Es mascota de un Criminal.
-            If esCaos(Npclist(NpcIndex).MaestroUser) Then
+            If EsCaos(Npclist(NpcIndex).MaestroUser) Then
                 'Es Caos el Dueño.
-                If esCaos(AttackerIndex) Then
+                If EsCaos(AttackerIndex) Then
                     'Un Caos intenta atacar una criatura de un Caos. No puede atacar.
                     Call WriteConsoleMsg(AttackerIndex, "Los miembros de la legión oscura no pueden atacar mascotas de otros legionarios. ", FontTypeNames.FONTTYPE_INFO)
                     Exit Function
@@ -1585,40 +1452,15 @@ Public Function PuedeAtacarNPC(ByVal AttackerIndex As Integer, ByVal NpcIndex As
                         If Not criminal(AttackerIndex) And Not criminal(OwnerUserIndex) Then
                         
                              'El atacante es Armada
-                            If esArmada(AttackerIndex) Then
+                            If EsArmada(AttackerIndex) Then
                                 
                                  'Intententa paralizar un npc de un armada?
-                                If esArmada(OwnerUserIndex) Then
+                                If EsArmada(OwnerUserIndex) Then
                                     'El atacante es Armada y esta intentando paralizar un npc de un armada: No puede
                                     Call WriteConsoleMsg(AttackerIndex, "Los miembros del Ejército Real no pueden paralizar criaturas ya paralizadas pertenecientes a otros miembros del Ejército Real", FontTypeNames.FONTTYPE_INFO)
                                     Exit Function
                                 
                                 'El atacante es Armada y esta intentando paralizar un npc de un ciuda
-                                Else
-                                    ' Si tiene seguro no puede
-                                    If UserList(AttackerIndex).flags.Seguro Then
-                                        Call WriteConsoleMsg(AttackerIndex, "Para paralizar criaturas ya paralizadas pertenecientes a ciudadanos debes quitarte el seguro.", FontTypeNames.FONTTYPE_INFO)
-                                        Exit Function
-                                    Else
-                                        ' Si ya estaba atacable, no podrá atacar a un npc perteneciente a otro ciuda
-                                        If ToogleToAtackable(AttackerIndex, OwnerUserIndex) Then
-                                            Call WriteConsoleMsg(AttackerIndex, "Has paralizado la criatura de un ciudadano, ahora eres atacable por él.", FontTypeNames.FONTTYPE_INFO)
-                                            PuedeAtacarNPC = True
-                                        End If
-                                        
-                                        Exit Function
-                                        
-                                    End If
-                                End If
-                                
-                            ' El atacante es ciuda
-                            Else
-                                'El atacante tiene el seguro puesto, no puede paralizar
-                                If UserList(AttackerIndex).flags.Seguro Then
-                                    Call WriteConsoleMsg(AttackerIndex, "Para paralizar criaturas ya paralizadas pertenecientes a ciudadanos debes quitarte el seguro.", FontTypeNames.FONTTYPE_INFO)
-                                    Exit Function
-                                    
-                                'El atacante no tiene el seguro puesto, ataca.
                                 Else
                                     ' Si ya estaba atacable, no podrá atacar a un npc perteneciente a otro ciuda
                                     If ToogleToAtackable(AttackerIndex, OwnerUserIndex) Then
@@ -1627,13 +1469,25 @@ Public Function PuedeAtacarNPC(ByVal AttackerIndex As Integer, ByVal NpcIndex As
                                     End If
                                     
                                     Exit Function
+                                        
                                 End If
+                                
+                            ' El atacante es ciuda
+                            Else
+
+                                ' Si ya estaba atacable, no podrá atacar a un npc perteneciente a otro ciuda
+                                If ToogleToAtackable(AttackerIndex, OwnerUserIndex) Then
+                                    Call WriteConsoleMsg(AttackerIndex, "Has paralizado la criatura de un ciudadano, ahora eres atacable por él.", FontTypeNames.FONTTYPE_INFO)
+                                    PuedeAtacarNPC = True
+                                End If
+                                
+                                Exit Function
                             End If
                             
                         ' Al menos uno de los dos es criminal
                         Else
                             ' Si ambos son caos
-                            If esCaos(AttackerIndex) And esCaos(OwnerUserIndex) Then
+                            If EsCaos(AttackerIndex) And EsCaos(OwnerUserIndex) Then
                                 'El atacante es Caos y esta intentando paralizar un npc de un Caos
                                 Call WriteConsoleMsg(AttackerIndex, "Los miembros de la legión oscura no pueden paralizar criaturas ya paralizadas por otros legionarios.", FontTypeNames.FONTTYPE_INFO)
                                 Exit Function
@@ -1664,30 +1518,23 @@ Public Function PuedeAtacarNPC(ByVal AttackerIndex As Integer, ByVal NpcIndex As
                     If Not criminal(OwnerUserIndex) Then
                         
                         'El atacante es Armada y esta intentando atacar un npc de un Ciudadano
-                        If esArmada(AttackerIndex) Then
+                        If EsArmada(AttackerIndex) Then
                         
                             'Intententa atacar un npc de un armada?
-                            If esArmada(OwnerUserIndex) Then
+                            If EsArmada(OwnerUserIndex) Then
                                 'El atacante es Armada y esta intentando atacar el npc de un armada: No puede
                                 Call WriteConsoleMsg(AttackerIndex, "Los miembros del Ejército Real no pueden atacar criaturas pertenecientes a otros miembros del Ejército Real", FontTypeNames.FONTTYPE_INFO)
                                 Exit Function
                             
                             'El atacante es Armada y esta intentando atacar un npc de un ciuda
                             Else
-                                
-                                ' Si tiene seguro no puede
-                                If UserList(AttackerIndex).flags.Seguro Then
-                                    Call WriteConsoleMsg(AttackerIndex, "Para atacar criaturas ya pertenecientes a ciudadanos debes quitarte el seguro.", FontTypeNames.FONTTYPE_INFO)
-                                    Exit Function
-                                Else
-                                    ' Si ya estaba atacable, no podrá atacar a un npc perteneciente a otro ciuda
-                                    If ToogleToAtackable(AttackerIndex, OwnerUserIndex) Then
-                                        Call WriteConsoleMsg(AttackerIndex, "Has atacado a la criatura de un ciudadano, ahora eres atacable por él.", FontTypeNames.FONTTYPE_INFO)
-                                        PuedeAtacarNPC = True
-                                    End If
-                                    
-                                    Exit Function
+                                ' Si ya estaba atacable, no podrá atacar a un npc perteneciente a otro ciuda
+                                If ToogleToAtackable(AttackerIndex, OwnerUserIndex) Then
+                                    Call WriteConsoleMsg(AttackerIndex, "Has atacado a la criatura de un ciudadano, ahora eres atacable por él.", FontTypeNames.FONTTYPE_INFO)
+                                    PuedeAtacarNPC = True
                                 End If
+                                
+                                Exit Function
                             End If
                             
                         ' No es aramda, puede ser criminal o ciuda
@@ -1696,28 +1543,15 @@ Public Function PuedeAtacarNPC(ByVal AttackerIndex As Integer, ByVal NpcIndex As
                             'El atacante es Ciudadano y esta intentando atacar un npc de un Ciudadano.
                             If Not criminal(AttackerIndex) Then
                                 
-                                If UserList(AttackerIndex).flags.Seguro Then
-                                    'El atacante tiene el seguro puesto. No puede atacar.
-                                    Call WriteConsoleMsg(AttackerIndex, "Para atacar criaturas pertenecientes a ciudadanos debes quitarte el seguro.", FontTypeNames.FONTTYPE_INFO)
-                                    Exit Function
-                                
-                                'El atacante no tiene el seguro puesto, ataca.
-                                Else
-                                    If ToogleToAtackable(AttackerIndex, OwnerUserIndex) Then
-                                        Call WriteConsoleMsg(AttackerIndex, "Has atacado a la criatura de un ciudadano, ahora eres atacable por él.", FontTypeNames.FONTTYPE_INFO)
-                                        PuedeAtacarNPC = True
-                                    End If
-                                    
-                                    Exit Function
+                                If ToogleToAtackable(AttackerIndex, OwnerUserIndex) Then
+                                    Call WriteConsoleMsg(AttackerIndex, "Has atacado a la criatura de un ciudadano, ahora eres atacable por él.", FontTypeNames.FONTTYPE_INFO)
+                                    PuedeAtacarNPC = True
                                 End If
+                                
+                                Exit Function
                                 
                             'El atacante es criminal y esta intentando atacar un npc de un Ciudadano.
                             Else
-                                ' Es criminal atacando un npc de un ciuda, con seguro puesto.
-                                If UserList(AttackerIndex).flags.Seguro Then
-                                    Call WriteConsoleMsg(AttackerIndex, "Para atacar criaturas pertenecientes a ciudadanos debes quitarte el seguro.", FontTypeNames.FONTTYPE_INFO)
-                                    Exit Function
-                                End If
                                 
                                 PuedeAtacarNPC = True
                             End If
@@ -1725,9 +1559,9 @@ Public Function PuedeAtacarNPC(ByVal AttackerIndex As Integer, ByVal NpcIndex As
                         
                     ' Es npc de un criminal
                     Else
-                        If esCaos(OwnerUserIndex) Then
+                        If EsCaos(OwnerUserIndex) Then
                             'Es Caos el Dueño.
-                            If esCaos(AttackerIndex) Then
+                            If EsCaos(AttackerIndex) Then
                                 'Un Caos intenta atacar una npc de un Caos. No puede atacar.
                                 Call WriteConsoleMsg(AttackerIndex, "Los miembros de la Legión Oscura no pueden atacar criaturas de otros legionarios. ", FontTypeNames.FONTTYPE_INFO)
                                 Exit Function
@@ -1740,7 +1574,7 @@ Public Function PuedeAtacarNPC(ByVal AttackerIndex As Integer, ByVal NpcIndex As
         ' Si no tiene dueño el npc, se lo apropia
         Else
             ' Solo pueden apropiarse de npcs los caos, armadas o ciudas.
-            If Not criminal(AttackerIndex) Or esCaos(AttackerIndex) Then
+            If Not criminal(AttackerIndex) Or EsCaos(AttackerIndex) Then
                 ' No puede apropiarse de los pretos!
                 If Not (esPretoriano(NpcIndex) <> 0) Then
                     ' Si es una mascota atacando, no se apropia del npc
@@ -1820,7 +1654,7 @@ Public Function TriggerZonaPelea(ByVal Origen As Integer, ByVal Destino As Integ
 
 'TODO: Pero que rebuscado!!
 'Nigo:  Te lo rediseñe, pero no te borro el TODO para que lo revises.
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     Dim tOrg As eTrigger
     Dim tDst As eTrigger
     
@@ -1838,7 +1672,7 @@ On Error GoTo Errhandler
     End If
 
 Exit Function
-Errhandler:
+ErrHandler:
     TriggerZonaPelea = TRIGGER6_AUSENTE
     LogError ("Error en TriggerZonaPelea - " & Err.description)
 End Function

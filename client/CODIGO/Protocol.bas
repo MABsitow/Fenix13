@@ -145,6 +145,7 @@ Private Enum ServerPacketID
     SubeClase
     ShowFormClase
     EligeFaccion
+    ShowFaccionForm
 End Enum
 
 Private Enum ClientPacketID
@@ -158,8 +159,6 @@ Private Enum ClientPacketID
     RequestPositionUpdate   'RPU
     Attack                  'AT
     PickUp                  'AG
-    SafeToggle              '/SEG & SEG  (SEG's behaviour has to be coded in the client)
-    ResuscitationSafeToggle
     RequestAtributes        'ATR
     RequestFame             'FAMA
     RequestSkills           'ESKI
@@ -237,6 +236,8 @@ Private Enum ClientPacketID
     Consulta
     RequestClaseForm
     EligioClase
+    EligioFaccion
+    RequestFaccionForm
 End Enum
 
 Public Enum FontTypeNames
@@ -261,9 +262,11 @@ Public Enum FontTypeNames
     FONTTYPE_CITIZEN
     FONTTYPE_CONSE
     FONTTYPE_DIOS
+    FONTTYPE_NEWBIE
+    FONTTYPE_NEUTRAL
 End Enum
 
-Public FontTypes(20) As tFont
+Public FontTypes(22) As tFont
 
 ''
 ' Initializes the fonts array
@@ -396,6 +399,20 @@ Public Sub InitFonts()
         .red = 250
         .green = 250
         .blue = 150
+        .bold = 1
+    End With
+
+    With FontTypes(FontTypeNames.FONTTYPE_NEWBIE)
+        .red = 100
+        .green = 200
+        .blue = 100
+        .bold = 1
+    End With
+    
+    With FontTypes(FontTypeNames.FONTTYPE_NEUTRAL)
+        .red = 180
+        .green = 180
+        .blue = 180
         .bold = 1
     End With
 End Sub
@@ -701,6 +718,9 @@ Public Sub HandleIncomingData()
         
         Case ServerPacketID.EligeFaccion
             Call HandleEligeFaccion
+        
+        Case ServerPacketID.ShowFaccionForm
+            Call HandleShowFaccionForm
             
         Case Else
             'ERROR : Abort!
@@ -1210,7 +1230,7 @@ Private Sub HandleBankInit()
     
         BankGold = incomingData.ReadLong
     Call InvBanco(0).Initialize(DirectDraw, frmBancoObj.PicBancoInv, MAX_BANCOINVENTORY_SLOTS)
-    Call InvBanco(1).Initialize(DirectDraw, frmBancoObj.picInv, Inventario.MaxObjs)
+    Call InvBanco(1).Initialize(DirectDraw, frmBancoObj.PicInv, Inventario.MaxObjs)
     
     For i = 1 To Inventario.MaxObjs
         With Inventario
@@ -2365,14 +2385,8 @@ On Error GoTo Errhandler
         .Nombre = Buffer.ReadASCIIString()
         NickColor = Buffer.ReadByte()
         
-        If (NickColor And eNickColor.ieCriminal) <> 0 Then
-            .Criminal = 1
-        Else
-            .Criminal = 0
-        End If
-        
-        .Atacable = (NickColor And eNickColor.ieAtacable) <> 0
-        
+        .Criminal = NickColor
+                
         privs = Buffer.ReadByte()
         
         If privs <> 0 Then
@@ -3706,23 +3720,13 @@ Private Sub HandleFame()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    If incomingData.length < 29 Then
+    If incomingData.length < 1 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
     
     'Remove packet ID
     Call incomingData.ReadByte
-    
-    With UserReputacion
-        .AsesinoRep = incomingData.ReadLong()
-        .BandidoRep = incomingData.ReadLong()
-        .BurguesRep = incomingData.ReadLong()
-        .LadronesRep = incomingData.ReadLong()
-        .NobleRep = incomingData.ReadLong()
-        .PlebeRep = incomingData.ReadLong()
-        .Promedio = incomingData.ReadLong()
-    End With
     
     LlegoFama = True
 End Sub
@@ -3745,8 +3749,9 @@ Private Sub HandleMiniStats()
     Call incomingData.ReadByte
     
     With UserEstadisticas
-        .CiudadanosMatados = incomingData.ReadLong()
+        .NeutralesMatados = incomingData.ReadLong()
         .CriminalesMatados = incomingData.ReadLong()
+        .CiudadanosMatados = incomingData.ReadLong()
         .UsuariosMatados = incomingData.ReadLong()
         .NpcsMatados = incomingData.ReadInteger()
         .clase = ListaClases(incomingData.ReadByte())
@@ -4501,14 +4506,8 @@ On Error GoTo Errhandler
     
     'Update char status adn tag!
     With charlist(CharIndex)
-        If (NickColor And eNickColor.ieCriminal) <> 0 Then
-            .Criminal = 1
-        Else
-            .Criminal = 0
-        End If
-        
-        .Atacable = (NickColor And eNickColor.ieAtacable) <> 0
-        
+        .Criminal = NickColor
+                
         .Nombre = UserTag
     End With
     
@@ -4726,34 +4725,6 @@ Public Sub WritePickUp()
 'Writes the "PickUp" message to the outgoing data buffer
 '***************************************************
     Call outgoingData.WriteByte(ClientPacketID.PickUp)
-End Sub
-
-''
-' Writes the "SafeToggle" message to the outgoing data buffer.
-'
-' @remarks  The data is not actually sent until the buffer is properly flushed.
-
-Public Sub WriteSafeToggle()
-'***************************************************
-'Author: Juan Martín Sotuyo Dodero (Maraxus)
-'Last Modification: 05/17/06
-'Writes the "SafeToggle" message to the outgoing data buffer
-'***************************************************
-    Call outgoingData.WriteByte(ClientPacketID.SafeToggle)
-End Sub
-
-''
-' Writes the "ResuscitationSafeToggle" message to the outgoing data buffer.
-'
-' @remarks  The data is not actually sent until the buffer is properly flushed.
-
-Public Sub WriteResuscitationToggle()
-'**************************************************************
-'Author: Rapsodius
-'Creation Date: 10/10/07
-'Writes the Resuscitation safe toggle packet to the outgoing data buffer.
-'**************************************************************
-    Call outgoingData.WriteByte(ClientPacketID.ResuscitationSafeToggle)
 End Sub
 
 ''
@@ -6591,26 +6562,6 @@ Public Sub WriteOnlineMap(ByVal Map As Integer)
 End Sub
 
 ''
-' Writes the "Forgive" message to the outgoing data buffer.
-'
-' @param    username The user to be forgiven.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
-
-Public Sub WriteForgive(ByVal UserName As String)
-'***************************************************
-'Author: Juan Martín Sotuyo Dodero (Maraxus)
-'Last Modification: 05/17/06
-'Writes the "Forgive" message to the outgoing data buffer
-'***************************************************
-    With outgoingData
-        Call .WriteByte(ClientPacketID.GMCommands)
-        Call .WriteByte(eGMCommands.Forgive)
-        
-        Call .WriteASCIIString(UserName)
-    End With
-End Sub
-
-''
 ' Writes the "Kick" message to the outgoing data buffer.
 '
 ' @param    username The user to be kicked.
@@ -7662,52 +7613,6 @@ Public Sub WriteCreateNPCWithRespawn(ByVal NPCIndex As Integer)
 End Sub
 
 ''
-' Writes the "ImperialArmour" message to the outgoing data buffer.
-'
-' @param    armourIndex The index of imperial armour to be altered.
-' @param    objectIndex The index of the new object to be set as the imperial armour.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
-
-Public Sub WriteImperialArmour(ByVal armourIndex As Byte, ByVal objectIndex As Integer)
-'***************************************************
-'Author: Juan Martín Sotuyo Dodero (Maraxus)
-'Last Modification: 05/17/06
-'Writes the "ImperialArmour" message to the outgoing data buffer
-'***************************************************
-    With outgoingData
-        Call .WriteByte(ClientPacketID.GMCommands)
-        Call .WriteByte(eGMCommands.ImperialArmour)
-        
-        Call .WriteByte(armourIndex)
-        
-        Call .WriteInteger(objectIndex)
-    End With
-End Sub
-
-''
-' Writes the "ChaosArmour" message to the outgoing data buffer.
-'
-' @param    armourIndex The index of chaos armour to be altered.
-' @param    objectIndex The index of the new object to be set as the chaos armour.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
-
-Public Sub WriteChaosArmour(ByVal armourIndex As Byte, ByVal objectIndex As Integer)
-'***************************************************
-'Author: Juan Martín Sotuyo Dodero (Maraxus)
-'Last Modification: 05/17/06
-'Writes the "ChaosArmour" message to the outgoing data buffer
-'***************************************************
-    With outgoingData
-        Call .WriteByte(ClientPacketID.GMCommands)
-        Call .WriteByte(eGMCommands.ChaosArmour)
-        
-        Call .WriteByte(armourIndex)
-        
-        Call .WriteInteger(objectIndex)
-    End With
-End Sub
-
-''
 ' Writes the "NavigateToggle" message to the outgoing data buffer.
 '
 ' @remarks  The data is not actually sent until the buffer is properly flushed.
@@ -7753,26 +7658,6 @@ Public Sub WriteTurnOffServer()
 End Sub
 
 ''
-' Writes the "TurnCriminal" message to the outgoing data buffer.
-'
-' @param    username The name of the user to turn into criminal.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
-
-Public Sub WriteTurnCriminal(ByVal UserName As String)
-'***************************************************
-'Author: Juan Martín Sotuyo Dodero (Maraxus)
-'Last Modification: 05/17/06
-'Writes the "TurnCriminal" message to the outgoing data buffer
-'***************************************************
-    With outgoingData
-        Call .WriteByte(ClientPacketID.GMCommands)
-        Call .WriteByte(eGMCommands.TurnCriminal)
-        
-        Call .WriteASCIIString(UserName)
-    End With
-End Sub
-
-''
 ' Writes the "ResetFactions" message to the outgoing data buffer.
 '
 ' @param    username The name of the user who will be removed from any faction.
@@ -7791,7 +7676,6 @@ Public Sub WriteResetFactions(ByVal UserName As String)
         Call .WriteASCIIString(UserName)
     End With
 End Sub
-
 
 ''
 ' Writes the "RequestCharMail" message to the outgoing data buffer.
@@ -8402,7 +8286,7 @@ Public Sub WriteSearchObjs(ByVal Obj As String)
         Call .WriteByte(eGMCommands.SearchObjs)
         
         Call .WriteASCIIString(Obj)
-<<<<<<< HEAD
+
     End With
 End Sub
 
@@ -8503,8 +8387,7 @@ Public Sub WriteLoseQuest(ByVal user As String)
         Call .WriteByte(eGMCommands.LoseQuest)
         
         Call .WriteASCIIString(user)
-=======
->>>>>>> origin/master
+
     End With
 End Sub
 
@@ -8527,6 +8410,9 @@ Public Sub WriteRequestClaseForm()
     End With
 End Sub
 
+Public Sub writerequestfaccionform()
+    Call outgoingData.WriteByte(ClientPacketID.RequestFaccionForm)
+End Sub
 Private Sub HandleShowFormClase()
 
     With incomingData
@@ -8549,6 +8435,15 @@ Private Sub HandleShowFormClase()
     End With
 End Sub
 
+Private Sub HandleShowFaccionForm()
+    With incomingData
+        
+        Call .ReadByte
+        
+        FrmElegirCamino.Show
+    
+    End With
+End Sub
 Private Sub HandleEligeFaccion()
     
     With incomingData
@@ -8562,11 +8457,21 @@ Public Sub WriteSendEligioSubClase(ByVal Index As Integer)
     
     With outgoingData
         
-        .WriteByte (ClientPacketID.EligioClase)
+        .WriteByte ClientPacketID.EligioClase
         .WriteByte Index
     
     End With
 
+End Sub
+
+Public Sub WriteEligioFaccion(ByVal Faccion As eFaccion)
+    
+    With outgoingData
+            
+        .WriteByte ClientPacketID.EligioFaccion
+        .WriteByte Faccion
+    
+    End With
 End Sub
 
 ''

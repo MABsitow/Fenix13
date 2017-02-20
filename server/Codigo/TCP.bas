@@ -266,15 +266,6 @@ With UserList(UserIndex)
     .flags.Muerto = 0
     .flags.Escondido = 0
     
-    .Reputacion.AsesinoRep = 0
-    .Reputacion.BandidoRep = 0
-    .Reputacion.BurguesRep = 0
-    .Reputacion.LadronesRep = 0
-    .Reputacion.NobleRep = 1000
-    .Reputacion.PlebeRep = 30
-    
-    .Reputacion.Promedio = 30 / 6
-    
     
     .Name = Name
     .Clase = eClass.Ciudadano
@@ -626,7 +617,7 @@ Sub ConnectUser(ByVal UserIndex As Integer, ByRef Name As String, ByRef Password
 '11/27/2009: Budi - Se envian los InvStats del personaje y su Fuerza y Agilidad
 '03/12/2009: Budi - Optimización del código
 '***************************************************
-Dim n As Integer
+Dim N As Integer
 
 With UserList(UserIndex)
 
@@ -745,8 +736,6 @@ With UserList(UserIndex)
         Exit Sub
     End If
     
-    Call LoadUserReputacion(UserIndex, Leer)
-    
     Set Leer = Nothing
     
     If EnTesting And .Stats.ELV >= 18 Then
@@ -764,13 +753,6 @@ With UserList(UserIndex)
         .CurrentInventorySlots = MAX_NORMAL_INVENTORY_SLOTS + ObjData(.Invent.Object(.Invent.MochilaEqpSlot).OBJIndex).MochilaType * 5
     Else
         .CurrentInventorySlots = MAX_NORMAL_INVENTORY_SLOTS
-    End If
-    If (.flags.Muerto = 0) Then
-        .flags.SeguroResu = False
-        Call WriteMultiMessage(UserIndex, eMessages.ResuscitationSafeOff) 'Call WriteResuscitationSafeOff(UserIndex)
-    Else
-        .flags.SeguroResu = True
-        Call WriteMultiMessage(UserIndex, eMessages.ResuscitationSafeOn) 'Call WriteResuscitationSafeOn(UserIndex)
     End If
     
     Call UpdateUserInv(True, UserIndex, 0)
@@ -1027,16 +1009,16 @@ With UserList(UserIndex)
 
     Call MostrarNumUsers
     
-    n = FreeFile
-    Open App.path & "\logs\numusers.log" For Output As n
-    Print #n, NumUsers
-    Close #n
+    N = FreeFile
+    Open App.path & "\logs\numusers.log" For Output As N
+    Print #N, NumUsers
+    Close #N
     
-    n = FreeFile
+    N = FreeFile
     'Log
-    Open App.path & "\logs\Connect.log" For Append Shared As #n
-    Print #n, .Name & " ha entrado al juego. UserIndex:" & UserIndex & " " & time & " " & Date
-    Close #n
+    Open App.path & "\logs\Connect.log" For Append Shared As #N
+    Print #N, .Name & " ha entrado al juego. UserIndex:" & UserIndex & " " & time & " " & Date
+    Close #N
 
 End With
 End Sub
@@ -1065,21 +1047,13 @@ Sub ResetFacciones(ByVal UserIndex As Integer)
 '23/01/2007 Pablo (ToxicWaste) - Agrego NivelIngreso, FechaIngreso, MatadosIngreso y NextRecompensa.
 '*************************************************
     With UserList(UserIndex).Faccion
-        .ArmadaReal = 0
-        .CiudadanosMatados = 0
-        .CriminalesMatados = 0
-        .FuerzasCaos = 0
-        .FechaIngreso = "No ingresó a ninguna Facción"
-        .RecibioArmaduraCaos = 0
-        .RecibioArmaduraReal = 0
-        .RecibioExpInicialCaos = 0
-        .RecibioExpInicialReal = 0
-        .RecompensasCaos = 0
-        .RecompensasReal = 0
-        .Reenlistadas = 0
-        .NivelIngreso = 0
-        .MatadosIngreso = 0
-        .NextRecompensa = 0
+        .Ataco(1) = 0
+        .Ataco(2) = 0
+        .Jerarquia = 0
+        .Matados(0) = 0
+        .Matados(1) = 0
+        .Matados(2) = 0
+        .Torneos = 0
     End With
 End Sub
 
@@ -1193,26 +1167,6 @@ Sub ResetBasicUserInfo(ByVal UserIndex As Integer)
         
     End With
 End Sub
-
-Sub ResetReputacion(ByVal UserIndex As Integer)
-'*************************************************
-'Author: Unknown
-'Last modified: 03/15/2006
-'Resetea todos los valores generales y las stats
-'03/15/2006 Maraxus - Uso de With para mayor performance y claridad.
-'*************************************************
-    With UserList(UserIndex).Reputacion
-        .AsesinoRep = 0
-        .BandidoRep = 0
-        .BurguesRep = 0
-        .LadronesRep = 0
-        .NobleRep = 0
-        .PlebeRep = 0
-        .NobleRep = 0
-        .Promedio = 0
-    End With
-End Sub
-
 
 
 Sub ResetUserFlags(ByVal UserIndex As Integer)
@@ -1360,7 +1314,6 @@ Call ResetFacciones(UserIndex)
 Call ResetContadores(UserIndex)
 Call ResetCharInfo(UserIndex)
 Call ResetBasicUserInfo(UserIndex)
-Call ResetReputacion(UserIndex)
 Call ResetUserFlags(UserIndex)
 Call LimpiarInventario(UserIndex)
 Call ResetUserSpells(UserIndex)
@@ -1390,7 +1343,7 @@ Sub CloseUser(ByVal UserIndex As Integer)
 
 On Error GoTo ErrHandler
 
-Dim n As Integer
+Dim N As Integer
 Dim Map As Integer
 Dim Name As String
 Dim i As Integer
@@ -1471,10 +1424,10 @@ Call ResetUserSlot(UserIndex)
 
 Call MostrarNumUsers
 
-n = FreeFile(1)
-Open App.path & "\logs\Connect.log" For Append Shared As #n
-Print #n, Name & " ha dejado el juego. " & "User Index:" & UserIndex & " " & time & " " & Date
-Close #n
+N = FreeFile(1)
+Open App.path & "\logs\Connect.log" For Append Shared As #N
+Print #N, Name & " ha dejado el juego. " & "User Index:" & UserIndex & " " & time & " " & Date
+Close #N
 
 Exit Sub
 

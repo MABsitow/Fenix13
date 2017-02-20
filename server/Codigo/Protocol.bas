@@ -139,6 +139,7 @@ Private Enum ServerPacketID
     SubeClase
     ShowFormClase
     EligeFaccion
+    ShowFaccionForm
 End Enum
 
 Private Enum ClientPacketID
@@ -152,8 +153,6 @@ Private Enum ClientPacketID
     RequestPositionUpdate   'RPU
     Attack                  'AT
     PickUp                  'AG
-    SafeToggle              '/SEG & SEG  (SEG's behaviour has to be coded in the client)
-    ResuscitationSafeToggle
     RequestAtributes        'ATR
     RequestFame             'FAMA
     RequestSkills           'ESKI
@@ -231,6 +230,8 @@ Private Enum ClientPacketID
     Consulta
     RequestClaseForm
     EligioClase
+    EligioFaccion
+    RequestFaccionForm
 End Enum
 
 ''
@@ -259,6 +260,8 @@ Public Enum FontTypeNames
     FONTTYPE_CITIZEN
     FONTTYPE_CONSE
     FONTTYPE_DIOS
+    FONTTYPE_NEWBIE
+    FONTTYPE_NEUTRAL
 End Enum
 
 Public Enum eEditOptions
@@ -354,13 +357,7 @@ On Error Resume Next
         
         Case ClientPacketID.PickUp                  'AG
             Call HandlePickUp(UserIndex)
-        
-        Case ClientPacketID.SafeToggle              '/SEG & SEG  (SEG's behaviour has to be coded in the client)
-            Call HandleSafeToggle(UserIndex)
-        
-        Case ClientPacketID.ResuscitationSafeToggle
-            Call HandleResuscitationToggle(UserIndex)
-        
+                
         Case ClientPacketID.RequestAtributes        'ATR
             Call HandleRequestAtributes(UserIndex)
         
@@ -592,6 +589,12 @@ On Error Resume Next
         Case ClientPacketID.EligioClase
             Call HandleEligioClase(UserIndex)
             
+        Case ClientPacketID.EligioFaccion
+            Call HandleEligioFaccion(UserIndex)
+        
+        Case ClientPacketID.RequestFaccionForm
+            Call HandleRequestFaccionForm(UserIndex)
+            
         Case Else
             'ERROR : Abort!
             Call CloseSocket(UserIndex)
@@ -630,8 +633,7 @@ On Error GoTo ErrHandler
         
         Select Case MessageIndex
             Case eMessages.DontSeeAnything, eMessages.NPCSwing, eMessages.NPCKillUser, eMessages.BlockedWithShieldUser, _
-                eMessages.BlockedWithShieldother, eMessages.UserSwing, eMessages.SafeModeOn, eMessages.SafeModeOff, _
-                eMessages.ResuscitationSafeOff, eMessages.ResuscitationSafeOn, eMessages.NobilityLost, _
+                eMessages.BlockedWithShieldother, eMessages.UserSwing, eMessages.NobilityLost, _
                 eMessages.CantUseWhileMeditating, eMessages.CancelHome, eMessages.FinishHome
             
             Case eMessages.NPCHitUser
@@ -800,9 +802,6 @@ With UserList(UserIndex)
         Case eGMCommands.OnlineMap               '/ONLINEMAP
             Call HandleOnlineMap(UserIndex)
         
-        Case eGMCommands.Forgive                 '/PERDON
-            Call HandleForgive(UserIndex)
-        
         Case eGMCommands.Kick                    '/ECHAR
             Call HandleKick(UserIndex)
         
@@ -965,12 +964,6 @@ With UserList(UserIndex)
         Case eGMCommands.CreateNPCWithRespawn    '/RACC
             Call HandleCreateNPCWithRespawn(UserIndex)
         
-        Case eGMCommands.ImperialArmour          '/AI1 - 4
-            Call HandleImperialArmour(UserIndex)
-        
-        Case eGMCommands.ChaosArmour             '/AC1 - 4
-            Call HandleChaosArmour(UserIndex)
-        
         Case eGMCommands.NavigateToggle          '/NAVE
             Call HandleNavigateToggle(UserIndex)
         
@@ -979,9 +972,6 @@ With UserList(UserIndex)
         
         Case eGMCommands.TurnOffServer           '/APAGAR
             Call HandleTurnOffServer(UserIndex)
-        
-        Case eGMCommands.TurnCriminal            '/CONDEN
-            Call HandleTurnCriminal(UserIndex)
         
         Case eGMCommands.ResetFactions           '/RAJAR
             Call HandleResetFactions(UserIndex)
@@ -1867,55 +1857,6 @@ Private Sub HandlePickUp(ByVal UserIndex As Integer)
         Call GetObj(UserIndex)
     End With
 End Sub
-
-''
-' Handles the "SafeToggle" message.
-'
-' @param    userIndex The index of the user sending the message.
-
-Private Sub HandleSafeToggle(ByVal UserIndex As Integer)
-'***************************************************
-'Author: Juan Martín Sotuyo Dodero (Maraxus)
-'Last Modification: 05/17/06
-'
-'***************************************************
-    With UserList(UserIndex)
-        'Remove packet ID
-        Call .incomingData.ReadByte
-        
-        If .flags.Seguro Then
-            Call WriteMultiMessage(UserIndex, eMessages.SafeModeOff) 'Call WriteSafeModeOff(UserIndex)
-        Else
-            Call WriteMultiMessage(UserIndex, eMessages.SafeModeOn) 'Call WriteSafeModeOn(UserIndex)
-        End If
-        
-        .flags.Seguro = Not .flags.Seguro
-    End With
-End Sub
-
-''
-' Handles the "ResuscitationSafeToggle" message.
-'
-' @param    userIndex The index of the user sending the message.
-
-Private Sub HandleResuscitationToggle(ByVal UserIndex As Integer)
-'***************************************************
-'Author: Rapsodius
-'Creation Date: 10/10/07
-'***************************************************
-    With UserList(UserIndex)
-        Call .incomingData.ReadByte
-        
-        .flags.SeguroResu = Not .flags.SeguroResu
-        
-        If .flags.SeguroResu Then
-            Call WriteMultiMessage(UserIndex, eMessages.ResuscitationSafeOn) 'Call WriteResuscitationSafeOn(UserIndex)
-        Else
-            Call WriteMultiMessage(UserIndex, eMessages.ResuscitationSafeOff) 'Call WriteResuscitationSafeOff(UserIndex)
-        End If
-    End With
-End Sub
-
 
 ''
 ' Handles the "RequestAtributes" message.
@@ -4511,11 +4452,9 @@ Private Sub HandleEnlist(ByVal UserIndex As Integer)
             Exit Sub
         End If
         
-        If Npclist(.flags.TargetNPC).flags.Faccion = 0 Then
-            Call EnlistarArmadaReal(UserIndex)
-        Else
-            Call EnlistarCaos(UserIndex)
-        End If
+        If ClaseBase(.Clase) Or ClaseTrabajadora(.Clase) Then Exit Sub
+        
+        Call Enlistar(UserIndex, Npclist(.flags.TargetNPC).flags.Faccion)
     End With
 End Sub
 
@@ -4553,15 +4492,26 @@ Private Sub HandleInformation(ByVal UserIndex As Integer)
         End If
         
         
-        NextRecom = .Faccion.NextRecompensa
+        Select Case .Faccion.Jerarquia
         
-        If Npclist(.flags.TargetNPC).flags.Faccion = 0 Then
-            If .Faccion.ArmadaReal = 0 Then
-                Call WriteChatOverHead(UserIndex, "¡¡No perteneces a las tropas reales!!", Npclist(.flags.TargetNPC).Char.CharIndex, vbWhite)
+            Case 1
+                NextRecom = REQUIERE_MATADOS_SEGUNDA
+            Case 2
+                NextRecom = REQUIERE_MATADOS_TERCERA
+            Case 3
+                NextRecom = REQUIERE_MATADOS_CUARTA
+            Case 4
+                Call WriteMultiMessage(UserIndex, eMessages.LastHierarchy, Npclist(.flags.TargetNPC).Char.CharIndex)
                 Exit Sub
-            End If
-            
-            Matados = .Faccion.CriminalesMatados
+        End Select
+        
+        If Npclist(.flags.TargetNPC).flags.Faccion <> .Faccion.Bando Then
+            Call WriteChatOverHead(UserIndex, "¡¡No perteneces a nuestras tropas!!", Npclist(.flags.TargetNPC).Char.CharIndex, vbWhite)
+            Exit Sub
+        End If
+        
+        If .Faccion.Bando = eFaccion.Real Then
+            Matados = .Faccion.Matados(eFaccion.Caos)
             Diferencia = NextRecom - Matados
             
             If Diferencia > 0 Then
@@ -4570,12 +4520,7 @@ Private Sub HandleInformation(ByVal UserIndex As Integer)
                 Call WriteChatOverHead(UserIndex, "Tu deber es combatir criminales, y ya has matado los suficientes como para merecerte una recompensa.", Npclist(.flags.TargetNPC).Char.CharIndex, vbWhite)
             End If
         Else
-            If .Faccion.FuerzasCaos = 0 Then
-                Call WriteChatOverHead(UserIndex, "¡¡No perteneces a la legión oscura!!", Npclist(.flags.TargetNPC).Char.CharIndex, vbWhite)
-                Exit Sub
-            End If
-            
-            Matados = .Faccion.CiudadanosMatados
+            Matados = .Faccion.Matados(eFaccion.Real)
             Diferencia = NextRecom - Matados
             
             If Diferencia > 0 Then
@@ -4616,18 +4561,8 @@ Private Sub HandleReward(ByVal UserIndex As Integer)
             Exit Sub
         End If
         
-        If Npclist(.flags.TargetNPC).flags.Faccion = 0 Then
-             If .Faccion.ArmadaReal = 0 Then
-                 Call WriteChatOverHead(UserIndex, "¡¡No perteneces a las tropas reales!!", Npclist(.flags.TargetNPC).Char.CharIndex, vbWhite)
-                 Exit Sub
-             End If
-             Call RecompensaArmadaReal(UserIndex)
-        Else
-             If .Faccion.FuerzasCaos = 0 Then
-                 Call WriteChatOverHead(UserIndex, "¡¡No perteneces a la legión oscura!!", Npclist(.flags.TargetNPC).Char.CharIndex, vbWhite)
-                 Exit Sub
-             End If
-             Call RecompensaCaos(UserIndex)
+        If Npclist(.flags.TargetNPC).flags.Faccion = .Faccion.Bando Then
+            Call Recompensado(UserIndex)
         End If
     End With
 End Sub
@@ -4721,8 +4656,8 @@ Private Sub HandleShareNpc(ByVal UserIndex As Integer)
         ' Pk or Caos?
         If criminal(UserIndex) Then
             ' Caos can only share with other caos
-            If esCaos(UserIndex) Then
-                If Not esCaos(TargetUserIndex) Then
+            If EsCaos(UserIndex) Then
+                If Not EsCaos(TargetUserIndex) Then
                     Call WriteConsoleMsg(UserIndex, "Solo puedes compartir npcs con miembros de tu misma facción!!", FontTypeNames.FONTTYPE_INFO)
                     Exit Sub
                 End If
@@ -5398,7 +5333,7 @@ Private Sub HandleLeaveFaction(ByVal UserIndex As Integer)
             ' Es rey o domonio?
             If Npclist(NpcIndex).NPCtype = eNPCType.Noble Then
                 'Rey?
-                If Npclist(NpcIndex).flags.Faccion = 0 Then
+                If Npclist(NpcIndex).flags.Faccion = eFaccion.Real Then
                     TalkToKing = True
                 ' Demonio
                 Else
@@ -5408,7 +5343,7 @@ Private Sub HandleLeaveFaction(ByVal UserIndex As Integer)
         End If
                
         'Quit the Royal Army?
-        If .Faccion.ArmadaReal = 1 Then
+        If .Faccion.Bando = eFaccion.Real Then
             ' Si le pidio al demonio salir de la armada, este le responde.
             If TalkToDemon Then
                 Call WriteChatOverHead(UserIndex, "¡¡¡Sal de aquí bufón!!!", _
@@ -5421,12 +5356,12 @@ Private Sub HandleLeaveFaction(ByVal UserIndex As Integer)
                                            Npclist(NpcIndex).Char.CharIndex, vbWhite)
                 End If
                 
-                Call ExpulsarFaccionReal(UserIndex, False)
+                Call Expulsar(UserIndex)
                 
             End If
         
         'Quit the Chaos Legion?
-        ElseIf .Faccion.FuerzasCaos = 1 Then
+        ElseIf .Faccion.Bando = eFaccion.Caos Then
             ' Si le pidio al rey salir del caos, le responde.
             If TalkToKing Then
                 Call WriteChatOverHead(UserIndex, "¡¡¡Sal de aquí maldito criminal!!!", _
@@ -5438,7 +5373,7 @@ Private Sub HandleLeaveFaction(ByVal UserIndex As Integer)
                                            Npclist(NpcIndex).Char.CharIndex, vbWhite)
                 End If
                 
-                Call ExpulsarFaccionCaos(UserIndex, False)
+                Call Expulsar(UserIndex)
             End If
         ' No es faccionario
         Else
@@ -5661,10 +5596,10 @@ Private Sub HandleOnlineRoyalArmy(ByVal UserIndex As Integer)
         Dim i As Long
         Dim list As String
 
-        For i = 1 To LastUser
-            If UserList(i).ConnID <> -1 Then
-                If UserList(i).Faccion.ArmadaReal = 1 Then
-                    If UserList(i).flags.Privilegios And (PlayerType.User Or PlayerType.Consejero Or PlayerType.SemiDios) Or _
+        For i = 1 To MiembrosAlianza.count
+            If UserList(MiembrosAlianza.Item(i)).ConnID <> -1 Then
+                If EsArmada(MiembrosAlianza.Item(i)) Then
+                    If UserList(MiembrosAlianza.Item(i)).flags.Privilegios And (PlayerType.User Or PlayerType.Consejero Or PlayerType.SemiDios) Or _
                       .flags.Privilegios And (PlayerType.Dios Or PlayerType.Admin) Then
                         list = list & UserList(i).Name & ", "
                     End If
@@ -5700,10 +5635,10 @@ Private Sub HandleOnlineChaosLegion(ByVal UserIndex As Integer)
         Dim i As Long
         Dim list As String
 
-        For i = 1 To LastUser
-            If UserList(i).ConnID <> -1 Then
-                If UserList(i).Faccion.FuerzasCaos = 1 Then
-                    If UserList(i).flags.Privilegios And (PlayerType.User Or PlayerType.Consejero Or PlayerType.SemiDios) Or _
+        For i = 1 To MiembrosCaos.count
+            If UserList(MiembrosCaos.Item(i)).ConnID <> -1 Then
+                If EsCaos(MiembrosCaos.Item(i)) Then
+                    If UserList(MiembrosCaos.Item(i)).flags.Privilegios And (PlayerType.User Or PlayerType.Consejero Or PlayerType.SemiDios) Or _
                       .flags.Privilegios And (PlayerType.Dios Or PlayerType.Admin) Then
                         list = list & UserList(i).Name & ", "
                     End If
@@ -6872,7 +6807,7 @@ On Error GoTo ErrHandler
                             Call WriteVar(UserCharPath, "FACCIONES", "CrimMatados", Var)
                             Call WriteConsoleMsg(UserIndex, "Charfile Alterado: " & UserName, FontTypeNames.FONTTYPE_INFO)
                         Else ' Online
-                            UserList(tUser).Faccion.CriminalesMatados = Var
+                            UserList(tUser).Faccion.Matados(eFaccion.Caos) = Var
                         End If
                         
                         ' Log it
@@ -6885,7 +6820,7 @@ On Error GoTo ErrHandler
                             Call WriteVar(UserCharPath, "FACCIONES", "CiudMatados", Var)
                             Call WriteConsoleMsg(UserIndex, "Charfile Alterado: " & UserName, FontTypeNames.FONTTYPE_INFO)
                         Else ' Online
-                            UserList(tUser).Faccion.CiudadanosMatados = Var
+                            UserList(tUser).Faccion.Matados(eFaccion.Real) = Var
                         End If
                         
                         ' Log it
@@ -6983,32 +6918,6 @@ On Error GoTo ErrHandler
                         
                         ' Log it
                         CommandString = CommandString & "SKILLSLIBRES "
-                    
-                    Case eEditOptions.eo_Nobleza
-                        Var = IIf(val(Arg1) > MAXREP, MAXREP, val(Arg1))
-                        
-                        If tUser <= 0 Then ' Offline
-                            Call WriteVar(UserCharPath, "REP", "Nobles", Var)
-                            Call WriteConsoleMsg(UserIndex, "Charfile Alterado: " & UserName, FontTypeNames.FONTTYPE_INFO)
-                        Else ' Online
-                            UserList(tUser).Reputacion.NobleRep = Var
-                        End If
-                    
-                        ' Log it
-                        CommandString = CommandString & "NOB "
-                        
-                    Case eEditOptions.eo_Asesino
-                        Var = IIf(val(Arg1) > MAXREP, MAXREP, val(Arg1))
-                        
-                        If tUser <= 0 Then ' Offline
-                            Call WriteVar(UserCharPath, "REP", "Asesino", Var)
-                            Call WriteConsoleMsg(UserIndex, "Charfile Alterado: " & UserName, FontTypeNames.FONTTYPE_INFO)
-                        Else ' Online
-                            UserList(tUser).Reputacion.AsesinoRep = Var
-                        End If
-                        
-                        ' Log it
-                        CommandString = CommandString & "ASE "
                     
                     Case eEditOptions.eo_Sex
                         Dim Sex As Byte
@@ -7661,65 +7570,6 @@ Private Sub HandleOnlineMap(ByVal UserIndex As Integer)
         
         Call WriteConsoleMsg(UserIndex, "Usuarios en el mapa: " & list, FontTypeNames.FONTTYPE_INFO)
     End With
-End Sub
-
-''
-' Handles the "Forgive" message.
-'
-' @param    userIndex The index of the user sending the message.
-
-Private Sub HandleForgive(ByVal UserIndex As Integer)
-'***************************************************
-'Author: Nicolas Matias Gonzalez (NIGO)
-'Last Modification: 12/29/06
-'
-'***************************************************
-    If UserList(UserIndex).incomingData.length < 3 Then
-        Err.Raise UserList(UserIndex).incomingData.NotEnoughDataErrCode
-        Exit Sub
-    End If
-    
-On Error GoTo ErrHandler
-    With UserList(UserIndex)
-        'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet...
-        Dim buffer As New clsByteQueue
-        Call buffer.CopyBuffer(.incomingData)
-        
-        'Remove packet ID
-        Call buffer.ReadByte
-        
-        Dim UserName As String
-        Dim tUser As Integer
-        
-        UserName = buffer.ReadASCIIString()
-        
-        If (Not .flags.Privilegios And PlayerType.RoleMaster) <> 0 And (.flags.Privilegios And (PlayerType.Admin Or PlayerType.Dios Or PlayerType.SemiDios)) <> 0 Then
-            tUser = NameIndex(UserName)
-            
-            If tUser > 0 Then
-                If EsNewbie(tUser) Then
-                    Call VolverCiudadano(tUser)
-                Else
-                    Call LogGM(.Name, "Intento perdonar un personaje de nivel avanzado.")
-                    Call WriteConsoleMsg(UserIndex, "Sólo se permite perdonar newbies.", FontTypeNames.FONTTYPE_INFO)
-                End If
-            End If
-        End If
-        
-        'If we got here then packet is complete, copy data back to original queue
-        Call .incomingData.CopyBuffer(buffer)
-    End With
-
-ErrHandler:
-    Dim error As Long
-    error = Err.Number
-On Error GoTo 0
-    
-    'Destroy auxiliar buffer
-    Set buffer = Nothing
-    
-    If error <> 0 Then _
-        Err.Raise error
 End Sub
 
 ''
@@ -8671,7 +8521,7 @@ On Error GoTo ErrHandler
         
         'Solo dioses, admins y RMS
         If .flags.Privilegios And (PlayerType.Dios Or PlayerType.Admin Or PlayerType.RoleMaster) Then
-            Call SendData(SendTarget.ToRealYRMs, 0, PrepareMessageConsoleMsg("EJÉRCITO REAL> " & message, FontTypeNames.FONTTYPE_TALK))
+            Call SendData(SendTarget.ToReal, 0, PrepareMessageConsoleMsg("EJÉRCITO REAL> " & message, FontTypeNames.FONTTYPE_TALK))
         End If
         
         'If we got here then packet is complete, copy data back to original queue
@@ -8720,7 +8570,7 @@ On Error GoTo ErrHandler
         
         'Solo dioses, admins y RMS
         If .flags.Privilegios And (PlayerType.Dios Or PlayerType.Admin Or PlayerType.RoleMaster) Then
-            Call SendData(SendTarget.ToCaosYRMs, 0, PrepareMessageConsoleMsg("FUERZAS DEL CAOS> " & message, FontTypeNames.FONTTYPE_TALK))
+            Call SendData(SendTarget.ToCaos, 0, PrepareMessageConsoleMsg("FUERZAS DEL CAOS> " & message, FontTypeNames.FONTTYPE_TALK))
         End If
         
         'If we got here then packet is complete, copy data back to original queue
@@ -8769,7 +8619,7 @@ On Error GoTo ErrHandler
         
         'Solo dioses, admins y RMS
         If .flags.Privilegios And (PlayerType.Dios Or PlayerType.Admin Or PlayerType.RoleMaster) Then
-            Call SendData(SendTarget.ToCiudadanosYRMs, 0, PrepareMessageConsoleMsg("CIUDADANOS> " & message, FontTypeNames.FONTTYPE_TALK))
+            Call SendData(SendTarget.ToCiudadanos, 0, PrepareMessageConsoleMsg("CIUDADANOS> " & message, FontTypeNames.FONTTYPE_TALK))
         End If
         
         'If we got here then packet is complete, copy data back to original queue
@@ -8818,7 +8668,7 @@ On Error GoTo ErrHandler
         
         'Solo dioses, admins y RMS
         If .flags.Privilegios And (PlayerType.Dios Or PlayerType.Admin Or PlayerType.RoleMaster) Then
-            Call SendData(SendTarget.ToCriminalesYRMs, 0, PrepareMessageConsoleMsg("CRIMINALES> " & message, FontTypeNames.FONTTYPE_TALK))
+            Call SendData(SendTarget.ToCriminales, 0, PrepareMessageConsoleMsg("CRIMINALES> " & message, FontTypeNames.FONTTYPE_TALK))
         End If
         
         'If we got here then packet is complete, copy data back to original queue
@@ -9665,16 +9515,14 @@ On Error GoTo ErrHandler
             Call LogGM(.Name, "ECHO DEL CAOS A: " & UserName)
     
             If tUser > 0 Then
-                Call ExpulsarFaccionCaos(tUser, True)
-                UserList(tUser).Faccion.Reenlistadas = 200
+                Call Expulsar(tUser) 'todo, se puede reenlistar?
                 Call WriteConsoleMsg(UserIndex, UserName & " expulsado de las fuerzas del caos y prohibida la reenlistada.", FontTypeNames.FONTTYPE_INFO)
                 Call WriteConsoleMsg(tUser, .Name & " te ha expulsado en forma definitiva de las fuerzas del caos.", FontTypeNames.FONTTYPE_FIGHT)
                 Call FlushBuffer(tUser)
             Else
                 If FileExist(CharPath & UserName & ".chr") Then
-                    Call WriteVar(CharPath & UserName & ".chr", "FACCIONES", "EjercitoCaos", 0)
-                    Call WriteVar(CharPath & UserName & ".chr", "FACCIONES", "Reenlistadas", 200)
-                    Call WriteVar(CharPath & UserName & ".chr", "FACCIONES", "Extra", "Expulsado por " & .Name)
+                    Call WriteVar(CharPath & UserName & ".chr", "FACCIONES", "Bando", eFaccion.Neutral)
+                    'Call WriteVar(CharPath & UserName & ".chr", "FACCIONES", "Extra", "Expulsado por " & .Name)
                     Call WriteConsoleMsg(UserIndex, UserName & " expulsado de las fuerzas del caos y prohibida la reenlistada.", FontTypeNames.FONTTYPE_INFO)
                 Else
                     Call WriteConsoleMsg(UserIndex, UserName & ".chr inexistente.", FontTypeNames.FONTTYPE_INFO)
@@ -9740,16 +9588,14 @@ On Error GoTo ErrHandler
             Call LogGM(.Name, "ECHÓ DE LA REAL A: " & UserName)
             
             If tUser > 0 Then
-                Call ExpulsarFaccionReal(tUser, True)
-                UserList(tUser).Faccion.Reenlistadas = 200
+                Call Expulsar(tUser) 'todo se puede reenlistar?
                 Call WriteConsoleMsg(UserIndex, UserName & " expulsado de las fuerzas reales y prohibida la reenlistada.", FontTypeNames.FONTTYPE_INFO)
                 Call WriteConsoleMsg(tUser, .Name & " te ha expulsado en forma definitiva de las fuerzas reales.", FontTypeNames.FONTTYPE_FIGHT)
                 Call FlushBuffer(tUser)
             Else
                 If FileExist(CharPath & UserName & ".chr") Then
-                    Call WriteVar(CharPath & UserName & ".chr", "FACCIONES", "EjercitoReal", 0)
-                    Call WriteVar(CharPath & UserName & ".chr", "FACCIONES", "Reenlistadas", 200)
-                    Call WriteVar(CharPath & UserName & ".chr", "FACCIONES", "Extra", "Expulsado por " & .Name)
+                    Call WriteVar(CharPath & UserName & ".chr", "FACCIONES", "Bando", eFaccion.Neutral)
+                    'Call WriteVar(CharPath & UserName & ".chr", "FACCIONES", "Extra", "Expulsado por " & .Name)
                     Call WriteConsoleMsg(UserIndex, UserName & " expulsado de las fuerzas reales y prohibida la reenlistada.", FontTypeNames.FONTTYPE_INFO)
                 Else
                     Call WriteConsoleMsg(UserIndex, UserName & ".chr inexistente.", FontTypeNames.FONTTYPE_INFO)
@@ -11119,94 +10965,6 @@ Public Sub HandleCreateNPCWithRespawn(ByVal UserIndex As Integer)
 End Sub
 
 ''
-' Handle the "ImperialArmour" message
-'
-' @param userIndex The index of the user sending the message
-
-Public Sub HandleImperialArmour(ByVal UserIndex As Integer)
-'***************************************************
-'Author: Juan Martín Sotuyo Dodero (Maraxus)
-'Last Modification: 12/24/06
-'
-'***************************************************
-    If UserList(UserIndex).incomingData.length < 4 Then
-        Err.Raise UserList(UserIndex).incomingData.NotEnoughDataErrCode
-        Exit Sub
-    End If
-    
-    With UserList(UserIndex)
-        'Remove Packet ID
-        Call .incomingData.ReadByte
-        
-        Dim index As Byte
-        Dim OBJIndex As Integer
-        
-        index = .incomingData.ReadByte()
-        OBJIndex = .incomingData.ReadInteger()
-        
-        If .flags.Privilegios And (PlayerType.User Or PlayerType.Consejero Or PlayerType.SemiDios Or PlayerType.RoleMaster) Then Exit Sub
-        
-        Select Case index
-            Case 1
-                ArmaduraImperial1 = OBJIndex
-            
-            Case 2
-                ArmaduraImperial2 = OBJIndex
-            
-            Case 3
-                ArmaduraImperial3 = OBJIndex
-            
-            Case 4
-                TunicaMagoImperial = OBJIndex
-        End Select
-    End With
-End Sub
-
-''
-' Handle the "ChaosArmour" message
-'
-' @param userIndex The index of the user sending the message
-
-Public Sub HandleChaosArmour(ByVal UserIndex As Integer)
-'***************************************************
-'Author: Juan Martín Sotuyo Dodero (Maraxus)
-'Last Modification: 12/24/06
-'
-'***************************************************
-    If UserList(UserIndex).incomingData.length < 4 Then
-        Err.Raise UserList(UserIndex).incomingData.NotEnoughDataErrCode
-        Exit Sub
-    End If
-    
-    With UserList(UserIndex)
-        'Remove Packet ID
-        Call .incomingData.ReadByte
-        
-        Dim index As Byte
-        Dim OBJIndex As Integer
-        
-        index = .incomingData.ReadByte()
-        OBJIndex = .incomingData.ReadInteger()
-        
-        If .flags.Privilegios And (PlayerType.User Or PlayerType.Consejero Or PlayerType.SemiDios Or PlayerType.RoleMaster) Then Exit Sub
-        
-        Select Case index
-            Case 1
-                ArmaduraCaos1 = OBJIndex
-            
-            Case 2
-                ArmaduraCaos2 = OBJIndex
-            
-            Case 3
-                ArmaduraCaos3 = OBJIndex
-            
-            Case 4
-                TunicaMagoCaos = OBJIndex
-        End Select
-    End With
-End Sub
-
-''
 ' Handle the "NavigateToggle" message
 '
 ' @param userIndex The index of the user sending the message
@@ -11293,60 +11051,6 @@ Public Sub HandleTurnOffServer(ByVal UserIndex As Integer)
         
         Unload frmMain
     End With
-End Sub
-
-''
-' Handle the "TurnCriminal" message
-'
-' @param userIndex The index of the user sending the message
-
-Public Sub HandleTurnCriminal(ByVal UserIndex As Integer)
-'***************************************************
-'Author: Juan Martín Sotuyo Dodero (Maraxus)
-'Last Modification: 12/26/06
-'
-'***************************************************
-    If UserList(UserIndex).incomingData.length < 3 Then
-        Err.Raise UserList(UserIndex).incomingData.NotEnoughDataErrCode
-        Exit Sub
-    End If
-    
-On Error GoTo ErrHandler
-    With UserList(UserIndex)
-        'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet...
-        Dim buffer As New clsByteQueue
-        Call buffer.CopyBuffer(.incomingData)
-        
-        'Remove packet ID
-        Call buffer.ReadByte
-        
-        Dim UserName As String
-        Dim tUser As Integer
-        
-        UserName = buffer.ReadASCIIString()
-        
-        If (Not .flags.Privilegios And PlayerType.RoleMaster) <> 0 And (.flags.Privilegios And (PlayerType.Admin Or PlayerType.Dios)) Then
-            Call LogGM(.Name, "/CONDEN " & UserName)
-            
-            tUser = NameIndex(UserName)
-            If tUser > 0 Then _
-                Call VolverCriminal(tUser)
-        End If
-                
-        'If we got here then packet is complete, copy data back to original queue
-        Call .incomingData.CopyBuffer(buffer)
-    End With
-
-ErrHandler:
-    Dim error As Long
-    error = Err.Number
-On Error GoTo 0
-    
-    'Destroy auxiliar buffer
-    Set buffer = Nothing
-    
-    If error <> 0 Then _
-        Err.Raise error
 End Sub
 
 ''
@@ -11849,35 +11553,21 @@ On Error GoTo ErrHandler
         
         Obj = buffer.ReadASCIIString()
         
-<<<<<<< HEAD
-        If (.flags.Privilegios And (PlayerType.Admin Or PlayerType.Dios)) Then
-            For i = 1 To UBound(ObjData)
-                If InStr(1, UCase$(ObjData(i).Name), UCase$(Obj)) Then
-                     Call WriteConsoleMsg(UserIndex, i & " - " & ObjData(i).Name, FontTypeNames.FONTTYPE_INFO)
-                N = N + 1
-                End If
-            Next
-    
-            If N = 0 Then
-                Call WriteConsoleMsg(UserIndex, "No hubo resultados de la búsqueda: " & Obj & ".", FontTypeNames.FONTTYPE_INFO)
-            Else
-                Call WriteConsoleMsg(UserIndex, "Hubo " & N & " resultados de la búsqueda: " & Obj & ".", FontTypeNames.FONTTYPE_INFO)
-=======
-        If Len(obj) > 1 Then
+        If Len(Obj) > 1 Then
             If (.flags.Privilegios And (PlayerType.Admin Or PlayerType.Dios)) Then
                 For i = 1 To UBound(ObjData)
-                    If InStr(1, ObjData(i).Name, obj) Then
+                    If InStr(1, ObjData(i).Name, Obj) Then
                          Call WriteConsoleMsg(UserIndex, i & " - " & ObjData(i).Name, FontTypeNames.FONTTYPE_INFO)
-                    n = n + 1
+                    N = N + 1
                     End If
                 Next
         
-                If n = 0 Then
-                    Call WriteConsoleMsg(UserIndex, "No hubo resultados de la búsqueda: " & obj & ".", FontTypeNames.FONTTYPE_INFO)
+                If N = 0 Then
+                    Call WriteConsoleMsg(UserIndex, "No hubo resultados de la búsqueda: " & Obj & ".", FontTypeNames.FONTTYPE_INFO)
                 Else
-                    Call WriteConsoleMsg(UserIndex, "Hubo " & n & " resultados de la búsqueda: " & obj & ".", FontTypeNames.FONTTYPE_INFO)
+                    Call WriteConsoleMsg(UserIndex, "Hubo " & N & " resultados de la búsqueda: " & Obj & ".", FontTypeNames.FONTTYPE_INFO)
                 End If
->>>>>>> origin/master
+
             End If
         Else
             Call WriteConsoleMsg(UserIndex, "Debe usar al menos dos o más carácteres.", FontTypeNames.FONTTYPE_INFO)
@@ -11914,7 +11604,7 @@ Private Sub HandleCountdown(ByVal UserIndex As Integer)
         Exit Sub
     End If
     
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     With UserList(UserIndex)
         'Remove packet ID
         Call .incomingData.ReadByte
@@ -11936,7 +11626,7 @@ On Error GoTo Errhandler
         
     End With
     
-Errhandler:
+ErrHandler:
     Dim error As Long
     error = Err.Number
 On Error GoTo 0
@@ -13718,14 +13408,7 @@ Public Sub WriteFame(ByVal UserIndex As Integer)
 On Error GoTo ErrHandler
     With UserList(UserIndex).outgoingData
         Call .WriteByte(ServerPacketID.Fame)
-        
-        Call .WriteLong(UserList(UserIndex).Reputacion.AsesinoRep)
-        Call .WriteLong(UserList(UserIndex).Reputacion.BandidoRep)
-        Call .WriteLong(UserList(UserIndex).Reputacion.BurguesRep)
-        Call .WriteLong(UserList(UserIndex).Reputacion.LadronesRep)
-        Call .WriteLong(UserList(UserIndex).Reputacion.NobleRep)
-        Call .WriteLong(UserList(UserIndex).Reputacion.PlebeRep)
-        Call .WriteLong(UserList(UserIndex).Reputacion.Promedio)
+
     End With
 Exit Sub
 
@@ -13752,8 +13435,9 @@ On Error GoTo ErrHandler
     With UserList(UserIndex).outgoingData
         Call .WriteByte(ServerPacketID.MiniStats)
         
-        Call .WriteLong(UserList(UserIndex).Faccion.CiudadanosMatados)
-        Call .WriteLong(UserList(UserIndex).Faccion.CriminalesMatados)
+        Call .WriteLong(UserList(UserIndex).Faccion.Matados(eFaccion.Neutral))
+        Call .WriteLong(UserList(UserIndex).Faccion.Matados(eFaccion.Caos))
+        Call .WriteLong(UserList(UserIndex).Faccion.Matados(eFaccion.Real))
         
 'TODO : Este valor es calculable, no debería NI EXISTIR, ya sea en el servidor ni en el cliente!!!
         Call .WriteLong(UserList(UserIndex).Stats.UsuariosMatados)
@@ -13852,11 +13536,11 @@ On Error GoTo ErrHandler
         
         Visibilidad = eForumVisibility.ieGENERAL_MEMBER
         
-        If esCaos(UserIndex) Or EsGM(UserIndex) Then
+        If EsCaos(UserIndex) Or EsGM(UserIndex) Then
             Visibilidad = Visibilidad Or eForumVisibility.ieCAOS_MEMBER
         End If
         
-        If esArmada(UserIndex) Or EsGM(UserIndex) Then
+        If EsArmada(UserIndex) Or EsGM(UserIndex) Then
             Visibilidad = Visibilidad Or eForumVisibility.ieREAL_MEMBER
         End If
         
@@ -15114,6 +14798,10 @@ ErrHandler:
     End If
 End Sub
 
+Public Sub WriteShowFaccionForm(ByVal UserIndex As Integer)
+    Call UserList(UserIndex).outgoingData.WriteByte(ServerPacketID.ShowFaccionForm)
+End Sub
+
 Private Sub HandleEligioClase(ByVal UserIndex As Integer)
     
     With UserList(UserIndex).incomingData
@@ -15130,4 +14818,182 @@ Private Sub HandleRequestClaseForm(ByVal UserIndex As Integer)
     UserList(UserIndex).incomingData.ReadByte
     
     Call EnviarSubClase(UserIndex)
+End Sub
+
+Private Sub HandleRequestFaccionForm(ByVal UserIndex As Integer)
+    UserList(UserIndex).incomingData.ReadByte
+    
+    Call EnviarFaccion(UserIndex)
+End Sub
+
+Private Sub HandleWinTournament(ByVal UserIndex As Integer)
+    
+    On Error GoTo ErrHandler
+    
+    With UserList(UserIndex)
+        
+        Dim buffer As New clsByteQueue
+        Call buffer.CopyBuffer(.incomingData)
+        
+        buffer.ReadByte
+        
+        Dim UI As Integer
+        
+        UI = NameIndex(buffer.ReadASCIIString())
+        
+        If UI > 0 Then
+            UserList(UI).Events.Torneos = UserList(UI).Events.Torneos + 1
+            UserList(UI).Faccion.Torneos = UserList(UI).Faccion.Torneos + 1
+        End If 'todo: deslogeado
+        
+        Call .incomingData.CopyBuffer(buffer)
+    End With
+
+ErrHandler:
+    Dim error As Long
+    error = Err.Number
+On Error GoTo 0
+    
+    'Destroy auxiliar buffer
+    Set buffer = Nothing
+    
+    If error <> 0 Then _
+        Err.Raise error
+
+End Sub
+
+Private Sub HandleLoseTournament(ByVal UserIndex As Integer)
+
+    On Error GoTo ErrHandler
+    
+    With UserList(UserIndex)
+        
+        Dim buffer As New clsByteQueue
+        Call buffer.CopyBuffer(.incomingData)
+        
+        buffer.ReadByte
+        
+        Dim UI As Integer
+        
+        UI = NameIndex(buffer.ReadASCIIString())
+        
+        'que se supone que hace este comando?
+        
+        Call .incomingData.CopyBuffer(buffer)
+    End With
+
+ErrHandler:
+    Dim error As Long
+    error = Err.Number
+On Error GoTo 0
+    
+    'Destroy auxiliar buffer
+    Set buffer = Nothing
+    
+    If error <> 0 Then _
+        Err.Raise error
+End Sub
+
+Private Sub HandleWinQuest(ByVal UserIndex As Integer)
+    
+    On Error GoTo ErrHandler
+    
+    With UserList(UserIndex)
+        
+        Dim buffer As New clsByteQueue
+        Call buffer.CopyBuffer(.incomingData)
+        
+        buffer.ReadByte
+        
+        Dim UI As Integer
+        
+        UI = NameIndex(buffer.ReadASCIIString())
+        
+        If UI > 0 Then
+            UserList(UI).Events.Torneos = UserList(UI).Events.Quests + 1
+            'UserList(UI).Faccion.Torneos = UserList(UI).Faccion.Quests + 1 'todo
+        End If 'todo: deslogeado
+        
+        Call .incomingData.CopyBuffer(buffer)
+    End With
+
+ErrHandler:
+    Dim error As Long
+    error = Err.Number
+On Error GoTo 0
+    
+    'Destroy auxiliar buffer
+    Set buffer = Nothing
+    
+    If error <> 0 Then _
+        Err.Raise error
+
+End Sub
+
+Private Sub HandleLoseQuest(ByVal UserIndex As Integer)
+
+    On Error GoTo ErrHandler
+    
+    With UserList(UserIndex)
+        
+        Dim buffer As New clsByteQueue
+        Call buffer.CopyBuffer(.incomingData)
+        
+        buffer.ReadByte
+        
+        Dim UI As Integer
+        
+        UI = NameIndex(buffer.ReadASCIIString())
+        
+        'que se supone que hace este comando?
+        
+        Call .incomingData.CopyBuffer(buffer)
+    End With
+
+ErrHandler:
+    Dim error As Long
+    error = Err.Number
+On Error GoTo 0
+    
+    'Destroy auxiliar buffer
+    Set buffer = Nothing
+    
+    If error <> 0 Then _
+        Err.Raise error
+End Sub
+
+Private Sub HandleEligioFaccion(ByVal UserIndex As Integer)
+    Dim Faccion As eFaccion
+    
+    With UserList(UserIndex)
+        .incomingData.ReadByte
+        Faccion = .incomingData.ReadByte
+        
+        If Not PuedeFaccion(UserIndex) Then Exit Sub
+        
+        If .Faccion.BandoOriginal > 0 Then Exit Sub
+        
+        If Faccion = eFaccion.Neutral Then
+            If .Faccion.Bando <> eFaccion.Neutral Then
+                'No podés declararte neutral perteneciendo ya a una facción. 32 51 223 N C
+            Else
+                '¡Has decidido seguir siendo neutral! Podés jurar fidelidad cuando lo desees. 190 190 190 N
+            End If
+            Exit Sub
+        End If
+        
+        If .Faccion.Matados(Faccion) > .Faccion.Matados(Enemigo(Faccion)) Then
+            'mensaje 9
+            Exit Sub
+        End If
+        
+        'mensaje 10
+        .Faccion.BandoOriginal = Faccion
+        .Faccion.Bando = Faccion
+        .Faccion.Ataco(Faccion) = 0
+        If Not PuedeFaccion(UserIndex) Then Call WriteEligeFaccion(UserIndex, False)
+        
+        'updateuserchar
+    End With
+    
 End Sub

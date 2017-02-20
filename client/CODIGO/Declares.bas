@@ -332,7 +332,7 @@ Enum eGenero
 End Enum
 
 Public Enum PlayerType
-    User = &H1
+    user = &H1
     Consejero = &H2
     SemiDios = &H4
     Dios = &H8
@@ -388,9 +388,11 @@ Public Const FundirMetal As Integer = 88
 
 ' Determina el color del nick
 Public Enum eNickColor
-    ieCriminal = &H1
-    ieCiudadano = &H2
-    ieAtacable = &H4
+    ieCiudadano = 2
+    ieCriminal = 3
+    ieNewbie = 4
+    ieNetrual = 5
+    ieAtacable = 6
 End Enum
 
 Public Enum eGMCommands
@@ -427,7 +429,6 @@ Public Enum eGMCommands
     ReviveChar              '/REVIVIR
     OnlineGM                '/ONLINEGM
     OnlineMap               '/ONLINEMAP
-    Forgive                 '/PERDON
     Kick                    '/ECHAR
     Execute                 '/EJECUTAR
     BanChar                 '/BAN
@@ -482,12 +483,9 @@ Public Enum eGMCommands
     SystemMessage           '/SMSG
     CreateNPC               '/ACC
     CreateNPCWithRespawn    '/RACC
-    ImperialArmour          '/AI1 - 4
-    ChaosArmour             '/AC1 - 4
     NavigateToggle          '/NAVE
     ServerOpenToUsersToggle '/RESTRINGIR
     TurnOffServer           '/APAGAR
-    TurnCriminal            '/CONDEN
     ResetFactions           '/RAJAR
     RequestCharMail         '/LASTEMAIL
     AlterPassword           '/APASS
@@ -689,6 +687,7 @@ Type tReputacion 'Fama del usuario
 End Type
 
 Type tEstadisticasUsu
+    NeutralesMatados As Long
     CiudadanosMatados As Long
     CriminalesMatados As Long
     UsuariosMatados As Long

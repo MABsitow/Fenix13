@@ -53,10 +53,6 @@ Public Enum SendTarget
     'ToPartyArea
     ToReal
     ToCaos
-    ToCiudadanosYRMs
-    ToCriminalesYRMs
-    'ToRealYRMs
-    'ToCaosYRMs
     ToHigherAdmins
     ToGMsAreaButRmsOrCounselors
     ToUsersAreaButGMs
@@ -215,7 +211,9 @@ On Error Resume Next
             Call EnviarDatosFaccion(eFaccion.Caos, sndData)
             Exit Sub
         
-        'Case SendTarget.ToReal
+        Case SendTarget.ToReal
+            Call EnviarDatosJerarquia(eFaccion.Real, sndData)
+            Exit Sub
         '    For LoopC = 1 To LastUser
         '        If (UserList(LoopC).ConnID <> -1) Then
         '            If UserList(LoopC).Faccion.ArmadaReal = 1 Then
@@ -225,7 +223,9 @@ On Error Resume Next
         '    Next LoopC
         '    Exit Sub
         
-        'Case SendTarget.ToCaos
+        Case SendTarget.ToCaos
+            Call EnviarDatosJerarquia(eFaccion.Caos, sndData)
+            Exit Sub
         '    For LoopC = 1 To LastUser
         '        If (UserList(LoopC).ConnID <> -1) Then
         '            If UserList(LoopC).Faccion.FuerzasCaos = 1 Then
@@ -727,7 +727,7 @@ Public Sub AlertarFaccionarios(ByVal UserIndex As Integer)
     Dim Map As Integer
     Dim Font As FontTypeNames
     
-    If esCaos(UserIndex) Then
+    If EsCaos(UserIndex) Then
         Font = FontTypeNames.FONTTYPE_CONSEJOCAOS
     Else
         Font = FontTypeNames.FONTTYPE_CONSEJO

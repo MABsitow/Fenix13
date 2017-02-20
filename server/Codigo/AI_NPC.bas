@@ -57,15 +57,7 @@ Public Const RANGO_VISION_X As Byte = 8
 Public Const RANGO_VISION_Y As Byte = 6
 
 '?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½
-'?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½
-'?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½
 '                        Modulo AI_NPC
-'?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½
-'?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½
-'?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½
-'AI de los NPC
-'?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½
-'?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½
 '?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½
 
 Private Sub GuardiasAI(ByVal NpcIndex As Integer, ByVal DelCaos As Boolean)
@@ -79,6 +71,7 @@ Private Sub GuardiasAI(ByVal NpcIndex As Integer, ByVal DelCaos As Boolean)
     Dim headingloop As Byte
     Dim UI As Integer
     Dim UserProtected As Boolean
+    Dim Perseguible As Boolean
     
     With Npclist(NpcIndex)
         For headingloop = eHeading.NORTH To eHeading.WEST
@@ -91,7 +84,13 @@ Private Sub GuardiasAI(ByVal NpcIndex As Integer, ByVal DelCaos As Boolean)
                         UserProtected = Not IntervaloPermiteSerAtacado(UI) And UserList(UI).flags.NoPuedeSerAtacado
                         UserProtected = UserProtected Or UserList(UI).flags.Ignorado Or UserList(UI).flags.EnConsulta
                         
-                        If UserList(UI).flags.Muerto = 0 And UserList(UI).flags.AdminPerseguible And Not UserProtected Then
+                        If .flags.Faccion <> eFaccion.Neutral Then
+                            Perseguible = UserList(UI).Faccion.Bando = Enemigo(.flags.Faccion) Or _
+                                          UserList(UI).Faccion.Ataco(.flags.Faccion) > 0 Or _
+                                          UserList(UI).Faccion.BandoOriginal <> UserList(UI).Faccion.Bando
+                        End If
+                        
+                        If UserList(UI).flags.Muerto = 0 And UserList(UI).flags.AdminPerseguible And Perseguible And Not UserProtected Then
                             'ï¿½ES CRIMINAL?
                             If Not DelCaos Then
                                 If criminal(UI) Then
@@ -148,6 +147,7 @@ Private Sub HostilMalvadoAI(ByVal NpcIndex As Integer)
     Dim NPCI As Integer
     Dim atacoPJ As Boolean
     Dim UserProtected As Boolean
+    Dim Perseguible As Boolean
     
     atacoPJ = False
     
@@ -163,7 +163,13 @@ Private Sub HostilMalvadoAI(ByVal NpcIndex As Integer)
                         UserProtected = Not IntervaloPermiteSerAtacado(UI) And UserList(UI).flags.NoPuedeSerAtacado
                         UserProtected = UserProtected Or UserList(UI).flags.Ignorado Or UserList(UI).flags.EnConsulta
                         
-                        If UserList(UI).flags.Muerto = 0 And UserList(UI).flags.AdminPerseguible And (Not UserProtected) Then
+                        If .flags.Faccion <> eFaccion.Neutral Then
+                            Perseguible = UserList(UI).Faccion.Bando = Enemigo(.flags.Faccion) Or _
+                                          UserList(UI).Faccion.Ataco(.flags.Faccion) > 0 Or _
+                                          UserList(UI).Faccion.BandoOriginal <> UserList(UI).Faccion.Bando
+                        End If
+                        
+                        If UserList(UI).flags.Muerto = 0 And UserList(UI).flags.AdminPerseguible And Perseguible And (Not UserProtected) Then
                             
                             atacoPJ = True
                             If .Movement = NpcObjeto Then
@@ -210,6 +216,7 @@ Private Sub HostilBuenoAI(ByVal NpcIndex As Integer)
     Dim headingloop As eHeading
     Dim UI As Integer
     Dim UserProtected As Boolean
+    Dim Perseguible As Boolean
     
     With Npclist(NpcIndex)
         For headingloop = eHeading.NORTH To eHeading.WEST
@@ -224,7 +231,13 @@ Private Sub HostilBuenoAI(ByVal NpcIndex As Integer)
                             UserProtected = Not IntervaloPermiteSerAtacado(UI) And UserList(UI).flags.NoPuedeSerAtacado
                             UserProtected = UserProtected Or UserList(UI).flags.Ignorado Or UserList(UI).flags.EnConsulta
                             
-                            If UserList(UI).flags.Muerto = 0 And UserList(UI).flags.AdminPerseguible And Not UserProtected Then
+                            If .flags.Faccion <> eFaccion.Neutral Then
+                                Perseguible = UserList(UI).Faccion.Bando = Enemigo(.flags.Faccion) Or _
+                                          UserList(UI).Faccion.Ataco(.flags.Faccion) > 0 Or _
+                                          UserList(UI).Faccion.BandoOriginal <> UserList(UI).Faccion.Bando
+                            End If
+                            
+                            If UserList(UI).flags.Muerto = 0 And UserList(UI).flags.AdminPerseguible And Perseguible And Not UserProtected Then
                                 If .flags.LanzaSpells > 0 Then
                                     Call NpcLanzaUnSpell(NpcIndex, UI)
                                 End If
@@ -257,6 +270,7 @@ Private Sub IrUsuarioCercano(ByVal NpcIndex As Integer)
     Dim SignoEO As Integer
     Dim i As Long
     Dim UserProtected As Boolean
+    Dim Perseguible As Boolean
     
     With Npclist(NpcIndex)
         If .flags.Inmovilizado = 1 Then
@@ -337,6 +351,11 @@ Private Sub IrUsuarioCercano(ByVal NpcIndex As Integer)
                             
                             UserProtected = Not IntervaloPermiteSerAtacado(UserIndex) And .flags.NoPuedeSerAtacado
                             UserProtected = UserProtected Or .flags.Ignorado Or .flags.EnConsulta
+                            If Npclist(NpcIndex).flags.Faccion <> eFaccion.Neutral Then
+                                Perseguible = .Faccion.Bando = Enemigo(Npclist(NpcIndex).flags.Faccion) Or _
+                                              .Faccion.Ataco(Npclist(NpcIndex).flags.Faccion) > 0 Or _
+                                              .Faccion.BandoOriginal <> .Faccion.Bando
+                            End If
                             
                             If .flags.Muerto = 0 And .flags.invisible = 0 And .flags.Oculto = 0 And _
                                 .flags.AdminPerseguible And Not UserProtected Then
@@ -414,7 +433,7 @@ Private Sub SeguirAgresor(ByVal NpcIndex As Integer)
 
                         If UserList(UI).Name = .flags.AttackedBy Then
                             If .MaestroUser > 0 Then
-                                If Not criminal(.MaestroUser) And Not criminal(UI) And (UserList(.MaestroUser).flags.Seguro Or UserList(.MaestroUser).Faccion.ArmadaReal = 1) Then
+                                If Not criminal(.MaestroUser) And Not criminal(UI) Then
                                     Call WriteConsoleMsg(.MaestroUser, "La mascota no atacará a ciudadanos si eres miembro del ejército real o tienes el seguro activado.", FontTypeNames.FONTTYPE_INFO)
                                     Call FlushBuffer(.MaestroUser)
                                     .flags.AttackedBy = vbNullString
@@ -451,7 +470,7 @@ Private Sub SeguirAgresor(ByVal NpcIndex As Integer)
                         
                         If UserList(UI).Name = .flags.AttackedBy Then
                             If .MaestroUser > 0 Then
-                                If Not criminal(.MaestroUser) And Not criminal(UI) And (UserList(.MaestroUser).flags.Seguro Or UserList(.MaestroUser).Faccion.ArmadaReal = 1) Then
+                                If Not criminal(.MaestroUser) And Not criminal(UI) Then
                                     Call WriteConsoleMsg(.MaestroUser, "La mascota no atacará a ciudadanos si eres miembro del ejército real o tienes el seguro activado.", FontTypeNames.FONTTYPE_INFO)
                                     Call FlushBuffer(.MaestroUser)
                                     .flags.AttackedBy = vbNullString
@@ -510,6 +529,7 @@ Private Sub PersigueCiudadano(ByVal NpcIndex As Integer)
     Dim tHeading As Byte
     Dim i As Long
     Dim UserProtected As Boolean
+    Dim Perseguible As Boolean
     
     With Npclist(NpcIndex)
         For i = 1 To ModAreas.ConnGroups(.Pos.Map).CountEntrys
@@ -524,8 +544,13 @@ Private Sub PersigueCiudadano(ByVal NpcIndex As Integer)
                         UserProtected = Not IntervaloPermiteSerAtacado(UserIndex) And UserList(UserIndex).flags.NoPuedeSerAtacado
                         UserProtected = UserProtected Or UserList(UserIndex).flags.Ignorado Or UserList(UserIndex).flags.EnConsulta
                         
+                      If .flags.Faccion <> eFaccion.Neutral Then
+                            Perseguible = UserList(UserIndex).Faccion.Bando = Enemigo(.flags.Faccion) Or _
+                                          UserList(UserIndex).Faccion.Ataco(.flags.Faccion) > 0 Or _
+                                          UserList(UserIndex).Faccion.BandoOriginal <> UserList(UserIndex).Faccion.Bando
+                        End If
                         If UserList(UserIndex).flags.Muerto = 0 And UserList(UserIndex).flags.invisible = 0 And _
-                            UserList(UserIndex).flags.Oculto = 0 And UserList(UserIndex).flags.AdminPerseguible And Not UserProtected Then
+                            UserList(UserIndex).flags.Oculto = 0 And UserList(UserIndex).flags.AdminPerseguible And Perseguible And Not UserProtected Then
                             
                             If .flags.LanzaSpells > 0 Then
                                 Call NpcLanzaUnSpell(NpcIndex, UserIndex)
@@ -558,6 +583,7 @@ Private Sub PersigueCriminal(ByVal NpcIndex As Integer)
     Dim SignoNS As Integer
     Dim SignoEO As Integer
     Dim UserProtected As Boolean
+    Dim Perseguible As Boolean
     
     With Npclist(NpcIndex)
         If .flags.Inmovilizado = 1 Then
@@ -592,6 +618,12 @@ Private Sub PersigueCriminal(ByVal NpcIndex As Integer)
                                  UserProtected = Not IntervaloPermiteSerAtacado(UserIndex) And .flags.NoPuedeSerAtacado
                                  UserProtected = UserProtected Or UserList(UserIndex).flags.Ignorado Or UserList(UserIndex).flags.EnConsulta
                                  
+                                 If Npclist(NpcIndex).flags.Faccion <> eFaccion.Neutral Then
+                                        Perseguible = .Faccion.Bando = Enemigo(Npclist(NpcIndex).flags.Faccion) Or _
+                                              .Faccion.Ataco(Npclist(NpcIndex).flags.Faccion) > 0 Or _
+                                              .Faccion.BandoOriginal <> .Faccion.Bando
+                                End If
+                        
                                  If .flags.Muerto = 0 And .flags.invisible = 0 And _
                                     .flags.Oculto = 0 And .flags.AdminPerseguible And Not UserProtected Then
                                      
@@ -613,24 +645,28 @@ Private Sub PersigueCriminal(ByVal NpcIndex As Integer)
                 'Is it in it's range of vision??
                 If Abs(UserList(UserIndex).Pos.X - .Pos.X) <= RANGO_VISION_X Then
                     If Abs(UserList(UserIndex).Pos.Y - .Pos.Y) <= RANGO_VISION_Y Then
-                        
-                        If criminal(UserIndex) Then
-                            
-                            UserProtected = Not IntervaloPermiteSerAtacado(UserIndex) And UserList(UserIndex).flags.NoPuedeSerAtacado
-                            UserProtected = UserProtected Or UserList(UserIndex).flags.Ignorado
-                            
-                            If UserList(UserIndex).flags.Muerto = 0 And UserList(UserIndex).flags.invisible = 0 And _
-                               UserList(UserIndex).flags.Oculto = 0 And UserList(UserIndex).flags.AdminPerseguible And Not UserProtected Then
-                                If .flags.LanzaSpells > 0 Then
-                                    Call NpcLanzaUnSpell(NpcIndex, UserIndex)
-                                End If
-                                If .flags.Inmovilizado = 1 Then Exit Sub
-                                tHeading = FindDirection(.Pos, UserList(UserIndex).Pos)
-                                Call MoveNPCChar(NpcIndex, tHeading)
-                                Exit Sub
-                           End If
-                        End If
-                        
+                            If Npclist(NpcIndex).flags.Faccion <> eFaccion.Neutral Then
+                                            Perseguible = UserList(UserIndex).Faccion.Bando = Enemigo(Npclist(NpcIndex).flags.Faccion) Or _
+                                                  UserList(UserIndex).Faccion.Ataco(Npclist(NpcIndex).flags.Faccion) > 0 Or _
+                                                  UserList(UserIndex).Faccion.BandoOriginal <> UserList(UserIndex).Faccion.Bando
+                            End If
+                                    
+                            If criminal(UserIndex) Then
+                                
+                                UserProtected = Not IntervaloPermiteSerAtacado(UserIndex) And UserList(UserIndex).flags.NoPuedeSerAtacado
+                                UserProtected = UserProtected Or UserList(UserIndex).flags.Ignorado
+                                
+                                If UserList(UserIndex).flags.Muerto = 0 And UserList(UserIndex).flags.invisible = 0 And _
+                                   UserList(UserIndex).flags.Oculto = 0 And UserList(UserIndex).flags.AdminPerseguible And Not UserProtected Then
+                                    If .flags.LanzaSpells > 0 Then
+                                        Call NpcLanzaUnSpell(NpcIndex, UserIndex)
+                                    End If
+                                    If .flags.Inmovilizado = 1 Then Exit Sub
+                                    tHeading = FindDirection(.Pos, UserList(UserIndex).Pos)
+                                    Call MoveNPCChar(NpcIndex, tHeading)
+                                    Exit Sub
+                               End If
+                            End If
                    End If
                 End If
                 
