@@ -184,6 +184,7 @@ Begin VB.Form frmComerciarUsu
       _ExtentY        =   2858
       _Version        =   393217
       BackColor       =   0
+      Enabled         =   -1  'True
       ReadOnly        =   -1  'True
       ScrollBars      =   2
       DisableNoScroll =   -1  'True
@@ -380,7 +381,6 @@ End Sub
 
 Private Sub imgQuitar_Click()
     Dim Amount As Long
-    Dim InvComSlot As Byte
 
     ' No tiene seleccionado ningun item
     If InvOfferComUsu(0).SelectedItem = 0 Then
@@ -502,7 +502,7 @@ Private Sub Form_LostFocus()
     Me.SetFocus
 End Sub
 
-Private Sub SubtxtAgregar_Change()
+Private Sub txtAgregar_Change()
     If Val(txtAgregar.Text) < 1 Then txtAgregar.Text = "1"
 
     If Val(txtAgregar.Text) > 2147483647 Then txtAgregar.Text = "2147483647"

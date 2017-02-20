@@ -155,3 +155,34 @@ Else: TipoRaza = 1
 End If
 
 End Function
+
+Public Function DameClaseFenix(ByVal Clase As eClass) As Byte
+'GoDKeR
+'Te odio fenix
+'Esto debería quitarse cuando se pueda dejar de usar la aolib para calcular el daño del wrestling (en cualquier momento creo yo la función)
+'El objetivo de esta "cosa" es dar una clase equivalente a la que hay en fénix ya que la numeración es distinta.
+
+    Select Case CByte(Clase)
+        Case 0 To 4
+            DameClaseFenix = CByte(Clase)
+        Case 5
+            DameClaseFenix = 8
+        Case 6
+            DameClaseFenix = 13
+        Case 7
+            DameClaseFenix = 14
+        Case 8
+            DameClaseFenix = 18
+        Case 9
+            DameClaseFenix = 23
+        Case 10
+            DameClaseFenix = 27
+        Case 11
+            DameClaseFenix = 31
+        Case 12 To 30
+            DameClaseFenix = (CByte(Clase) + 23)
+        Case 31, 32
+            DameClaseFenix = (CByte(Clase) + 24)
+    End Select
+    
+End Function

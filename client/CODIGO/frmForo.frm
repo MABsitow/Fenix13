@@ -231,7 +231,6 @@ Private Sticky As Boolean
 
 ' Para restringir la visibilidad de los foros
 Public Privilegios As Byte
-Public ForosVisibles As eForumType
 Public CanPostSticky As Byte
 
 ' Imagenes de fondo
@@ -370,7 +369,7 @@ End Sub
 
 Private Sub imgTab_Click(Index As Integer)
 
-    Call Audio.PlayWave(SND_CLICK)
+    'call 'audio.PlayWave(SND_CLICK)
     
     If Index <> ForoActual Then
         ForoActual = Index

@@ -664,22 +664,20 @@ Public Sub HideExtraControls(ByVal NumItems As Integer, Optional ByVal Upgrading
 End Sub
 
 Private Sub RenderItem(ByRef Pic As PictureBox, ByVal GrhIndex As Long)
-    Dim SR As RECT
-    Dim DR As RECT
     
     With GrhData(GrhIndex)
-        SR.Left = .sX
-        SR.Top = .sY
-        SR.Right = SR.Left + .pixelWidth
-        SR.Bottom = SR.Top + .pixelHeight
+    '    SR.Left = .sX
+    '    SR.Top = .sY
+    '    SR.Right = SR.Left + .pixelWidth
+    '    SR.bottom = SR.Top + .pixelHeight
     End With
     
-    DR.Left = 0
-    DR.Top = 0
-    DR.Right = 32
-    DR.Bottom = 32
+    'DR.Left = 0
+    'DR.Top = 0
+    'DR.Right = 32
+    'DR.bottom = 32
     
-    Call DrawGrhtoHdc(Pic.hdc, GrhIndex, SR, DR)
+    'Call DrawGrhtoHdc(Pic.hdc, GrhIndex, SR, DR)
     Pic.Refresh
 End Sub
 
@@ -785,7 +783,6 @@ Private Sub picMejorar3_Click()
 End Sub
 
 Private Sub picPestania_Click(Index As Integer)
-    Dim i As Integer
     Dim NumItems As Integer
     
     If Cargando Then Exit Sub
@@ -842,7 +839,7 @@ Private Sub Scroll_Change()
 End Sub
 
 Private Sub txtCantItems_Change()
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     If Val(txtCantItems.Text) < 0 Then
         txtCantItems.Text = 1
     End If
@@ -853,7 +850,7 @@ On Error GoTo Errhandler
     
     Exit Sub
     
-Errhandler:
+ErrHandler:
     'If we got here the user may have pasted (Shift + Insert) a REALLY large number, causing an overflow, so we set amount back to 1
     txtCantItems.Text = MAX_INVENTORY_OBJS
 End Sub

@@ -7,7 +7,6 @@ Private Declare Function CallWindowProc Lib "user32" Alias "CallWindowProcA" (By
 Public Declare Function GetProp Lib "user32" Alias "GetPropA" (ByVal hwnd As Long, ByVal lpString As String) As Long
 Public Declare Function SetProp Lib "user32" Alias "SetPropA" (ByVal hwnd As Long, ByVal lpString As String, ByVal hData As Long) As Long
 Public Declare Function SystemParametersInfo Lib "user32" Alias "SystemParametersInfoA" (ByVal uAction As Long, ByVal uParam As Long, ByVal lpvParam As Any, ByVal fuWinIni As Long) As Long
-Public Declare Function GetSystemMetrics Lib "user32" (ByVal nIndex As Long) As Long
 Public Declare Sub CopyMemory Lib "kernel32" Alias "RtlMoveMemory" (pDst As Any, pSrc As Any, ByVal ByteLen As Long)
 
 Public Const GWL_WNDPROC = -4
@@ -18,9 +17,6 @@ Private Const WHEEL_DELTA = 120
 Private Const WHEEL_PAGESCROLL = &HFFFFFFFF
 
 Public Const SPI_GETWHEELSCROLLLINES = 104
-
-Public Const SM_MOUSEWHEELPRESENT = 75
-
 
 ' store a pointer to the form object
 ' which is set via ObjPtr
@@ -57,11 +53,11 @@ If uMsg = WM_MOUSEWHEEL Then
     'End If
     ' ##### Paging = suggested number of lines to scroll (e.g. in a textbox) #####
     ' Windows 95: Not supported
-    Dim R As Long
+    Dim r As Long
 
-    SystemParametersInfo SPI_GETWHEELSCROLLLINES, 0, R, 0
+    SystemParametersInfo SPI_GETWHEELSCROLLLINES, 0, r, 0
         
-    If R = WHEEL_PAGESCROLL Then
+    If r = WHEEL_PAGESCROLL Then
         'Wheel roll should be interpreted as clicking
         'once in the page down or page up regions of
         'the scroll bar
@@ -88,16 +84,6 @@ If dw And &H80000000 Then
     HiWord = (dw \ 65535) - 1
 Else
     HiWord = dw \ 65535
-End If
-
-End Function
-
-Public Function LoWord(dw As Long) As Integer
-
-If dw And &H8000& Then
-    LoWord = &H8000 Or (dw And &H7FFF&)
-Else
-    LoWord = dw And &HFFFF&
 End If
 
 End Function

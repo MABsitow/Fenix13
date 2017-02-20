@@ -242,11 +242,8 @@ Option Explicit
 
 Private clsFormulario As clsFormMovementManager
 
-Public LastIndex1 As Integer
-Public LastIndex2 As Integer
 Public LasActionBuy As Boolean
 Private ClickNpcInv As Boolean
-Private lIndex As Byte
 
 Private cBotonVender As clsGraphicalButton
 Private cBotonComprar As clsGraphicalButton
@@ -375,7 +372,7 @@ Private Sub imgComprar_Click()
     
     If Not IsNumeric(cantidad.Text) Or cantidad.Text = 0 Then Exit Sub
     
-    Call Audio.PlayWave(SND_CLICK)
+    'call 'audio.PlayWave(SND_CLICK)
     
     LasActionBuy = True
     If UserGLD >= CalculateSellPrice(NPCInventory(InvComNpc.SelectedItem).Valor, Val(cantidad.Text)) Then
@@ -397,7 +394,7 @@ Private Sub imgVender_Click()
 
     If Not IsNumeric(cantidad.Text) Or cantidad.Text = 0 Then Exit Sub
     
-    Call Audio.PlayWave(SND_CLICK)
+    'call 'audio.PlayWave(SND_CLICK)
     
     LasActionBuy = False
 

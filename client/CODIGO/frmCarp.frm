@@ -691,22 +691,20 @@ Public Sub HideExtraControls(ByVal NumItems As Integer, Optional ByVal Upgrading
 End Sub
 
 Private Sub RenderItem(ByRef Pic As PictureBox, ByVal GrhIndex As Long)
-    Dim SR As RECT
-    Dim DR As RECT
     
     With GrhData(GrhIndex)
-        SR.Left = .sX
-        SR.Top = .sY
-        SR.Right = SR.Left + .pixelWidth
-        SR.Bottom = SR.Top + .pixelHeight
+        'SR.Left = .sX
+        'SR.Top = .sY
+        'SR.Right = SR.Left + .pixelWidth
+        'SR.bottom = SR.Top + .pixelHeight
     End With
     
-    DR.Left = 0
-    DR.Top = 0
-    DR.Right = 32
-    DR.Bottom = 32
+    'DR.Left = 0
+    'DR.Top = 0
+    'DR.Right = 32
+    'DR.bottom = 32
     
-    Call DrawGrhtoHdc(Pic.hdc, GrhIndex, SR, DR)
+    'Call DrawGrhtoHdc(Pic.hdc, GrhIndex, SR, DR)
     Pic.Refresh
 End Sub
 
@@ -786,7 +784,6 @@ Private Sub imgMejorar3_Click()
 End Sub
 
 Private Sub imgPestania_Click(Index As Integer)
-    Dim i As Integer
     Dim NumItems As Integer
     
     If Cargando Then Exit Sub

@@ -1440,7 +1440,7 @@ Public Sub ParseUserCommand(ByVal RawCommand As String)
                 Call WriteHome
         End Select
         
-    ElseIf Left$(Comando, 1) = "\" Then
+    ElseIf (Left$(Comando, 1) = "\") Or (TalkMode = 2) Then
         If UserEstado = 1 Then 'Muerto
             With FontTypes(FontTypeNames.FONTTYPE_INFO)
                 Call ShowConsoleMsg("¡¡Estás muerto!!", .red, .green, .blue, .bold, .italic)
@@ -1448,18 +1448,25 @@ Public Sub ParseUserCommand(ByVal RawCommand As String)
             Exit Sub
         End If
         ' Mensaje Privado
-        Call AuxWriteWhisper(mid$(Comando, 2), ArgumentosRaw)
+        If (TalkMode = 2 And StrComp(WhisperTarget, vbNullString) > 0) Then
+            Call AuxWriteWhisper(WhisperTarget, ArgumentosRaw)
+        Else
+            Call AuxWriteWhisper(mid$(Comando, 2), ArgumentosRaw)
+        End If
         
-    ElseIf Left$(Comando, 1) = "-" Then
+    ElseIf (Left$(Comando, 1) = "-") Or (TalkMode = 4) Then
         If UserEstado = 1 Then 'Muerto
             With FontTypes(FontTypeNames.FONTTYPE_INFO)
                 Call ShowConsoleMsg("¡¡Estás muerto!!", .red, .green, .blue, .bold, .italic)
             End With
             Exit Sub
         End If
-        ' Gritar
-        Call WriteYell(mid$(RawCommand, 2))
-        
+        If TalkMode = 4 Then
+            Call WriteYell(RawCommand)
+        Else
+            ' Gritar
+            Call WriteYell(mid$(RawCommand, 2))
+        End If
     Else
         ' Hablar
         Call WriteTalk(RawCommand)

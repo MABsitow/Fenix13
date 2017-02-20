@@ -79,12 +79,6 @@ Public ClientSetup As tSetupMods
 Public MiCabecera As tCabecera
 Public Config_Inicio As tGameIni
 
-Public Sub IniciarCabecera(ByRef Cabecera As tCabecera)
-    Cabecera.Desc = "Argentum Online by Noland Studios. Copyright Noland-Studios 2001, pablomarquez@noland-studios.com.ar"
-    Cabecera.CRC = Rnd * 100
-    Cabecera.MagicWord = Rnd * 10
-End Sub
-
 Public Function LeerGameIni() As tGameIni
     Dim N As Integer
     Dim GameIni As tGameIni
