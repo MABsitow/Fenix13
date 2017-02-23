@@ -245,7 +245,7 @@ On Error GoTo ErrHandler
     ReDim Hechizos(1 To NumeroHechizos) As tHechizo
     
     frmCargando.cargar.min = 0
-    frmCargando.cargar.max = NumeroHechizos
+    frmCargando.cargar.MAX = NumeroHechizos
     frmCargando.cargar.value = 0
     
     'Llena la lista
@@ -338,6 +338,8 @@ On Error GoTo ErrHandler
             .Nivel = val(Leer.GetValue("Hechizo" & Hechizo, "Nivel"))
             
             .Target = val(Leer.GetValue("Hechizo" & Hechizo, "Target"))
+            .Flecha = val(Leer.GetValue("Hechizo" & Hechizo, "Flecha"))
+            
             frmCargando.cargar.value = frmCargando.cargar.value + 1
             
         End With
@@ -555,6 +557,20 @@ Sub LoadBalance()
     
 End Sub
 
+Sub LoadObjSastre()
+
+    Dim N As Integer, lc As Integer
+    
+    N = val(GetVar(DatPath & "ObjSastre.dat", "INIT", "NumObjs"))
+    
+    ReDim Preserve ObjSastre(1 To N) As Integer
+    
+    For lc = 1 To N
+        ObjSastre(lc) = val(GetVar(DatPath & "ObjSastre.dat", "Obj" & lc, "Index"))
+    Next
+
+End Sub
+
 Sub LoadObjCarpintero()
 '***************************************************
 'Author: Unknown
@@ -613,7 +629,7 @@ Sub LoadOBJData()
     NumObjDatas = val(Leer.GetValue("INIT", "NumObjs"))
     
     frmCargando.cargar.min = 0
-    frmCargando.cargar.max = NumObjDatas
+    frmCargando.cargar.MAX = NumObjDatas
     frmCargando.cargar.value = 0
     
     
@@ -645,8 +661,12 @@ Sub LoadOBJData()
                     .LingO = val(Leer.GetValue("OBJ" & Object, "LingO"))
                     .SkHerreria = val(Leer.GetValue("OBJ" & Object, "SkHerreria"))
                     .Jerarquia = val(Leer.GetValue("OBJ" & Object, "Jerarquia"))
+                    .PielLobo = val(Leer.GetValue("OBJ" & Object, "PielLobo"))
+                    .PielOsoPardo = val(Leer.GetValue("OBJ" & Object, "PielOsoPardo"))
+                    .PielOsoPolar = val(Leer.GetValue("OBJ" & Object, "PielOsoPolar"))
+                    .SkSastreria = val(Leer.GetValue("OBJ" & Object, "SkSastreria"))
                     
-                Case eOBJType.otESCUDO
+                Case eOBJType.otEscudo
                     .ShieldAnim = val(Leer.GetValue("OBJ" & Object, "Anim"))
                     .LingH = val(Leer.GetValue("OBJ" & Object, "LingH"))
                     .LingP = val(Leer.GetValue("OBJ" & Object, "LingP"))
@@ -655,7 +675,7 @@ Sub LoadOBJData()
                     .Real = val(Leer.GetValue("OBJ" & Object, "Real"))
                     .Caos = val(Leer.GetValue("OBJ" & Object, "Caos"))
                 
-                Case eOBJType.otCASCO
+                Case eOBJType.otCasco
                     .CascoAnim = val(Leer.GetValue("OBJ" & Object, "Anim"))
                     .LingH = val(Leer.GetValue("OBJ" & Object, "LingH"))
                     .LingP = val(Leer.GetValue("OBJ" & Object, "LingP"))
@@ -714,14 +734,7 @@ Sub LoadOBJData()
                     .MaxHIT = val(Leer.GetValue("OBJ" & Object, "MaxHIT"))
                     .MinHIT = val(Leer.GetValue("OBJ" & Object, "MinHIT"))
                     .Envenena = val(Leer.GetValue("OBJ" & Object, "Envenena"))
-                    
-                Case eOBJType.otAnillo 'Pablo (ToxicWaste)
-                    .LingH = val(Leer.GetValue("OBJ" & Object, "LingH"))
-                    .LingP = val(Leer.GetValue("OBJ" & Object, "LingP"))
-                    .LingO = val(Leer.GetValue("OBJ" & Object, "LingO"))
-                    .SkHerreria = val(Leer.GetValue("OBJ" & Object, "SkHerreria"))
-                    .MaxHIT = val(Leer.GetValue("OBJ" & Object, "MaxHIT"))
-                    .MinHIT = val(Leer.GetValue("OBJ" & Object, "MinHIT"))
+
                     
                 Case eOBJType.otTeleport
                     .Radio = val(Leer.GetValue("OBJ" & Object, "Radio"))
@@ -1044,16 +1057,14 @@ Sub LoadUserInit(ByVal UserIndex As Integer, ByRef UserFile As clsIniReader)
             .Invent.MunicionEqpObjIndex = .Invent.Object(.Invent.MunicionEqpSlot).OBJIndex
         End If
         
-        '[Alejo]
-        'Obtiene el indice-objeto anilo
-        .Invent.AnilloEqpSlot = CByte(UserFile.GetValue("Inventory", "AnilloSlot"))
-        If .Invent.AnilloEqpSlot > 0 Then
-            .Invent.AnilloEqpObjIndex = .Invent.Object(.Invent.AnilloEqpSlot).OBJIndex
-        End If
-        
         .Invent.MochilaEqpSlot = CByte(UserFile.GetValue("Inventory", "MochilaSlot"))
         If .Invent.MochilaEqpSlot > 0 Then
             .Invent.MochilaEqpObjIndex = .Invent.Object(.Invent.MochilaEqpSlot).OBJIndex
+        End If
+        
+        .Invent.HerramientaEqpslot = CByte(UserFile.GetValue("Inventory", "HerramientaSlot"))
+        If .Invent.HerramientaEqpslot > 0 Then
+            .Invent.HerramientaEqpObjIndex = .Invent.Object(.Invent.HerramientaEqpslot).OBJIndex
         End If
         
         .NroMascotas = CInt(UserFile.GetValue("MASCOTAS", "NroMascotas"))
@@ -1061,6 +1072,11 @@ Sub LoadUserInit(ByVal UserIndex As Integer, ByRef UserFile As clsIniReader)
             .MascotasType(LoopC) = val(UserFile.GetValue("MASCOTAS", "MAS" & LoopC))
         Next LoopC
         
+        
+        For LoopC = 1 To 3
+            .Recompensas(LoopC) = val(UserFile.GetValue("RECOMPENSAS", "Recompensa" & LoopC))
+        Next
+
       '  ln = UserFile.GetValue("Guild", "GUILDINDEX")
        ' If IsNumeric(ln) Then
        '     .GuildIndex = CInt(ln)
@@ -1113,7 +1129,7 @@ Sub CargarBackUp()
 110         Call InitAreas
         
 115         frmCargando.cargar.min = 0
-120         frmCargando.cargar.max = NumMaps
+120         frmCargando.cargar.MAX = NumMaps
 125         frmCargando.cargar.value = 0
         
 130         MapPath = GetVar(DatPath & "Map.dat", "INIT", "MapPath")
@@ -1168,7 +1184,7 @@ Sub LoadMapData()
 110         Call InitAreas
         
 115         frmCargando.cargar.min = 0
-120         frmCargando.cargar.max = NumMaps
+120         frmCargando.cargar.MAX = NumMaps
 125         frmCargando.cargar.value = 0
         
 130         MapPath = GetVar(DatPath & "Map.dat", "INIT", "MapPath")
@@ -1722,9 +1738,8 @@ With UserList(UserIndex)
     Call WriteVar(UserFile, "Inventory", "BarcoSlot", CStr(.Invent.BarcoSlot))
     Call WriteVar(UserFile, "Inventory", "MunicionSlot", CStr(.Invent.MunicionEqpSlot))
     Call WriteVar(UserFile, "Inventory", "MochilaSlot", CStr(.Invent.MochilaEqpSlot))
+    Call WriteVar(UserFile, "Inventory", "HerramientaSlot", CStr(.Invent.HerramientaEqpslot))
     '/Nacho
-    
-    Call WriteVar(UserFile, "Inventory", "AnilloSlot", CStr(.Invent.AnilloEqpSlot))
     
     Dim cad As String
     
@@ -1756,6 +1771,10 @@ With UserList(UserIndex)
     
     Call WriteVar(UserFile, "MASCOTAS", "NroMascotas", CStr(NroMascotas))
     
+    For LoopC = 1 To 3
+        Call WriteVar(UserFile, "RECOMPENSAS", "Recompensa" & LoopC, val(.Recompensas(LoopC)))
+    Next LoopC
+
     'Devuelve el head de muerto
     If .flags.Muerto = 1 Then
         .Char.Head = iCabezaMuerto

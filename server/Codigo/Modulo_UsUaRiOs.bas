@@ -80,7 +80,7 @@ Public Sub ActStats(ByVal VictimIndex As Integer, ByVal AttackerIndex As Integer
     End With
 End Sub
 
-Public Sub RevivirUsuario(ByVal UserIndex As Integer)
+Public Sub RevivirUsuario(ByVal UserIndex As Integer, Optional ByVal Lleno As Boolean = False)
 '***************************************************
 'Author: Unknown
 'Last Modification: -
@@ -110,6 +110,12 @@ Public Sub RevivirUsuario(ByVal UserIndex As Integer)
         End If
         
         Call ChangeUserChar(UserIndex, .Char.body, .Char.Head, .Char.heading, .Char.WeaponAnim, .Char.ShieldAnim, .Char.CascoAnim)
+        
+        If Lleno Then
+            .Stats.MinHp = .Stats.MaxHp
+            .Stats.MinMAN = .Stats.MaxMAN
+        End If
+        
         Call WriteUpdateUserStats(UserIndex)
     End With
 End Sub
@@ -541,7 +547,8 @@ Public Sub CheckUserLevel(ByVal UserIndex As Integer)
 495             If .Stats.MaxSta > STAT_MAXSTA Then .Stats.MaxSta = STAT_MAXSTA
             
                 'Actualizamos Mana
-500             .Stats.MaxMAN = .Stats.MaxMAN + AumentoMANA
+500             '.Stats.MaxMAN = .Stats.MaxMAN + AumentoMANA
+                Call AddtoVar(.Stats.MaxMAN, AumentoMANA, 2200 + 800 * Buleano(.Clase And .Recompensas(2) = 2))
 505             If .Stats.MaxMAN > STAT_MAXMAN Then .Stats.MaxMAN = STAT_MAXMAN
             
                 'Actualizamos Golpe Máximo
@@ -583,6 +590,7 @@ Public Sub CheckUserLevel(ByVal UserIndex As Integer)
               '      End If
               '  End If
 570             If PuedeSubirClase(UserIndex) Then Call WriteSubeClase(UserIndex, True)
+571             If PuedeRecompensa(UserIndex) Then Call WriteEligeRecompensa(UserIndex, True)
             Loop
         
             'If it ceased to be a newbie, remove newbie items and get char away from newbie dungeon
@@ -1251,34 +1259,21 @@ On Error GoTo ErrorHandler
         
         ' DESEQUIPA TODOS LOS OBJETOS
         'desequipar armadura
-        If .Invent.ArmourEqpObjIndex > 0 Then
-            Call Desequipar(UserIndex, .Invent.ArmourEqpSlot)
-        End If
+        If .Invent.ArmourEqpObjIndex > 0 Then Call Desequipar(UserIndex, .Invent.ArmourEqpSlot)
         
         'desequipar arma
-        If .Invent.WeaponEqpObjIndex > 0 Then
-            Call Desequipar(UserIndex, .Invent.WeaponEqpSlot)
-        End If
+        If .Invent.WeaponEqpObjIndex > 0 Then Call Desequipar(UserIndex, .Invent.WeaponEqpSlot)
         
         'desequipar casco
-        If .Invent.CascoEqpObjIndex > 0 Then
-            Call Desequipar(UserIndex, .Invent.CascoEqpSlot)
-        End If
-        
-        'desequipar herramienta
-        If .Invent.AnilloEqpSlot > 0 Then
-            Call Desequipar(UserIndex, .Invent.AnilloEqpSlot)
-        End If
+        If .Invent.CascoEqpObjIndex > 0 Then Call Desequipar(UserIndex, .Invent.CascoEqpSlot)
         
         'desequipar municiones
-        If .Invent.MunicionEqpObjIndex > 0 Then
-            Call Desequipar(UserIndex, .Invent.MunicionEqpSlot)
-        End If
+        If .Invent.MunicionEqpObjIndex > 0 Then Call Desequipar(UserIndex, .Invent.MunicionEqpSlot)
         
         'desequipar escudo
-        If .Invent.EscudoEqpObjIndex > 0 Then
-            Call Desequipar(UserIndex, .Invent.EscudoEqpSlot)
-        End If
+        If .Invent.EscudoEqpObjIndex > 0 Then Call Desequipar(UserIndex, .Invent.EscudoEqpSlot)
+        
+        If .Invent.HerramientaEqpObjIndex > 0 Then Call Desequipar(UserIndex, .Invent.HerramientaEqpslot)
         
         ' << Reseteamos los posibles FX sobre el personaje >>
         If .Char.loops = INFINITE_LOOPS Then
@@ -1686,7 +1681,6 @@ Public Sub WarpMascota(ByVal UserIndex As Integer, ByVal PetIndex As Integer)
     End With
 End Sub
 
-
 ''
 ' Se inicia la salida de un usuario.
 '
@@ -1704,7 +1698,15 @@ Sub Cerrar_Usuario(ByVal UserIndex As Integer)
     With UserList(UserIndex)
         If .flags.UserLogged And Not .Counters.Saliendo Then
             .Counters.Saliendo = True
-            .Counters.Salir = IIf((.flags.Privilegios And PlayerType.User) And Not MapInfo(.Pos.map).Pk, IntervaloCerrarConexion, 0)
+            If .flags.Privilegios And PlayerType.User Then
+                If (.Clase = eClass.Pirata) And (.Recompensas(3) = 2) Then
+                    .Counters.Salir = 2
+                Else
+                    .Counters.Salir = IntervaloCerrarConexion
+                End If
+            Else
+                .Counters.Salir = 0
+            End If
             
             isNotVisible = (.flags.Oculto Or .flags.invisible)
             If isNotVisible Then
@@ -2252,3 +2254,38 @@ With UserList(UserIndex)
 
 End With
 End Sub
+
+Public Function PuedeRecompensa(ByVal UserIndex As Integer) As Byte
+
+
+With UserList(UserIndex)
+
+    If UserList(UserIndex).Clase = eClass.Sastre Then Exit Function
+
+    If .Recompensas(1) = 0 And .Stats.ELV >= 18 Then
+        PuedeRecompensa = 1
+        Exit Function
+    End If
+    
+    If .Clase = eClass.Talador Or .Clase = eClass.Pescador Then Exit Function
+    
+    If .Stats.ELV >= 25 And .Recompensas(2) = 0 Then
+        PuedeRecompensa = 2
+        Exit Function
+    End If
+        
+    If .Clase = eClass.Carpintero Then Exit Function
+    
+    If .Recompensas(3) = 0 And _
+        (.Stats.ELV >= 34 Or _
+        (ClaseTrabajadora(.Clase) And .Stats.ELV >= 32) Or _
+        ((.Clase = eClass.Pirata Or .Clase = eClass.Ladron) And .Stats.ELV >= 30)) Then
+        PuedeRecompensa = 3
+        Exit Function
+    End If
+
+
+End With
+
+End Function
+

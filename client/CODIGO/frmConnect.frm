@@ -21,18 +21,55 @@ Begin VB.Form frmConnect
    ScaleWidth      =   1024
    StartUpPosition =   2  'CenterScreen
    Visible         =   0   'False
-   Begin VB.PictureBox Render 
-      BackColor       =   &H00000040&
+   Begin VB.TextBox txtPasswd 
+      Alignment       =   2  'Center
       BorderStyle     =   0  'None
-      Height          =   11520
-      Left            =   0
-      ScaleHeight     =   768
-      ScaleMode       =   3  'Pixel
-      ScaleWidth      =   1024
+      BeginProperty Font 
+         Name            =   "Tahoma"
+         Size            =   8.25
+         Charset         =   0
+         Weight          =   700
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      Height          =   375
+      IMEMode         =   3  'DISABLE
+      Left            =   4560
+      PasswordChar    =   "*"
+      TabIndex        =   1
+      Top             =   3480
+      Width           =   3615
+   End
+   Begin VB.TextBox txtNombre 
+      Alignment       =   2  'Center
+      BorderStyle     =   0  'None
+      BeginProperty Font 
+         Name            =   "Tahoma"
+         Size            =   8.25
+         Charset         =   0
+         Weight          =   700
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      Height          =   375
+      Left            =   4560
       TabIndex        =   0
-      TabStop         =   0   'False
-      Top             =   0
-      Width           =   15360
+      Top             =   2880
+      Width           =   3615
+   End
+   Begin VB.Image imgCrearPj 
+      Height          =   375
+      Left            =   4560
+      Top             =   4080
+      Width           =   1455
+   End
+   Begin VB.Image imgConectarse 
+      Height          =   375
+      Left            =   6720
+      Top             =   4080
+      Width           =   1455
    End
    Begin VB.Image imgServArgentina 
       Height          =   795
@@ -89,9 +126,6 @@ Attribute VB_Exposed = False
 
 Option Explicit
 
-Public LastPressed As clsGraphicalButton
-
-
 Private Sub Form_KeyDown(KeyCode As Integer, Shift As Integer)
     If KeyCode = 27 Then
         prgRun = False
@@ -126,11 +160,6 @@ Private Sub LoadButtons()
 
 End Sub
 
-Private Sub Form_MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
-    LastPressed.ToggleToNormal
-End Sub
-
-
 Private Sub imgConectarse_Click()
     
     If frmMain.Socket1.Connected Then
@@ -140,10 +169,10 @@ Private Sub imgConectarse_Click()
     End If
     
     'update user info
-    UserName = "clases" 'txtNombre.Text
+    UserName = txtNombre.Text
     
     Dim aux As String
-    aux = "asd" 'txtPasswd.Text
+    aux = txtPasswd.Text
 
     UserPassword = aux
 

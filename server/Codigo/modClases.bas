@@ -186,3 +186,92 @@ Public Function DameClaseFenix(ByVal Clase As eClass) As Byte
     End Select
     
 End Function
+
+Public Sub EnviarRecompensa(ByVal UserIndex As Integer)
+    
+    With UserList(UserIndex)
+        Dim Recom As Integer
+        Recom = PuedeRecompensa(UserIndex)
+        
+        If (Not .flags.Muerto) And Recom Then
+            Call WriteShowRecompensaForm(UserIndex, .Clase, Recom)
+        End If
+    End With
+End Sub
+Public Sub EstablecerRecompensas()
+
+Recompensas(eClass.Minero, 1, 1).SubeHP = 120
+
+Recompensas(eClass.Mago, 1, 1).Obj(1).OBJIndex = PocionAzulNoCae
+Recompensas(eClass.Mago, 1, 1).Obj(1).Amount = 1000
+Recompensas(eClass.Mago, 1, 2).Obj(1).OBJIndex = PocionRojaNoCae
+Recompensas(eClass.Mago, 1, 2).Obj(1).Amount = 1000
+Recompensas(eClass.Mago, 2, 1).SubeHP = 10
+
+Recompensas(eClass.Nigromante, 1, 1).Obj(1).OBJIndex = PocionAzulNoCae
+Recompensas(eClass.Nigromante, 1, 1).Obj(1).Amount = 1000
+Recompensas(eClass.Nigromante, 1, 2).Obj(1).OBJIndex = PocionRojaNoCae
+Recompensas(eClass.Nigromante, 1, 2).Obj(1).Amount = 1000
+Recompensas(eClass.Nigromante, 2, 1).SubeHP = 15
+Recompensas(eClass.Nigromante, 2, 2).SubeMP = 40
+
+Recompensas(eClass.Paladin, 1, 1).Obj(1).OBJIndex = PocionAzulNoCae
+Recompensas(eClass.Paladin, 1, 1).Obj(1).Amount = 1000
+Recompensas(eClass.Paladin, 1, 2).Obj(1).OBJIndex = PocionRojaNoCae
+Recompensas(eClass.Paladin, 1, 2).Obj(1).Amount = 1000
+Recompensas(eClass.Paladin, 2, 1).SubeHP = 5
+Recompensas(eClass.Paladin, 2, 1).SubeMP = 10
+Recompensas(eClass.Paladin, 2, 2).SubeMP = 30
+
+Recompensas(eClass.Clerigo, 1, 1).Obj(1).OBJIndex = PocionAzulNoCae
+Recompensas(eClass.Clerigo, 1, 1).Obj(1).Amount = 1000
+Recompensas(eClass.Clerigo, 1, 2).Obj(1).OBJIndex = PocionRojaNoCae
+Recompensas(eClass.Clerigo, 1, 2).Obj(1).Amount = 1000
+Recompensas(eClass.Clerigo, 2, 1).SubeHP = 10
+Recompensas(eClass.Clerigo, 2, 2).SubeMP = 50
+
+Recompensas(eClass.Bardo, 1, 1).Obj(1).OBJIndex = PocionAzulNoCae
+Recompensas(eClass.Bardo, 1, 1).Obj(1).Amount = 1000
+Recompensas(eClass.Bardo, 1, 2).Obj(1).OBJIndex = PocionRojaNoCae
+Recompensas(eClass.Bardo, 1, 2).Obj(1).Amount = 1000
+Recompensas(eClass.Bardo, 2, 1).SubeHP = 10
+Recompensas(eClass.Bardo, 2, 2).SubeMP = 50
+
+Recompensas(eClass.Druida, 1, 1).Obj(1).OBJIndex = PocionAzulNoCae
+Recompensas(eClass.Druida, 1, 1).Obj(1).Amount = 1000
+Recompensas(eClass.Druida, 1, 2).Obj(1).OBJIndex = PocionRojaNoCae
+Recompensas(eClass.Druida, 1, 2).Obj(1).Amount = 1000
+Recompensas(eClass.Druida, 2, 1).SubeHP = 15
+Recompensas(eClass.Druida, 2, 2).SubeMP = 40
+
+Recompensas(eClass.Asesino, 1, 1).Obj(1).OBJIndex = PocionAzulNoCae
+Recompensas(eClass.Asesino, 1, 1).Obj(1).Amount = 1000
+Recompensas(eClass.Asesino, 1, 2).Obj(1).OBJIndex = PocionRojaNoCae
+Recompensas(eClass.Asesino, 1, 2).Obj(1).Amount = 1000
+Recompensas(eClass.Asesino, 2, 1).SubeHP = 10
+Recompensas(eClass.Asesino, 2, 2).SubeMP = 30
+
+Recompensas(eClass.Cazador, 1, 1).Obj(1).OBJIndex = PocionAzulNoCae
+Recompensas(eClass.Cazador, 1, 1).Obj(1).Amount = 1000
+Recompensas(eClass.Cazador, 1, 2).Obj(1).OBJIndex = PocionRojaNoCae
+Recompensas(eClass.Cazador, 1, 2).Obj(1).Amount = 1000
+Recompensas(eClass.Cazador, 2, 1).SubeHP = 10
+Recompensas(eClass.Cazador, 2, 2).SubeMP = 50
+
+Recompensas(eClass.Arquero, 1, 1).Obj(1).OBJIndex = Flecha
+Recompensas(eClass.Arquero, 1, 1).Obj(1).Amount = 1500
+Recompensas(eClass.Arquero, 1, 2).Obj(1).OBJIndex = PocionRojaNoCae
+Recompensas(eClass.Arquero, 1, 2).Obj(1).Amount = 1000
+Recompensas(eClass.Arquero, 2, 1).SubeHP = 10
+
+Recompensas(eClass.Guerrero, 1, 1).Obj(1).OBJIndex = PocionVerdeNoCae
+Recompensas(eClass.Guerrero, 1, 1).Obj(1).Amount = 80
+Recompensas(eClass.Guerrero, 1, 1).Obj(2).OBJIndex = PocionAmarillaNoCae
+Recompensas(eClass.Guerrero, 1, 1).Obj(2).Amount = 100
+Recompensas(eClass.Guerrero, 1, 2).Obj(1).OBJIndex = PocionRojaNoCae
+Recompensas(eClass.Guerrero, 1, 2).Obj(1).Amount = 1000
+Recompensas(eClass.Guerrero, 2, 1).SubeHP = 5
+
+Recompensas(eClass.Pirata, 1, 1).SubeHP = 20
+Recompensas(eClass.Pirata, 2, 2).SubeHP = 40
+End Sub

@@ -163,6 +163,13 @@ Public CurServer As Integer
 'Public CreandoClan As Boolean
 'Public ClanName As String
 
+Type tRecompensa
+    Name As String
+    Descripcion As String
+End Type
+
+Public Recompensas() As tRecompensa
+
 Public UserCiego As Boolean
 Public UserEstupido As Boolean
 
@@ -232,35 +239,35 @@ Public Enum eClass
         Ciudadano = 1
         Trabajador = 2
         Experto_Minerales = 3
-        Minero = 4
-        Herrero = 5 '8
+        MINERO = 4
+        HERRERO = 5 '8
         Experto_Madera = 6 '13
-        Talador = 7 '14
-        Carpintero = 8 '18
-        Pescador = 9 '23
+        TALADOR = 7 '14
+        CARPINTERO = 8 '18
+        PESCADOR = 9 '23
         Sastre = 10 '27
         Alquimista = 11 '31
         Luchador = 12 '35
         Con_Mana = 13 '36
         Hechicero = 14 '37
-        Mago = 15 '38
-        Nigromante = 16 '39
+        MAGO = 15 '38
+        NIGROMANTE = 16 '39
         Orden_Sagrada = 17 '40
-        Paladin = 18 '41
-        Clerigo = 19 '42
+        PALADIN = 18 '41
+        CLERIGO = 19 '42
         Naturalista = 20 '43
-        Bardo = 21 '44
-        Druida = 22 '45
+        BARDO = 21 '44
+        DRUIDA = 22 '45
         Sigiloso = 23 '46
-        Asesino = 24 '47
-        Cazador = 25 '48
+        ASESINO = 24 '47
+        CAZADOR = 25 '48
         Sin_Mana = 26 '49
-        Arquero = 27 '50
-        Guerrero = 28 '51
+        ARQUERO = 27 '50
+        GUERRERO = 28 '51
         Caballero = 29 '52
         Bandido = 30 '53
-        Pirata = 31 '55
-        Ladron = 32 '56
+        PIRATA = 31 '55
+        LADRON = 32 '56
 End Enum
 
 Public Enum eCiudad
@@ -664,7 +671,7 @@ Type tEstadisticasUsu
     CriminalesMatados As Long
     UsuariosMatados As Long
     NpcsMatados As Long
-    clase As String
+    Clase As String
     PenaCarcel As Long
 End Type
 

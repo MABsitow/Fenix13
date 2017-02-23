@@ -41,17 +41,17 @@ Public Declare Function PoderAtaqueWrestling Lib "aolib.dll" Alias "PoderAtaqueW
 
 Public Const MAXDISTANCIAARCO As Byte = 18
 
-Public Function MinimoInt(ByVal a As Integer, ByVal b As Integer) As Integer
-    If a > b Then
+Public Function MinimoInt(ByVal A As Integer, ByVal b As Integer) As Integer
+    If A > b Then
         MinimoInt = b
     Else
-        MinimoInt = a
+        MinimoInt = A
     End If
 End Function
 
-Public Function MaximoInt(ByVal a As Integer, ByVal b As Integer) As Integer
-    If a > b Then
-        MaximoInt = a
+Public Function MaximoInt(ByVal A As Integer, ByVal b As Integer) As Integer
+    If A > b Then
+        MaximoInt = A
     Else
         MaximoInt = b
     End If
@@ -151,19 +151,24 @@ Public Function UserImpactoNpc(ByVal UserIndex As Integer, ByVal NpcIndex As Int
     
     Arma = UserList(UserIndex).Invent.WeaponEqpObjIndex
     
-    If Arma > 0 Then 'Usando un arma
-        If ObjData(Arma).proyectil = 1 Then
-            PoderAtaque = PoderAtaqueProyectil(UserIndex)
-            Skill = eSkill.Proyectiles
-        Else
-            PoderAtaque = PoderAtaqueArma(UserIndex)
-            Skill = eSkill.Armas
+    With UserList(UserIndex)
+        If Arma > 0 Then 'Usando un arma
+            If ObjData(Arma).proyectil = 1 Then
+                PoderAtaque = (1 + 0.05 * Buleano(.Clase = eClass.Arquero And .Recompensas(3) = 1) + _
+                0.1 * Buleano(.Recompensas(3) = 1 And (.Clase = eClass.Guerrero Or .Clase = eClass.Cazador) * _
+                PoderAtaqueProyectil(UserIndex)))
+                
+                Skill = eSkill.Proyectiles
+            Else
+                PoderAtaque = (1 + 0.05 * Buleano(.Clase = eClass.Paladin And .Recompensas(3) = 2)) * PoderAtaqueArma(UserIndex)
+                Skill = eSkill.Armas
+            End If
+        Else 'Peleando con puños
+            PoderAtaque = PoderAtaqueWrestling(18, UserList(UserIndex).Stats.UserAtributos(eAtributos.Agilidad), DameClaseFenix(UserList(UserIndex).Clase), UserList(UserIndex).Stats.ELV) \ 4
+            Skill = eSkill.Wrestling
         End If
-    Else 'Peleando con puños
-        PoderAtaque = PoderAtaqueWrestling(18, UserList(UserIndex).Stats.UserAtributos(eAtributos.Agilidad), DameClaseFenix(UserList(UserIndex).Clase), UserList(UserIndex).Stats.ELV) \ 4
-        Skill = eSkill.Wrestling
-    End If
-    
+    End With
+        
     ' Chances are rounded
     ProbExito = MaximoInt(10, MinimoInt(90, 50 + ((PoderAtaque - Npclist(NpcIndex).PoderEvasion) * 0.4)))
     
@@ -189,38 +194,43 @@ Public Function NpcImpacto(ByVal NpcIndex As Integer, ByVal UserIndex As Integer
     Dim SkillTacticas As Long
     Dim SkillDefensa As Long
     
-    UserEvasion = PoderEvasion(UserIndex)
-    NpcPoderAtaque = Npclist(NpcIndex).PoderAtaque
-    PoderEvasioEscudo = PoderEvasionEscudo(UserIndex)
-    
-    SkillTacticas = UserList(UserIndex).Stats.UserSkills(eSkill.Tacticas)
-    SkillDefensa = UserList(UserIndex).Stats.UserSkills(eSkill.Defensa)
-    
-    'Esta usando un escudo ???
-    If UserList(UserIndex).Invent.EscudoEqpObjIndex > 0 Then UserEvasion = UserEvasion + PoderEvasioEscudo
-    
-    ' Chances are rounded
-    ProbExito = MaximoInt(10, MinimoInt(90, 50 + ((NpcPoderAtaque - UserEvasion) * 0.4)))
-    
-    NpcImpacto = (RandomNumber(1, 100) <= ProbExito)
-    
-    ' el usuario esta usando un escudo ???
-    If UserList(UserIndex).Invent.EscudoEqpObjIndex > 0 Then
-        If Not NpcImpacto Then
-            If SkillDefensa + SkillTacticas > 0 Then  'Evitamos división por cero
-                ' Chances are rounded
-                ProbRechazo = MaximoInt(10, MinimoInt(90, 100 * SkillDefensa / (SkillDefensa + SkillTacticas)))
-                Rechazo = (RandomNumber(1, 100) <= ProbRechazo)
-                
-                If Rechazo Then
-                    'Se rechazo el ataque con el escudo
-                    Call SendData(SendTarget.ToPCArea, UserIndex, PrepareMessagePlayWave(SND_ESCUDO, UserList(UserIndex).Pos.X, UserList(UserIndex).Pos.Y))
-                    Call WriteMultiMessage(UserIndex, eMessages.BlockedWithShieldUser) 'Call WriteBlockedWithShieldUser(UserIndex)
-                    Call SubirSkill(UserIndex, eSkill.Defensa, 25)
+    With UserList(UserIndex)
+        UserEvasion = (1 + 0.05 * Buleano(.Recompensas(3) = 2 And (.Clase = eClass.Arquero Or .Clase = eClass.Nigromante) _
+        * PoderEvasion(UserIndex)))
+        
+        NpcPoderAtaque = Npclist(NpcIndex).PoderAtaque
+        PoderEvasioEscudo = PoderEvasionEscudo(UserIndex)
+        
+        SkillTacticas = UserList(UserIndex).Stats.UserSkills(eSkill.Tacticas)
+        SkillDefensa = UserList(UserIndex).Stats.UserSkills(eSkill.Defensa)
+        
+        'Esta usando un escudo ???
+        If UserList(UserIndex).Invent.EscudoEqpObjIndex > 0 Then UserEvasion = UserEvasion + PoderEvasioEscudo
+        
+        ' Chances are rounded
+        ProbExito = MaximoInt(10, MinimoInt(90, 50 + ((NpcPoderAtaque - UserEvasion) * 0.4)))
+        
+        NpcImpacto = (RandomNumber(1, 100) <= ProbExito)
+        
+        ' el usuario esta usando un escudo ???
+        If UserList(UserIndex).Invent.EscudoEqpObjIndex > 0 Then
+            If Not NpcImpacto Then
+                If SkillDefensa + SkillTacticas > 0 Then  'Evitamos división por cero
+                    ' Chances are rounded
+                    ProbRechazo = MaximoInt(10, MinimoInt(90, 100 * SkillDefensa / (SkillDefensa + SkillTacticas)))
+                    Rechazo = (RandomNumber(1, 100) <= ProbRechazo)
+                    
+                    If Rechazo Then
+                        'Se rechazo el ataque con el escudo
+                        Call SendData(SendTarget.ToPCArea, UserIndex, PrepareMessagePlayWave(SND_ESCUDO, UserList(UserIndex).Pos.X, UserList(UserIndex).Pos.Y))
+                        Call WriteMultiMessage(UserIndex, eMessages.BlockedWithShieldUser) 'Call WriteBlockedWithShieldUser(UserIndex)
+                        Call SubirSkill(UserIndex, eSkill.Defensa, 25)
+                    End If
                 End If
             End If
         End If
-    End If
+        
+    End With
 End Function
 
 Public Function CalcularDaño(ByVal UserIndex As Integer, Optional ByVal NpcIndex As Integer = 0) As Long
@@ -256,7 +266,12 @@ Public Function CalcularDaño(ByVal UserIndex As Integer, Optional ByVal NpcIndex
                     
                     If Arma.Municion = 1 Then
                         proyectil = ObjData(.Invent.MunicionEqpObjIndex)
-                        DañoArma = DañoArma + RandomNumber(proyectil.MinHIT, proyectil.MaxHIT)
+                        DañoArma = DañoArma + _
+                        RandomNumber(proyectil.MinHIT + 10 * Buleano(.flags.BonusFlecha) + _
+                                        5 * Buleano(.Clase = eClass.Arquero And .Recompensas(3) = 2), _
+                                    proyectil.MaxHIT + 15 * Buleano(.flags.BonusFlecha) + _
+                                        3 * Buleano(eClass.Arquero And .Recompensas(3) = 2))
+                        
                         ' For some reason this isn't done...
                         'DañoMaxArma = DañoMaxArma + proyectil.MaxHIT
                     End If
@@ -429,7 +444,8 @@ Public Sub NpcDaño(ByVal NpcIndex As Integer, ByVal UserIndex As Integer)
                 End If
         End Select
         
-        absorbido = absorbido + defbarco
+        absorbido = absorbido + defbarco + 2 * Buleano(.Clase = eClass.Guerrero And .Recompensas(2) = 2)
+        
         daño = daño - absorbido
         If daño < 1 Then daño = 1
         
@@ -830,7 +846,9 @@ On Error GoTo ErrHandler
     Arma = UserList(AtacanteIndex).Invent.WeaponEqpObjIndex
     
     'Calculamos el poder de evasion...
-    UserPoderEvasion = PoderEvasion(VictimaIndex)
+    UserPoderEvasion = (1 + 0.05 * Buleano(UserList(VictimaIndex).Recompensas(3) = 2 And _
+        (UserList(VictimaIndex).Clase = eClass.Arquero Or UserList(VictimaIndex).Clase = eClass.Nigromante))) * _
+        PoderEvasion(VictimaIndex)
     
     If UserList(VictimaIndex).Invent.EscudoEqpObjIndex > 0 Then
        UserPoderEvasionEscudo = PoderEvasionEscudo(VictimaIndex)
@@ -843,10 +861,15 @@ On Error GoTo ErrHandler
     'Esta usando un arma ???
     If UserList(AtacanteIndex).Invent.WeaponEqpObjIndex > 0 Then
         If ObjData(Arma).proyectil = 1 Then
-            PoderAtaque = PoderAtaqueProyectil(AtacanteIndex)
+            PoderAtaque = (1 + 0.05 * Buleano(UserList(AtacanteIndex).Clase = eClass.Arquero And UserList(AtacanteIndex).Recompensas(3) = 1) + _
+                0.1 * Buleano(UserList(AtacanteIndex).Recompensas(3) = 1 And (UserList(AtacanteIndex).Clase = eClass.Guerrero Or UserList(AtacanteIndex).Clase = eClass.Cazador))) * _
+                PoderAtaqueProyectil(AtacanteIndex)
+                
             Skill = eSkill.Proyectiles
         Else
-            PoderAtaque = PoderAtaqueArma(AtacanteIndex)
+            PoderAtaque = (1 + 0.05 * Buleano(UserList(AtacanteIndex).Clase = eClass.Paladin And UserList(AtacanteIndex).Recompensas(3) = 2)) * _
+                PoderAtaqueArma(AtacanteIndex)
+                
             Skill = eSkill.Armas
         End If
     Else
@@ -980,7 +1003,6 @@ On Error GoTo ErrHandler
     Dim absorbido As Long
     Dim defbarco As Integer
     Dim Obj As ObjData
-    Dim Resist As Byte
     
     daño = CalcularDaño(AtacanteIndex)
     
@@ -1003,11 +1025,10 @@ On Error GoTo ErrHandler
             Case PartesCuerpo.bCabeza
                 'Si tiene casco absorbe el golpe
                 If UserList(VictimaIndex).Invent.CascoEqpObjIndex > 0 Then
-                    Obj = ObjData(UserList(VictimaIndex).Invent.CascoEqpObjIndex)
-                    absorbido = RandomNumber(Obj.MinDef, Obj.MaxDef)
-                    absorbido = absorbido + defbarco - Resist
-                    daño = daño - absorbido
-                    If daño < 0 Then daño = 1
+                    If Not (.Clase = eClass.Arquero And .Recompensas(3) = 2) Then
+                        Obj = ObjData(UserList(VictimaIndex).Invent.CascoEqpObjIndex)
+                        absorbido = RandomNumber(Obj.MinDef, Obj.MaxDef)
+                    End If
                 End If
             
             Case Else
@@ -1021,12 +1042,13 @@ On Error GoTo ErrHandler
                     Else
                         absorbido = RandomNumber(Obj.MinDef, Obj.MaxDef)
                     End If
-                    absorbido = absorbido + defbarco - Resist
-                    daño = daño - absorbido
-                    If daño < 0 Then daño = 1
                 End If
         End Select
         
+        absorbido = absorbido + defbarco + 2 * Buleano(UserList(VictimaIndex).Clase = eClass.Guerrero And UserList(VictimaIndex).Recompensas(2) = 2)
+        daño = daño - absorbido
+        If daño < 0 Then daño = 1
+                    
         Call WriteMultiMessage(AtacanteIndex, eMessages.UserHittedUser, UserList(VictimaIndex).Char.CharIndex, Lugar, daño)
         Call WriteMultiMessage(VictimaIndex, eMessages.UserHittedByUser, .Char.CharIndex, Lugar, daño)
         
