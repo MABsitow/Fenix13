@@ -211,7 +211,7 @@ Public Sub RefreshAllChars()
     
     For loopC = 1 To LastChar
         If charlist(loopC).Active = 1 Then
-            MapData(charlist(loopC).Pos.x, charlist(loopC).Pos.y).CharIndex = loopC
+            MapData(charlist(loopC).Pos.X, charlist(loopC).Pos.Y).CharIndex = loopC
         End If
     Next loopC
 End Sub
@@ -366,13 +366,13 @@ Sub MoveTo(ByVal Direccion As E_Heading)
     
     Select Case Direccion
         Case E_Heading.NORTH
-            LegalOk = MoveToLegalPos(UserPos.x, UserPos.y - 1)
+            LegalOk = MoveToLegalPos(UserPos.X, UserPos.Y - 1)
         Case E_Heading.EAST
-            LegalOk = MoveToLegalPos(UserPos.x + 1, UserPos.y)
+            LegalOk = MoveToLegalPos(UserPos.X + 1, UserPos.Y)
         Case E_Heading.SOUTH
-            LegalOk = MoveToLegalPos(UserPos.x, UserPos.y + 1)
+            LegalOk = MoveToLegalPos(UserPos.X, UserPos.Y + 1)
         Case E_Heading.WEST
-            LegalOk = MoveToLegalPos(UserPos.x - 1, UserPos.y)
+            LegalOk = MoveToLegalPos(UserPos.X - 1, UserPos.Y)
     End Select
     
     If LegalOk And Not UserParalizado Then
@@ -438,7 +438,7 @@ Private Sub CheckKeys()
             If GetKeyState(CustomKeys.BindedKey(eKeyType.mKeyUp)) < 0 Then
                 If frmMain.TrainingMacro.Enabled Then frmMain.DesactivarMacroHechizos
                 Call MoveTo(NORTH)
-                frmMain.Coord.Caption = UserMap & " X: " & UserPos.x & " Y: " & UserPos.y
+                frmMain.Coord.Caption = UserMap & " X: " & UserPos.X & " Y: " & UserPos.Y
                 Exit Sub
             End If
             
@@ -447,7 +447,7 @@ Private Sub CheckKeys()
                 If frmMain.TrainingMacro.Enabled Then frmMain.DesactivarMacroHechizos
                 Call MoveTo(EAST)
                 'frmMain.Coord.Caption = "(" & UserMap & "," & UserPos.x & "," & UserPos.y & ")"
-                frmMain.Coord.Caption = UserMap & " X: " & UserPos.x & " Y: " & UserPos.y
+                frmMain.Coord.Caption = UserMap & " X: " & UserPos.X & " Y: " & UserPos.Y
                 Exit Sub
             End If
         
@@ -455,7 +455,7 @@ Private Sub CheckKeys()
             If GetKeyState(CustomKeys.BindedKey(eKeyType.mKeyDown)) < 0 Then
                 If frmMain.TrainingMacro.Enabled Then frmMain.DesactivarMacroHechizos
                 Call MoveTo(SOUTH)
-                frmMain.Coord.Caption = UserMap & " X: " & UserPos.x & " Y: " & UserPos.y
+                frmMain.Coord.Caption = UserMap & " X: " & UserPos.X & " Y: " & UserPos.Y
                 Exit Sub
             End If
         
@@ -463,7 +463,7 @@ Private Sub CheckKeys()
             If GetKeyState(CustomKeys.BindedKey(eKeyType.mKeyLeft)) < 0 Then
                 If frmMain.TrainingMacro.Enabled Then frmMain.DesactivarMacroHechizos
                 Call MoveTo(WEST)
-                frmMain.Coord.Caption = UserMap & " X: " & UserPos.x & " Y: " & UserPos.y
+                frmMain.Coord.Caption = UserMap & " X: " & UserPos.X & " Y: " & UserPos.Y
                 Exit Sub
             End If
             
@@ -485,15 +485,15 @@ Private Sub CheckKeys()
             
             If frmMain.TrainingMacro.Enabled Then frmMain.DesactivarMacroHechizos
             'frmMain.Coord.Caption = "(" & UserPos.x & "," & UserPos.y & ")"
-            frmMain.Coord.Caption = "X: " & UserPos.x & " Y: " & UserPos.y
+            frmMain.Coord.Caption = "X: " & UserPos.X & " Y: " & UserPos.Y
         End If
     End If
 End Sub
 
 'CSEH: ErrLog
 Sub SwitchMap(ByVal Map As Integer)
-    Dim y As Long
-    Dim x As Long
+    Dim Y As Long
+    Dim X As Long
     Dim handle As Integer
     Dim reader As New clsByteBuffer
     Dim data() As Byte
@@ -515,10 +515,10 @@ Sub SwitchMap(ByVal Map As Integer)
     Dim i As Long
     
     'Load arrays
-    For y = YMinMapSize To YMaxMapSize
-        For x = XMinMapSize To XMaxMapSize
+    For Y = YMinMapSize To YMaxMapSize
+        For X = XMinMapSize To XMaxMapSize
         
-            With MapData(x, y)
+            With MapData(X, Y)
                 ByFlags = reader.getByte
                     
                 .Blocked = ByFlags And 1
@@ -540,16 +540,16 @@ Sub SwitchMap(ByVal Map As Integer)
                 Next
                 
                 'Erase NPCs
-                If MapData(x, y).CharIndex > 0 Then
-                    Call EraseChar(MapData(x, y).CharIndex)
+                If MapData(X, Y).CharIndex > 0 Then
+                    Call EraseChar(MapData(X, Y).CharIndex)
                 End If
                 
                 'Erase OBJs
-                MapData(x, y).ObjGrh.GrhIndex = 0
+                MapData(X, Y).ObjGrh.GrhIndex = 0
                 
             End With
-        Next x
-    Next y
+        Next X
+    Next Y
     
     MapInfo.Name = ""
     MapInfo.Music = ""
@@ -755,6 +755,7 @@ Sub Main()
         '.txtNombre.SelLength = Len(.txtNombre)
     End With
     
+    Call EstablecerRecompensas
     Call AddtoRichTextBox(frmCargando.Status, "Hecho", 255, 0, 0, True, False, False)
     
     Call AddtoRichTextBox(frmCargando.Status, "Iniciando motor gráfico... ", 255, 255, 255, True, False, True)
@@ -935,11 +936,11 @@ Private Function CMSValidateChar_(ByVal iAsc As Integer) As Boolean
 End Function
 
 'TODO : como todo lo relativo a mapas, no tiene nada que hacer acá....
-Function HayAgua(ByVal x As Integer, ByVal y As Integer) As Boolean
-    HayAgua = ((MapData(x, y).Graphic(1).GrhIndex >= 1505 And MapData(x, y).Graphic(1).GrhIndex <= 1520) Or _
-            (MapData(x, y).Graphic(1).GrhIndex >= 5665 And MapData(x, y).Graphic(1).GrhIndex <= 5680) Or _
-            (MapData(x, y).Graphic(1).GrhIndex >= 13547 And MapData(x, y).Graphic(1).GrhIndex <= 13562)) And _
-                MapData(x, y).Graphic(2).GrhIndex = 0
+Function HayAgua(ByVal X As Integer, ByVal Y As Integer) As Boolean
+    HayAgua = ((MapData(X, Y).Graphic(1).GrhIndex >= 1505 And MapData(X, Y).Graphic(1).GrhIndex <= 1520) Or _
+            (MapData(X, Y).Graphic(1).GrhIndex >= 5665 And MapData(X, Y).Graphic(1).GrhIndex <= 5680) Or _
+            (MapData(X, Y).Graphic(1).GrhIndex >= 13547 And MapData(X, Y).Graphic(1).GrhIndex <= 13562)) And _
+                MapData(X, Y).Graphic(2).GrhIndex = 0
                 
 End Function
 
@@ -1062,35 +1063,35 @@ Private Sub InicializarNombres()
     ListaClases(eClass.Ciudadano) = "Ciudadano"
     ListaClases(eClass.Trabajador) = "Trabajador"
     ListaClases(eClass.Experto_Minerales) = "Experto en minerales"
-    ListaClases(eClass.Minero) = "Minero"
-    ListaClases(eClass.Herrero) = "Herrero"
+    ListaClases(eClass.MINERO) = "Minero"
+    ListaClases(eClass.HERRERO) = "Herrero"
     ListaClases(eClass.Experto_Madera) = "Experto en uso de madera"
-    ListaClases(eClass.Talador) = "Leñador"
-    ListaClases(eClass.Carpintero) = "Carpintero"
-    ListaClases(eClass.Pescador) = "Pescador"
+    ListaClases(eClass.TALADOR) = "Leñador"
+    ListaClases(eClass.CARPINTERO) = "Carpintero"
+    ListaClases(eClass.PESCADOR) = "Pescador"
     ListaClases(eClass.Sastre) = "Sastre"
     ListaClases(eClass.Alquimista) = "Alquimista"
     ListaClases(eClass.Luchador) = "Luchador"
     ListaClases(eClass.Con_Mana) = "Con uso de mana"
     ListaClases(eClass.Hechicero) = "Hechicero"
-    ListaClases(eClass.Mago) = "Mago"
-    ListaClases(eClass.Nigromante) = "Nigromante"
+    ListaClases(eClass.MAGO) = "Mago"
+    ListaClases(eClass.NIGROMANTE) = "Nigromante"
     ListaClases(eClass.Orden_Sagrada) = "Orden sagrada"
-    ListaClases(eClass.Paladin) = "Paladin"
-    ListaClases(eClass.Clerigo) = "Clerigo"
+    ListaClases(eClass.PALADIN) = "Paladin"
+    ListaClases(eClass.CLERIGO) = "Clerigo"
     ListaClases(eClass.Naturalista) = "Naturalista"
-    ListaClases(eClass.Bardo) = "Bardo"
-    ListaClases(eClass.Druida) = "Druida"
+    ListaClases(eClass.BARDO) = "Bardo"
+    ListaClases(eClass.DRUIDA) = "Druida"
     ListaClases(eClass.Sigiloso) = "Sigiloso"
-    ListaClases(eClass.Asesino) = "Asesino"
-    ListaClases(eClass.Cazador) = "Cazador"
+    ListaClases(eClass.ASESINO) = "Asesino"
+    ListaClases(eClass.CAZADOR) = "Cazador"
     ListaClases(eClass.Sin_Mana) = "Sin uso de mana"
-    ListaClases(eClass.Arquero) = "Arquero"
-    ListaClases(eClass.Guerrero) = "Guerrero"
+    ListaClases(eClass.ARQUERO) = "Arquero"
+    ListaClases(eClass.GUERRERO) = "Guerrero"
     ListaClases(eClass.Caballero) = "Caballero"
     ListaClases(eClass.Bandido) = "Bandido"
-    ListaClases(eClass.Pirata) = "Pirata"
-    ListaClases(eClass.Ladron) = "Ladron"
+    ListaClases(eClass.PIRATA) = "Pirata"
+    ListaClases(eClass.LADRON) = "Ladron"
     
     SkillsNames(eSkill.Magia) = "Magia"
     SkillsNames(eSkill.Robar) = "Robar"
@@ -1320,3 +1321,297 @@ Public Function ReadFile(FileName As String, Optional Size As Long = -1) As Byte
 
 End Function
 
+Public Sub EstablecerRecompensas()
+
+ReDim Recompensas(1 To NUMCLASES, 1 To 3, 1 To 2) As tRecompensa
+
+Recompensas(eClass.MINERO, 1, 1).Name = "Fortaleza del Trabajador"
+Recompensas(eClass.MINERO, 1, 1).Descripcion = "Aumenta la vida en 120 puntos."
+
+Recompensas(eClass.MINERO, 1, 2).Name = "Suerte de Novato"
+Recompensas(eClass.MINERO, 1, 2).Descripcion = "Al morir hay 20% de probabilidad de no perder los minerales."
+
+Recompensas(eClass.MINERO, 2, 1).Name = "Destrucción Mágica"
+Recompensas(eClass.MINERO, 2, 1).Descripcion = "Inmunidad al paralisis lanzado por otros usuarios."
+
+Recompensas(eClass.MINERO, 2, 2).Name = "Pica Fuerte"
+Recompensas(eClass.MINERO, 2, 2).Descripcion = "Permite minar 20% más cantidad de hierro y la plata."
+
+Recompensas(eClass.MINERO, 3, 1).Name = "Gremio del Trabajador"
+Recompensas(eClass.MINERO, 3, 1).Descripcion = "Permite minar 20% más cantidad de oro."
+
+Recompensas(eClass.MINERO, 3, 2).Name = "Pico de la Suerte"
+Recompensas(eClass.MINERO, 3, 2).Descripcion = "Al morir hay 30% de probabilidad de que no perder los minerales (acumulativo con Suerte de Novato.)"
+
+
+Recompensas(eClass.HERRERO, 1, 1).Name = "Yunque Rojizo"
+Recompensas(eClass.HERRERO, 1, 1).Descripcion = "25% de probabilidad de gastar la mitad de lingotes en la creación de objetos (Solo aplicable a armas y armaduras)."
+
+Recompensas(eClass.HERRERO, 1, 2).Name = "Maestro de la Forja"
+Recompensas(eClass.HERRERO, 1, 2).Descripcion = "Reduce los costos de cascos y escudos a un 50%."
+
+Recompensas(eClass.HERRERO, 2, 1).Name = "Experto en Filos"
+Recompensas(eClass.HERRERO, 2, 1).Descripcion = "Permite crear las mejores armas (Espada Neithan, Espada Neithan + 1, Espada de Plata + 1 y Daga Infernal)."
+
+Recompensas(eClass.HERRERO, 2, 2).Name = "Experto en Corazas"
+Recompensas(eClass.HERRERO, 2, 2).Descripcion = "Permite crear las mejores armaduras (Armaduras de las Tinieblas, Armadura Legendaria y Armaduras del Dragón)."
+
+Recompensas(eClass.HERRERO, 3, 1).Name = "Fundir Metal"
+Recompensas(eClass.HERRERO, 3, 1).Descripcion = "Reduce a un 50% la cantidad de lingotes utilizados en fabricación de Armas y Armaduras (acumulable con Yunque Rojizo)."
+
+Recompensas(eClass.HERRERO, 3, 2).Name = "Trabajo en Serie"
+Recompensas(eClass.HERRERO, 3, 2).Descripcion = "10% de probabilidad de crear el doble de objetos de los asignados con la misma cantidad de lingotes."
+
+
+Recompensas(eClass.TALADOR, 1, 1).Name = "Músculos Fornidos"
+Recompensas(eClass.TALADOR, 1, 1).Descripcion = "Permite talar 20% más cantidad de madera."
+
+Recompensas(eClass.TALADOR, 1, 2).Name = "Tiempos de Calma"
+Recompensas(eClass.TALADOR, 1, 2).Descripcion = "Evita tener hambre y sed."
+
+
+Recompensas(eClass.CARPINTERO, 1, 1).Name = "Experto en Arcos"
+Recompensas(eClass.CARPINTERO, 1, 1).Descripcion = "Permite la creación de los mejores arcos (Élfico y de las Tinieblas)."
+
+Recompensas(eClass.CARPINTERO, 1, 2).Name = "Experto de Varas"
+Recompensas(eClass.CARPINTERO, 1, 2).Descripcion = "Permite la creación de las mejores varas (Engarzadas)."
+
+Recompensas(eClass.CARPINTERO, 2, 1).Name = "Fila de Leña"
+Recompensas(eClass.CARPINTERO, 2, 1).Descripcion = "Aumenta la creación de flechas a 20 por vez."
+
+Recompensas(eClass.CARPINTERO, 2, 2).Name = "Espíritu de Navegante"
+Recompensas(eClass.CARPINTERO, 2, 2).Descripcion = "Reduce en un 20% el coste de madera de las barcas."
+
+
+Recompensas(eClass.PESCADOR, 1, 1).Name = "Favor de los Dioses"
+Recompensas(eClass.PESCADOR, 1, 1).Descripcion = "Pescar 20% más cantidad de pescados."
+
+Recompensas(eClass.PESCADOR, 1, 2).Name = "Pesca en Alta Mar"
+Recompensas(eClass.PESCADOR, 1, 2).Descripcion = "Al pescar en barca hay 10% de probabilidad de obtener pescados más caros."
+
+
+Recompensas(eClass.MAGO, 1, 1).Name = "Pociones de Espíritu"
+Recompensas(eClass.MAGO, 1, 1).Descripcion = "1.000 pociones azules que no caen al morir."
+
+Recompensas(eClass.MAGO, 1, 2).Name = "Pociones de Vida"
+Recompensas(eClass.MAGO, 1, 2).Descripcion = "1.000 pociones rojas que no caen al morir."
+
+Recompensas(eClass.MAGO, 2, 1).Name = "Vitalidad"
+Recompensas(eClass.MAGO, 2, 1).Descripcion = "Aumenta la vida en 10 puntos."
+
+Recompensas(eClass.MAGO, 2, 2).Name = "Fortaleza Mental"
+Recompensas(eClass.MAGO, 2, 2).Descripcion = "Libera el limite de mana máximo."
+
+Recompensas(eClass.MAGO, 3, 1).Name = "Furia del Relámpago"
+Recompensas(eClass.MAGO, 3, 1).Descripcion = "Aumenta el daño base máximo de la Descarga Eléctrica en 10 puntos."
+
+Recompensas(eClass.MAGO, 3, 2).Name = "Destrucción"
+Recompensas(eClass.MAGO, 3, 2).Descripcion = "Aumenta el daño base mínimo del Apocalipsis en 10 puntos."
+
+Recompensas(eClass.NIGROMANTE, 1, 1).Name = "Pociones de Espíritu"
+Recompensas(eClass.NIGROMANTE, 1, 1).Descripcion = "1.000 pociones azules que no caen al morir."
+
+Recompensas(eClass.NIGROMANTE, 1, 2).Name = "Pociones de Vida"
+Recompensas(eClass.NIGROMANTE, 1, 2).Descripcion = "1.000 pociones rojas que no caen al morir."
+
+Recompensas(eClass.NIGROMANTE, 2, 1).Name = "Vida del Invocador"
+Recompensas(eClass.NIGROMANTE, 2, 1).Descripcion = "Aumenta la vida en 15 puntos."
+
+Recompensas(eClass.NIGROMANTE, 2, 2).Name = "Alma del Invocador"
+Recompensas(eClass.NIGROMANTE, 2, 2).Descripcion = "Aumenta el mana en 40 puntos."
+
+Recompensas(eClass.NIGROMANTE, 3, 1).Name = "Semillas de las Almas"
+Recompensas(eClass.NIGROMANTE, 3, 1).Descripcion = "Aumenta el daño base mínimo de la magia en 10 puntos."
+
+Recompensas(eClass.NIGROMANTE, 3, 2).Name = "Bloqueo de las Almas"
+Recompensas(eClass.NIGROMANTE, 3, 2).Descripcion = "Aumenta la evasión en un 5%."
+
+
+Recompensas(eClass.PALADIN, 1, 1).Name = "Pociones de Espíritu"
+Recompensas(eClass.PALADIN, 1, 1).Descripcion = "1.000 pociones azules que no caen al morir."
+
+Recompensas(eClass.PALADIN, 1, 2).Name = "Pociones de Vida"
+Recompensas(eClass.PALADIN, 1, 2).Descripcion = "1.000 pociones rojas que no caen al morir."
+
+Recompensas(eClass.PALADIN, 2, 1).Name = "Aura de Vitalidad"
+Recompensas(eClass.PALADIN, 2, 1).Descripcion = "Aumenta la vida en 5 puntos y el mana en 10 puntos."
+
+Recompensas(eClass.PALADIN, 2, 2).Name = "Aura de Espíritu"
+Recompensas(eClass.PALADIN, 2, 2).Descripcion = "Aumenta el mana en 30 puntos."
+
+Recompensas(eClass.PALADIN, 3, 1).Name = "Gracia Divina"
+Recompensas(eClass.PALADIN, 3, 1).Descripcion = "Reduce el coste de mana de Remover Paralisis a 250 puntos."
+
+Recompensas(eClass.PALADIN, 3, 2).Name = "Favor de los Enanos"
+Recompensas(eClass.PALADIN, 3, 2).Descripcion = "Aumenta en 5% la posibilidad de golpear al enemigo con armas cuerpo a cuerpo."
+
+Recompensas(eClass.CLERIGO, 1, 1).Name = "Pociones de Espíritu"
+Recompensas(eClass.CLERIGO, 1, 1).Descripcion = "1.000 pociones azules que no caen al morir."
+
+Recompensas(eClass.CLERIGO, 1, 2).Name = "Pociones de Vida"
+Recompensas(eClass.CLERIGO, 1, 2).Descripcion = "1.000 pociones rojas que no caen al morir."
+
+Recompensas(eClass.CLERIGO, 2, 1).Name = "Signo Vital"
+Recompensas(eClass.CLERIGO, 2, 1).Descripcion = "Aumenta la vida en 10 puntos."
+
+Recompensas(eClass.CLERIGO, 2, 2).Name = "Espíritu de Sacerdote"
+Recompensas(eClass.CLERIGO, 2, 2).Descripcion = "Aumenta el mana en 50 puntos."
+
+Recompensas(eClass.CLERIGO, 3, 1).Name = "Sacerdote Experto"
+Recompensas(eClass.CLERIGO, 3, 1).Descripcion = "Aumenta la cura base de Curar Heridas Graves en 20 puntos."
+
+Recompensas(eClass.CLERIGO, 3, 2).Name = "Alzamientos de Almas"
+Recompensas(eClass.CLERIGO, 3, 2).Descripcion = "El hechizo de Resucitar cura a las personas con su mana, energía, hambre y sed llenas y cuesta 1.100 de mana."
+
+Recompensas(eClass.BARDO, 1, 1).Name = "Pociones de Espíritu"
+Recompensas(eClass.BARDO, 1, 1).Descripcion = "1.000 pociones azules que no caen al morir."
+
+Recompensas(eClass.BARDO, 1, 2).Name = "Pociones de Vida"
+Recompensas(eClass.BARDO, 1, 2).Descripcion = "1.000 pociones rojas que no caen al morir."
+
+Recompensas(eClass.BARDO, 2, 1).Name = "Melodía Vital"
+Recompensas(eClass.BARDO, 2, 1).Descripcion = "Aumenta la vida en 10 puntos."
+
+Recompensas(eClass.BARDO, 2, 2).Name = "Melodía de la Meditación"
+Recompensas(eClass.BARDO, 2, 2).Descripcion = "Aumenta el mana en 50 puntos."
+
+Recompensas(eClass.BARDO, 3, 1).Name = "Concentración"
+Recompensas(eClass.BARDO, 3, 1).Descripcion = "Aumenta la probabilidad de Apuñalar a un 20% (con 100 skill)."
+
+Recompensas(eClass.BARDO, 3, 2).Name = "Melodía Caótica"
+Recompensas(eClass.BARDO, 3, 2).Descripcion = "Aumenta el daño base del Apocalipsis y la Descarga Electrica en 5 puntos."
+
+
+Recompensas(eClass.DRUIDA, 1, 1).Name = "Pociones de Espíritu"
+Recompensas(eClass.DRUIDA, 1, 1).Descripcion = "1.000 pociones azules que no caen al morir."
+
+Recompensas(eClass.DRUIDA, 1, 2).Name = "Pociones de Vida"
+Recompensas(eClass.DRUIDA, 1, 2).Descripcion = "1.000 pociones rojas que no caen al morir."
+
+Recompensas(eClass.DRUIDA, 2, 1).Name = "Grifo de la Vida"
+Recompensas(eClass.DRUIDA, 2, 1).Descripcion = "Aumenta la vida en 15 puntos."
+
+Recompensas(eClass.DRUIDA, 2, 2).Name = "Poder del Alma"
+Recompensas(eClass.DRUIDA, 2, 2).Descripcion = "Aumenta el mana en 40 puntos."
+
+Recompensas(eClass.DRUIDA, 3, 1).Name = "Raíces de la Naturaleza"
+Recompensas(eClass.DRUIDA, 3, 1).Descripcion = "Reduce el coste de mana de Inmovilizar a 250 puntos."
+
+Recompensas(eClass.DRUIDA, 3, 2).Name = "Fortaleza Natural"
+Recompensas(eClass.DRUIDA, 3, 2).Descripcion = "Aumenta la vida de los elementales invocados en 75 puntos."
+
+
+Recompensas(eClass.ASESINO, 1, 1).Name = "Pociones de Espíritu"
+Recompensas(eClass.ASESINO, 1, 1).Descripcion = "1.000 pociones azules que no caen al morir."
+
+Recompensas(eClass.ASESINO, 1, 2).Name = "Pociones de Vida"
+Recompensas(eClass.ASESINO, 1, 2).Descripcion = "1.000 pociones rojas que no caen al morir."
+
+Recompensas(eClass.ASESINO, 2, 1).Name = "Sombra de Vida"
+Recompensas(eClass.ASESINO, 2, 1).Descripcion = "Aumenta la vida en 10 puntos."
+
+Recompensas(eClass.ASESINO, 2, 2).Name = "Sombra Mágica"
+Recompensas(eClass.ASESINO, 2, 2).Descripcion = "Aumenta el mana en 30 puntos."
+
+Recompensas(eClass.ASESINO, 3, 1).Name = "Daga Mortal"
+Recompensas(eClass.ASESINO, 3, 1).Descripcion = "Aumenta el daño de Apuñalar a un 70% más que el golpe."
+
+Recompensas(eClass.ASESINO, 3, 2).Name = "Punteria mortal"
+Recompensas(eClass.ASESINO, 3, 2).Descripcion = "Las chances de apuñalar suben a 25% (Con 100 skills)."
+
+
+Recompensas(eClass.CAZADOR, 1, 1).Name = "Pociones de Espíritu"
+Recompensas(eClass.CAZADOR, 1, 1).Descripcion = "1.000 pociones azules que no caen al morir."
+
+Recompensas(eClass.CAZADOR, 1, 2).Name = "Pociones de Vida"
+Recompensas(eClass.CAZADOR, 1, 2).Descripcion = "1.000 pociones rojas que no caen al morir."
+
+Recompensas(eClass.CAZADOR, 2, 1).Name = "Fortaleza del Oso"
+Recompensas(eClass.CAZADOR, 2, 1).Descripcion = "Aumenta la vida en 10 puntos."
+
+Recompensas(eClass.CAZADOR, 2, 2).Name = "Fortaleza del Leviatán"
+Recompensas(eClass.CAZADOR, 2, 2).Descripcion = "Aumenta el mana en 50 puntos."
+
+Recompensas(eClass.CAZADOR, 3, 1).Name = "Precisión"
+Recompensas(eClass.CAZADOR, 3, 1).Descripcion = "Aumenta la puntería con arco en un 10%."
+
+Recompensas(eClass.CAZADOR, 3, 2).Name = "Tiro Preciso"
+Recompensas(eClass.CAZADOR, 3, 2).Descripcion = "Las flechas que golpeen la cabeza ignoran la defensa del casco."
+
+
+Recompensas(eClass.ARQUERO, 1, 1).Name = "Flechas Mortales"
+Recompensas(eClass.ARQUERO, 1, 1).Descripcion = "1.500 flechas que caen al morir."
+
+Recompensas(eClass.ARQUERO, 1, 2).Name = "Pociones de Vida"
+Recompensas(eClass.ARQUERO, 1, 2).Descripcion = "1.000 pociones rojas que no caen al morir."
+
+Recompensas(eClass.ARQUERO, 2, 1).Name = "Vitalidad Élfica"
+Recompensas(eClass.ARQUERO, 2, 1).Descripcion = "Aumenta la vida en 10 puntos."
+
+Recompensas(eClass.ARQUERO, 2, 2).Name = "Paso Élfico"
+Recompensas(eClass.ARQUERO, 2, 2).Descripcion = "Aumenta la evasión en un 5%."
+
+Recompensas(eClass.ARQUERO, 3, 1).Name = "Ojo del Águila"
+Recompensas(eClass.ARQUERO, 3, 1).Descripcion = "Aumenta la puntería con arco en un 5%."
+
+Recompensas(eClass.ARQUERO, 3, 2).Name = "Disparo Élfico"
+Recompensas(eClass.ARQUERO, 3, 2).Descripcion = "Aumenta el daño base mínimo de las flechas en 5 puntos y el máximo en 3 puntos."
+
+
+Recompensas(eClass.GUERRERO, 1, 1).Name = "Pociones de Poder"
+Recompensas(eClass.GUERRERO, 1, 1).Descripcion = "80 pociones verdes y 100 amarillas que no caen al morir."
+
+Recompensas(eClass.GUERRERO, 1, 2).Name = "Pociones de Vida"
+Recompensas(eClass.GUERRERO, 1, 2).Descripcion = "1.000 pociones rojas que no caen al morir."
+
+Recompensas(eClass.GUERRERO, 2, 1).Name = "Vida del Mamut"
+Recompensas(eClass.GUERRERO, 2, 1).Descripcion = "Aumenta la vida en 5 puntos."
+
+Recompensas(eClass.GUERRERO, 2, 2).Name = "Piel de Piedra"
+Recompensas(eClass.GUERRERO, 2, 2).Descripcion = "Aumenta la defensa permanentemente en 2 puntos."
+
+Recompensas(eClass.GUERRERO, 3, 1).Name = "Cuerda Tensa"
+Recompensas(eClass.GUERRERO, 3, 1).Descripcion = "Aumenta la puntería con arco en un 10%."
+
+Recompensas(eClass.GUERRERO, 3, 2).Name = "Resistencia Mágica"
+Recompensas(eClass.GUERRERO, 3, 2).Descripcion = "Reduce la duración de la parálisis de un minuto a 45 segundos."
+
+
+Recompensas(eClass.PIRATA, 1, 1).Name = "Marejada Vital"
+Recompensas(eClass.PIRATA, 1, 1).Descripcion = "Aumenta la vida en 20 puntos."
+
+Recompensas(eClass.PIRATA, 1, 2).Name = "Aventurero Arriesgado"
+Recompensas(eClass.PIRATA, 1, 2).Descripcion = "Permite entrar a los dungeons independientemente del nivel."
+
+Recompensas(eClass.PIRATA, 2, 1).Name = "Riqueza"
+Recompensas(eClass.PIRATA, 2, 1).Descripcion = "10% de probabilidad de no perder los objetos al morir."
+
+Recompensas(eClass.PIRATA, 2, 2).Name = "Escamas del Dragón"
+Recompensas(eClass.PIRATA, 2, 2).Descripcion = "Aumenta la vida en 40 puntos."
+
+Recompensas(eClass.PIRATA, 3, 1).Name = "Magia Tabú"
+Recompensas(eClass.PIRATA, 3, 1).Descripcion = "Inmunidad a la paralisis."
+
+Recompensas(eClass.PIRATA, 3, 2).Name = "Cuerda de Escape"
+Recompensas(eClass.PIRATA, 3, 2).Descripcion = "Permite salir del juego en solo dos segundos."
+
+
+Recompensas(eClass.LADRON, 1, 1).Name = "Codicia"
+Recompensas(eClass.LADRON, 1, 1).Descripcion = "Aumenta en 10% la cantidad de oro robado."
+
+Recompensas(eClass.LADRON, 1, 2).Name = "Manos Sigilosas"
+Recompensas(eClass.LADRON, 1, 2).Descripcion = "Aumenta en 5% la probabilidad de robar exitosamente."
+
+Recompensas(eClass.LADRON, 2, 1).Name = "Pies sigilosos"
+Recompensas(eClass.LADRON, 2, 1).Descripcion = "Permite moverse mientrás se está oculto."
+
+Recompensas(eClass.LADRON, 2, 2).Name = "Ladrón Experto"
+Recompensas(eClass.LADRON, 2, 2).Descripcion = "Permite el robo de objetos (10% de probabilidad)."
+
+Recompensas(eClass.LADRON, 3, 1).Name = "Robo Lejano"
+Recompensas(eClass.LADRON, 3, 1).Descripcion = "Permite robar a una distancia de hasta 4 tiles."
+
+Recompensas(eClass.LADRON, 3, 2).Name = "Fundido de Sombra"
+Recompensas(eClass.LADRON, 3, 2).Descripcion = "Aumenta en 10% la probabilidad de robar objetos."
+
+End Sub

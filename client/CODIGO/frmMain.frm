@@ -186,6 +186,7 @@ Begin VB.Form frmMain
       _Version        =   393217
       BackColor       =   0
       BorderStyle     =   0
+      Enabled         =   -1  'True
       ReadOnly        =   -1  'True
       ScrollBars      =   2
       DisableNoScroll =   -1  'True
@@ -211,6 +212,18 @@ Begin VB.Form frmMain
       Top             =   2400
       Visible         =   0   'False
       Width           =   2565
+   End
+   Begin VB.Label lblRecompensa 
+      AutoSize        =   -1  'True
+      BackStyle       =   0  'Transparent
+      Caption         =   "R"
+      ForeColor       =   &H00FFFFFF&
+      Height          =   195
+      Left            =   14640
+      TabIndex        =   34
+      Top             =   1200
+      Visible         =   0   'False
+      Width           =   105
    End
    Begin VB.Label lblMode 
       AutoSize        =   -1  'True
@@ -1301,14 +1314,14 @@ Private Sub Form_KeyUp(KeyCode As Integer, Shift As Integer)
     End Select
 End Sub
 
-Private Sub Form_MouseDown(Button As Integer, Shift As Integer, x As Single, y As Single)
+Private Sub Form_MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single)
     MouseBoton = Button
     MouseShift = Shift
 End Sub
 
-Private Sub Form_MouseUp(Button As Integer, Shift As Integer, x As Single, y As Single)
-    clicX = x
-    clicY = y
+Private Sub Form_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
+    clicX = X
+    clicY = Y
 End Sub
 
 Private Sub Form_QueryUnload(Cancel As Integer, UnloadMode As Integer)
@@ -1387,7 +1400,7 @@ Call MsgBox("Funciones deshabilitadas.", vbInformation, "Argentum Online")
 'Call frmOpciones.Show(vbModeless, frmMain)
 End Sub
 
-Private Sub InvEqu_MouseMove(Button As Integer, Shift As Integer, x As Single, y As Single)
+Private Sub InvEqu_MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
     LastPressed.ToggleToNormal
 End Sub
 
@@ -1404,11 +1417,15 @@ Private Sub lblCerrar_Click()
 End Sub
 
 Private Sub lblFaccion_Click()
-    Call writerequestfaccionform
+    Call WriteRequestFaccionForm
 End Sub
 
 Private Sub lblMinimizar_Click()
     Me.WindowState = 1
+End Sub
+
+Private Sub lblRecompensa_Click()
+    Call WriteRequestRecompensaForm
 End Sub
 
 Private Sub Macro_Timer()
@@ -1461,21 +1478,21 @@ Private Sub MainViewPic_DblClick()
     Form_DblClick
 End Sub
 
-Private Sub MainViewPic_MouseDown(Button As Integer, Shift As Integer, x As Single, y As Single)
+Private Sub MainViewPic_MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single)
     MouseBoton = Button
     MouseShift = Shift
 End Sub
 
-Private Sub MainViewPic_MouseMove(Button As Integer, Shift As Integer, x As Single, y As Single)
-    MouseX = x
-    MouseY = y
+Private Sub MainViewPic_MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
+    MouseX = X
+    MouseY = Y
     
     'Call GuiMouseMove(X, Y)
 End Sub
 
-Private Sub MainViewPic_MouseUp(Button As Integer, Shift As Integer, x As Single, y As Single)
-    clicX = x
-    clicY = y
+Private Sub MainViewPic_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
+    clicX = X
+    clicY = Y
 End Sub
 
 Private Sub mnuEquipar_Click()
@@ -1538,10 +1555,10 @@ Private Sub TirarItem()
         End With
     Else
         If (Inventario.SelectedItem > 0 And Inventario.SelectedItem < MAX_INVENTORY_SLOTS + 1) Or (Inventario.SelectedItem = FLAGORO) Then
-            If Inventario.amount(Inventario.SelectedItem) = 1 Then
+            If Inventario.Amount(Inventario.SelectedItem) = 1 Then
                 Call WriteDrop(Inventario.SelectedItem, 1)
             Else
-                If Inventario.amount(Inventario.SelectedItem) > 1 Then
+                If Inventario.Amount(Inventario.SelectedItem) > 1 Then
                     If Not Comerciando Then frmCantidad.Show , frmMain
                 End If
             End If
@@ -1632,7 +1649,7 @@ Private Sub cmdLanzar_Click()
     End If
 End Sub
 
-Private Sub CmdLanzar_MouseMove(Button As Integer, Shift As Integer, x As Single, y As Single)
+Private Sub CmdLanzar_MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
     UsaMacro = False
     CnTd = 0
 End Sub
@@ -1764,7 +1781,7 @@ Private Sub Form_DblClick()
     End If
 End Sub
 
-Private Sub Form_MouseMove(Button As Integer, Shift As Integer, x As Single, y As Single)
+Private Sub Form_MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
 '    MouseX = X - MainViewShp.Left
 '    MouseY = Y - MainViewShp.Top
     
@@ -1857,7 +1874,7 @@ Private Sub picInv_DblClick()
     Call UsarItem
 End Sub
 
-Private Sub picInv_MouseUp(Button As Integer, Shift As Integer, x As Single, y As Single)
+Private Sub picInv_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
     'call 'audio.PlayWave(SND_CLICK)
 End Sub
 
@@ -1990,7 +2007,7 @@ Private Sub Socket1_Connect()
     Call outgoingData.ReadASCIIStringFixed(outgoingData.Length)
     
 
-    second.Enabled = True
+    Second.Enabled = True
 
     Select Case EstadoLogin
         Case E_MODO.CrearNuevoPj
@@ -2008,7 +2025,7 @@ End Sub
 Private Sub Socket1_Disconnect()
     Dim i As Long
     
-    second.Enabled = False
+    Second.Enabled = False
     Connected = False
     
     Socket1.Cleanup
@@ -2070,7 +2087,7 @@ Private Sub Socket1_LastError(ErrorCode As Integer, ErrorString As String, Respo
     Call MsgBox(ErrorString, vbApplicationModal + vbInformation + vbOKOnly + vbDefaultButton1, "Error")
     frmConnect.MousePointer = 1
     Response = 0
-    second.Enabled = False
+    Second.Enabled = False
 
     frmMain.Socket1.Disconnect
     
@@ -2103,8 +2120,8 @@ Private Function InGameArea() As Boolean
 'Last Modification: 04/07/08
 'Checks if last click was performed within or outside the game area.
 '***************************************************
-    If clicX < MainViewShp.Left Or clicX > MainViewShp.Left + MainViewShp.width Then Exit Function
-    If clicY < MainViewShp.Top Or clicY > MainViewShp.Top + MainViewShp.height Then Exit Function
+    If clicX < MainViewShp.Left Or clicX > MainViewShp.Left + MainViewShp.Width Then Exit Function
+    If clicY < MainViewShp.Top Or clicY > MainViewShp.Top + MainViewShp.Height Then Exit Function
     
     InGameArea = True
 End Function

@@ -146,6 +146,8 @@ Private Enum ServerPacketID
     ShowFormClase
     EligeFaccion
     ShowFaccionForm
+    EligeRecompensa
+    ShowRecompensaForm
 End Enum
 
 Private Enum ClientPacketID
@@ -238,6 +240,8 @@ Private Enum ClientPacketID
     EligioClase
     EligioFaccion
     RequestFaccionForm
+    RequestRecompensaForm
+    EligioRecompensa
 End Enum
 
 Public Enum FontTypeNames
@@ -723,6 +727,12 @@ Public Sub HandleIncomingData()
         
         Case ServerPacketID.ShowFaccionForm
             Call HandleShowFaccionForm
+        
+        Case ServerPacketID.EligeRecompensa
+            Call HandleEligeRecompensa
+        
+        Case ServerPacketID.ShowRecompensaForm
+            Call HandleShowRecompensaForm
             
         Case Else
             'ERROR : Abort!
@@ -3747,7 +3757,7 @@ Private Sub HandleMiniStats()
         .CiudadanosMatados = incomingData.ReadLong()
         .UsuariosMatados = incomingData.ReadLong()
         .NpcsMatados = incomingData.ReadInteger()
-        .clase = ListaClases(incomingData.ReadByte())
+        .Clase = ListaClases(incomingData.ReadByte())
         .PenaCarcel = incomingData.ReadLong()
     End With
 End Sub
@@ -8401,8 +8411,17 @@ Public Sub WriteRequestClaseForm()
     End With
 End Sub
 
-Public Sub writerequestfaccionform()
+Public Sub WriteRequestFaccionForm()
     Call outgoingData.WriteByte(ClientPacketID.RequestFaccionForm)
+End Sub
+
+Public Sub WriteRequestRecompensaForm()
+    Call outgoingData.WriteByte(ClientPacketID.RequestRecompensaForm)
+End Sub
+
+Public Sub WriteEligioRecompensa(ByVal Index As Byte)
+    Call outgoingData.WriteByte(ClientPacketID.EligioRecompensa)
+    Call outgoingData.WriteByte(Index)
 End Sub
 Private Sub HandleShowFormClase()
 
@@ -8435,6 +8454,7 @@ Private Sub HandleShowFaccionForm()
     
     End With
 End Sub
+
 Private Sub HandleEligeFaccion()
     
     With incomingData
@@ -8442,6 +8462,40 @@ Private Sub HandleEligeFaccion()
         Call .ReadByte
         
         frmMain.lblFaccion.Visible = .ReadBoolean
+    End With
+End Sub
+
+Private Sub HandleEligeRecompensa()
+    
+    With incomingData
+    
+        Call .ReadByte
+        
+        frmMain.lblRecompensa.Visible = .ReadBoolean
+    End With
+End Sub
+
+Private Sub HandleShowRecompensaForm()
+    With incomingData
+        
+        Call .ReadByte
+        
+        Dim Clase As Byte
+        Dim Recom As Integer
+        
+        Clase = .ReadByte
+        Recom = .ReadInteger
+        
+        Dim i As Long
+        
+        For i = 1 To 2
+            frmRecompensa.Nombre(i) = Recompensas(Clase, Recom, i).Name
+            frmRecompensa.Descripcion(i) = Recompensas(Clase, Recom, i).Descripcion
+        Next
+        
+        frmRecompensa.Visible = True
+        frmRecompensa.SetFocus
+        
     End With
 End Sub
 Public Sub WriteSendEligioSubClase(ByVal Index As Integer)
