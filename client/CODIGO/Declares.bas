@@ -33,10 +33,14 @@ Attribute VB_Name = "Mod_Declaraciones"
 
 Option Explicit
 
+Public ChoosingWhisper As Boolean
+Public TalkMode As Byte
+Public WhisperTarget As String
+
 'Objetos públicos
 'Public DialogosClanes As New clsGuildDlg
 Public Dialogos As New clsDialogs
-Public Audio As New clsAudio
+'Public Audio As New clsAudio
 Public Inventario As New clsGraphicalInventory
 Public InvBanco(1) As New clsGraphicalInventory
 
@@ -52,7 +56,7 @@ Public Const MAX_LIST_ITEMS As Byte = 4
 Public InvLingosHerreria(1 To MAX_LIST_ITEMS) As New clsGraphicalInventory
 Public InvMaderasCarpinteria(1 To MAX_LIST_ITEMS) As New clsGraphicalInventory
                 
-Public SurfaceDB As clsSurfaceManager   'No va new porque es una interfaz, el new se pone al decidir que clase de objeto es
+'Public SurfaceDB As New clsSurfaceManDyn   'No va new porque es una interfaz, el new se pone al decidir que clase de objeto es
 Public CustomKeys As New clsCustomKeys
 Public CustomMessages As New clsCustomMessages
 
@@ -141,14 +145,8 @@ Public Const MP3_Inicio As Byte = 101
 
 Public RawServersList As String
 
-Public Type tColor
-    R As Byte
-    g As Byte
-    b As Byte
-End Type
-
-Public ColoresPJ(0 To 50) As tColor
-
+'GoDKeR: Mucho mejor asi que la chastrinada de antes
+Public ColoresPJ(0 To 50) As Long
 
 Public Type tServerInfo
     Ip As String
@@ -164,7 +162,13 @@ Public CurServer As Integer
 
 'Public CreandoClan As Boolean
 'Public ClanName As String
-Public Site As String
+
+Type tRecompensa
+    Name As String
+    Descripcion As String
+End Type
+
+Public Recompensas() As tRecompensa
 
 Public UserCiego As Boolean
 Public UserEstupido As Boolean
@@ -181,13 +185,6 @@ Public Const bPiernaDerecha = 3
 Public Const bBrazoDerecho = 4
 Public Const bBrazoIzquierdo = 5
 Public Const bTorso = 6
-
-'Timers de GetTickCount
-Public Const tAt = 2000
-Public Const tUs = 600
-
-Public Const PrimerBodyBarco = 84
-Public Const UltimoBodyBarco = 87
 
 Public NumEscudosAnims As Integer
 
@@ -207,7 +204,6 @@ Public UserBancoInventory(1 To MAX_BANCOINVENTORY_SLOTS) As Inventory
 Public TradingUserName As String
 
 Public Tips() As String * 255
-Public Const LoopAdEternum As Integer = 999
 
 'Direcciones
 Public Enum E_Heading
@@ -220,7 +216,6 @@ End Enum
 'Objetos
 Public Const MAX_INVENTORY_OBJS As Integer = 10000
 Public Const MAX_INVENTORY_SLOTS As Byte = 30
-Public Const MAX_NORMAL_INVENTORY_SLOTS As Byte = 20
 Public Const MAX_NPC_INVENTORY_SLOTS As Byte = 50
 Public Const MAXHECHI As Byte = 35
 
@@ -234,8 +229,6 @@ Public Const MAXATRIBUTOS As Byte = 38
 Public Const FLAGORO As Integer = MAX_INVENTORY_SLOTS + 1
 Public Const GOLD_OFFER_SLOT As Integer = INV_OFFER_SLOTS + 1
 
-Public Const FOgata As Integer = 1521
-
 Public Enum eFaccion
     Neutral = 0
     Real = 1
@@ -246,35 +239,35 @@ Public Enum eClass
         Ciudadano = 1
         Trabajador = 2
         Experto_Minerales = 3
-        Minero = 4
-        Herrero = 5 '8
+        MINERO = 4
+        HERRERO = 5 '8
         Experto_Madera = 6 '13
-        Talador = 7 '14
-        Carpintero = 8 '18
-        Pescador = 9 '23
+        TALADOR = 7 '14
+        CARPINTERO = 8 '18
+        PESCADOR = 9 '23
         Sastre = 10 '27
         Alquimista = 11 '31
         Luchador = 12 '35
         Con_Mana = 13 '36
         Hechicero = 14 '37
-        Mago = 15 '38
-        Nigromante = 16 '39
+        MAGO = 15 '38
+        NIGROMANTE = 16 '39
         Orden_Sagrada = 17 '40
-        Paladin = 18 '41
-        Clerigo = 19 '42
+        PALADIN = 18 '41
+        CLERIGO = 19 '42
         Naturalista = 20 '43
-        Bardo = 21 '44
-        Druida = 22 '45
+        BARDO = 21 '44
+        DRUIDA = 22 '45
         Sigiloso = 23 '46
-        Asesino = 24 '47
-        Cazador = 25 '48
+        ASESINO = 24 '47
+        CAZADOR = 25 '48
         Sin_Mana = 26 '49
-        Arquero = 27 '50
-        Guerrero = 28 '51
+        ARQUERO = 27 '50
+        GUERRERO = 28 '51
         Caballero = 29 '52
         Bandido = 30 '53
-        Pirata = 31 '55
-        Ladron = 32 '56
+        PIRATA = 31 '55
+        LADRON = 32 '56
 End Enum
 
 Public Enum eCiudad
@@ -385,15 +378,6 @@ End Enum
 Public MaxInventorySlots As Byte
 
 Public Const FundirMetal As Integer = 88
-
-' Determina el color del nick
-Public Enum eNickColor
-    ieCiudadano = 2
-    ieCriminal = 3
-    ieNewbie = 4
-    ieNetrual = 5
-    ieAtacable = 6
-End Enum
 
 Public Enum eGMCommands
     GMMessage = 1           '/GMSG
@@ -536,13 +520,8 @@ Public Const MENSAJE_CRIATURA_MATADO As String = "¡¡¡La criatura te ha matado!!!
 Public Const MENSAJE_RECHAZO_ATAQUE_ESCUDO As String = "¡¡¡Has rechazado el ataque con el escudo!!!"
 Public Const MENSAJE_USUARIO_RECHAZO_ATAQUE_ESCUDO  As String = "¡¡¡El usuario rechazó el ataque con su escudo!!!"
 Public Const MENSAJE_FALLADO_GOLPE As String = "¡¡¡Has fallado el golpe!!!"
-Public Const MENSAJE_SEGURO_ACTIVADO As String = ">>SEGURO ACTIVADO<<"
-Public Const MENSAJE_SEGURO_DESACTIVADO As String = ">>SEGURO DESACTIVADO<<"
 Public Const MENSAJE_PIERDE_NOBLEZA As String = "¡¡Has perdido puntaje de nobleza y ganado puntaje de criminalidad!! Si sigues ayudando a criminales te convertirás en uno de ellos y serás perseguido por las tropas de las ciudades."
 Public Const MENSAJE_USAR_MEDITANDO As String = "¡Estás meditando! Debes dejar de meditar para usar objetos."
-
-Public Const MENSAJE_SEGURO_RESU_ON As String = "SEGURO DE RESURRECCION ACTIVADO"
-Public Const MENSAJE_SEGURO_RESU_OFF As String = "SEGURO DE RESURRECCION DESACTIVADO"
 
 Public Const MENSAJE_GOLPE_CABEZA As String = "¡¡La criatura te ha pegado en la cabeza por "
 Public Const MENSAJE_GOLPE_BRAZO_IZQ As String = "¡¡La criatura te ha pegado el brazo izquierdo por "
@@ -692,7 +671,7 @@ Type tEstadisticasUsu
     CriminalesMatados As Long
     UsuariosMatados As Long
     NpcsMatados As Long
-    clase As String
+    Clase As String
     PenaCarcel As Long
 End Type
 
@@ -710,8 +689,6 @@ End Type
 Public Nombres As Boolean
 
 'User status vars
-Global OtroInventario(1 To MAX_INVENTORY_SLOTS) As Inventory
-
 Public UserHechizos(1 To MAXHECHI) As Integer
 
 Public NPCInventory(1 To MAX_NPC_INVENTORY_SLOTS) As NpCinV
@@ -731,7 +708,6 @@ Public UserMinHAM As Byte
 Public UserGLD As Long
 Public UserLvl As Integer
 Public UserPort As Integer
-Public UserServerIP As String
 Public UserEstado As Byte '0 = Vivo & 1 = Muerto
 Public UserPasarNivel As Long
 Public UserExp As Long
@@ -759,7 +735,6 @@ Public UserShieldEqpSlot As Byte
 Public Comerciando As Boolean
 Public MirandoForo As Boolean
 Public MirandoAsignarSkills As Boolean
-Public MirandoEstadisticas As Boolean
 'Public MirandoParty As Boolean
 '<-------------------------NUEVO-------------------------->
 
@@ -789,7 +764,6 @@ Public ListaClases(1 To NUMCLASES) As String
 Public SkillPoints As Integer
 Public Alocados As Integer
 Public flags() As Integer
-Public Oscuridad As Integer
 'Public logged As Boolean ' www.gs-zone.org
 
 Public UsingSkill As Integer
@@ -865,12 +839,9 @@ Public Enum eTrigger
 End Enum
 
 'Server stuff
-Public RequestPosTimer As Integer 'Used in main loop
 Public stxtbuffer As String 'Holds temp raw data from server
 Public stxtbuffercmsg As String 'Holds temp raw data from server
-Public SendNewChar As Boolean 'Used during login
 Public Connected As Boolean 'True when connected to server
-Public DownloadingMap As Boolean 'Currently downloading a map from server
 Public UserMap As Integer
 
 'Control
@@ -972,25 +943,8 @@ Public Traveling As Boolean
 
 Public Const OFFSET_HEAD As Integer = -34
 
-Public Enum eSMType
-    sResucitation
-    sSafemode
-    mSpells
-    mWork
-End Enum
-
-Public Const SM_CANT As Byte = 4
-Public SMStatus(SM_CANT) As Boolean
-
-'Hardcoded grhs and items
-Public Const GRH_INI_SM As Integer = 4978
-
 Public Const ORO_INDEX As Integer = 12
 Public Const ORO_GRH As Integer = 511
-
-Public Const GRH_HALF_STAR As Integer = 5357
-Public Const GRH_FULL_STAR As Integer = 5358
-Public Const GRH_GLOW_STAR As Integer = 5359
 
 Public Const LH_GRH As Integer = 724
 Public Const LP_GRH As Integer = 725

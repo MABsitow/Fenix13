@@ -118,7 +118,7 @@ On Error GoTo ErrHandler
     
     For i = TrashCollector.count To 1 Step -1
         Set d = TrashCollector(i)
-        Call EraseObj(1, d.Map, d.X, d.Y)
+        Call EraseObj(1, d.map, d.X, d.Y)
         Call TrashCollector.Remove(i)
         Set d = Nothing
     Next i
@@ -165,8 +165,8 @@ On Error Resume Next
     Call LoadMotd
     Call BanIpCargar
     
-    Prision.Map = 66
-    Libertad.Map = 66
+    Prision.map = 66
+    Libertad.map = 66
     
     Prision.X = 75
     Prision.Y = 47
@@ -316,7 +316,7 @@ On Error Resume Next
     SkillsNames(eSkill.Proyectiles) = "Combate a distancia"
     SkillsNames(eSkill.Wrestling) = "Combate sin armas"
     SkillsNames(eSkill.Navegacion) = "Navegacion"
-    SkillsNames(eSkill.Sastreria) = "Sastreria" 'todo implementar sastre al trabajador (uff)
+    SkillsNames(eSkill.Sastreria) = "Sastreria"
     SkillsNames(eSkill.Resis) = "Resistencia Magica"
     
     ListaAtributos(eAtributos.Fuerza) = "Fuerza"
@@ -378,6 +378,9 @@ On Error Resume Next
     frmCargando.Label1(2).Caption = "Cargando Objetos de Carpintería"
     Call LoadObjCarpintero
     
+    frmCargando.Label1(2).Caption = "Cargando Objetos de Sastrería"
+    Call LoadObjSastre
+    
     frmCargando.Label1(2).Caption = "Cargando Balance.Dat"
     Call LoadBalance    '4/01/08 Pablo ToxicWaste
     
@@ -395,7 +398,9 @@ On Error Resume Next
     End If
     
     Call SonidosMapas.LoadSoundMapInfo
-
+    
+    Call EstablecerRecompensas
+    
     Call generateMatrix
     
     'Comentado porque hay worldsave en ese mapa!
@@ -492,14 +497,14 @@ Function ReadField(ByVal Pos As Integer, ByRef Text As String, ByVal SepASCII As
     End If
 End Function
 
-Function MapaValido(ByVal Map As Integer) As Boolean
+Function MapaValido(ByVal map As Integer) As Boolean
 '***************************************************
 'Author: Unknown
 'Last Modification: -
 '
 '***************************************************
 
-    MapaValido = Map >= 1 And Map <= NumMaps
+    MapaValido = map >= 1 And map <= NumMaps
 End Function
 
 Sub MostrarNumUsers()
@@ -943,10 +948,10 @@ Public Function Intemperie(ByVal UserIndex As Integer) As Boolean
 '**************************************************************
 
     With UserList(UserIndex)
-        If MapInfo(.Pos.Map).Zona <> "DUNGEON" Then
-            If MapData(.Pos.Map, .Pos.X, .Pos.Y).trigger <> 1 And _
-               MapData(.Pos.Map, .Pos.X, .Pos.Y).trigger <> 2 And _
-               MapData(.Pos.Map, .Pos.X, .Pos.Y).trigger <> 4 Then Intemperie = True
+        If MapInfo(.Pos.map).Zona <> "DUNGEON" Then
+            If MapData(.Pos.map, .Pos.X, .Pos.Y).trigger <> 1 And _
+               MapData(.Pos.map, .Pos.X, .Pos.Y).trigger <> 2 And _
+               MapData(.Pos.map, .Pos.X, .Pos.Y).trigger <> 4 Then Intemperie = True
         Else
             Intemperie = False
         End If
@@ -1013,7 +1018,7 @@ Public Sub EfectoFrio(ByVal UserIndex As Integer)
         If .Counters.Frio < IntervaloFrio Then
             .Counters.Frio = .Counters.Frio + 1
         Else
-            If MapInfo(.Pos.Map).Terreno = Nieve Then
+            If MapInfo(.Pos.map).Terreno = Nieve Then
                 Call WriteConsoleMsg(UserIndex, "¡¡Estás muriendo de frío, abrigate o morirás!!", FontTypeNames.FONTTYPE_INFO)
                 modifi = Porcentaje(.Stats.MaxHp, 5)
                 .Stats.MinHp = .Stats.MinHp - modifi
@@ -1211,6 +1216,19 @@ Public Sub EfectoParalisisUser(ByVal UserIndex As Integer)
 
 End Sub
 
+Public Sub EfectoBonusFlecha(ByVal UserIndex As Integer)
+    With UserList(UserIndex)
+        
+        If .Counters.BonusFlecha > 0 Then
+            .Counters.BonusFlecha = .Counters.BonusFlecha - 1
+        Else
+            .flags.BonusFlecha = False
+            Call WriteConsoleMsg(UserIndex, "El efecto de Arco Encantado ha terminado.", FontTypeNames.FONTTYPE_INFO)
+        End If
+        
+    End With
+End Sub
+
 Public Sub RecStamina(ByVal UserIndex As Integer, ByRef EnviarStats As Boolean, ByVal Intervalo As Integer)
 '***************************************************
 'Author: Unknown
@@ -1219,9 +1237,9 @@ Public Sub RecStamina(ByVal UserIndex As Integer, ByRef EnviarStats As Boolean, 
 '***************************************************
 
     With UserList(UserIndex)
-        If MapData(.Pos.Map, .Pos.X, .Pos.Y).trigger = 1 And _
-           MapData(.Pos.Map, .Pos.X, .Pos.Y).trigger = 2 And _
-           MapData(.Pos.Map, .Pos.X, .Pos.Y).trigger = 4 Then Exit Sub
+        If MapData(.Pos.map, .Pos.X, .Pos.Y).trigger = 1 And _
+           MapData(.Pos.map, .Pos.X, .Pos.Y).trigger = 2 And _
+           MapData(.Pos.map, .Pos.X, .Pos.Y).trigger = 4 Then Exit Sub
         
         
         Dim massta As Integer
@@ -1305,6 +1323,8 @@ Public Sub HambreYSed(ByVal UserIndex As Integer, ByRef fenviarAyS As Boolean)
     With UserList(UserIndex)
         If Not .flags.Privilegios And PlayerType.User Then Exit Sub
         
+        If (.Clase = eClass.Talador And .Recompensas(1) = 2) Then Exit Sub
+        
         'Sed
         If .Stats.MinAGU > 0 Then
             If .Counters.AGUACounter < IntervaloSed Then
@@ -1348,9 +1368,9 @@ Public Sub Sanar(ByVal UserIndex As Integer, ByRef EnviarStats As Boolean, ByVal
 '***************************************************
 
     With UserList(UserIndex)
-        If MapData(.Pos.Map, .Pos.X, .Pos.Y).trigger = 1 And _
-           MapData(.Pos.Map, .Pos.X, .Pos.Y).trigger = 2 And _
-           MapData(.Pos.Map, .Pos.X, .Pos.Y).trigger = 4 Then Exit Sub
+        If MapData(.Pos.map, .Pos.X, .Pos.Y).trigger = 1 And _
+           MapData(.Pos.map, .Pos.X, .Pos.Y).trigger = 2 And _
+           MapData(.Pos.map, .Pos.X, .Pos.Y).trigger = 4 Then Exit Sub
         
         Dim mashit As Integer
         'con el paso del tiempo va sanando....pero muy lentamente ;-)
@@ -1495,4 +1515,16 @@ Public Sub FreeCharIndexes()
 '***************************************************
     ' Free all char indexes (set them all to 0)
     Call ZeroMemory(CharList(1), MAXCHARS * Len(CharList(1)))
+End Sub
+
+Public Function Buleano(A As Boolean) As Byte
+
+Buleano = -A
+
+End Function
+
+Public Sub AddtoVar(Var As Variant, Addon As Variant, MAX As Variant)
+
+Var = MinimoInt(Var + Addon, MAX)
+
 End Sub

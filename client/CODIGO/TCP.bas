@@ -33,7 +33,6 @@ Attribute VB_Name = "Mod_TCP"
 
 
 Option Explicit
-Public Warping As Boolean
 Public LlegaronSkills As Boolean
 Public LlegaronAtrib As Boolean
 Public LlegoFama As Boolean

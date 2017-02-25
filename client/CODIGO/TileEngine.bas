@@ -33,6 +33,26 @@ Attribute VB_Name = "Mod_TileEngine"
 
 Option Explicit
 
+Public Type Texture
+        Ptr As Long
+        Width As Integer
+        Height As Integer
+End Type
+
+Private Type RECT
+        X1 As Long
+        X2 As Long
+        Y1 As Long
+        Y2 As Long
+End Type
+
+Private SpriteBatch As clsBGFXSpriteBatch
+
+'Private Viewport As D3DVIEWPORT8
+Private Projection As TYPE_MATH_MATRIX
+Private View As TYPE_MATH_MATRIX
+'Private Camera As D3DVECTOR
+
 'Map sizes in tiles
 Public Const XMaxMapSize As Byte = 100
 Public Const XMinMapSize As Byte = 1
@@ -154,6 +174,7 @@ Public Type Char
     Criminal As Byte
     
     Nombre As String
+    NombreOffset As Integer
     
     scrollDirectionX As Integer
     scrollDirectionY As Integer
@@ -196,16 +217,12 @@ Public Type MapInfo
     MapVersion As Integer
 End Type
 
-'DX7 Objects
-Public DirectX As New DirectX7
-Public DirectDraw As DirectDraw7
-Private PrimarySurface As DirectDrawSurface7
-Private PrimaryClipper As DirectDrawClipper
-Private BackBufferSurface As DirectDrawSurface7
+Public Const DegreeToRadian As Single = 0.01745329251994 'Pi / 180
+
+
+Public AmbientColor(3) As Long
 
 Public IniPath As String
-Public MapPath As String
-
 
 'Bordes del mapa
 Public MinXBorder As Byte
@@ -245,8 +262,8 @@ Private MainViewLeft As Integer
 'volver el engine muy lento
 Public TileBufferSize As Integer
 
-Private TileBufferPixelOffsetX As Integer
-Private TileBufferPixelOffsetY As Integer
+'Private TileBufferPixelOffsetX As Integer
+'Private TileBufferPixelOffsetY As Integer
 
 'Tamaño de los tiles en pixels
 Public TilePixelHeight As Integer
@@ -260,29 +277,20 @@ Dim timerElapsedTime As Single
 Dim timerTicksPerFrame As Single
 Dim engineBaseSpeed As Single
 
-
-Public NumBodies As Integer
-Public Numheads As Integer
-Public NumFxs As Integer
-
 Public NumChars As Integer
 Public LastChar As Integer
 Public NumWeaponAnims As Integer
-Public NumShieldAnims As Integer
 
+Private MainView        As Long 'ID
+Private MainViewWidth   As Integer
+Private MainViewHeight  As Integer
 
-Private MainDestRect   As RECT
-Private MainViewRect   As RECT
-Private BackBufferRect As RECT
-
-Private MainViewWidth As Integer
-Private MainViewHeight As Integer
+'Private Const Layer2    As Long = 1
+Private Const Layer3    As Long = 1
+Private Const Layer4    As Long = 2
 
 Private MouseTileX As Byte
 Private MouseTileY As Byte
-
-
-
 
 '¿?¿?¿?¿?¿?¿?¿?¿?¿?¿Graficos¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?
 Public GrhData() As GrhData 'Guarda todos los grh
@@ -301,51 +309,24 @@ Public MapInfo As MapInfo ' Info acerca del mapa en uso
 
 Public bRain        As Boolean 'está raineando?
 Public bTecho       As Boolean 'hay techo?
-Public brstTick     As Long
-
-Private RLluvia(7)  As RECT  'RECT de la lluvia
-Private iFrameIndex As Byte  'Frame actual de la LL
-Private llTick      As Long  'Contador
-Private LTLluvia(4) As Integer
 
 Public charlist(1 To 10000) As Char
 
 ' Used by GetTextExtentPoint32
-Private Type size
+Private Type Size
     cx As Long
     cy As Long
 End Type
 
-'[CODE 001]:MatuX
 Public Enum PlayLoop
     plNone = 0
     plLluviain = 1
     plLluviaout = 2
 End Enum
 
-'[END]'
-'
-'       [END]
-'¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?
-
-#If ConAlfaB Then
-
-Private Declare Function BltAlphaFast Lib "vbabdx" (ByRef lpDDSDest As Any, ByRef lpDDSSource As Any, ByVal iWidth As Long, ByVal iHeight As Long, _
-        ByVal pitchSrc As Long, ByVal pitchDst As Long, ByVal dwMode As Long) As Long
-Private Declare Function BltEfectoNoche Lib "vbabdx" (ByRef lpDDSDest As Any, ByVal iWidth As Long, ByVal iHeight As Long, _
-        ByVal pitchDst As Long, ByVal dwMode As Long) As Long
-
-#End If
-
 'Very percise counter 64bit system counter
 Private Declare Function QueryPerformanceFrequency Lib "kernel32" (lpFrequency As Currency) As Long
 Private Declare Function QueryPerformanceCounter Lib "kernel32" (lpPerformanceCount As Currency) As Long
-
-'Text width computation. Needed to center text.
-Private Declare Function GetTextExtentPoint32 Lib "gdi32" Alias "GetTextExtentPoint32A" (ByVal hdc As Long, ByVal lpsz As String, ByVal cbString As Long, lpSize As size) As Long
-
-Private Declare Function SetPixel Lib "gdi32" (ByVal hdc As Long, ByVal X As Long, ByVal Y As Long, ByVal crColor As Long) As Long
-Private Declare Function GetPixel Lib "gdi32" (ByVal hdc As Long, ByVal X As Long, ByVal Y As Long) As Long
 
 Sub CargarCabezas()
     Dim N As Integer
@@ -522,12 +503,12 @@ Sub CargarArrayLluvia()
     Close #N
 End Sub
 
-Sub ConvertCPtoTP(ByVal viewPortX As Integer, ByVal viewPortY As Integer, ByRef tX As Byte, ByRef tY As Byte)
+Sub ConvertCPtoTP(ByVal viewPortX As Integer, ByVal viewPortY As Integer, ByRef TX As Byte, ByRef TY As Byte)
 '******************************************
 'Converts where the mouse is in the main window to a tile position. MUST be called eveytime the mouse moves.
 '******************************************
-    tX = UserPos.X + viewPortX \ TilePixelWidth - WindowTileWidth \ 2
-    tY = UserPos.Y + viewPortY \ TilePixelHeight - WindowTileHeight \ 2
+    TX = UserPos.X + viewPortX \ TilePixelWidth - WindowTileWidth \ 2
+    TY = UserPos.Y + viewPortY \ TilePixelHeight - WindowTileHeight \ 2
 End Sub
 
 Sub MakeChar(ByVal CharIndex As Integer, ByVal Body As Integer, ByVal Head As Integer, ByVal Heading As Byte, ByVal X As Integer, ByVal Y As Integer, ByVal Arma As Integer, ByVal Escudo As Integer, ByVal Casco As Integer)
@@ -582,6 +563,7 @@ Sub ResetCharInfo(ByVal CharIndex As Integer)
         .Moving = 0
         .muerto = False
         .Nombre = ""
+        .NombreOffset = 0
         .pie = False
         .Pos.X = 0
         .Pos.Y = 0
@@ -720,12 +702,12 @@ Public Sub DoFogataFx()
     If bFogata Then
         bFogata = HayFogata(location)
         If Not bFogata Then
-            Call Audio.StopWave(FogataBufferIndex)
+            'call 'audio.StopWave(FogataBufferIndex)
             FogataBufferIndex = 0
         End If
     Else
         bFogata = HayFogata(location)
-        If bFogata And FogataBufferIndex = 0 Then FogataBufferIndex = Audio.PlayWave("fuego.wav", location.X, location.Y, LoopStyle.Enabled)
+        'If bFogata And FogataBufferIndex = 0 Then FogataBufferIndex = 'audio.PlayWave("fuego.wav", location.X, location.Y, LoopStyle.Enabled)
     End If
 End Sub
 
@@ -742,20 +724,19 @@ Sub DoPasosFx(ByVal CharIndex As Integer)
                 .pie = Not .pie
                 
                 If .pie Then
-                    Call Audio.PlayWave(SND_PASOS1, .Pos.X, .Pos.Y)
+                    'call 'audio.PlayWave(SND_PASOS1, .Pos.X, .Pos.Y)
                 Else
-                    Call Audio.PlayWave(SND_PASOS2, .Pos.X, .Pos.Y)
+                    'call 'audio.PlayWave(SND_PASOS2, .Pos.X, .Pos.Y)
                 End If
             End If
         End With
     Else
 ' TODO : Actually we would have to check if the CharIndex char is in the water or not....
-        Call Audio.PlayWave(SND_NAVEGANDO, charlist(CharIndex).Pos.X, charlist(CharIndex).Pos.Y)
+        'call 'audio.PlayWave(SND_NAVEGANDO, charlist(CharIndex).Pos.X, charlist(CharIndex).Pos.Y)
     End If
 End Sub
 
 Sub MoveCharbyPos(ByVal CharIndex As Integer, ByVal nX As Integer, ByVal nY As Integer)
-On Error Resume Next
     Dim X As Integer
     Dim Y As Integer
     Dim addX As Integer
@@ -808,48 +789,78 @@ On Error Resume Next
     End If
 End Sub
 
+Sub MoveCamera(ByVal nHeading As E_Heading)
+
+    'Figure out which way to move
+    Select Case nHeading
+        Case E_Heading.NORTH
+            'Camera.Y = Camera.Y - 1
+        Case E_Heading.EAST
+            'Camera.X = Camera.X + 1
+        Case E_Heading.SOUTH
+            'Camera.Y = Camera.Y + 1
+        Case E_Heading.WEST
+            'Camera.X = Camera.X - 1
+    End Select
+    
+    
+    'Check to see if its out of bounds
+    'If Camera.X < MinXBorder Or Camera.X > MaxXBorder Or Camera.Y < MinYBorder Or Camera.Y > MaxYBorder Then
+    '    Exit Sub
+    'Else
+    
+    '    With At
+    '        .X = Camera.X
+    '        .Y = Camera.Y
+    '        .Z = 0
+    '    End With
+        
+    '    Call D3DXMATH_MATRIX.D3DXMatrixLookAtLH(View, Camera, At, Up)
+    '    Call DirectDevice.SetTransform(D3DTS_VIEW, View)
+        
+   ' End If
+End Sub
+
 Sub MoveScreen(ByVal nHeading As E_Heading)
 '******************************************
 'Starts the screen moving in a direction
 '******************************************
     Dim X As Integer
     Dim Y As Integer
-    Dim tX As Integer
-    Dim tY As Integer
+    Dim TX As Integer
+    Dim TY As Integer
     
     'Figure out which way to move
     Select Case nHeading
         Case E_Heading.NORTH
             Y = -1
-        
         Case E_Heading.EAST
             X = 1
-        
         Case E_Heading.SOUTH
             Y = 1
-        
         Case E_Heading.WEST
             X = -1
     End Select
     
     'Fill temp pos
-    tX = UserPos.X + X
-    tY = UserPos.Y + Y
+    TX = UserPos.X + X
+    TY = UserPos.Y + Y
     
     'Check to see if its out of bounds
-    If tX < MinXBorder Or tX > MaxXBorder Or tY < MinYBorder Or tY > MaxYBorder Then
+    If TX < MinXBorder Or TX > MaxXBorder Or TY < MinYBorder Or TY > MaxYBorder Then
         Exit Sub
     Else
         'Start moving... MainLoop does the rest
         AddtoUserPos.X = X
-        UserPos.X = tX
+        UserPos.X = TX
         AddtoUserPos.Y = Y
-        UserPos.Y = tY
+        UserPos.Y = TY
         UserMoving = 1
         
         bTecho = IIf(MapData(UserPos.X, UserPos.Y).Trigger = 1 Or _
                 MapData(UserPos.X, UserPos.Y).Trigger = 2 Or _
                 MapData(UserPos.X, UserPos.Y).Trigger = 4, True, False)
+        
     End If
 End Sub
 
@@ -876,16 +887,16 @@ Function NextOpenChar() As Integer
 '*****************************************************************
 'Finds next open char slot in CharList
 '*****************************************************************
-    Dim loopc As Long
+    Dim loopC As Long
     Dim Dale As Boolean
     
-    loopc = 1
-    Do While charlist(loopc).Active And Dale
-        loopc = loopc + 1
-        Dale = (loopc <= UBound(charlist))
+    loopC = 1
+    Do While charlist(loopC).Active And Dale
+        loopC = loopC + 1
+        Dale = (loopC <= UBound(charlist))
     Loop
     
-    NextOpenChar = loopc
+    NextOpenChar = loopC
 End Function
 
 ''
@@ -921,7 +932,7 @@ On Error GoTo errorHandler
     Do Until Grh <= 0
         
         With GrhData(Grh)
-
+            
             'Get number of frames
             Get handle, , .NumFrames
             If .NumFrames <= 0 Then GoTo errorHandler
@@ -1083,11 +1094,10 @@ Function InMapBounds(ByVal X As Integer, ByVal Y As Integer) As Boolean
     InMapBounds = True
 End Function
 
-Private Sub DDrawGrhtoSurface(ByRef Grh As Grh, ByVal X As Integer, ByVal Y As Integer, ByVal Center As Byte, ByVal Animate As Byte)
+Private Sub DDrawGrhtoSurface(ByVal Batch As clsBGFXSpriteBatch, ByRef Grh As Grh, ByVal X As Integer, ByVal Y As Integer, ByVal Z As Integer, ByVal Center As Byte, ByVal Animate As Byte, Color() As Long)
     Dim CurrentGrhIndex As Integer
-    Dim SourceRect As RECT
-On Error GoTo error
-        
+'On Error GoTo error
+    
     If Animate Then
         If Grh.Started = 1 Then
             Grh.FrameCounter = Grh.FrameCounter + (timerElapsedTime * GrhData(Grh.GrhIndex).NumFrames / Grh.Speed)
@@ -1120,30 +1130,25 @@ On Error GoTo error
             End If
         End If
         
-        SourceRect.Left = .sX
-        SourceRect.Top = .sY
-        SourceRect.Right = SourceRect.Left + .pixelWidth
-        SourceRect.Bottom = SourceRect.Top + .pixelHeight
-        
         'Draw
-        Call BackBufferSurface.BltFast(X, Y, SurfaceDB.Surface(.FileNum), SourceRect, DDBLTFAST_WAIT)
+        Device_Textured_Render Batch, X, Y, .pixelWidth, .pixelHeight, .sX, .sY, SurfaceDB.Surface(.FileNum), Color
+        
     End With
 Exit Sub
 
 error:
-    If Err.number = 9 And Grh.FrameCounter < 1 Then
+    If Err.Number = 9 And Grh.FrameCounter < 1 Then
         Grh.FrameCounter = 1
         Resume
     Else
         MsgBox "Ocurrió un error inesperado, por favor comuniquelo a los administradores del juego." & vbCrLf & "Descripción del error: " & _
-        vbCrLf & Err.Description, vbExclamation, "[ " & Err.number & " ] Error"
+        vbCrLf & Err.Description, vbExclamation, "[ " & Err.Number & " ] Error"
         End
     End If
 End Sub
 
-Sub DDrawTransGrhIndextoSurface(ByVal GrhIndex As Integer, ByVal X As Integer, ByVal Y As Integer, ByVal Center As Byte)
-    Dim SourceRect As RECT
-    
+Sub DDrawTransGrhIndextoSurface(ByVal Batch As clsBGFXSpriteBatch, ByVal GrhIndex As Integer, ByVal X As Integer, ByVal Y As Integer, ByVal Center As Byte, Color() As Long)
+
     With GrhData(GrhIndex)
         'Center Grh over X,Y pos
         If Center Then
@@ -1156,24 +1161,18 @@ Sub DDrawTransGrhIndextoSurface(ByVal GrhIndex As Integer, ByVal X As Integer, B
             End If
         End If
         
-        SourceRect.Left = .sX
-        SourceRect.Top = .sY
-        SourceRect.Right = SourceRect.Left + .pixelWidth
-        SourceRect.Bottom = SourceRect.Top + .pixelHeight
-        
         'Draw
-        Call BackBufferSurface.BltFast(X, Y, SurfaceDB.Surface(.FileNum), SourceRect, DDBLTFAST_SRCCOLORKEY Or DDBLTFAST_WAIT)
+        Device_Textured_Render Batch, X, Y, .pixelWidth, .pixelHeight, .sX, .sY, SurfaceDB.Surface(.FileNum), Color
     End With
 End Sub
 
-Sub DDrawTransGrhtoSurface(ByRef Grh As Grh, ByVal X As Integer, ByVal Y As Integer, ByVal Center As Byte, ByVal Animate As Byte)
+Sub DDrawTransGrhtoSurface(ByVal Batch As clsBGFXSpriteBatch, ByRef Grh As Grh, ByVal X As Integer, ByVal Y As Integer, ByVal Center As Byte, ByVal Animate As Byte, Color() As Long)
 '*****************************************************************
 'Draws a GRH transparently to a X and Y position
 '*****************************************************************
     Dim CurrentGrhIndex As Integer
-    Dim SourceRect As RECT
     
-On Error GoTo error
+'On Error GoTo error
     
     If Animate Then
         If Grh.Started = 1 Then
@@ -1207,208 +1206,24 @@ On Error GoTo error
                 Y = Y - Int(.TileHeight * TilePixelHeight) + TilePixelHeight
             End If
         End If
-                
-        SourceRect.Left = .sX
-        SourceRect.Top = .sY
-        SourceRect.Right = SourceRect.Left + .pixelWidth
-        SourceRect.Bottom = SourceRect.Top + .pixelHeight
-        
+
         'Draw
-        Call BackBufferSurface.BltFast(X, Y, SurfaceDB.Surface(.FileNum), SourceRect, DDBLTFAST_SRCCOLORKEY Or DDBLTFAST_WAIT)
+        Device_Textured_Render Batch, X, Y, .pixelWidth, .pixelHeight, .sX, .sY, SurfaceDB.Surface(.FileNum), Color
     End With
 Exit Sub
 
 error:
-    If Err.number = 9 And Grh.FrameCounter < 1 Then
+    If Err.Number = 9 And Grh.FrameCounter < 1 Then
         Grh.FrameCounter = 1
         Resume
     Else
         MsgBox "Ocurrió un error inesperado, por favor comuniquelo a los administradores del juego." & vbCrLf & "Descripción del error: " & _
-        vbCrLf & Err.Description, vbExclamation, "[ " & Err.number & " ] Error"
+        vbCrLf & Err.Description, vbExclamation, "[ " & Err.Number & " ] Error"
         End
     End If
 End Sub
 
-#If ConAlfaB = 1 Then
-
-Sub DDrawTransGrhtoSurfaceAlpha(ByRef Grh As Grh, ByVal X As Integer, ByVal Y As Integer, ByVal Center As Byte, ByVal Animate As Byte)
-'*****************************************************************
-'Draws a GRH transparently to a X and Y position
-'*****************************************************************
-    Dim CurrentGrhIndex As Integer
-    Dim SourceRect As RECT
-    Dim Src As DirectDrawSurface7
-    Dim rDest As RECT
-    Dim dArray() As Byte, sArray() As Byte
-    Dim ddsdSrc As DDSURFACEDESC2, ddsdDest As DDSURFACEDESC2
-    Dim Modo As Long
-    
-    If Animate Then
-        If Grh.Started = 1 Then
-            Grh.FrameCounter = Grh.FrameCounter + (timerElapsedTime * GrhData(Grh.GrhIndex).NumFrames / Grh.Speed)
-            
-            If Grh.FrameCounter > GrhData(Grh.GrhIndex).NumFrames Then
-                Grh.FrameCounter = (Grh.FrameCounter Mod GrhData(Grh.GrhIndex).NumFrames) + 1
-                
-                If Grh.Loops <> INFINITE_LOOPS Then
-                    If Grh.Loops > 0 Then
-                        Grh.Loops = Grh.Loops - 1
-                    Else
-                        Grh.Started = 0
-                    End If
-                End If
-            End If
-        End If
-    End If
-    
-    'Figure out what frame to draw (always 1 if not animated)
-    CurrentGrhIndex = GrhData(Grh.GrhIndex).Frames(Grh.FrameCounter)
-    
-    With GrhData(CurrentGrhIndex)
-        'Center Grh over X,Y pos
-        If Center Then
-            If .TileWidth <> 1 Then
-                X = X - Int(.TileWidth * TilePixelWidth / 2) + TilePixelWidth \ 2
-            End If
-            If .TileHeight <> 1 Then
-                Y = Y - Int(.TileHeight * TilePixelHeight) + TilePixelHeight
-            End If
-        End If
-        
-        SourceRect.Left = .sX
-        SourceRect.Top = .sY
-        SourceRect.Right = SourceRect.Left + .pixelWidth
-        SourceRect.Bottom = SourceRect.Top + .pixelHeight
-        
-        Set Src = SurfaceDB.Surface(.FileNum)
-        
-        Src.GetSurfaceDesc ddsdSrc
-        BackBufferSurface.GetSurfaceDesc ddsdDest
-        
-        rDest.Left = X
-        rDest.Top = Y
-        rDest.Right = X + .pixelWidth
-        rDest.Bottom = Y + .pixelHeight
-        
-        If rDest.Right > ddsdDest.lWidth Then
-            rDest.Right = ddsdDest.lWidth
-        End If
-        If rDest.Bottom > ddsdDest.lHeight Then
-            rDest.Bottom = ddsdDest.lHeight
-        End If
-    End With
-    
-    ' 0 -> 16 bits 555
-    ' 1 -> 16 bits 565
-    ' 2 -> 16 bits raro (Sin implementar)
-    ' 3 -> 24 bits
-    ' 4 -> 32 bits
-    
-    If ddsdDest.ddpfPixelFormat.lGBitMask = &H3E0& And ddsdSrc.ddpfPixelFormat.lGBitMask = &H3E0& Then
-        Modo = 0
-    ElseIf ddsdDest.ddpfPixelFormat.lGBitMask = &H7E0& And ddsdSrc.ddpfPixelFormat.lGBitMask = &H7E0& Then
-        Modo = 1
-'TODO : Revisar las máscaras de 24!! Quizás mirando el campo lRGBBitCount para diferenciar 24 de 32...
-    ElseIf ddsdDest.ddpfPixelFormat.lGBitMask = &H7E0& And ddsdSrc.ddpfPixelFormat.lGBitMask = &H7E0& Then
-        Modo = 3
-    ElseIf ddsdDest.ddpfPixelFormat.lGBitMask = &HFF00& And ddsdSrc.ddpfPixelFormat.lGBitMask = &HFF00& Then
-        Modo = 4
-    Else
-        'Modo = 2 '16 bits raro ?
-        Call BackBufferSurface.BltFast(X, Y, Src, SourceRect, DDBLTFAST_SRCCOLORKEY Or DDBLTFAST_WAIT)
-        Exit Sub
-    End If
-    
-    Dim SrcLock As Boolean
-    Dim DstLock As Boolean
-    
-    SrcLock = False
-    DstLock = False
-    
-On Local Error GoTo HayErrorAlpha
-    
-    Call Src.Lock(SourceRect, ddsdSrc, DDLOCK_WAIT, 0)
-    SrcLock = True
-    Call BackBufferSurface.Lock(rDest, ddsdDest, DDLOCK_WAIT, 0)
-    DstLock = True
-    
-    Call BackBufferSurface.GetLockedArray(dArray())
-    Call Src.GetLockedArray(sArray())
-    
-    Call BltAlphaFast(ByVal VarPtr(dArray(X + X, Y)), ByVal VarPtr(sArray(SourceRect.Left * 2, SourceRect.Top)), rDest.Right - rDest.Left, rDest.Bottom - rDest.Top, ddsdSrc.lPitch, ddsdDest.lPitch, Modo)
-    
-    BackBufferSurface.Unlock rDest
-    DstLock = False
-    Src.Unlock SourceRect
-    SrcLock = False
-Exit Sub
-
-HayErrorAlpha:
-    If SrcLock Then Src.Unlock SourceRect
-    If DstLock Then BackBufferSurface.Unlock rDest
-End Sub
-
-#End If 'ConAlfaB = 1
-
-Function GetBitmapDimensions(ByVal BmpFile As String, ByRef bmWidth As Long, ByRef bmHeight As Long)
-'*****************************************************************
-'Gets the dimensions of a bmp
-'*****************************************************************
-    Dim BMHeader As BITMAPFILEHEADER
-    Dim BINFOHeader As BITMAPINFOHEADER
-    
-    Open BmpFile For Binary Access Read As #1
-    
-    Get #1, , BMHeader
-    Get #1, , BINFOHeader
-    
-    Close #1
-    
-    bmWidth = BINFOHeader.biWidth
-    bmHeight = BINFOHeader.biHeight
-End Function
-
-Sub DrawGrhtoHdc(ByVal hdc As Long, ByVal GrhIndex As Integer, ByRef SourceRect As RECT, ByRef destRect As RECT)
-'*****************************************************************
-'Draws a Grh's portion to the given area of any Device Context
-'*****************************************************************
-    Call SurfaceDB.Surface(GrhData(GrhIndex).FileNum).BltToDC(hdc, SourceRect, destRect)
-End Sub
-
-Public Sub DrawTransparentGrhtoHdc(ByVal dsthdc As Long, ByVal srchdc As Long, ByRef SourceRect As RECT, ByRef destRect As RECT, ByVal TransparentColor)
-'**************************************************************
-'Author: Torres Patricio (Pato)
-'Last Modify Date: 12/22/2009
-'This method is SLOW... Don't use in a loop if you care about
-'speed!
-'*************************************************************
-    Dim color As Long
-    Dim X As Long
-    Dim Y As Long
-    
-    For X = SourceRect.Left To SourceRect.Right
-        For Y = SourceRect.Top To SourceRect.Bottom
-            color = GetPixel(srchdc, X, Y)
-            
-            If color <> TransparentColor Then
-                Call SetPixel(dsthdc, destRect.Left + (X - SourceRect.Left), destRect.Top + (Y - SourceRect.Top), color)
-            End If
-        Next Y
-    Next X
-End Sub
-
-Public Sub DrawImageInPicture(ByRef PictureBox As PictureBox, ByRef Picture As StdPicture, ByVal X1 As Single, ByVal Y1 As Single, Optional Width1, Optional Height1, Optional X2, Optional Y2, Optional Width2, Optional Height2)
-'**************************************************************
-'Author: Torres Patricio (Pato)
-'Last Modify Date: 12/28/2009
-'Draw Picture in the PictureBox
-'*************************************************************
-
-Call PictureBox.PaintPicture(Picture, X1, Y1, Width1, Height1, X2, Y2, Width2, Height2)
-End Sub
-
-
-Sub RenderScreen(ByVal tilex As Integer, ByVal tiley As Integer, ByVal PixelOffsetX As Integer, ByVal PixelOffsetY As Integer)
+Sub RenderScreen(ByVal PixelOffsetX As Integer, ByVal PixelOffsetY As Integer)
 '**************************************************************
 'Author: Aaron Perkins
 'Last Modify Date: 8/14/2007
@@ -1417,32 +1232,33 @@ Sub RenderScreen(ByVal tilex As Integer, ByVal tiley As Integer, ByVal PixelOffs
 '**************************************************************
     Dim Y           As Long     'Keeps track of where on map we are
     Dim X           As Long     'Keeps track of where on map we are
-    Dim screenminY  As Integer  'Start Y pos on current screen
-    Dim screenmaxY  As Integer  'End Y pos on current screen
-    Dim screenminX  As Integer  'Start X pos on current screen
-    Dim screenmaxX  As Integer  'End X pos on current screen
+    Dim ScreenMinY  As Integer  'Start Y pos on current screen
+    Dim ScreenMaxY  As Integer  'End Y pos on current screen
+    Dim ScreenMinX  As Integer  'Start X pos on current screen
+    Dim ScreenMaxX  As Integer  'End X pos on current screen
     Dim minY        As Integer  'Start Y pos on current map
     Dim maxY        As Integer  'End Y pos on current map
     Dim minX        As Integer  'Start X pos on current map
     Dim maxX        As Integer  'End X pos on current map
-    Dim ScreenX     As Integer  'Keeps track of where to place tile on screen
-    Dim ScreenY     As Integer  'Keeps track of where to place tile on screen
+    Dim screenX     As Integer  'Keeps track of where to place tile on screen
+    Dim screenY     As Integer  'Keeps track of where to place tile on screen
     Dim minXOffset  As Integer
     Dim minYOffset  As Integer
     Dim PixelOffsetXTemp As Integer 'For centering grhs
     Dim PixelOffsetYTemp As Integer 'For centering grhs
-    
+    Dim wCommon As TYPE_VIDEO_STATE
     
     'Figure out Ends and Starts of screen
-    screenminY = tiley - HalfWindowTileHeight
-    screenmaxY = tiley + HalfWindowTileHeight
-    screenminX = tilex - HalfWindowTileWidth
-    screenmaxX = tilex + HalfWindowTileWidth
+    ScreenMinY = (UserPos.Y - AddtoUserPos.Y) - HalfWindowTileHeight
+    ScreenMaxY = (UserPos.Y - AddtoUserPos.Y) + HalfWindowTileHeight
+    ScreenMinX = (UserPos.X - AddtoUserPos.X) - HalfWindowTileWidth
+    ScreenMaxX = (UserPos.X - AddtoUserPos.X) + HalfWindowTileWidth
     
-    minY = screenminY - TileBufferSize
-    maxY = screenmaxY + TileBufferSize
-    minX = screenminX - TileBufferSize
-    maxX = screenmaxX + TileBufferSize
+    minY = ScreenMinY - TileBufferSize
+    maxY = ScreenMaxY + TileBufferSize
+    minX = ScreenMinX - TileBufferSize
+    maxX = ScreenMaxX + TileBufferSize
+   
     
     'Make sure mins and maxs are allways in map bounds
     If minY < XMinMapSize Then
@@ -1460,141 +1276,120 @@ Sub RenderScreen(ByVal tilex As Integer, ByVal tiley As Integer, ByVal PixelOffs
     If maxX > XMaxMapSize Then maxX = XMaxMapSize
     
     'If we can, we render around the view area to make it smoother
-    If screenminY > YMinMapSize Then
-        screenminY = screenminY - 1
+    If ScreenMinY > YMinMapSize Then
+        ScreenMinY = ScreenMinY - 1
     Else
-        screenminY = 1
-        ScreenY = 1
+        ScreenMinY = 1
+        screenY = 1
     End If
     
-    If screenmaxY < YMaxMapSize Then screenmaxY = screenmaxY + 1
+    If ScreenMaxY < YMaxMapSize Then ScreenMaxY = ScreenMaxY + 1
     
-    If screenminX > XMinMapSize Then
-        screenminX = screenminX - 1
+    If ScreenMinX > XMinMapSize Then
+        ScreenMinX = ScreenMinX - 1
     Else
-        screenminX = 1
-        ScreenX = 1
+        ScreenMinX = 1
+        screenX = 1
     End If
     
-    If screenmaxX < XMaxMapSize Then screenmaxX = screenmaxX + 1
+    If ScreenMaxX < XMaxMapSize Then ScreenMaxX = ScreenMaxX + 1
+    
+    wCommon = Video.AsState(STATE_ALPHA_WRITE, STATE_RGB_WRITE)
+    SpriteBatch.Begin
+    
+    Call SpriteBatch.SetState(wCommon)
     
     'Draw floor layer
-    For Y = screenminY To screenmaxY
-        For X = screenminX To screenmaxX
-            
-            'Layer 1 **********************************
-            Call DDrawGrhtoSurface(MapData(X, Y).Graphic(1), _
-                (ScreenX - 1) * TilePixelWidth + PixelOffsetX + TileBufferPixelOffsetX, _
-                (ScreenY - 1) * TilePixelHeight + PixelOffsetY + TileBufferPixelOffsetY, _
-                0, 1)
-            '******************************************
-            
-            ScreenX = ScreenX + 1
-        Next X
-        
-        'Reset ScreenX to original value and increment ScreenY
-        ScreenX = ScreenX - X + screenminX
-        ScreenY = ScreenY + 1
-    Next Y
+    For Y = ScreenMinY To ScreenMaxY
+        For X = ScreenMinX To ScreenMaxX
     
-    'Draw floor layer 2
-    ScreenY = minYOffset
-    For Y = minY To maxY
-        ScreenX = minXOffset
-        For X = minX To maxX
+            'Layer 1 **********************************
+            Call DDrawGrhtoSurface(SpriteBatch, MapData(X, Y).Graphic(1), _
+                (screenX - 1) * TilePixelWidth + PixelOffsetX, _
+                (screenY - 1) * TilePixelHeight + PixelOffsetY, _
+                0, 0, 1, AmbientColor)
+            '******************************************
             
             'Layer 2 **********************************
             If MapData(X, Y).Graphic(2).GrhIndex <> 0 Then
-                Call DDrawTransGrhtoSurface(MapData(X, Y).Graphic(2), _
-                        (ScreenX - 1) * TilePixelWidth + PixelOffsetX, _
-                        (ScreenY - 1) * TilePixelHeight + PixelOffsetY, _
-                        1, 1)
+                Call DDrawTransGrhtoSurface(SpriteBatch, MapData(X, Y).Graphic(2), _
+                        (screenX - 1) * TilePixelWidth + PixelOffsetX, _
+                        (screenY - 1) * TilePixelHeight + PixelOffsetY, _
+                        1, 1, AmbientColor)
             End If
             '******************************************
             
-            ScreenX = ScreenX + 1
+            screenX = screenX + 1
         Next X
-        ScreenY = ScreenY + 1
+    
+        'Reset ScreenX to original value and increment ScreenY
+        screenX = screenX - X + ScreenMinX
+        screenY = screenY + 1
     Next Y
     
-    'Draw Transparent Layers
-    ScreenY = minYOffset
+   'Draw Transparent Layers
+   screenY = (minYOffset - TileBufferSize)
     For Y = minY To maxY
-        ScreenX = minXOffset
+        screenX = (minXOffset - TileBufferSize)
         For X = minX To maxX
-            PixelOffsetXTemp = (ScreenX - 1) * TilePixelWidth + PixelOffsetX
-            PixelOffsetYTemp = (ScreenY - 1) * TilePixelHeight + PixelOffsetY
-            
+            PixelOffsetXTemp = screenX * TilePixelWidth + PixelOffsetX
+            PixelOffsetYTemp = screenY * TilePixelHeight + PixelOffsetY
+    
             With MapData(X, Y)
                 'Object Layer **********************************
                 If .ObjGrh.GrhIndex <> 0 Then
-                    Call DDrawTransGrhtoSurface(.ObjGrh, _
-                            PixelOffsetXTemp, PixelOffsetYTemp, 1, 1)
+                    Call DDrawTransGrhtoSurface(SpriteBatch, .ObjGrh, _
+                            PixelOffsetXTemp, PixelOffsetYTemp, 1, 1, AmbientColor)
                 End If
                 '***********************************************
-                
-                
+    
+    
                 'Char layer ************************************
                 If .CharIndex <> 0 Then
-                    Call CharRender(.CharIndex, PixelOffsetXTemp, PixelOffsetYTemp)
+                    Call CharRender(SpriteBatch, .CharIndex, PixelOffsetXTemp, PixelOffsetYTemp)
                 End If
                 '*************************************************
-                
-                
+    
+    
                 'Layer 3 *****************************************
                 If .Graphic(3).GrhIndex <> 0 Then
                     'Draw
-                    Call DDrawTransGrhtoSurface(.Graphic(3), _
-                            PixelOffsetXTemp, PixelOffsetYTemp, 1, 1)
+                    Call DDrawTransGrhtoSurface(SpriteBatch, .Graphic(3), _
+                            PixelOffsetXTemp, PixelOffsetYTemp, 1, 1, AmbientColor)
                 End If
                 '************************************************
             End With
-            
-            ScreenX = ScreenX + 1
-        Next X
-        ScreenY = ScreenY + 1
-    Next Y
     
+            screenX = screenX + 1
+        Next X
+        screenY = screenY + 1
+    Next Y
+        
     If Not bTecho Then
         'Draw blocked tiles and grid
-        ScreenY = minYOffset
+        screenY = (minYOffset - TileBufferSize)
         For Y = minY To maxY
-            ScreenX = minXOffset
+            screenX = (minXOffset - TileBufferSize)
             For X = minX To maxX
-                
+               
                 'Layer 4 **********************************
                 If MapData(X, Y).Graphic(4).GrhIndex Then
                     'Draw
-                    Call DDrawTransGrhtoSurface(MapData(X, Y).Graphic(4), _
-                        (ScreenX - 1) * TilePixelWidth + PixelOffsetX, _
-                        (ScreenY - 1) * TilePixelHeight + PixelOffsetY, _
-                        1, 1)
+                    Call DDrawTransGrhtoSurface(SpriteBatch, MapData(X, Y).Graphic(4), _
+                        screenX * TilePixelWidth + PixelOffsetX, _
+                        screenY * TilePixelHeight + PixelOffsetY, _
+                        1, 1, AmbientColor)
                 End If
                 '**********************************
-                
-                ScreenX = ScreenX + 1
+               
+                screenX = screenX + 1
             Next X
-            ScreenY = ScreenY + 1
+            screenY = screenY + 1
         Next Y
     End If
-    
-'TODO : Check this!!
-    If bLluvia(UserMap) = 1 Then
-        If bRain Then
-            'Figure out what frame to draw
-            If llTick < DirectX.TickCount - 50 Then
-                iFrameIndex = iFrameIndex + 1
-                If iFrameIndex > 7 Then iFrameIndex = 0
-                llTick = DirectX.TickCount
-            End If
 
-            For Y = 0 To 4
-                For X = 0 To 4
-                    Call BackBufferSurface.BltFast(LTLluvia(Y), LTLluvia(X), SurfaceDB.Surface(55562), RLluvia(iFrameIndex), DDBLTFAST_SRCCOLORKEY + DDBLTFAST_WAIT)
-                Next X
-            Next Y
-        End If
-    End If
+    SpriteBatch.Finish
+    
 End Sub
 
 Public Function RenderSounds()
@@ -1607,16 +1402,16 @@ Public Function RenderSounds()
         If bRain Then
             If bTecho Then
                 If frmMain.IsPlaying <> PlayLoop.plLluviain Then
-                    If RainBufferIndex Then _
-                        Call Audio.StopWave(RainBufferIndex)
-                    RainBufferIndex = Audio.PlayWave("lluviain.wav", 0, 0, LoopStyle.Enabled)
+                    'If RainBufferIndex Then _
+                        'call 'audio.StopWave(RainBufferIndex)
+                    'RainBufferIndex = 'audio.PlayWave("lluviain.wav", 0, 0, LoopStyle.Enabled)
                     frmMain.IsPlaying = PlayLoop.plLluviain
                 End If
             Else
                 If frmMain.IsPlaying <> PlayLoop.plLluviaout Then
-                    If RainBufferIndex Then _
-                        Call Audio.StopWave(RainBufferIndex)
-                    RainBufferIndex = Audio.PlayWave("lluviaout.wav", 0, 0, LoopStyle.Enabled)
+                    'If RainBufferIndex Then _
+                        'call 'audio.StopWave(RainBufferIndex)
+                    'RainBufferIndex = 'audio.PlayWave("lluviaout.wav", 0, 0, LoopStyle.Enabled)
                     frmMain.IsPlaying = PlayLoop.plLluviaout
                 End If
             End If
@@ -1636,26 +1431,6 @@ Function HayUserAbajo(ByVal X As Integer, ByVal Y As Integer, ByVal GrhIndex As 
     End If
 End Function
 
-Sub LoadGraphics()
-'**************************************************************
-'Author: Juan Martín Sotuyo Dodero - complete rewrite
-'Last Modify Date: 11/03/2006
-'Initializes the SurfaceDB and sets up the rain rects
-'**************************************************************
-    'New surface manager :D
-    Call SurfaceDB.Initialize(DirectDraw, ClientSetup.bUseVideo, DirGraficos, ClientSetup.byMemory)
-    
-    'Set up te rain rects
-    RLluvia(0).Top = 0:      RLluvia(1).Top = 0:      RLluvia(2).Top = 0:      RLluvia(3).Top = 0
-    RLluvia(0).Left = 0:     RLluvia(1).Left = 128:   RLluvia(2).Left = 256:   RLluvia(3).Left = 384
-    RLluvia(0).Right = 128:  RLluvia(1).Right = 256:  RLluvia(2).Right = 384:  RLluvia(3).Right = 512
-    RLluvia(0).Bottom = 128: RLluvia(1).Bottom = 128: RLluvia(2).Bottom = 128: RLluvia(3).Bottom = 128
-    
-    RLluvia(4).Top = 128:    RLluvia(5).Top = 128:    RLluvia(6).Top = 128:    RLluvia(7).Top = 128
-    RLluvia(4).Left = 0:     RLluvia(5).Left = 128:   RLluvia(6).Left = 256:   RLluvia(7).Left = 384
-    RLluvia(4).Right = 128:  RLluvia(5).Right = 256:  RLluvia(6).Right = 384:  RLluvia(7).Right = 512
-    RLluvia(4).Bottom = 256: RLluvia(5).Bottom = 256: RLluvia(6).Bottom = 256: RLluvia(7).Bottom = 256
-End Sub
 
 Public Function InitTileEngine(ByVal setDisplayFormhWnd As Long, ByVal setMainViewTop As Integer, ByVal setMainViewLeft As Integer, ByVal setTilePixelHeight As Integer, ByVal setTilePixelWidth As Integer, ByVal setWindowTileHeight As Integer, ByVal setWindowTileWidth As Integer, ByVal setTileBufferSize As Integer, ByVal pixelsToScrollPerFrameX As Integer, pixelsToScrollPerFrameY As Integer, ByVal engineSpeed As Single) As Boolean
 '***************************************************
@@ -1664,9 +1439,6 @@ Public Function InitTileEngine(ByVal setDisplayFormhWnd As Long, ByVal setMainVi
 'Last modified by: Juan Martín Sotuyo Dodero (Maraxus)
 'Creates all DX objects and configures the engine to start running.
 '***************************************************
-    Dim SurfaceDesc As DDSURFACEDESC2
-    Dim ddck As DDCOLORKEY
-    
     IniPath = App.path & "\Init\"
     
     'Fill startup variables
@@ -1683,8 +1455,8 @@ Public Function InitTileEngine(ByVal setDisplayFormhWnd As Long, ByVal setMainVi
     
     'Compute offset in pixels when rendering tile buffer.
     'We diminish by one to get the top-left corner of the tile for rendering.
-    TileBufferPixelOffsetX = ((TileBufferSize - 1) * TilePixelWidth)
-    TileBufferPixelOffsetY = ((TileBufferSize - 1) * TilePixelHeight)
+    'TileBufferPixelOffsetX = ((TileBufferSize - 1) * TilePixelWidth)
+    'TileBufferPixelOffsetY = ((TileBufferSize - 1) * TilePixelHeight)
     
     engineBaseSpeed = engineSpeed
     
@@ -1711,99 +1483,27 @@ Public Function InitTileEngine(ByVal setDisplayFormhWnd As Long, ByVal setMainVi
     ScrollPixelsPerFrameX = pixelsToScrollPerFrameX
     ScrollPixelsPerFrameY = pixelsToScrollPerFrameY
     
-    'Set the view rect
-    With MainViewRect
-        .Left = MainViewLeft
-        .Top = MainViewTop
-        .Right = .Left + MainViewWidth
-        .Bottom = .Top + MainViewHeight
-    End With
-    
     'Set the dest rect
-    With MainDestRect
-        .Left = TilePixelWidth * TileBufferSize - TilePixelWidth
-        .Top = TilePixelHeight * TileBufferSize - TilePixelHeight
-        .Right = .Left + MainViewWidth
-        .Bottom = .Top + MainViewHeight
-    End With
+    'With MainDestRect
+    '    .X1 = 0
+    '    .Y1 = 0
+    '    .X2 = MainViewWidth
+    '    .Y2 = MainViewHeight
+    'End With
     
-On Error Resume Next
-    Set DirectX = New DirectX7
-    
-    If Err Then
-        MsgBox "No se puede iniciar DirectX. Por favor asegurese de tener la ultima version correctamente instalada."
-        Exit Function
-    End If
-
-    
-    '****** INIT DirectDraw ******
-    ' Create the root DirectDraw object
-    Set DirectDraw = DirectX.DirectDrawCreate("")
-    
-    If Err Then
-        MsgBox "No se puede iniciar DirectDraw. Por favor asegurese de tener la ultima version correctamente instalada."
-        Exit Function
-    End If
-    
-On Error GoTo 0
-    Call DirectDraw.SetCooperativeLevel(setDisplayFormhWnd, DDSCL_NORMAL)
-    
-    'Primary Surface
-    ' Fill the surface description structure
-    With SurfaceDesc
-        .lFlags = DDSD_CAPS
-        .ddsCaps.lCaps = DDSCAPS_PRIMARYSURFACE
-    End With
-    ' Create the surface
-    Set PrimarySurface = DirectDraw.CreateSurface(SurfaceDesc)
-    
-    'Create Primary Clipper
-    Set PrimaryClipper = DirectDraw.CreateClipper(0)
-    Call PrimaryClipper.SetHWnd(frmMain.hwnd)
-    Call PrimarySurface.SetClipper(PrimaryClipper)
-    
-    With BackBufferRect
-        .Left = 0
-        .Top = 0
-        .Right = TilePixelWidth * (WindowTileWidth + 2 * TileBufferSize)
-        .Bottom = TilePixelHeight * (WindowTileHeight + 2 * TileBufferSize)
-    End With
-    
-    With SurfaceDesc
-        .lFlags = DDSD_CAPS Or DDSD_HEIGHT Or DDSD_WIDTH
-        If ClientSetup.bUseVideo Then
-            .ddsCaps.lCaps = DDSCAPS_OFFSCREENPLAIN Or DDSCAPS_VIDEOMEMORY
-        Else
-            .ddsCaps.lCaps = DDSCAPS_OFFSCREENPLAIN Or DDSCAPS_SYSTEMMEMORY
-        End If
-        .lHeight = BackBufferRect.Bottom
-        .lWidth = BackBufferRect.Right
-    End With
-    
-    ' Create surface
-    Set BackBufferSurface = DirectDraw.CreateSurface(SurfaceDesc)
-    
-    'Set color key
-    ddck.low = 0
-    ddck.high = 0
-    Call BackBufferSurface.SetColorKey(DDCKEY_SRCBLT, ddck)
-    
-    'Set font transparency
-    Call BackBufferSurface.SetFontTransparency(D_TRUE)
-    
+    Call BGFX_Init(prgRun)
+    'Call DirectX_Init
     Call LoadGrhData
     Call CargarCuerpos
     Call CargarCabezas
     Call CargarCascos
     Call CargarFxs
     
-    LTLluvia(0) = 224
-    LTLluvia(1) = 352
-    LTLluvia(2) = 480
-    LTLluvia(3) = 608
-    LTLluvia(4) = 736
+    AmbientColor(0) = -1
+    AmbientColor(1) = -1
+    AmbientColor(2) = -1
+    AmbientColor(3) = -1
     
-    Call LoadGraphics
     
     InitTileEngine = True
 End Function
@@ -1814,14 +1514,37 @@ Public Sub DeinitTileEngine()
 'Last Modification: 08/14/07
 'Destroys all DX objects
 '***************************************************
-On Error Resume Next
-    Set PrimarySurface = Nothing
-    Set PrimaryClipper = Nothing
-    Set BackBufferSurface = Nothing
-    
-    Set DirectDraw = Nothing
-    
-    Set DirectX = Nothing
+'Set no texture in the device to avoid memory leaks
+
+        'If Not DirectDevice Is Nothing Then
+        '        DirectDevice.SetTexture 0, Nothing
+        'End If
+        
+        'Set FontVB = Nothing
+        'Set WindowVB = Nothing
+        
+        '// Destroy Textures
+        'Set SurfaceDB = Nothing
+        
+        'Set DirectX = Nothing
+        'Set DirectD3D = Nothing
+        'Set DirectDevice = Nothing
+        
+        Call SurfaceDB.Delete
+        
+        Call Video.Destroy
+        
+        'Clear arrays
+        Erase GrhData
+        Erase BodyData
+        Erase HeadData
+        Erase FxData
+        Erase WeaponAnimData
+        Erase ShieldAnimData
+        Erase CascoAnimData
+        Erase MapData
+        Erase charlist
+        
 End Sub
 
 Sub ShowNextFrame(ByVal DisplayFormTop As Integer, ByVal DisplayFormLeft As Integer, ByVal MouseViewX As Integer, ByVal MouseViewY As Integer)
@@ -1833,12 +1556,6 @@ Sub ShowNextFrame(ByVal DisplayFormTop As Integer, ByVal DisplayFormLeft As Inte
 '***************************************************
     Static OffsetCounterX As Single
     Static OffsetCounterY As Single
-    
-    '****** Set main view rectangle ******
-    MainViewRect.Left = (DisplayFormLeft / Screen.TwipsPerPixelX) + MainViewLeft
-    MainViewRect.Top = (DisplayFormTop / Screen.TwipsPerPixelY) + MainViewTop
-    MainViewRect.Right = MainViewRect.Left + MainViewWidth
-    MainViewRect.Bottom = MainViewRect.Top + MainViewHeight
     
     If EngineRun Then
         If UserMoving Then
@@ -1866,12 +1583,15 @@ Sub ShowNextFrame(ByVal DisplayFormTop As Integer, ByVal DisplayFormLeft As Inte
         'Update mouse position within view area
         Call ConvertCPtoTP(MouseViewX, MouseViewY, MouseTileX, MouseTileY)
         
+        Call Video.SetViewRect(MainView, 0, 0, MainViewWidth, MainViewHeight)
+                
         '****** Update screen ******
         If UserCiego Then
             Call CleanViewPort
         Else
-            Call RenderScreen(UserPos.X - AddtoUserPos.X, UserPos.Y - AddtoUserPos.Y, OffsetCounterX, OffsetCounterY)
+            Call RenderScreen(OffsetCounterX, OffsetCounterY)
         End If
+        
         If ClientSetup.bActive Then
             If isCapturePending Then
                 Call ScreenCapture(True)
@@ -1880,22 +1600,19 @@ Sub ShowNextFrame(ByVal DisplayFormTop As Integer, ByVal DisplayFormLeft As Inte
         End If
         Call Dialogos.Render
         Call DibujarCartel
-        
+
+            
        ' Call DialogosClanes.Draw
+        'Call Inventario.LoopDrawInv
         
-        'Display front-buffer!
-        Call PrimarySurface.Blt(MainViewRect, BackBufferSurface, MainDestRect, DDBLT_WAIT)
         
-        'Limit FPS to 100 (an easy number higher than monitor's vertical refresh rates)
-        While (DirectX.TickCount - fpsLastCheck) \ 10 < FramesPerSecCounter
-            Sleep 5
-        Wend
+        Call Video.Frame
         
         'FPS update
-        If fpsLastCheck + 1000 < DirectX.TickCount Then
+        If fpsLastCheck + 1000 < GetTickCount() Then
             FPS = FramesPerSecCounter
             FramesPerSecCounter = 1
-            fpsLastCheck = DirectX.TickCount
+            fpsLastCheck = GetTickCount()
         Else
             FramesPerSecCounter = FramesPerSecCounter + 1
         End If
@@ -1903,86 +1620,6 @@ Sub ShowNextFrame(ByVal DisplayFormTop As Integer, ByVal DisplayFormLeft As Inte
         'Get timing info
         timerElapsedTime = GetElapsedTime()
         timerTicksPerFrame = timerElapsedTime * engineBaseSpeed
-    End If
-End Sub
-
-#If ConAlfaB Then
-
-Public Sub EfectoNoche(ByRef Surface As DirectDrawSurface7)
-    Dim dArray() As Byte
-    Dim ddsdDest As DDSURFACEDESC2
-    Dim Modo As Long
-    Dim rRect As RECT
-    
-    Surface.GetSurfaceDesc ddsdDest
-    
-    With rRect
-        .Left = 0
-        .Top = 0
-        .Right = ddsdDest.lWidth
-        .Bottom = ddsdDest.lHeight
-    End With
-    
-    If ddsdDest.ddpfPixelFormat.lGBitMask = &H3E0 Then
-        Modo = 0
-    ElseIf ddsdDest.ddpfPixelFormat.lGBitMask = &H7E0 Then
-        Modo = 1
-    Else
-        Modo = 2
-    End If
-    
-    Dim DstLock As Boolean
-    DstLock = False
-    
-    On Local Error GoTo HayErrorAlpha
-    
-    Surface.Lock rRect, ddsdDest, DDLOCK_WAIT, 0
-    DstLock = True
-    
-    Surface.GetLockedArray dArray()
-    Call BltEfectoNoche(ByVal VarPtr(dArray(0, 0)), _
-        ddsdDest.lWidth, ddsdDest.lHeight, ddsdDest.lPitch, _
-        Modo)
-    
-HayErrorAlpha:
-    If DstLock = True Then
-        Surface.Unlock rRect
-        DstLock = False
-    End If
-End Sub
-
-#End If
-
-Public Sub RenderText(ByVal lngXPos As Integer, ByVal lngYPos As Integer, ByRef strText As String, ByVal lngColor As Long, ByRef font As StdFont)
-    If strText <> "" Then
-        Call BackBufferSurface.SetForeColor(vbBlack)
-        Call BackBufferSurface.SetFont(font)
-        Call BackBufferSurface.DrawText(lngXPos - 2, lngYPos - 1, strText, False)
-        
-        Call BackBufferSurface.SetForeColor(lngColor)
-        Call BackBufferSurface.DrawText(lngXPos, lngYPos, strText, False)
-    End If
-End Sub
-
-Public Sub RenderTextCentered(ByVal lngXPos As Integer, ByVal lngYPos As Integer, ByRef strText As String, ByVal lngColor As Long, ByRef font As StdFont)
-    Dim hdc As Long
-    Dim ret As size
-    
-    If strText <> "" Then
-        Call BackBufferSurface.SetFont(font)
-        
-        'Get width of text once rendered
-        hdc = BackBufferSurface.GetDC()
-        Call GetTextExtentPoint32(hdc, strText, Len(strText), ret)
-        Call BackBufferSurface.ReleaseDC(hdc)
-        
-        lngXPos = lngXPos - ret.cx \ 2
-        
-        Call BackBufferSurface.SetForeColor(vbBlack)
-        Call BackBufferSurface.DrawText(lngXPos - 2, lngYPos - 1, strText, False)
-        
-        Call BackBufferSurface.SetForeColor(lngColor)
-        Call BackBufferSurface.DrawText(lngXPos, lngYPos, strText, False)
     End If
 End Sub
 
@@ -2011,7 +1648,7 @@ Private Function GetElapsedTime() As Single
     Call QueryPerformanceCounter(end_time)
 End Function
 
-Private Sub CharRender(ByVal CharIndex As Long, ByVal PixelOffsetX As Integer, ByVal PixelOffsetY As Integer)
+Private Sub CharRender(ByVal Batch As clsBGFXSpriteBatch, ByVal CharIndex As Long, ByVal PixelOffsetX As Integer, ByVal PixelOffsetY As Integer)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modify Date: 12/03/04
@@ -2020,7 +1657,7 @@ Private Sub CharRender(ByVal CharIndex As Long, ByVal PixelOffsetX As Integer, B
     Dim moved As Boolean
     Dim Pos As Integer
     Dim line As String
-    Dim color As Long
+    Dim Color As Long
     
 With charlist(CharIndex)
         If .Moving Then
@@ -2088,20 +1725,20 @@ With charlist(CharIndex)
         If .Head.Head(.Heading).GrhIndex Then
             If Not .invisible Then
                 'Draw Body
-                If .Body.Walk(.Heading).GrhIndex Then Call DDrawTransGrhtoSurface(.Body.Walk(.Heading), PixelOffsetX, PixelOffsetY, 1, 1)
+                If .Body.Walk(.Heading).GrhIndex Then Call DDrawTransGrhtoSurface(Batch, .Body.Walk(.Heading), PixelOffsetX, PixelOffsetY, 1, 1, AmbientColor)
             
                 'Draw Head
-                If .Head.Head(.Heading).GrhIndex Then Call DDrawTransGrhtoSurface(.Head.Head(.Heading), PixelOffsetX + .Body.HeadOffset.X, PixelOffsetY + .Body.HeadOffset.Y, 1, 0)
+                If .Head.Head(.Heading).GrhIndex Then Call DDrawTransGrhtoSurface(Batch, .Head.Head(.Heading), PixelOffsetX + .Body.HeadOffset.X, PixelOffsetY + .Body.HeadOffset.Y, 1, 0, AmbientColor)
                     
                 'Draw Helmet
-                If .Casco.Head(.Heading).GrhIndex Then Call DDrawTransGrhtoSurface(.Casco.Head(.Heading), PixelOffsetX + .Body.HeadOffset.X, PixelOffsetY + .Body.HeadOffset.Y, 1, 0)
+                If .Casco.Head(.Heading).GrhIndex Then Call DDrawTransGrhtoSurface(Batch, .Casco.Head(.Heading), PixelOffsetX + .Body.HeadOffset.X, PixelOffsetY + .Body.HeadOffset.Y, 1, 0, AmbientColor)
                     ' Call DDrawTransGrhtoSurface(.Casco.Head(.Heading), PixelOffsetX + .Body.HeadOffset.X, PixelOffsetY + .Body.HeadOffset.Y + OFFSET_HEAD, 1, 0)
                 
                 'Draw Weapon
-                If .Arma.WeaponWalk(.Heading).GrhIndex Then Call DDrawTransGrhtoSurface(.Arma.WeaponWalk(.Heading), PixelOffsetX, PixelOffsetY, 1, 1)
+                If .Arma.WeaponWalk(.Heading).GrhIndex Then Call DDrawTransGrhtoSurface(Batch, .Arma.WeaponWalk(.Heading), PixelOffsetX, PixelOffsetY, 1, 1, AmbientColor)
                     
                 'Draw Shield
-                If .Escudo.ShieldWalk(.Heading).GrhIndex Then Call DDrawTransGrhtoSurface(.Escudo.ShieldWalk(.Heading), PixelOffsetX, PixelOffsetY, 1, 1)
+                If .Escudo.ShieldWalk(.Heading).GrhIndex Then Call DDrawTransGrhtoSurface(Batch, .Escudo.ShieldWalk(.Heading), PixelOffsetX, PixelOffsetY, 1, 1, AmbientColor)
                 
                 If LenB(.Nombre) > 0 Then
                     If Nombres Then
@@ -2113,21 +1750,21 @@ With charlist(CharIndex)
                             Select Case .Criminal
                             
                                 Case 2 'ciuda
-                                    color = RGB(ColoresPJ(49).R, ColoresPJ(49).g, ColoresPJ(49).b)
+                                    Color = ColoresPJ(49)
                                 Case 3
-                                    color = RGB(ColoresPJ(50).R, ColoresPJ(50).g, ColoresPJ(50).b)
+                                    Color = ColoresPJ(50)
                                 Case 4
-                                    color = RGB(ColoresPJ(47).R, ColoresPJ(47).g, ColoresPJ(47).b)
+                                    Color = ColoresPJ(47)
                                 Case 5
-                                    color = RGB(ColoresPJ(48).R, ColoresPJ(48).g, ColoresPJ(48).b)
+                                    Color = ColoresPJ(48)
                             End Select
                         Else
-                            color = RGB(ColoresPJ(.priv).R, ColoresPJ(.priv).g, ColoresPJ(.priv).b)
+                            Color = ColoresPJ(.priv)
                         End If
                             
                             'Nick
                             line = Left$(.Nombre, Pos - 2)
-                            Call RenderTextCentered(PixelOffsetX + TilePixelWidth \ 2 + 5, PixelOffsetY + 30, line, color, frmMain.font)
+                            'Call Text_Draw(PixelOffsetX - .NombreOffset, PixelOffsetY + 30, line, Color)
                             
                             'Clan
                          '   line = mid$(.Nombre, Pos)
@@ -2138,7 +1775,7 @@ With charlist(CharIndex)
         Else
             'Draw Body
             If .Body.Walk(.Heading).GrhIndex Then _
-                Call DDrawTransGrhtoSurface(.Body.Walk(.Heading), PixelOffsetX, PixelOffsetY, 1, 1)
+                Call DDrawTransGrhtoSurface(Batch, .Body.Walk(.Heading), PixelOffsetX, PixelOffsetY, 1, 1, AmbientColor)
         End If
         
         'Update dialogs
@@ -2178,6 +1815,76 @@ Private Sub CleanViewPort()
 'Last Modify Date: 12/03/04
 'Fills the viewport with black.
 '***************************************************
-    Dim R As RECT
-    Call BackBufferSurface.BltColorFill(R, vbBlack)
+    'todo: check if inventory still rendering after this
+    'DirectDevice.Clear 0, ByVal 0, D3DCLEAR_TARGET Or D3DCLEAR_ZBUFFER, 0, 1#, 0
+End Sub
+
+Private Sub BGFX_Init(ByRef isRunning As Boolean)
+    isRunning = Video.Create(frmMain.MainViewPic.hwnd, RENDERER_DIRECT3D11)
+    
+    Call Video.Reset(MainViewWidth, MainViewHeight)
+    
+    Call Video.SetViewClear(MainView, CLEAR_COLOR, &HFF)
+    
+    Call Video.SetDebug(DEBUG_MODE_STATS)
+    
+    Call Mathematic.MxToOrtho2D(Projection, 0#, MainViewWidth, MainViewHeight, 0#)
+    Call Mathematic.MxToIdentity(View)
+    
+    Call Video.SetViewTransform(MainView, View, Projection)
+    Call Video.SetTransform(View)
+    
+    Set SpriteBatch = New clsBGFXSpriteBatch
+    
+    Call SpriteBatch.Initialise(1000)
+    
+    Call SpriteBatch.SetProgram(Video.CreateProgram( _
+       Video.CreateShaderFromMemory(Video.Copy8I(ReadFile("INIT/Shader/D3D11/vs_simple.bin"))), _
+       Video.CreateShaderFromMemory(Video.Copy8I(ReadFile("INIT/Shader/D3D11/fs_simple.bin")))))
+       
+    
+    Call SurfaceDB.Initialize(DirGraficos, 90)
+    
+End Sub
+
+Public Sub Device_Textured_Render(ByVal Batch As clsBGFXSpriteBatch, _
+                                  ByVal X As Integer, ByVal Y As Integer, _
+                                  ByVal Width As Integer, ByVal Height As Integer, _
+                                  ByVal sX As Integer, ByVal sY As Integer, _
+                                  tex As Texture, _
+                                  ByRef Color() As Long)
+
+        Dim TexWidth As Long, TexHeight As Long
+
+        TexWidth = tex.Width
+        TexHeight = tex.Height
+                
+        With Batch
+                '// Seteamos la textura
+                Call .SetTexture(tex.Ptr)
+                
+                If TexWidth <> 0 And TexHeight <> 0 Then
+                    Call .Draw(X, Y, Width, Height, Color, sX / TexWidth, sY / TexHeight, (sX + Width) / TexWidth, (sY + Height) / TexHeight)
+                Else
+                    Call .Draw(X, Y, TexWidth, TexHeight, Color)
+                End If
+        End With
+
+End Sub
+
+Public Sub SetCamera(ByVal X As Single, ByVal Y As Single)
+    
+    'Camera.X = X
+    'Camera.Y = Y
+    
+    'With At
+    
+    '    .X = Camera.X
+    '    .Y = Camera.Y
+    '    .Z = 0
+        
+    'End With
+    
+    'Call D3DXMATH_MATRIX.D3DXMatrixLookAtLH(View, Camera, At, Up)
+    'Call DirectDevice.SetTransform(D3DTS_VIEW, View)
 End Sub

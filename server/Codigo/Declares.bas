@@ -164,11 +164,6 @@ Public Const NingunCasco As Integer = 2
 Public Const NingunArma As Integer = 2
 
 Public Const EspadaMataDragonesIndex As Integer = 402
-Public Const LAUDMAGICO As Integer = 696
-Public Const FLAUTAMAGICA As Integer = 208
-
-Public Const LAUDELFICO As Integer = 1049
-Public Const FLAUTAELFICA As Integer = 1050
 
 Public Const APOCALIPSIS_SPELL_INDEX As Integer = 25
 
@@ -288,6 +283,10 @@ Public Const LingoteOro As Integer = 388
 Public Const Leña As Integer = 58
 Public Const LeñaElfica As Integer = 1006
 
+Public Const PLobo As Integer = 414
+Public Const POsoPardo As Integer = 415
+Public Const POsoPolar As Integer = 416
+
 Public Const MAXNPCS As Integer = 10000
 Public Const MAXCHARS As Integer = 10000
 
@@ -302,6 +301,8 @@ Public Const MARTILLO_HERRERO As Integer = 389
 Public Const SERRUCHO_CARPINTERO As Integer = 198
 Public Const RED_PESCA As Integer = 543
 Public Const CAÑA_PESCA As Integer = 138
+Public Const HILAR_SASTRE As Integer = 697
+Public Const PICO_EXPERTO As Integer = 753
 
 Public Enum eNPCType
     Comun = 0
@@ -432,6 +433,12 @@ Public Enum eAtributos
     Constitucion = 5
 End Enum
 
+Public Const PocionRojaNoCae As Integer = 754
+Public Const PocionAzulNoCae As Integer = 755
+Public Const PocionAmarillaNoCae As Integer = 756
+Public Const PocionVerdeNoCae As Integer = 757
+Public Const Flecha As Integer = 480
+
 Public Const AumentoSTDef As Byte = 15
 Public Const AumentoSTMago As Byte = AumentoSTDef - 1
 
@@ -498,9 +505,9 @@ Public Enum eOBJType
     otBebidas = 13
     otLeña = 14
     otFogata = 15
-    otESCUDO = 16
-    otCASCO = 17
-    otAnillo = 18
+    otEscudo = 16
+    otCasco = 17
+    otHerramientas = 18
     otTeleport = 19
     otYacimiento = 22
     otMinerales = 23
@@ -613,6 +620,7 @@ Public Type tHechizo
     Estupidez As Byte
     Ceguera As Byte
     Revivir As Byte
+    Flecha As Byte
     Morph As Byte
     Mimetiza As Byte
     RemueveInvisibilidadParcial As Byte
@@ -658,10 +666,10 @@ Public Type Inventario
     CascoEqpSlot As Byte
     MunicionEqpObjIndex As Integer
     MunicionEqpSlot As Byte
-    AnilloEqpObjIndex As Integer
-    AnilloEqpSlot As Byte
     BarcoObjIndex As Integer
     BarcoSlot As Byte
+    HerramientaEqpObjIndex As Integer
+    HerramientaEqpslot As Byte
     MochilaEqpObjIndex As Integer
     MochilaEqpSlot As Byte
     NroItems As Integer
@@ -673,7 +681,7 @@ Public Type Position
 End Type
 
 Public Type WorldPos
-    Map As Integer
+    map As Integer
     X As Integer
     Y As Integer
 End Type
@@ -799,6 +807,10 @@ Public Type ObjData
     
     Agarrable As Byte
     
+    PielLobo As Integer
+    PielOsoPardo As Integer
+    PielOsoPolar As Integer
+    
     LingH As Integer
     LingO As Integer
     LingP As Integer
@@ -809,6 +821,7 @@ Public Type ObjData
     SkCarpinteria As Integer
     SkResistencia As Integer
     SkDefensa As Integer
+    SkSastreria As Integer
     
     texto As String
     
@@ -838,17 +851,14 @@ Public Type Recompensa
     Obj(1 To 2) As Obj
 End Type
 
-'[Pablo ToxicWaste]
-Public Type ModClase
-    Evasion As Double
-    AtaqueArmas As Double
-    AtaqueProyectiles As Double
-    AtaqueWrestling As Double
-    DañoArmas As Double
-    DañoProyectiles As Double
-    DañoWrestling As Double
-    Escudo As Double
-End Type
+Public Enum eMods
+        EVASION = 1
+        CUERPOACUERPO
+        CONARCOS
+        EVAESCUDO
+        DañoCuerpoACuerpo
+        DañoConArcos
+End Enum
 
 Public Type ModRaza
     Fuerza As Single
@@ -975,6 +985,7 @@ Public Type UserFlags
     Descuento As String
     Hambre As Byte
     Sed As Byte
+    BonusFlecha As Boolean
     PuedeMoverse As Byte
     TimerLanzarSpell As Long
     PuedeTrabajar As Byte
@@ -1082,6 +1093,7 @@ Public Type UserCounters
     Ceguera As Integer
     Estupidez As Integer
     
+    BonusFlecha As Long
     Invisibilidad As Integer
     TiempoOculto As Integer
     
@@ -1143,7 +1155,6 @@ Public Type tEvents
         Quests As Byte
 End Type
 
-
 Public Type tCrafting
     Cantidad As Long
     PorCiclo As Integer
@@ -1153,6 +1164,8 @@ End Type
 Public Type User
     Name As String
     ID As Long
+    
+    Recompensas(1 To 3) As Byte
     
     showName As Boolean 'Permite que los GMs oculten su nick con el comando /SHOWNAME
     
@@ -1499,11 +1512,12 @@ Public LevelSkill(1 To 50) As LevelSkill
 Public ForbidenNames() As String
 Public ArmasHerrero() As Integer
 Public ArmadurasHerrero() As Integer
+Public ObjSastre() As Integer
 Public ObjCarpintero() As Integer
 Public MD5s() As String
 Public BanIps As New Collection
 'Public Parties(1 To MAX_PARTIES) As clsParty
-Public ModClase(1 To NUMCLASES) As ModClase
+Public Mods(1 To 6, 1 To NUMCLASES) As Single
 Public ModRaza(1 To NUMRAZAS) As ModRaza
 Public ModVida(1 To NUMCLASES) As Double
 Public Ciudades(1 To NUMCIUDADES) As WorldPos

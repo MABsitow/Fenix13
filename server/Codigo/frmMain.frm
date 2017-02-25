@@ -368,7 +368,7 @@ End Sub
 
 Private Sub AutoSave_Timer()
 
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
 'fired every minute
 Static Minutos As Long
 Static MinutosLatsClean As Long
@@ -404,15 +404,15 @@ Call PurgarPenas
 Call CheckIdleUser
 
 '<<<<<-------- Log the number of users online ------>>>
-Dim n As Integer
-n = FreeFile()
-Open App.path & "\logs\numusers.log" For Output Shared As n
-Print #n, NumUsers
-Close #n
+Dim N As Integer
+N = FreeFile()
+Open App.path & "\logs\numusers.log" For Output Shared As N
+Print #N, NumUsers
+Close #N
 '<<<<<-------- Log the number of users online ------>>>
 
 Exit Sub
-Errhandler:
+ErrHandler:
     Call LogError("Error en TimerAutoSave " & Err.Number & ": " & Err.description)
     Resume Next
 End Sub
@@ -502,11 +502,11 @@ For LoopC = 1 To MaxUsers
 Next
 
 'Log
-Dim n As Integer
-n = FreeFile
-Open App.path & "\logs\Main.log" For Append Shared As #n
-Print #n, Date & " " & time & " server cerrado."
-Close #n
+Dim N As Integer
+N = FreeFile
+Open App.path & "\logs\Main.log" For Append Shared As #N
+Print #N, Date & " " & time & " server cerrado."
+Close #N
 
 End
 
@@ -569,6 +569,8 @@ On Error GoTo hayerror
                         If .flags.Mimetizado = 1 Then Call EfectoMimetismo(iUserIndex)
                         
                         If .flags.AtacablePor > 0 Then Call EfectoEstadoAtacable(iUserIndex)
+                        
+                        If .flags.BonusFlecha Then Call EfectoBonusFlecha(iUserIndex)
                         
                         Call DuracionPociones(iUserIndex)
                         
@@ -727,15 +729,24 @@ Visible = False
 
 End Sub
 
+'CSEH: ErrLog
 Private Sub npcataca_Timer()
+    '<EhHeader>
+    On Error GoTo npcataca_Timer_Err
+    '</EhHeader>
 
-On Error Resume Next
-Dim npc As Long
+    Dim npc As Long
 
-For npc = 1 To LastNPC
-    Npclist(npc).CanAttack = 1
-Next npc
+100 For npc = 1 To LastNPC
+105     Npclist(npc).CanAttack = 1
+110 Next npc
 
+    '<EhFooter>
+    Exit Sub
+
+npcataca_Timer_Err:
+        Call LogError("Error en npcataca_Timer: " & Erl & " - " & Err.description)
+    '</EhFooter>
 End Sub
 
 Private Sub packetResend_Timer()
@@ -744,7 +755,7 @@ Private Sub packetResend_Timer()
 'Last Modification: 04/01/07
 'Attempts to resend to the user all data that may be enqueued.
 '***************************************************
-On Error GoTo Errhandler:
+On Error GoTo ErrHandler:
     Dim i As Long
     
     For i = 1 To MaxUsers
@@ -757,7 +768,7 @@ On Error GoTo Errhandler:
 
 Exit Sub
 
-Errhandler:
+ErrHandler:
     LogError ("Error en packetResend - Error: " & Err.Number & " - Desc: " & Err.description)
     Resume Next
 End Sub
@@ -803,7 +814,7 @@ If Not haciendoBK And Not EnPausa Then
                            Call EfectoParalisisNpc(NpcIndex)
                         End If
                         
-                        mapa = .Pos.Map
+                        mapa = .Pos.map
                         
                         If mapa > 0 Then
                             If MapInfo(mapa).NumUsers > 0 Then
@@ -822,12 +833,12 @@ End If
 Exit Sub
 
 ErrorHandler:
-    Call LogError("Error en TIMER_AI_Timer " & Npclist(NpcIndex).Name & " mapa:" & Npclist(NpcIndex).Pos.Map)
+    Call LogError("Error en TIMER_AI_Timer " & Npclist(NpcIndex).Name & " mapa:" & Npclist(NpcIndex).Pos.map)
     Call MuereNpc(NpcIndex, 0)
 End Sub
 
 Private Sub tLluvia_Timer()
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
 
 Dim iCount As Long
 If Lloviendo Then
@@ -837,7 +848,7 @@ If Lloviendo Then
 End If
 
 Exit Sub
-Errhandler:
+ErrHandler:
 Call LogError("tLluvia " & Err.Number & ": " & Err.description)
 End Sub
 
@@ -886,11 +897,11 @@ Private Sub tPiqueteC_Timer()
     
     Dim i As Long
     
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
     For i = 1 To LastUser
         With UserList(i)
             If .flags.UserLogged Then
-                If MapData(.Pos.Map, .Pos.X, .Pos.Y).trigger = eTrigger.ANTIPIQUETE Then
+                If MapData(.Pos.map, .Pos.X, .Pos.Y).trigger = eTrigger.ANTIPIQUETE Then
                     .Counters.PiqueteC = .Counters.PiqueteC + 1
                     Call WriteConsoleMsg(i, "¡¡¡Estás obstruyendo la vía pública, muévete o serás encarcelado!!!", FontTypeNames.FONTTYPE_INFO)
                     
@@ -905,8 +916,8 @@ On Error GoTo Errhandler
                 If .flags.Muerto = 1 Then
                     If .flags.Traveling = 1 Then
                         If .Counters.goHome <= 0 Then
-                            Call FindLegalPos(i, Ciudades(.Hogar).Map, Ciudades(.Hogar).X, Ciudades(.Hogar).Y)
-                            Call WarpUserChar(i, Ciudades(.Hogar).Map, Ciudades(.Hogar).X, Ciudades(.Hogar).Y, True)
+                            Call FindLegalPos(i, Ciudades(.Hogar).map, Ciudades(.Hogar).X, Ciudades(.Hogar).Y)
+                            Call WarpUserChar(i, Ciudades(.Hogar).map, Ciudades(.Hogar).X, Ciudades(.Hogar).Y, True)
                             Call WriteMultiMessage(i, eMessages.FinishHome)
                             .flags.Traveling = 0
                         Else
@@ -928,6 +939,6 @@ On Error GoTo Errhandler
     Next i
 Exit Sub
 
-Errhandler:
+ErrHandler:
     Call LogError("Error en tPiqueteC_Timer " & Err.Number & ": " & Err.description)
 End Sub

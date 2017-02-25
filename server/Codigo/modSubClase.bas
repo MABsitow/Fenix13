@@ -125,3 +125,34 @@ Call CalcularValores(UserIndex)
 If Not PuedeSubirClase(UserIndex) Then Call WriteSubeClase(UserIndex, False)
 
 End Sub
+
+Public Sub RecibirRecompensa(ByVal UserIndex As Integer, ByVal Eleccion As Byte)
+Dim Recompensa As Byte
+Dim i As Integer
+
+Recompensa = PuedeRecompensa(UserIndex)
+
+If Recompensa = 0 Then Exit Sub
+
+UserList(UserIndex).Recompensas(Recompensa) = Eleccion
+
+If Recompensas(UserList(UserIndex).Clase, Recompensa, Eleccion).SubeHP Then
+    Call AddtoVar(UserList(UserIndex).Stats.MaxHp, Recompensas(UserList(UserIndex).Clase, Recompensa, Eleccion).SubeHP, STAT_MAXHP)
+    Call WriteUpdateHP(UserIndex)
+End If
+
+If Recompensas(UserList(UserIndex).Clase, Recompensa, Eleccion).SubeMP Then
+    Call AddtoVar(UserList(UserIndex).Stats.MaxMAN, Recompensas(UserList(UserIndex).Clase, Recompensa, Eleccion).SubeMP, 2000 + 200 * Buleano(UserList(UserIndex).Clase = Mago) * 200 + 300 * Buleano(UserList(UserIndex).Clase = Mago And UserList(UserIndex).Recompensas(2) = 2))
+    Call WriteUpdateMana(UserIndex)
+End If
+
+For i = 1 To 2
+    If Recompensas(UserList(UserIndex).Clase, Recompensa, Eleccion).Obj(i).OBJIndex Then
+        If Not MeterItemEnInventario(UserIndex, Recompensas(UserList(UserIndex).Clase, Recompensa, Eleccion).Obj(i)) Then Call TirarItemAlPiso(UserList(UserIndex).Pos, Recompensas(UserList(UserIndex).Clase, Recompensa, Eleccion).Obj(i))
+    End If
+Next
+
+If PuedeRecompensa(UserIndex) = 0 Then Call WriteEligeRecompensa(UserIndex, False)
+
+End Sub
+

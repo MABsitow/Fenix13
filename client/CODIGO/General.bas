@@ -93,7 +93,7 @@ End Function
 Sub CargarAnimArmas()
 On Error Resume Next
 
-    Dim loopc As Long
+    Dim loopC As Long
     Dim arch As String
     
     arch = App.path & "\init\" & "armas.dat"
@@ -102,12 +102,12 @@ On Error Resume Next
     
     ReDim WeaponAnimData(1 To NumWeaponAnims) As WeaponAnimData
     
-    For loopc = 1 To NumWeaponAnims
-        InitGrh WeaponAnimData(loopc).WeaponWalk(1), Val(GetVar(arch, "ARMA" & loopc, "Dir1")), 0
-        InitGrh WeaponAnimData(loopc).WeaponWalk(2), Val(GetVar(arch, "ARMA" & loopc, "Dir2")), 0
-        InitGrh WeaponAnimData(loopc).WeaponWalk(3), Val(GetVar(arch, "ARMA" & loopc, "Dir3")), 0
-        InitGrh WeaponAnimData(loopc).WeaponWalk(4), Val(GetVar(arch, "ARMA" & loopc, "Dir4")), 0
-    Next loopc
+    For loopC = 1 To NumWeaponAnims
+        InitGrh WeaponAnimData(loopC).WeaponWalk(1), Val(GetVar(arch, "ARMA" & loopC, "Dir1")), 0
+        InitGrh WeaponAnimData(loopC).WeaponWalk(2), Val(GetVar(arch, "ARMA" & loopC, "Dir2")), 0
+        InitGrh WeaponAnimData(loopC).WeaponWalk(3), Val(GetVar(arch, "ARMA" & loopC, "Dir3")), 0
+        InitGrh WeaponAnimData(loopC).WeaponWalk(4), Val(GetVar(arch, "ARMA" & loopC, "Dir4")), 0
+    Next loopC
 End Sub
 
 Sub CargarColores()
@@ -125,36 +125,34 @@ On Error Resume Next
     Dim i As Long
     
     For i = 0 To 46 '49 y 50 reservados para ciudadano y criminal
-        ColoresPJ(i).R = CByte(GetVar(archivoC, CStr(i), "R"))
-        ColoresPJ(i).g = CByte(GetVar(archivoC, CStr(i), "G"))
-        ColoresPJ(i).b = CByte(GetVar(archivoC, CStr(i), "B"))
+        ColoresPJ(i) = RGB(CInt(GetVar(archivoC, CStr(i), "R")), CInt(GetVar(archivoC, CStr(i), "G")), CInt(GetVar(archivoC, CStr(i), "B")))
     Next i
     
     ' Crimi
-    ColoresPJ(50).R = CByte(GetVar(archivoC, "CR", "R"))
-    ColoresPJ(50).g = CByte(GetVar(archivoC, "CR", "G"))
-    ColoresPJ(50).b = CByte(GetVar(archivoC, "CR", "B"))
+    ColoresPJ(50) = RGB(CInt(GetVar(archivoC, "CR", "R")), _
+    CInt(GetVar(archivoC, "CR", "G")), _
+    CInt(GetVar(archivoC, "CR", "B")))
     
     ' Ciuda
-    ColoresPJ(49).R = CByte(GetVar(archivoC, "CI", "R"))
-    ColoresPJ(49).g = CByte(GetVar(archivoC, "CI", "G"))
-    ColoresPJ(49).b = CByte(GetVar(archivoC, "CI", "B"))
+    ColoresPJ(49) = RGB(CInt(GetVar(archivoC, "CI", "R")), _
+    CInt(GetVar(archivoC, "CI", "G")), _
+    CInt(GetVar(archivoC, "CI", "B")))
     
     ' Neutral
-    ColoresPJ(48).R = CByte(GetVar(archivoC, "NE", "R"))
-    ColoresPJ(48).g = CByte(GetVar(archivoC, "NE", "G"))
-    ColoresPJ(48).b = CByte(GetVar(archivoC, "NE", "B"))
+    ColoresPJ(48) = RGB(CInt(GetVar(archivoC, "NE", "R")), _
+    CInt(GetVar(archivoC, "NE", "G")), _
+    CInt(GetVar(archivoC, "NE", "B")))
     
-    ColoresPJ(47).R = CByte(GetVar(archivoC, "NW", "R"))
-    ColoresPJ(47).g = CByte(GetVar(archivoC, "NW", "G"))
-    ColoresPJ(47).b = CByte(GetVar(archivoC, "NW", "B"))
+    ColoresPJ(47) = RGB(CInt(GetVar(archivoC, "NW", "R")), _
+    CInt(GetVar(archivoC, "NW", "G")), _
+    CInt(GetVar(archivoC, "NW", "B")))
     
 End Sub
 
 Sub CargarAnimEscudos()
 On Error Resume Next
 
-    Dim loopc As Long
+    Dim loopC As Long
     Dim arch As String
     
     arch = App.path & "\init\" & "escudos.dat"
@@ -163,12 +161,12 @@ On Error Resume Next
     
     ReDim ShieldAnimData(1 To NumEscudosAnims) As ShieldAnimData
     
-    For loopc = 1 To NumEscudosAnims
-        InitGrh ShieldAnimData(loopc).ShieldWalk(1), Val(GetVar(arch, "ESC" & loopc, "Dir1")), 0
-        InitGrh ShieldAnimData(loopc).ShieldWalk(2), Val(GetVar(arch, "ESC" & loopc, "Dir2")), 0
-        InitGrh ShieldAnimData(loopc).ShieldWalk(3), Val(GetVar(arch, "ESC" & loopc, "Dir3")), 0
-        InitGrh ShieldAnimData(loopc).ShieldWalk(4), Val(GetVar(arch, "ESC" & loopc, "Dir4")), 0
-    Next loopc
+    For loopC = 1 To NumEscudosAnims
+        InitGrh ShieldAnimData(loopC).ShieldWalk(1), Val(GetVar(arch, "ESC" & loopC, "Dir1")), 0
+        InitGrh ShieldAnimData(loopC).ShieldWalk(2), Val(GetVar(arch, "ESC" & loopC, "Dir2")), 0
+        InitGrh ShieldAnimData(loopC).ShieldWalk(3), Val(GetVar(arch, "ESC" & loopC, "Dir3")), 0
+        InitGrh ShieldAnimData(loopC).ShieldWalk(4), Val(GetVar(arch, "ESC" & loopC, "Dir4")), 0
+    Next loopC
 End Sub
 
 Sub AddtoRichTextBox(ByRef RichTextBox As RichTextBox, ByVal Text As String, Optional ByVal red As Integer = -1, Optional ByVal green As Integer, Optional ByVal blue As Integer, Optional ByVal bold As Boolean = False, Optional ByVal italic As Boolean = False, Optional ByVal bCrLf As Boolean = True)
@@ -209,13 +207,13 @@ Public Sub RefreshAllChars()
 'Goes through the charlist and replots all the characters on the map
 'Used to make sure everyone is visible
 '*****************************************************************
-    Dim loopc As Long
+    Dim loopC As Long
     
-    For loopc = 1 To LastChar
-        If charlist(loopc).Active = 1 Then
-            MapData(charlist(loopc).Pos.X, charlist(loopc).Pos.Y).CharIndex = loopc
+    For loopC = 1 To LastChar
+        If charlist(loopC).Active = 1 Then
+            MapData(charlist(loopC).Pos.X, charlist(loopC).Pos.Y).CharIndex = loopC
         End If
-    Next loopc
+    Next loopC
 End Sub
 
 Sub SaveGameini()
@@ -246,7 +244,7 @@ End Function
 
 Function CheckUserData(ByVal checkemail As Boolean) As Boolean
     'Validamos los datos del user
-    Dim loopc As Long
+    Dim loopC As Long
     Dim CharAscii As Integer
     
     If checkemail And UserEmail = "" Then
@@ -259,13 +257,13 @@ Function CheckUserData(ByVal checkemail As Boolean) As Boolean
         Exit Function
     End If
     
-    For loopc = 1 To Len(UserPassword)
-        CharAscii = Asc(mid$(UserPassword, loopc, 1))
+    For loopC = 1 To Len(UserPassword)
+        CharAscii = Asc(mid$(UserPassword, loopC, 1))
         If Not LegalCharacter(CharAscii) Then
             MsgBox ("Password inválido. El caractér " & Chr$(CharAscii) & " no está permitido.")
             Exit Function
         End If
-    Next loopc
+    Next loopC
     
     If UserName = "" Then
         MsgBox ("Ingrese un nombre de personaje.")
@@ -277,13 +275,13 @@ Function CheckUserData(ByVal checkemail As Boolean) As Boolean
         Exit Function
     End If
     
-    For loopc = 1 To Len(UserName)
-        CharAscii = Asc(mid$(UserName, loopc, 1))
+    For loopC = 1 To Len(UserName)
+        CharAscii = Asc(mid$(UserName, loopC, 1))
         If Not LegalCharacter(CharAscii) Then
             MsgBox ("Nombre inválido. El caractér " & Chr$(CharAscii) & " no está permitido.")
             Exit Function
         End If
-    Next loopc
+    Next loopC
     
     CheckUserData = True
 End Function
@@ -382,6 +380,7 @@ Sub MoveTo(ByVal Direccion As E_Heading)
         If Not UserDescansar And Not UserMeditar Then
             MoveCharbyHead UserCharIndex, Direccion
             MoveScreen Direccion
+            'MoveCamera Direccion
         End If
     Else
         If charlist(UserCharIndex).Heading <> Direccion Then
@@ -392,7 +391,7 @@ Sub MoveTo(ByVal Direccion As E_Heading)
     If frmMain.macrotrabajo.Enabled Then Call frmMain.DesactivarMacroTrabajo
     
     ' Update 3D sounds!
-    Call Audio.MoveListener(UserPos.X, UserPos.Y)
+    'call 'audio.MoveListener(UserPos.X, UserPos.Y)
 End Sub
 
 Sub RandomMove()
@@ -469,7 +468,7 @@ Private Sub CheckKeys()
             End If
             
             ' We haven't moved - Update 3D sounds!
-            Call Audio.MoveListener(UserPos.X, UserPos.Y)
+            'call 'audio.MoveListener(UserPos.X, UserPos.Y)
         Else
             Dim kp As Boolean
             kp = (GetKeyState(CustomKeys.BindedKey(eKeyType.mKeyUp)) < 0) Or _
@@ -481,7 +480,7 @@ Private Sub CheckKeys()
                 Call RandomMove
             Else
                 ' We haven't moved - Update 3D sounds!
-                Call Audio.MoveListener(UserPos.X, UserPos.Y)
+                'call 'audio.MoveListener(UserPos.X, UserPos.Y)
             End If
             
             If frmMain.TrainingMacro.Enabled Then frmMain.DesactivarMacroHechizos
@@ -495,7 +494,6 @@ End Sub
 Sub SwitchMap(ByVal Map As Integer)
     Dim Y As Long
     Dim X As Long
-    Dim tempint As Integer
     Dim handle As Integer
     Dim reader As New clsByteBuffer
     Dim data() As Byte
@@ -710,12 +708,7 @@ Sub Main()
     
     'Load ao.dat config file
     Call LoadClientSetup
-    
-    If ClientSetup.bDinamic Then
-        Set SurfaceDB = New clsSurfaceManDyn
-    Else
-        Set SurfaceDB = New clsSurfaceManStatic
-    End If
+
     
     'Read command line. Do it AFTER config file is loaded to prevent this from
     'canceling the effects of "/nores" option.
@@ -741,7 +734,7 @@ Sub Main()
     frmCargando.Show
     frmCargando.Refresh
     
-    frmConnect.version = "v" & App.Major & "." & App.Minor & " Build: " & App.Revision
+    'frmConnect.version = "v" & App.Major & "." & App.Minor & " Build: " & App.Revision
     Call AddtoRichTextBox(frmCargando.Status, "Buscando servidores... ", 255, 255, 255, True, False, True)
 
     Call CargarServidores
@@ -757,20 +750,23 @@ Sub Main()
     Call Protocol.InitFonts
     
     With frmConnect
-        .txtNombre = Config_Inicio.Name
-        .txtNombre.SelStart = 0
-        .txtNombre.SelLength = Len(.txtNombre)
+        '.txtNombre = Config_Inicio.Name
+        '.txtNombre.SelStart = 0
+        '.txtNombre.SelLength = Len(.txtNombre)
     End With
     
+    Call EstablecerRecompensas
     Call AddtoRichTextBox(frmCargando.Status, "Hecho", 255, 0, 0, True, False, False)
     
     Call AddtoRichTextBox(frmCargando.Status, "Iniciando motor gráfico... ", 255, 255, 255, True, False, True)
     
-    If Not InitTileEngine(frmMain.hwnd, 149, 13, 32, 32, 13, 17, 9, 8, 8, 0.018) Then
+    prgRun = True
+    
+    If Not InitTileEngine(frmMain.hwnd, 149, 13, 32, 32, 17, 23, 7, 8, 8, 0.018) Then
         Call CloseClient
     End If
     
-    Call AddtoRichTextBox(frmCargando.Status, "Hecho", 255, 0, 0, True, False, False)
+    'Call AddtoRichTextBox(frmCargando.Status, "Hecho", 255, 0, 0, True, False, False)
     
     Call AddtoRichTextBox(frmCargando.Status, "Creando animaciones extra... ", 255, 255, 255, True, False, True)
     
@@ -788,15 +784,15 @@ UserMap = 1
     Call AddtoRichTextBox(frmCargando.Status, "Iniciando DirectSound... ", 255, 255, 255, True, False, True)
     
     'Inicializamos el sonido
-    Call Audio.Initialize(DirectX, frmMain.hwnd, App.path & "\" & Config_Inicio.DirSonidos & "\", App.path & "\" & Config_Inicio.DirMusica & "\")
+    'call 'audio.Initialize(DirectX, frmMain.hwnd, App.path & "\" & Config_Inicio.DirSonidos & "\", App.path & "\" & Config_Inicio.DirMusica & "\")
     'Enable / Disable audio
-    Audio.MusicActivated = Not ClientSetup.bNoMusic
-    Audio.SoundActivated = Not ClientSetup.bNoSound
-    Audio.SoundEffectsActivated = Not ClientSetup.bNoSoundEffects
+    'audio.MusicActivated = Not ClientSetup.bNoMusic
+    'audio.SoundActivated = Not ClientSetup.bNoSound
+    'audio.SoundEffectsActivated = Not ClientSetup.bNoSoundEffects
     'Inicializamos el inventario gráfico
-    Call Inventario.Initialize(DirectDraw, frmMain.picInv, MAX_INVENTORY_SLOTS)
+    Call Inventario.Initialize(frmMain.picInv, MAX_INVENTORY_SLOTS)
     
-    Call Audio.MusicMP3Play(App.path & "\MP3\" & MP3_Inicio & ".mp3")
+    'call 'audio.MusicMP3Play(App.path & "\MP3\" & MP3_Inicio & ".mp3")
     
     Call AddtoRichTextBox(frmCargando.Status, "Hecho", 255, 0, 0, True, False, False)
     
@@ -807,15 +803,12 @@ UserMap = 1
     
     Unload frmCargando
         
-#If UsarWrench = 1 Then
     frmMain.Socket1.Startup
-#End If
 
     frmConnect.Visible = True
     
     'Inicialización de variables globales
     PrimeraVez = True
-    prgRun = True
     pausa = False
     
     'Set the intervals of timers
@@ -842,7 +835,7 @@ UserMap = 1
     Call MainTimer.Start(TimersIndex.CastAttack)
     
     'Set the dialog's font
-    Dialogos.font = frmMain.font
+    Dialogos.Font = frmMain.Font
     'DialogosClanes.font = frmMain.font
     
     lFrameTimer = GetTickCount
@@ -980,8 +973,7 @@ Public Sub LeerLineaComandos()
     Dim i As Long
     
     Dim UpToDate As Boolean
-    Dim Patch As String
-    
+
     'Parseo los comandos
     T = Split(Command, " ")
     For i = LBound(T) To UBound(T)
@@ -994,52 +986,6 @@ Public Sub LeerLineaComandos()
     Next i
     
     'Call AoUpdate(UpToDate, NoRes) ' www.gs-zone.org
-End Sub
-
-''
-' Runs AoUpdate if we haven't updated yet, patches aoupdate and runs Client normally if we are updated.
-'
-' @param UpToDate Specifies if we have checked for updates or not
-' @param NoREs Specifies if we have to set nores arg when running the client once again (if the AoUpdate is executed).
-
-Private Sub AoUpdate(ByVal UpToDate As Boolean, ByVal NoRes As Boolean)
-'*************************************************
-'Author: BrianPr
-'Created: 25/11/2008
-'Last modified: 25/11/2008
-'
-'*************************************************
-On Error GoTo error
-    Dim extraArgs As String
-    If Not UpToDate Then
-        'No recibe update, ejecutar AU
-        'Ejecuto el AoUpdate, sino me voy
-        If Dir(App.path & "\AoUpdate.exe", vbArchive) = vbNullString Then
-            MsgBox "No se encuentra el archivo de actualización AoUpdate.exe por favor descarguelo y vuelva a intentar", vbCritical
-            End
-        Else
-            FileCopy App.path & "\AoUpdate.exe", App.path & "\AoUpdateTMP.exe"
-            
-            If NoRes Then
-                extraArgs = " /nores"
-            End If
-            
-            Call ShellExecute(0, "Open", App.path & "\AoUpdateTMP.exe", App.EXEName & ".exe" & extraArgs, App.path, SW_SHOWNORMAL)
-            End
-        End If
-    Else
-        If FileExist(App.path & "\AoUpdateTMP.exe", vbArchive) Then Kill App.path & "\AoUpdateTMP.exe"
-    End If
-Exit Sub
-
-error:
-    If Err.number = 75 Then 'Si el archivo AoUpdateTMP.exe está en uso, entonces esperamos 5 ms y volvemos a intentarlo hasta que nos deje.
-        Sleep 5
-        Resume
-    Else
-        MsgBox Err.Description & vbCrLf, vbInformation, "[ " & Err.number & " ]" & " Error "
-        End
-    End If
 End Sub
 
 Private Sub LoadClientSetup()
@@ -1084,9 +1030,9 @@ Private Sub SaveClientSetup()
     
     fHandle = FreeFile
     
-    ClientSetup.bNoMusic = Not Audio.MusicActivated
-    ClientSetup.bNoSound = Not Audio.SoundActivated
-    ClientSetup.bNoSoundEffects = Not Audio.SoundEffectsActivated
+    'ClientSetup.bNoMusic = Not 'audio.MusicActivated
+    'ClientSetup.bNoSound = Not 'audio.SoundActivated
+    'ClientSetup.bNoSoundEffects = Not 'audio.SoundEffectsActivated
    ' ClientSetup.bGuildNews = Not ClientSetup.bGuildNews
   '  ClientSetup.bGldMsgConsole = Not DialogosClanes.Activo
     'ClientSetup.bCantMsgs = DialogosClanes.CantidadDialogos
@@ -1117,35 +1063,35 @@ Private Sub InicializarNombres()
     ListaClases(eClass.Ciudadano) = "Ciudadano"
     ListaClases(eClass.Trabajador) = "Trabajador"
     ListaClases(eClass.Experto_Minerales) = "Experto en minerales"
-    ListaClases(eClass.Minero) = "Minero"
-    ListaClases(eClass.Herrero) = "Herrero"
+    ListaClases(eClass.MINERO) = "Minero"
+    ListaClases(eClass.HERRERO) = "Herrero"
     ListaClases(eClass.Experto_Madera) = "Experto en uso de madera"
-    ListaClases(eClass.Talador) = "Leñador"
-    ListaClases(eClass.Carpintero) = "Carpintero"
-    ListaClases(eClass.Pescador) = "Pescador"
+    ListaClases(eClass.TALADOR) = "Leñador"
+    ListaClases(eClass.CARPINTERO) = "Carpintero"
+    ListaClases(eClass.PESCADOR) = "Pescador"
     ListaClases(eClass.Sastre) = "Sastre"
     ListaClases(eClass.Alquimista) = "Alquimista"
     ListaClases(eClass.Luchador) = "Luchador"
     ListaClases(eClass.Con_Mana) = "Con uso de mana"
     ListaClases(eClass.Hechicero) = "Hechicero"
-    ListaClases(eClass.Mago) = "Mago"
-    ListaClases(eClass.Nigromante) = "Nigromante"
+    ListaClases(eClass.MAGO) = "Mago"
+    ListaClases(eClass.NIGROMANTE) = "Nigromante"
     ListaClases(eClass.Orden_Sagrada) = "Orden sagrada"
-    ListaClases(eClass.Paladin) = "Paladin"
-    ListaClases(eClass.Clerigo) = "Clerigo"
+    ListaClases(eClass.PALADIN) = "Paladin"
+    ListaClases(eClass.CLERIGO) = "Clerigo"
     ListaClases(eClass.Naturalista) = "Naturalista"
-    ListaClases(eClass.Bardo) = "Bardo"
-    ListaClases(eClass.Druida) = "Druida"
+    ListaClases(eClass.BARDO) = "Bardo"
+    ListaClases(eClass.DRUIDA) = "Druida"
     ListaClases(eClass.Sigiloso) = "Sigiloso"
-    ListaClases(eClass.Asesino) = "Asesino"
-    ListaClases(eClass.Cazador) = "Cazador"
+    ListaClases(eClass.ASESINO) = "Asesino"
+    ListaClases(eClass.CAZADOR) = "Cazador"
     ListaClases(eClass.Sin_Mana) = "Sin uso de mana"
-    ListaClases(eClass.Arquero) = "Arquero"
-    ListaClases(eClass.Guerrero) = "Guerrero"
+    ListaClases(eClass.ARQUERO) = "Arquero"
+    ListaClases(eClass.GUERRERO) = "Guerrero"
     ListaClases(eClass.Caballero) = "Caballero"
     ListaClases(eClass.Bandido) = "Bandido"
-    ListaClases(eClass.Pirata) = "Pirata"
-    ListaClases(eClass.Ladron) = "Ladron"
+    ListaClases(eClass.PIRATA) = "Pirata"
+    ListaClases(eClass.LADRON) = "Ladron"
     
     SkillsNames(eSkill.Magia) = "Magia"
     SkillsNames(eSkill.Robar) = "Robar"
@@ -1207,8 +1153,6 @@ Public Sub CloseClient()
     frmCargando.Show
     Call AddtoRichTextBox(frmCargando.Status, "Liberando recursos...", 0, 0, 0, 0, 0, 0)
     
-    Call Resolution.ResetResolution
-    
     'Stop tile engine
     Call DeinitTileEngine
     
@@ -1217,10 +1161,10 @@ Public Sub CloseClient()
     'Destruimos los objetos públicos creados
     Set CustomMessages = Nothing
     Set CustomKeys = Nothing
-    Set SurfaceDB = Nothing
+    'Set SurfaceDB = Nothing
     Set Dialogos = Nothing
   '  Set DialogosClanes = Nothing
-    Set Audio = Nothing
+    'Set Audio = Nothing
     Set Inventario = Nothing
     Set MainTimer = Nothing
     Set incomingData = Nothing
@@ -1337,8 +1281,6 @@ Public Function ForumAlignment(ByVal yForumType As Byte) As Byte
     
 End Function
 
-
-
 Public Sub LogError(Desc As String)
 '***************************************************
 'Author: Unknown
@@ -1346,7 +1288,7 @@ Public Sub LogError(Desc As String)
 '
 '***************************************************
 
-On Error GoTo Errhandler
+On Error GoTo ErrHandler
 
     Dim nfile As Integer
     nfile = FreeFile ' obtenemos un canal
@@ -1356,6 +1298,320 @@ On Error GoTo Errhandler
     
     Exit Sub
 
-Errhandler:
+ErrHandler:
+
+End Sub
+
+Public Function ReadFile(FileName As String, Optional Size As Long = -1) As Byte()
+
+    Dim wFile As Integer
+
+    wFile = FreeFile
+    Open FileName For Binary Access Read As wFile
+
+    If LOF(wFile) > 0 Then
+        
+        Size = LOF(wFile)
+        ReDim ReadFile(0 To LOF(wFile) - 1)
+        Get wFile, , ReadFile
+
+    End If
+
+    Close #wFile
+
+End Function
+
+Public Sub EstablecerRecompensas()
+
+ReDim Recompensas(1 To NUMCLASES, 1 To 3, 1 To 2) As tRecompensa
+
+Recompensas(eClass.MINERO, 1, 1).Name = "Fortaleza del Trabajador"
+Recompensas(eClass.MINERO, 1, 1).Descripcion = "Aumenta la vida en 120 puntos."
+
+Recompensas(eClass.MINERO, 1, 2).Name = "Suerte de Novato"
+Recompensas(eClass.MINERO, 1, 2).Descripcion = "Al morir hay 20% de probabilidad de no perder los minerales."
+
+Recompensas(eClass.MINERO, 2, 1).Name = "Destrucción Mágica"
+Recompensas(eClass.MINERO, 2, 1).Descripcion = "Inmunidad al paralisis lanzado por otros usuarios."
+
+Recompensas(eClass.MINERO, 2, 2).Name = "Pica Fuerte"
+Recompensas(eClass.MINERO, 2, 2).Descripcion = "Permite minar 20% más cantidad de hierro y la plata."
+
+Recompensas(eClass.MINERO, 3, 1).Name = "Gremio del Trabajador"
+Recompensas(eClass.MINERO, 3, 1).Descripcion = "Permite minar 20% más cantidad de oro."
+
+Recompensas(eClass.MINERO, 3, 2).Name = "Pico de la Suerte"
+Recompensas(eClass.MINERO, 3, 2).Descripcion = "Al morir hay 30% de probabilidad de que no perder los minerales (acumulativo con Suerte de Novato.)"
+
+
+Recompensas(eClass.HERRERO, 1, 1).Name = "Yunque Rojizo"
+Recompensas(eClass.HERRERO, 1, 1).Descripcion = "25% de probabilidad de gastar la mitad de lingotes en la creación de objetos (Solo aplicable a armas y armaduras)."
+
+Recompensas(eClass.HERRERO, 1, 2).Name = "Maestro de la Forja"
+Recompensas(eClass.HERRERO, 1, 2).Descripcion = "Reduce los costos de cascos y escudos a un 50%."
+
+Recompensas(eClass.HERRERO, 2, 1).Name = "Experto en Filos"
+Recompensas(eClass.HERRERO, 2, 1).Descripcion = "Permite crear las mejores armas (Espada Neithan, Espada Neithan + 1, Espada de Plata + 1 y Daga Infernal)."
+
+Recompensas(eClass.HERRERO, 2, 2).Name = "Experto en Corazas"
+Recompensas(eClass.HERRERO, 2, 2).Descripcion = "Permite crear las mejores armaduras (Armaduras de las Tinieblas, Armadura Legendaria y Armaduras del Dragón)."
+
+Recompensas(eClass.HERRERO, 3, 1).Name = "Fundir Metal"
+Recompensas(eClass.HERRERO, 3, 1).Descripcion = "Reduce a un 50% la cantidad de lingotes utilizados en fabricación de Armas y Armaduras (acumulable con Yunque Rojizo)."
+
+Recompensas(eClass.HERRERO, 3, 2).Name = "Trabajo en Serie"
+Recompensas(eClass.HERRERO, 3, 2).Descripcion = "10% de probabilidad de crear el doble de objetos de los asignados con la misma cantidad de lingotes."
+
+
+Recompensas(eClass.TALADOR, 1, 1).Name = "Músculos Fornidos"
+Recompensas(eClass.TALADOR, 1, 1).Descripcion = "Permite talar 20% más cantidad de madera."
+
+Recompensas(eClass.TALADOR, 1, 2).Name = "Tiempos de Calma"
+Recompensas(eClass.TALADOR, 1, 2).Descripcion = "Evita tener hambre y sed."
+
+
+Recompensas(eClass.CARPINTERO, 1, 1).Name = "Experto en Arcos"
+Recompensas(eClass.CARPINTERO, 1, 1).Descripcion = "Permite la creación de los mejores arcos (Élfico y de las Tinieblas)."
+
+Recompensas(eClass.CARPINTERO, 1, 2).Name = "Experto de Varas"
+Recompensas(eClass.CARPINTERO, 1, 2).Descripcion = "Permite la creación de las mejores varas (Engarzadas)."
+
+Recompensas(eClass.CARPINTERO, 2, 1).Name = "Fila de Leña"
+Recompensas(eClass.CARPINTERO, 2, 1).Descripcion = "Aumenta la creación de flechas a 20 por vez."
+
+Recompensas(eClass.CARPINTERO, 2, 2).Name = "Espíritu de Navegante"
+Recompensas(eClass.CARPINTERO, 2, 2).Descripcion = "Reduce en un 20% el coste de madera de las barcas."
+
+
+Recompensas(eClass.PESCADOR, 1, 1).Name = "Favor de los Dioses"
+Recompensas(eClass.PESCADOR, 1, 1).Descripcion = "Pescar 20% más cantidad de pescados."
+
+Recompensas(eClass.PESCADOR, 1, 2).Name = "Pesca en Alta Mar"
+Recompensas(eClass.PESCADOR, 1, 2).Descripcion = "Al pescar en barca hay 10% de probabilidad de obtener pescados más caros."
+
+
+Recompensas(eClass.MAGO, 1, 1).Name = "Pociones de Espíritu"
+Recompensas(eClass.MAGO, 1, 1).Descripcion = "1.000 pociones azules que no caen al morir."
+
+Recompensas(eClass.MAGO, 1, 2).Name = "Pociones de Vida"
+Recompensas(eClass.MAGO, 1, 2).Descripcion = "1.000 pociones rojas que no caen al morir."
+
+Recompensas(eClass.MAGO, 2, 1).Name = "Vitalidad"
+Recompensas(eClass.MAGO, 2, 1).Descripcion = "Aumenta la vida en 10 puntos."
+
+Recompensas(eClass.MAGO, 2, 2).Name = "Fortaleza Mental"
+Recompensas(eClass.MAGO, 2, 2).Descripcion = "Libera el limite de mana máximo."
+
+Recompensas(eClass.MAGO, 3, 1).Name = "Furia del Relámpago"
+Recompensas(eClass.MAGO, 3, 1).Descripcion = "Aumenta el daño base máximo de la Descarga Eléctrica en 10 puntos."
+
+Recompensas(eClass.MAGO, 3, 2).Name = "Destrucción"
+Recompensas(eClass.MAGO, 3, 2).Descripcion = "Aumenta el daño base mínimo del Apocalipsis en 10 puntos."
+
+Recompensas(eClass.NIGROMANTE, 1, 1).Name = "Pociones de Espíritu"
+Recompensas(eClass.NIGROMANTE, 1, 1).Descripcion = "1.000 pociones azules que no caen al morir."
+
+Recompensas(eClass.NIGROMANTE, 1, 2).Name = "Pociones de Vida"
+Recompensas(eClass.NIGROMANTE, 1, 2).Descripcion = "1.000 pociones rojas que no caen al morir."
+
+Recompensas(eClass.NIGROMANTE, 2, 1).Name = "Vida del Invocador"
+Recompensas(eClass.NIGROMANTE, 2, 1).Descripcion = "Aumenta la vida en 15 puntos."
+
+Recompensas(eClass.NIGROMANTE, 2, 2).Name = "Alma del Invocador"
+Recompensas(eClass.NIGROMANTE, 2, 2).Descripcion = "Aumenta el mana en 40 puntos."
+
+Recompensas(eClass.NIGROMANTE, 3, 1).Name = "Semillas de las Almas"
+Recompensas(eClass.NIGROMANTE, 3, 1).Descripcion = "Aumenta el daño base mínimo de la magia en 10 puntos."
+
+Recompensas(eClass.NIGROMANTE, 3, 2).Name = "Bloqueo de las Almas"
+Recompensas(eClass.NIGROMANTE, 3, 2).Descripcion = "Aumenta la evasión en un 5%."
+
+
+Recompensas(eClass.PALADIN, 1, 1).Name = "Pociones de Espíritu"
+Recompensas(eClass.PALADIN, 1, 1).Descripcion = "1.000 pociones azules que no caen al morir."
+
+Recompensas(eClass.PALADIN, 1, 2).Name = "Pociones de Vida"
+Recompensas(eClass.PALADIN, 1, 2).Descripcion = "1.000 pociones rojas que no caen al morir."
+
+Recompensas(eClass.PALADIN, 2, 1).Name = "Aura de Vitalidad"
+Recompensas(eClass.PALADIN, 2, 1).Descripcion = "Aumenta la vida en 5 puntos y el mana en 10 puntos."
+
+Recompensas(eClass.PALADIN, 2, 2).Name = "Aura de Espíritu"
+Recompensas(eClass.PALADIN, 2, 2).Descripcion = "Aumenta el mana en 30 puntos."
+
+Recompensas(eClass.PALADIN, 3, 1).Name = "Gracia Divina"
+Recompensas(eClass.PALADIN, 3, 1).Descripcion = "Reduce el coste de mana de Remover Paralisis a 250 puntos."
+
+Recompensas(eClass.PALADIN, 3, 2).Name = "Favor de los Enanos"
+Recompensas(eClass.PALADIN, 3, 2).Descripcion = "Aumenta en 5% la posibilidad de golpear al enemigo con armas cuerpo a cuerpo."
+
+Recompensas(eClass.CLERIGO, 1, 1).Name = "Pociones de Espíritu"
+Recompensas(eClass.CLERIGO, 1, 1).Descripcion = "1.000 pociones azules que no caen al morir."
+
+Recompensas(eClass.CLERIGO, 1, 2).Name = "Pociones de Vida"
+Recompensas(eClass.CLERIGO, 1, 2).Descripcion = "1.000 pociones rojas que no caen al morir."
+
+Recompensas(eClass.CLERIGO, 2, 1).Name = "Signo Vital"
+Recompensas(eClass.CLERIGO, 2, 1).Descripcion = "Aumenta la vida en 10 puntos."
+
+Recompensas(eClass.CLERIGO, 2, 2).Name = "Espíritu de Sacerdote"
+Recompensas(eClass.CLERIGO, 2, 2).Descripcion = "Aumenta el mana en 50 puntos."
+
+Recompensas(eClass.CLERIGO, 3, 1).Name = "Sacerdote Experto"
+Recompensas(eClass.CLERIGO, 3, 1).Descripcion = "Aumenta la cura base de Curar Heridas Graves en 20 puntos."
+
+Recompensas(eClass.CLERIGO, 3, 2).Name = "Alzamientos de Almas"
+Recompensas(eClass.CLERIGO, 3, 2).Descripcion = "El hechizo de Resucitar cura a las personas con su mana, energía, hambre y sed llenas y cuesta 1.100 de mana."
+
+Recompensas(eClass.BARDO, 1, 1).Name = "Pociones de Espíritu"
+Recompensas(eClass.BARDO, 1, 1).Descripcion = "1.000 pociones azules que no caen al morir."
+
+Recompensas(eClass.BARDO, 1, 2).Name = "Pociones de Vida"
+Recompensas(eClass.BARDO, 1, 2).Descripcion = "1.000 pociones rojas que no caen al morir."
+
+Recompensas(eClass.BARDO, 2, 1).Name = "Melodía Vital"
+Recompensas(eClass.BARDO, 2, 1).Descripcion = "Aumenta la vida en 10 puntos."
+
+Recompensas(eClass.BARDO, 2, 2).Name = "Melodía de la Meditación"
+Recompensas(eClass.BARDO, 2, 2).Descripcion = "Aumenta el mana en 50 puntos."
+
+Recompensas(eClass.BARDO, 3, 1).Name = "Concentración"
+Recompensas(eClass.BARDO, 3, 1).Descripcion = "Aumenta la probabilidad de Apuñalar a un 20% (con 100 skill)."
+
+Recompensas(eClass.BARDO, 3, 2).Name = "Melodía Caótica"
+Recompensas(eClass.BARDO, 3, 2).Descripcion = "Aumenta el daño base del Apocalipsis y la Descarga Electrica en 5 puntos."
+
+
+Recompensas(eClass.DRUIDA, 1, 1).Name = "Pociones de Espíritu"
+Recompensas(eClass.DRUIDA, 1, 1).Descripcion = "1.000 pociones azules que no caen al morir."
+
+Recompensas(eClass.DRUIDA, 1, 2).Name = "Pociones de Vida"
+Recompensas(eClass.DRUIDA, 1, 2).Descripcion = "1.000 pociones rojas que no caen al morir."
+
+Recompensas(eClass.DRUIDA, 2, 1).Name = "Grifo de la Vida"
+Recompensas(eClass.DRUIDA, 2, 1).Descripcion = "Aumenta la vida en 15 puntos."
+
+Recompensas(eClass.DRUIDA, 2, 2).Name = "Poder del Alma"
+Recompensas(eClass.DRUIDA, 2, 2).Descripcion = "Aumenta el mana en 40 puntos."
+
+Recompensas(eClass.DRUIDA, 3, 1).Name = "Raíces de la Naturaleza"
+Recompensas(eClass.DRUIDA, 3, 1).Descripcion = "Reduce el coste de mana de Inmovilizar a 250 puntos."
+
+Recompensas(eClass.DRUIDA, 3, 2).Name = "Fortaleza Natural"
+Recompensas(eClass.DRUIDA, 3, 2).Descripcion = "Aumenta la vida de los elementales invocados en 75 puntos."
+
+
+Recompensas(eClass.ASESINO, 1, 1).Name = "Pociones de Espíritu"
+Recompensas(eClass.ASESINO, 1, 1).Descripcion = "1.000 pociones azules que no caen al morir."
+
+Recompensas(eClass.ASESINO, 1, 2).Name = "Pociones de Vida"
+Recompensas(eClass.ASESINO, 1, 2).Descripcion = "1.000 pociones rojas que no caen al morir."
+
+Recompensas(eClass.ASESINO, 2, 1).Name = "Sombra de Vida"
+Recompensas(eClass.ASESINO, 2, 1).Descripcion = "Aumenta la vida en 10 puntos."
+
+Recompensas(eClass.ASESINO, 2, 2).Name = "Sombra Mágica"
+Recompensas(eClass.ASESINO, 2, 2).Descripcion = "Aumenta el mana en 30 puntos."
+
+Recompensas(eClass.ASESINO, 3, 1).Name = "Daga Mortal"
+Recompensas(eClass.ASESINO, 3, 1).Descripcion = "Aumenta el daño de Apuñalar a un 70% más que el golpe."
+
+Recompensas(eClass.ASESINO, 3, 2).Name = "Punteria mortal"
+Recompensas(eClass.ASESINO, 3, 2).Descripcion = "Las chances de apuñalar suben a 25% (Con 100 skills)."
+
+
+Recompensas(eClass.CAZADOR, 1, 1).Name = "Pociones de Espíritu"
+Recompensas(eClass.CAZADOR, 1, 1).Descripcion = "1.000 pociones azules que no caen al morir."
+
+Recompensas(eClass.CAZADOR, 1, 2).Name = "Pociones de Vida"
+Recompensas(eClass.CAZADOR, 1, 2).Descripcion = "1.000 pociones rojas que no caen al morir."
+
+Recompensas(eClass.CAZADOR, 2, 1).Name = "Fortaleza del Oso"
+Recompensas(eClass.CAZADOR, 2, 1).Descripcion = "Aumenta la vida en 10 puntos."
+
+Recompensas(eClass.CAZADOR, 2, 2).Name = "Fortaleza del Leviatán"
+Recompensas(eClass.CAZADOR, 2, 2).Descripcion = "Aumenta el mana en 50 puntos."
+
+Recompensas(eClass.CAZADOR, 3, 1).Name = "Precisión"
+Recompensas(eClass.CAZADOR, 3, 1).Descripcion = "Aumenta la puntería con arco en un 10%."
+
+Recompensas(eClass.CAZADOR, 3, 2).Name = "Tiro Preciso"
+Recompensas(eClass.CAZADOR, 3, 2).Descripcion = "Las flechas que golpeen la cabeza ignoran la defensa del casco."
+
+
+Recompensas(eClass.ARQUERO, 1, 1).Name = "Flechas Mortales"
+Recompensas(eClass.ARQUERO, 1, 1).Descripcion = "1.500 flechas que caen al morir."
+
+Recompensas(eClass.ARQUERO, 1, 2).Name = "Pociones de Vida"
+Recompensas(eClass.ARQUERO, 1, 2).Descripcion = "1.000 pociones rojas que no caen al morir."
+
+Recompensas(eClass.ARQUERO, 2, 1).Name = "Vitalidad Élfica"
+Recompensas(eClass.ARQUERO, 2, 1).Descripcion = "Aumenta la vida en 10 puntos."
+
+Recompensas(eClass.ARQUERO, 2, 2).Name = "Paso Élfico"
+Recompensas(eClass.ARQUERO, 2, 2).Descripcion = "Aumenta la evasión en un 5%."
+
+Recompensas(eClass.ARQUERO, 3, 1).Name = "Ojo del Águila"
+Recompensas(eClass.ARQUERO, 3, 1).Descripcion = "Aumenta la puntería con arco en un 5%."
+
+Recompensas(eClass.ARQUERO, 3, 2).Name = "Disparo Élfico"
+Recompensas(eClass.ARQUERO, 3, 2).Descripcion = "Aumenta el daño base mínimo de las flechas en 5 puntos y el máximo en 3 puntos."
+
+
+Recompensas(eClass.GUERRERO, 1, 1).Name = "Pociones de Poder"
+Recompensas(eClass.GUERRERO, 1, 1).Descripcion = "80 pociones verdes y 100 amarillas que no caen al morir."
+
+Recompensas(eClass.GUERRERO, 1, 2).Name = "Pociones de Vida"
+Recompensas(eClass.GUERRERO, 1, 2).Descripcion = "1.000 pociones rojas que no caen al morir."
+
+Recompensas(eClass.GUERRERO, 2, 1).Name = "Vida del Mamut"
+Recompensas(eClass.GUERRERO, 2, 1).Descripcion = "Aumenta la vida en 5 puntos."
+
+Recompensas(eClass.GUERRERO, 2, 2).Name = "Piel de Piedra"
+Recompensas(eClass.GUERRERO, 2, 2).Descripcion = "Aumenta la defensa permanentemente en 2 puntos."
+
+Recompensas(eClass.GUERRERO, 3, 1).Name = "Cuerda Tensa"
+Recompensas(eClass.GUERRERO, 3, 1).Descripcion = "Aumenta la puntería con arco en un 10%."
+
+Recompensas(eClass.GUERRERO, 3, 2).Name = "Resistencia Mágica"
+Recompensas(eClass.GUERRERO, 3, 2).Descripcion = "Reduce la duración de la parálisis de un minuto a 45 segundos."
+
+
+Recompensas(eClass.PIRATA, 1, 1).Name = "Marejada Vital"
+Recompensas(eClass.PIRATA, 1, 1).Descripcion = "Aumenta la vida en 20 puntos."
+
+Recompensas(eClass.PIRATA, 1, 2).Name = "Aventurero Arriesgado"
+Recompensas(eClass.PIRATA, 1, 2).Descripcion = "Permite entrar a los dungeons independientemente del nivel."
+
+Recompensas(eClass.PIRATA, 2, 1).Name = "Riqueza"
+Recompensas(eClass.PIRATA, 2, 1).Descripcion = "10% de probabilidad de no perder los objetos al morir."
+
+Recompensas(eClass.PIRATA, 2, 2).Name = "Escamas del Dragón"
+Recompensas(eClass.PIRATA, 2, 2).Descripcion = "Aumenta la vida en 40 puntos."
+
+Recompensas(eClass.PIRATA, 3, 1).Name = "Magia Tabú"
+Recompensas(eClass.PIRATA, 3, 1).Descripcion = "Inmunidad a la paralisis."
+
+Recompensas(eClass.PIRATA, 3, 2).Name = "Cuerda de Escape"
+Recompensas(eClass.PIRATA, 3, 2).Descripcion = "Permite salir del juego en solo dos segundos."
+
+
+Recompensas(eClass.LADRON, 1, 1).Name = "Codicia"
+Recompensas(eClass.LADRON, 1, 1).Descripcion = "Aumenta en 10% la cantidad de oro robado."
+
+Recompensas(eClass.LADRON, 1, 2).Name = "Manos Sigilosas"
+Recompensas(eClass.LADRON, 1, 2).Descripcion = "Aumenta en 5% la probabilidad de robar exitosamente."
+
+Recompensas(eClass.LADRON, 2, 1).Name = "Pies sigilosos"
+Recompensas(eClass.LADRON, 2, 1).Descripcion = "Permite moverse mientrás se está oculto."
+
+Recompensas(eClass.LADRON, 2, 2).Name = "Ladrón Experto"
+Recompensas(eClass.LADRON, 2, 2).Descripcion = "Permite el robo de objetos (10% de probabilidad)."
+
+Recompensas(eClass.LADRON, 3, 1).Name = "Robo Lejano"
+Recompensas(eClass.LADRON, 3, 1).Descripcion = "Permite robar a una distancia de hasta 4 tiles."
+
+Recompensas(eClass.LADRON, 3, 2).Name = "Fundido de Sombra"
+Recompensas(eClass.LADRON, 3, 2).Descripcion = "Aumenta en 10% la probabilidad de robar objetos."
 
 End Sub

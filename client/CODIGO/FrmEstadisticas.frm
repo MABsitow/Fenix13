@@ -1021,13 +1021,9 @@ Private clsFormulario As clsFormMovementManager
 Private cBotonCerrar As clsGraphicalButton
 Public LastPressed As clsGraphicalButton
 
-Private Const ANCHO_BARRA As Byte = 73 'pixeles
-Private Const BAR_LEFT_POS As Integer = 361 'pixeles
-
 Public Sub Iniciar_Labels()
 'Iniciamos los labels con los valores de los atributos y los skills
 Dim i As Integer
-Dim Ancho As Integer
 
 For i = 1 To NUMATRIBUTOS
     Atri(i).Caption = UserAtributos(i)

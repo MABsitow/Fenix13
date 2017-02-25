@@ -43,9 +43,6 @@ Attribute VB_Exposed = False
 
 Option Explicit
 
-'Inherit from the surface manager
-Implements clsSurfaceManager
-
 Private Const BYTES_PER_MB As Long = 1048576                        '1Mb = 1024 Kb = 1024 * 1024 bytes = 1048576 bytes
 Private Const MIN_MEMORY_TO_USE As Long = 4 * BYTES_PER_MB          '4 Mb
 Private Const DEFAULT_MEMORY_TO_USE As Long = 16 * BYTES_PER_MB     '16 Mb
@@ -53,10 +50,23 @@ Private Const DEFAULT_MEMORY_TO_USE As Long = 16 * BYTES_PER_MB     '16 Mb
 'Number of buckets in our hash table. Must be a nice prime number.
 Const HASH_TABLE_SIZE As Long = 337
 
+Private Type Texture
+        Ptr As Long
+        Width As Integer
+        Height As Integer
+End Type
+
+Private Type TYPE_SURFACE
+        Width As Integer
+        Height As Integer
+        Surface As Long
+        Size As Long
+End Type
+
 Private Type SURFACE_ENTRY_DYN
     fileIndex As Long
     lastAccess As Long
-    Surface As DirectDrawSurface7
+    Surface As TYPE_SURFACE
 End Type
 
 Private Type HashNode
@@ -66,24 +76,12 @@ End Type
 
 Private surfaceList(HASH_TABLE_SIZE - 1) As HashNode
 
-Private DirectDraw As DirectDraw7
-
 Private maxBytesToUse As Long
 Private usedBytes As Long
-
-Private useVideoMemory As Boolean
 
 Private ResourcePath As String
 
 Private Declare Function GetTickCount Lib "kernel32" () As Long
-
-Private Const DIB_PAL_COLORS As Long = 1
-Private Const DIB_RGB_COLORS As Long = 0
-Private Declare Function SetDIBitsToDevice Lib "GDI32.dll" _
-    (ByVal hdc As Long, ByVal XDest As Long, ByVal YDest As Long, _
-    ByVal dwWidth As Long, ByVal dwHeight As Long, ByVal xSrc As Long, _
-    ByVal ySrc As Long, ByVal uStartScan As Long, ByVal CScanLine As Long, _
-    lpBits As Any, lpbmi As BITMAPINFO, ByVal fuColorUse As Long) As Long
 
 Private Sub Class_Initialize()
 '**************************************************************
@@ -117,16 +115,13 @@ Private Sub Class_Terminate()
     Next i
 End Sub
 
-Private Sub clsSurfaceManager_Initialize(ByRef DD As DirectDraw7, ByVal videoMemory As Boolean, ByVal graphicPath As String, Optional ByVal maxMemoryUsageInMb As Long = -1)
+Public Sub Initialize(ByVal graphicPath As String, Optional ByVal maxMemoryUsageInMb As Long = -1)
 '**************************************************************
 'Author: Juan Martín Sotuyo Dodero
-'Last Modify Date: 3/06/2006
+'Last Modify Date: 29/07/2012 - ^[GS]^
 'Initializes the manager
 '**************************************************************
-    Set DirectDraw = DD
-    
-    useVideoMemory = videoMemory
-    
+
     ResourcePath = graphicPath
     
     If maxMemoryUsageInMb = -1 Then
@@ -138,7 +133,7 @@ Private Sub clsSurfaceManager_Initialize(ByRef DD As DirectDraw7, ByVal videoMem
     End If
 End Sub
 
-Private Property Get clsSurfaceManager_Surface(ByVal fileIndex As Long) As DirectDrawSurface7
+Public Property Get Surface(ByVal fileIndex As Long) As Texture
 '**************************************************************
 'Author: Juan Martín Sotuyo Dodero
 'Last Modify Date: 3/06/2006
@@ -151,44 +146,34 @@ Private Property Get clsSurfaceManager_Surface(ByVal fileIndex As Long) As Direc
         For i = 1 To .surfaceCount
             If .SurfaceEntry(i).fileIndex = fileIndex Then
                 .SurfaceEntry(i).lastAccess = GetTickCount
-                Set clsSurfaceManager_Surface = .SurfaceEntry(i).Surface
-                Exit Function
+                
+                Dim Tex As Texture
+                Tex.Ptr = .SurfaceEntry(i).Surface.Surface
+                Tex.Width = .SurfaceEntry(i).Surface.Width
+                Tex.Height = .SurfaceEntry(i).Surface.Height
+                
+                Set Surface = Tex
+                Exit Property
             End If
         Next i
     End With
     
     'Not in memory, load it!
-    Set clsSurfaceManager_Surface = LoadSurface(fileIndex)
+    Surface = LoadSurface(fileIndex)
 End Property
 
-Private Function LoadSurface(ByVal fileIndex As Long) As DirectDrawSurface7
+Private Function LoadSurface(ByVal fileIndex As Long) As Texture
 '**************************************************************
 'Author: Nicolas Matias Gonzalez (NIGO)
-'Last Modify Date: 05/11/2009
+'Last Modify Date: 09/10/2012 - ^[GS]^
 'Loads the surface named fileIndex + ".bmp" and inserts it to the
 'surface list in the listIndex position
 '**************************************************************
-On Error GoTo Errhandler
-
-    Dim newSurface As SURFACE_ENTRY_DYN
-    Dim ddsd As DDSURFACEDESC2
-    Dim ddck As DDCOLORKEY
-    Dim data() As Byte
-    Dim bmpInfo As BITMAPINFO
-    Dim sDC As Long
+On Error GoTo ErrHandler
     
-    'get Bitmap
-    Call Get_Bitmap(ResourcePath, CStr(fileIndex) & ".BMP", bmpInfo, data)
-
-    'Set up the surface desc
-    ddsd.lFlags = DDSD_CAPS Or DDSD_HEIGHT Or DDSD_WIDTH
-    If useVideoMemory Then
-        ddsd.ddsCaps.lCaps = DDSCAPS_OFFSCREENPLAIN Or DDSCAPS_VIDEOMEMORY
-    Else
-        ddsd.ddsCaps.lCaps = DDSCAPS_OFFSCREENPLAIN Or DDSCAPS_SYSTEMMEMORY
-    End If
-    ddsd.lWidth = bmpInfo.bmiHeader.biWidth
-    ddsd.lHeight = bmpInfo.bmiHeader.biHeight
+    Dim Tex As Texture
+    Dim newSurface As SURFACE_ENTRY_DYN
+    Dim Image As TYPE_STB_IMAGE
         
     With newSurface
         .fileIndex = fileIndex
@@ -196,24 +181,22 @@ On Error GoTo Errhandler
         'Set last access time (if we didn't we would reckon this texture as the one lru)
         .lastAccess = GetTickCount
         
-        'Load surface
-        Set .Surface = DirectDraw.CreateSurface(ddsd)
+        'Set .Surface = DirectD3D.CreateTextureFromFileEx(DirectDevice, App.path & "\GRAFICOS\" & LTrim(str(fileIndex)) & ".png", _
+                D3DX_DEFAULT, D3DX_DEFAULT, 3, 0, D3DFMT_A8R8G8B8, D3DPOOL_MANAGED, D3DX_FILTER_NONE, _
+                D3DX_FILTER_NONE, &HFF000000, texture_info, ByVal 0)
         
-        sDC = .Surface.GetDC
+        Image = STB.CreateImageFromBytes(ReadFile(DirGraficos & fileIndex & ".png", .Surface.Size), 3)
+
+        .Surface.Surface = BGFX.CreateTexture2DFromMemory(Image.vX, Image.vY, False, 1, TEXTURE_FORMAT_RGB8, TEXTURE_FLAG_NONE, BGFX.Copy(Image.vData, Image.vX * Image.vY * Image.vComponent))
         
-        Call SetDIBitsToDevice(sDC, 0, 0, bmpInfo.bmiHeader.biWidth, bmpInfo.bmiHeader.biHeight, 0, 0, 0, bmpInfo.bmiHeader.biHeight, data(0), bmpInfo, DIB_RGB_COLORS)
+        .Surface.Width = Image.vX
+        .Surface.Height = Image.vY
         
-        Call .Surface.ReleaseDC(sDC)
-        
-        'Set colorkey
-        ddck.high = 0
-        ddck.low = 0
-        Call .Surface.SetColorKey(DDCKEY_SRCBLT, ddck)
-        
-        'Retrieve the updated surface desc
-        Call .Surface.GetSurfaceDesc(ddsd)
-    End With
+        Call STB.DestroyImage(Image)
     
+        
+    End With
+
     'Insert surface to the list
     With surfaceList(fileIndex Mod HASH_TABLE_SIZE)
         .surfaceCount = .surfaceCount + 1
@@ -222,11 +205,15 @@ On Error GoTo Errhandler
         
         .SurfaceEntry(.surfaceCount) = newSurface
         
-        Set LoadSurface = newSurface.Surface
+        Tex.Ptr = newSurface.Surface.Surface
+        Tex.Width = newSurface.Surface.Width
+        Tex.Height = newSurface.Surface.Height
+        
+        Set LoadSurface = Tex
     End With
     
     'Update used bytes
-    usedBytes = usedBytes + ddsd.lHeight * ddsd.lPitch
+    usedBytes = usedBytes + newSurface.Surface.Size
     
     'Check if we have exceeded our allowed share of memory usage
     Do While usedBytes > maxBytesToUse
@@ -237,21 +224,8 @@ On Error GoTo Errhandler
     Loop
 Exit Function
 
-Errhandler:
-    If Err.number = DDERR_OUTOFMEMORY Or Err.number = DDERR_OUTOFVIDEOMEMORY Then
-        'Remove a surface and try again
-        If RemoveLRU() Then
-            Resume
-        Else
-            MsgBox "No hay memoria disponible! El programa abortará. Cierra algunos programas e intenta de nuevo"
-            End
-        End If
-    Else
-        MsgBox "Un error inesperado ocurrió al intentar cargar el gráfico " & CStr(fileIndex) & ".BMP" & ". " & vbCrLf & _
-                "El código de error es " & CStr(Err.number) & " - " & Err.Description & vbCrLf & vbCrLf & "Copia este mensaje y notifica a los administradores.", _
-                vbOKOnly Or vbCritical Or vbExclamation, "Error"
-        End
-    End If
+ErrHandler:
+
 End Function
 
 Private Function RemoveLRU() As Boolean
@@ -265,7 +239,7 @@ Private Function RemoveLRU() As Boolean
     Dim LRUtime As Long
     Dim i As Long
     Dim j As Long
-    Dim ddsd As DDSURFACEDESC2
+    Dim Size As Long
     
     LRUtime = GetTickCount
     
@@ -284,12 +258,12 @@ Private Function RemoveLRU() As Boolean
     
     If LRUj Then
         RemoveLRU = True
-        'Retrieve the surface desc
-        Call surfaceList(LRUi).SurfaceEntry(LRUj).Surface.GetSurfaceDesc(ddsd)
-        
         'Remove it
-        Set surfaceList(LRUi).SurfaceEntry(LRUj).Surface = Nothing
+        Set surfaceList(LRUi).SurfaceEntry(LRUj).Surface = -1
         surfaceList(LRUi).SurfaceEntry(LRUj).fileIndex = 0
+        
+        'Update the used bytes
+        usedBytes = usedBytes - surfaceList(LRUi).SurfaceEntry(LRUj).Surface.Size
         
         'Move back the list (if necessary)
         With surfaceList(LRUi)
@@ -305,7 +279,7 @@ Private Function RemoveLRU() As Boolean
             End If
         End With
         
-        'Update the used bytes
-        usedBytes = usedBytes - ddsd.lHeight * ddsd.lPitch
     End If
 End Function
+
+
