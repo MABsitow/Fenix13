@@ -15,16 +15,11 @@ Attribute VB_Exposed = False
 
 Option Explicit
 
-Private Rectangle As D3DRect
+Private Rectangle As Rect
 
 Private HasTitle As Boolean
 Private CloseButton As Boolean
 Private StrTitle As String
-
-Private Verts() As TLVERTEX
-Private VertsCount As Long
-
-Private ElementsCount As Long
 
 Private Objects() As clsGUIObject
 Private ObjectsCount As Long
@@ -38,8 +33,8 @@ Public Sub Initialize(ByVal X As Integer, ByVal Y As Integer, _
     With Rectangle
         .x1 = X
         .x2 = Width
-        .Y1 = Y
-        .Y2 = Height
+        .y1 = Y
+        .y2 = Height
     End With
     
     'Resize the window to a multiple of 32 'CHECK THIS
@@ -51,236 +46,96 @@ Public Sub Initialize(ByVal X As Integer, ByVal Y As Integer, _
     End If
     
     CloseButton = CloseBtn
-    
-    ReDim Verts(0 To 1000) As TLVERTEX
-    
-    Call BuildWindowVerts
+
 End Sub
 
-Public Sub OnDraw(Batch As clsBatch)
+Public Sub OnDraw(Batch As clsBGFXSpriteBatch, ByVal AtlasW As Long, ByVal AtlasH As Long)
+    'todo: Would be great to build an image in memory and draw it at once insted of draw it by pieces
+    'todo: GUI should not use AmbientColor
     
     Dim i As Long
+    Dim j As Long
+    
+    Dim Obj As clsGUIObject
+    
+    Dim startX As Long
+    Dim startY As Long
+    
+    Dim compW As Integer
+    
+    startX = Rectangle.x1 'should check for w & h (not render, or cut the images)
+    startY = Rectangle.y1
     
     For i = 1 To ObjectsCount
+        Set Obj = Objects(i)
         
+        Select Case Obj.OType
+        
+            Case eGuiObjectType.Button
+                
+                With Image(eGuiElement.LeftButton)
+                
+                    Call Batch.Draw(startX + Obj.X, startY + Obj.Y, _
+                                    .W, .H, _
+                                    AmbientColor, _
+                                    .X / AtlasW, .Y / AtlasH, _
+                                    (.X + .W) / AtlasW, (.Y + .H) / AtlasH)
+                        
+                End With
+                
+                startX = startX + GUIImageWidth(eGuiElement.LeftButton)
+                
+                compW = GUIImageWidth(eGuiElement.MidButton)
+                
+                With Image(eGuiElement.MidButton)
+
+                    For j = 0 To (Obj.W / compW) - 3
+                        
+                        Call Batch.Draw(startX + Obj.X, startY + Obj.Y, _
+                                        .W, .H, _
+                                        AmbientColor, _
+                                        .X / AtlasW, .Y / AtlasH, _
+                                        (.X + .W) / AtlasW, (.Y + .H) / AtlasH)
+                        
+                        startX = startX + compW
+                    Next
+                    
+                End With
+                
+                With Image(eGuiElement.RightButton)
+                
+                    Call Batch.Draw(startX + Obj.X, startY + Obj.Y, _
+                                    .W, .H, _
+                                    AmbientColor, _
+                                    .X / AtlasW, .Y / AtlasH, _
+                                    (.X + .W) / AtlasW, (.Y + .H) / AtlasH)
+                
+                End With
+        End Select
     Next
     
 End Sub
 
 Public Sub AddObject(ByVal Name As String, ByVal X As Integer, ByVal Y As Integer, _
                     ByVal W As Integer, ByVal H As Integer, ByVal OType As eGuiObjectType, events() As Long, _
-                    ByVal Text As String, Optional BuildObjects As Boolean = False)
-
-'param BuilObjects: Solo debe ser true cuando agreguen el último objecto a la ventana
+                    ByVal Text As String)
 
 Dim GuiObject As New clsGUIObject
-Dim Rect As D3DRect
+Dim Rect As Rect
     
     With Rect
         .x1 = X
         .x2 = W
-        .Y1 = Y
-        .Y2 = H
+        .y1 = Y
+        .y2 = H
     End With
     
-    Call GuiObject.CreateObject(Name, Rect, OType, events, Text)
+    Call GuiObject.CreateObject(Name, Rect.x1, Rect.y1, Rect.x2, Rect.y2, OType, events, Text)
     
     ObjectsCount = ObjectsCount + 1
     ReDim Preserve Objects(1 To ObjectsCount) As clsGUIObject
     Set Objects(ObjectsCount) = GuiObject
-    
-    
-    If BuildObjects Then Call AddObjectsVerts
-End Sub
 
-Private Sub AddObjectsVerts()
-Dim i As Long, j As Long
-Dim startX As Integer, startY As Integer
-Dim compW As Integer, compH As Integer
-
-'agrego mas vertices para poder trabajar
-ReDim Preserve Verts(0 To VertsCount + 300) As TLVERTEX
-
-Dim comp As clsGUIObject
-
-For i = 1 To ObjectsCount
-    
-    Set comp = Objects(i)
-    
-    'Nos posicionamos dentro de la ventana
-    startX = Rectangle.x1
-    startY = Rectangle.Y1
-
-    With comp
-        Select Case comp.OType
-            Case eGuiObjectType.Label
-                If i = 0 Then
-                    VertsCount = VertsCount + 1
-                End If
-                
-                startX = Rectangle.x1 + comp.ObjectRectangle.x1
-                startY = Rectangle.Y1 + comp.ObjectRectangle.Y1
-                
-                Call Text_Add(comp.Text, startX, startY, -1)
-                
-            Case eGuiObjectType.Button
-            
-                If i = 0 Then ' evito pisar el ultimo vertice cargado
-                    VertsCount = VertsCount + 1
-                End If
-                
-                startX = startX + comp.ObjectRectangle.x1
-                startY = startY + comp.ObjectRectangle.Y1
-                
-                Dim txtX As Integer
-                Dim txtY As Integer
-                
-                txtX = startX + (comp.ObjectRectangle.x2 \ 2) - (Text_GetWidth(cfonts(1), comp.Text) \ 2)
-                txtY = startY + (comp.ObjectRectangle.Y2 \ 2) - (cfonts(1).RowPitch \ 2)
-                
-                comp.TSV = Text_Add(comp.Text, txtX, txtY, -1)
-                
-                Call VertsFromElement(eGuiElement.LeftButton, Verts, VertsCount)
-                Call Translate(Verts, VertsCount, startX, startY)
-                VertsCount = VertsCount + 6
-                ElementsCount = ElementsCount + 1
-                
-                startX = startX + GUIImageWidth(eGuiElement.LeftButton)
-                
-                compW = GUIImageWidth(eGuiElement.MidButton)
-                For j = 0 To (comp.ObjectRectangle.x2 / compW) - 3
-                    Call VertsFromElement(eGuiElement.MidButton, Verts, VertsCount)
-                    Call Translate(Verts, VertsCount, startX, startY)
-                    VertsCount = VertsCount + 6
-                    ElementsCount = ElementsCount + 1
-                    startX = startX + GUIImageWidth(eGuiElement.MidButton)
-                Next
-                
-                Call VertsFromElement(eGuiElement.RightButton, Verts, VertsCount)
-                Call Translate(Verts, VertsCount, startX, startY)
-                VertsCount = VertsCount + 6
-                ElementsCount = ElementsCount + 1
-                
-        End Select
-    End With
-    
-Next
-
-'volvemos a ajustar
-ReDim Preserve Verts(0 To VertsCount) As TLVERTEX
-
-End Sub
-Private Sub BuildWindowVerts()
-'Prepare the verts
-'Check?
-    Dim startX As Integer, startY As Integer
-    Dim elementW As Integer, elementH As Integer
-    
-    startX = Rectangle.x1
-    startY = Rectangle.Y1
-    
-    'Arriba izquierda
-    Call VertsFromElement(eGuiElement.TopLeft, Verts)
-    Call Translate(Verts, VertsCount, startX, startY)
-    
-    startX = startX + GUIImageWidth(eGuiElement.TopLeft)
-    
-    VertsCount = VertsCount + 6
-    ElementsCount = ElementsCount + 1
-    
-    Dim i As Long
-    Dim j As Long
-    
-    elementW = GUIImageWidth(eGuiElement.TopMid)
-    'Arriba al medio
-    For i = 0 To (Rectangle.x2 / elementW) - 3
-        Call VertsFromElement(eGuiElement.TopMid, Verts, VertsCount)
-        Call Translate(Verts, VertsCount, startX, startY)
-        VertsCount = VertsCount + 6
-        ElementsCount = ElementsCount + 1
-        startX = startX + GUIImageWidth(eGuiElement.TopMid)
-    Next
-    
-    'Arriba derecha
-    Call VertsFromElement(eGuiElement.TopRight, Verts, VertsCount)
-    Call Translate(Verts, VertsCount, startX, startY)
-    VertsCount = VertsCount + 6
-    ElementsCount = ElementsCount + 1
-    
-    'reacomodo
-    startX = Rectangle.x1
-    startY = startY + GUIImageHeight(eGuiElement.TopLeft)
-    
-    elementH = GUIImageHeight(eGuiElement.LeftMid)
-    'izquierda medio
-    For i = 0 To (Rectangle.Y2 / elementH) - 3
-        Call VertsFromElement(eGuiElement.LeftMid, Verts, VertsCount)
-        Call Translate(Verts, VertsCount, startX, startY)
-        VertsCount = VertsCount + 6
-        ElementsCount = ElementsCount + 1
-        startY = startY + GUIImageHeight(eGuiElement.LeftMid)
-    Next
-    
-    'abajo izquierda
-    Call VertsFromElement(eGuiElement.BotLeft, Verts, VertsCount)
-    Call Translate(Verts, VertsCount, startX, startY)
-    VertsCount = VertsCount + 6
-    ElementsCount = ElementsCount + 1
-    startX = startX + GUIImageWidth(eGuiElement.BotLeft)
-    
-    elementW = GUIImageWidth(eGuiElement.BotMid)
-    'abajo al medio
-    For i = 0 To (Rectangle.x2 / elementW) - 3
-        Call VertsFromElement(eGuiElement.BotMid, Verts, VertsCount)
-        Call Translate(Verts, VertsCount, startX, startY)
-        VertsCount = VertsCount + 6
-        ElementsCount = ElementsCount + 1
-        startX = startX + GUIImageWidth(eGuiElement.BotMid)
-    Next
-    
-    Call VertsFromElement(eGuiElement.BotRight, Verts, VertsCount)
-    Call Translate(Verts, VertsCount, startX, startY)
-    VertsCount = VertsCount + 6
-    ElementsCount = ElementsCount + 1
-    startY = Rectangle.Y1 + GUIImageHeight(eGuiElement.BotRight)
-    
-    elementH = GUIImageHeight(eGuiElement.RightMid)
-    'derecho al medio
-    For i = 0 To (Rectangle.Y2 / elementH) - 3
-        Call VertsFromElement(eGuiElement.RightMid, Verts, VertsCount)
-        Call Translate(Verts, VertsCount, startX, startY)
-        VertsCount = VertsCount + 6
-        startY = startY + GUIImageHeight(eGuiElement.RightMid)
-        ElementsCount = ElementsCount + 1
-    Next
-    
-    'reacomodo
-    startX = Rectangle.x1 + GUIImageWidth(eGuiElement.LeftMid)
-    startY = Rectangle.Y1 + GUIImageHeight(eGuiElement.TopMid)
-    
-    elementW = GUIImageWidth(eGuiElement.BG)
-    elementH = GUIImageHeight(eGuiElement.BG)
-    'fondo
-    For i = 0 To (Rectangle.x2 / elementW) - 3
-        For j = 0 To (Rectangle.Y2 / elementH) - 3
-            
-            Call VertsFromElement(eGuiElement.BG, Verts, VertsCount)
-            Call Translate(Verts, VertsCount, startX, startY)
-            VertsCount = VertsCount + 6
-            startY = startY + GUIImageHeight(eGuiElement.BG)
-            ElementsCount = ElementsCount + 1
-        Next
-        startY = Rectangle.Y1 + GUIImageHeight(eGuiElement.TopMid) 'reset
-        startX = startX + GUIImageWidth(eGuiElement.BG)
-    Next
-    
-    'redim para salvar memoria - probablemente nunca vaya a tener una ventana sin controles _
-    por lo cual esto se podria evitar y hacerlo cuando se carguen todos los componentes _
-    PEEEEEEERO algun loco puede llegar a crear la ventana sin componentes y terminaria _
-    ocupando mas memoria de la que debe si esto no estuviera
-    
-    ReDim Preserve Verts(0 To VertsCount) As TLVERTEX
-    
 End Sub
 
 Friend Function getObject(ByVal Index As Integer) As clsGUIObject
@@ -291,43 +146,26 @@ Friend Function getObjectCount() As Integer
     getObjectCount = ObjectsCount
 End Function
 
-Friend Function getElementsCount() As Integer
-    getElementsCount = ElementsCount
-End Function
-
-Friend Function getVertsCount() As Integer
-    getVertsCount = VertsCount
-End Function
-
-Friend Sub getWindowVerts(ByRef outVerts() As TLVERTEX)
-    CopyMemory outVerts(0), Verts(0), FVF_SIZE * VertsCount
-End Sub
-
 Friend Function Collide(ByVal X As Integer, ByVal Y As Integer) As Integer
 Dim i As Long
 
 Dim comp As clsGUIObject
-Dim Rect As D3DRect
 
 For i = 1 To ObjectsCount
     Set comp = Objects(i)
-    Rect = comp.ObjectRectangle
-    
-    With Rect
-        If X > (.x1 + Rectangle.x1) And X < (.x2 + Rectangle.x1 + .x1) And _
-            Y > (.Y1 + Rectangle.Y1) And Y < (.Y2 + Rectangle.Y1 + .Y1) Then
-                
-                Collide = i
-                Exit Function
-        End If
-    
-    End With
+
+    If X > (comp.X + Rectangle.x1) And X < (comp.W + Rectangle.x1 + comp.X) And _
+        Y > (comp.Y + Rectangle.y1) And Y < (comp.H + Rectangle.y1 + comp.Y) Then
+            
+            Collide = i
+            Exit Function
+    End If
 Next
 
 Collide = -1
 End Function
 
-Function Engine_Collision_Rect(ByVal x1 As Integer, ByVal Y1 As Integer, ByVal Width1 As Integer, ByVal Height1 As Integer, ByVal x2 As Integer, ByVal Y2 As Integer, ByVal Width2 As Integer, ByVal Height2 As Integer) As Boolean
+Function Engine_Collision_Rect(ByVal x1 As Integer, ByVal y1 As Integer, ByVal Width1 As Integer, ByVal Height1 As Integer, ByVal x2 As Integer, ByVal y2 As Integer, ByVal Width2 As Integer, ByVal Height2 As Integer) As Boolean
 '*****************************************************************
 'Check for collision between two rectangles
 'More info: http://www.vbgore.com/GameClient.TileEngine.Engine_Collision_Rect
@@ -335,8 +173,8 @@ Function Engine_Collision_Rect(ByVal x1 As Integer, ByVal Y1 As Integer, ByVal W
 
     If x1 + Width1 >= x2 Then
         If x1 <= x2 + Width2 Then
-            If Y1 + Height1 >= Y2 Then
-                If Y1 <= Y2 + Height2 Then
+            If y1 + Height1 >= y2 Then
+                If y1 <= y2 + Height2 Then
                     Engine_Collision_Rect = True
                 End If
             End If
@@ -351,8 +189,8 @@ Private Sub NormalizeSize()
         Rectangle.x2 = Rectangle.x2 + 1
     Loop
     
-    Do While Rectangle.Y2 Mod 32 <> 0
-        Rectangle.Y2 = Rectangle.Y2 + 1
+    Do While Rectangle.y2 Mod 32 <> 0
+        Rectangle.y2 = Rectangle.y2 + 1
     Loop
     
 End Sub

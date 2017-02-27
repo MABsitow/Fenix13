@@ -1489,7 +1489,8 @@ Public Sub ShowConsoleMsg(ByVal Message As String, Optional ByVal red As Integer
 'Last Modification: 01/03/07
 '
 '***************************************************
-    Call AddtoRichTextBox(frmMain.RecTxt, Message, red, green, blue, bold, italic)
+    'todo
+    'Call AddtoRichTextBox(frmMain.RecTxt, Message, red, green, blue, bold, italic)
 End Sub
 
 ''

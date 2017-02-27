@@ -268,7 +268,7 @@ Public Sub SetItem(ByVal slot As Byte, _
         'Last Modify Date: 12/04/06
         'Sets all data for a given inventory slot
         '***************************************************
-
+        
         If slot < 1 Or slot > UBound(Inventory) Then Exit Sub
     
         With Inventory(slot)
@@ -356,8 +356,8 @@ Private Sub DrawInventory()
         'Call DirectX_Scene_BeginCustom(1, TempRect)
 
         For loopC = InventoryOffset * (InventoryWindow.ScaleWidth \ ownTilePixelWidth) + 1 To UBound(Inventory)
-                startdX = 5 + ((loopC - 1) Mod (frmMain.PicInv.Width / 32)) * 32
-                startdY = ((loopC - 1) \ (frmMain.PicInv.Width / 32)) * 32
+                startdX = 5 + ((loopC - 1) Mod (InventoryWindow.Width / 32)) * 32
+                startdY = ((loopC - 1) \ (InventoryWindow.Width / 32)) * 32
 
                 If Inventory(loopC).GrhIndex Then
 

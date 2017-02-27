@@ -169,7 +169,7 @@ On Error Resume Next
     Next loopC
 End Sub
 
-Sub AddtoRichTextBox(ByRef RichTextBox As RichTextBox, ByVal Text As String, Optional ByVal red As Integer = -1, Optional ByVal green As Integer, Optional ByVal blue As Integer, Optional ByVal bold As Boolean = False, Optional ByVal italic As Boolean = False, Optional ByVal bCrLf As Boolean = True)
+Sub AddtoRichTextBox(ByRef RichTextBox As RichTextBox, ByVal Text As String, Optional ByVal Red As Integer = -1, Optional ByVal Green As Integer, Optional ByVal Blue As Integer, Optional ByVal Bold As Boolean = False, Optional ByVal Italic As Boolean = False, Optional ByVal bCrLf As Boolean = True)
 '******************************************
 'Adds text to a Richtext box at the bottom.
 'Automatically scrolls to new text.
@@ -188,10 +188,10 @@ Sub AddtoRichTextBox(ByRef RichTextBox As RichTextBox, ByVal Text As String, Opt
         
         .SelStart = Len(.Text)
         .SelLength = 0
-        .SelBold = bold
-        .SelItalic = italic
+        .SelBold = Bold
+        .SelItalic = Italic
         
-        If Not red = -1 Then .SelColor = RGB(red, green, blue)
+        If Not Red = -1 Then .SelColor = RGB(Red, Green, Blue)
         
         If bCrLf And Len(.Text) > 0 Then Text = vbCrLf & Text
         .SelText = Text
@@ -337,7 +337,8 @@ Sub SetConnected()
     Unload frmCrearPersonaje
     Unload frmConnect
     
-    frmMain.lblName.Caption = UserName
+    'todo
+    'frmMain.lblName.Caption = UserName
     'Load main form
     frmMain.Visible = True
         
@@ -438,7 +439,8 @@ Private Sub CheckKeys()
             If GetKeyState(CustomKeys.BindedKey(eKeyType.mKeyUp)) < 0 Then
                 If frmMain.TrainingMacro.Enabled Then frmMain.DesactivarMacroHechizos
                 Call MoveTo(NORTH)
-                frmMain.Coord.Caption = UserMap & " X: " & UserPos.X & " Y: " & UserPos.Y
+                'todo
+                'frmMain.Coord.Caption = UserMap & " X: " & UserPos.X & " Y: " & UserPos.Y
                 Exit Sub
             End If
             
@@ -447,7 +449,7 @@ Private Sub CheckKeys()
                 If frmMain.TrainingMacro.Enabled Then frmMain.DesactivarMacroHechizos
                 Call MoveTo(EAST)
                 'frmMain.Coord.Caption = "(" & UserMap & "," & UserPos.x & "," & UserPos.y & ")"
-                frmMain.Coord.Caption = UserMap & " X: " & UserPos.X & " Y: " & UserPos.Y
+                'frmMain.Coord.Caption = UserMap & " X: " & UserPos.X & " Y: " & UserPos.Y
                 Exit Sub
             End If
         
@@ -455,7 +457,7 @@ Private Sub CheckKeys()
             If GetKeyState(CustomKeys.BindedKey(eKeyType.mKeyDown)) < 0 Then
                 If frmMain.TrainingMacro.Enabled Then frmMain.DesactivarMacroHechizos
                 Call MoveTo(SOUTH)
-                frmMain.Coord.Caption = UserMap & " X: " & UserPos.X & " Y: " & UserPos.Y
+                'frmMain.Coord.Caption = UserMap & " X: " & UserPos.X & " Y: " & UserPos.Y
                 Exit Sub
             End If
         
@@ -463,7 +465,7 @@ Private Sub CheckKeys()
             If GetKeyState(CustomKeys.BindedKey(eKeyType.mKeyLeft)) < 0 Then
                 If frmMain.TrainingMacro.Enabled Then frmMain.DesactivarMacroHechizos
                 Call MoveTo(WEST)
-                frmMain.Coord.Caption = UserMap & " X: " & UserPos.X & " Y: " & UserPos.Y
+                'frmMain.Coord.Caption = UserMap & " X: " & UserPos.X & " Y: " & UserPos.Y
                 Exit Sub
             End If
             
@@ -485,7 +487,7 @@ Private Sub CheckKeys()
             
             If frmMain.TrainingMacro.Enabled Then frmMain.DesactivarMacroHechizos
             'frmMain.Coord.Caption = "(" & UserPos.x & "," & UserPos.y & ")"
-            frmMain.Coord.Caption = "X: " & UserPos.X & " Y: " & UserPos.Y
+            'frmMain.Coord.Caption = "X: " & UserPos.X & " Y: " & UserPos.Y
         End If
     End If
 End Sub
@@ -697,7 +699,8 @@ End Sub
 
 Sub Main()
     Call WriteClientVer
-    
+    Call InitColours
+        
     'Load config file
     If FileExist(App.path & "\init\Inicio.con", vbNormal) Then
         Config_Inicio = LeerGameIni()
@@ -762,7 +765,7 @@ Sub Main()
     
     prgRun = True
     
-    If Not InitTileEngine(frmMain.hwnd, 149, 13, 32, 32, 17, 23, 7, 8, 8, 0.018) Then
+    If Not InitTileEngine(frmMain.hWnd, 149, 13, 32, 32, 17, 23, 7, 8, 8, 0.018) Then
         Call CloseClient
     End If
     
@@ -790,7 +793,8 @@ UserMap = 1
     'audio.SoundActivated = Not ClientSetup.bNoSound
     'audio.SoundEffectsActivated = Not ClientSetup.bNoSoundEffects
     'Inicializamos el inventario gráfico
-    Call Inventario.Initialize(frmMain.picInv, MAX_INVENTORY_SLOTS)
+    'todo
+    'Call Inventario.Initialize(frmMain.PicInv, MAX_INVENTORY_SLOTS)
     
     'call 'audio.MusicMP3Play(App.path & "\MP3\" & MP3_Inicio & ".mp3")
     
@@ -854,11 +858,11 @@ UserMap = 1
             Call CheckKeys
         End If
         'FPS Counter - mostramos las FPS
-        If GetTickCount - lFrameTimer >= 1000 Then
-            If FPSFLAG Then frmMain.lblFPS.Caption = Mod_TileEngine.FPS
+        'If GetTickCount - lFrameTimer >= 1000 Then
+        '    If FPSFLAG Then frmMain.lblFPS.Caption = Mod_TileEngine.FPS
             
-            lFrameTimer = GetTickCount
-        End If
+        '    lFrameTimer = GetTickCount
+        'End If
         
        ' If GetTickCount - Count = 1000 Then
         '        Call SendData(SendTarget.toMap, UserIndex, PrepareMessageCountdown(Count))
@@ -946,15 +950,17 @@ End Function
 
 Public Sub ShowSendTxt()
     If Not frmCantidad.Visible Then
-        frmMain.SendTxt.Visible = True
-        frmMain.SendTxt.SetFocus
+        'todo
+        'frmMain.SendTxt.Visible = True
+        'frmMain.SendTxt.SetFocus
     End If
 End Sub
 
 Public Sub ShowSendCMSGTxt()
     If Not frmCantidad.Visible Then
-        frmMain.SendCMSTXT.Visible = True
-        frmMain.SendCMSTXT.SetFocus
+    'todo
+        'frmMain.SendCMSTXT.Visible = True
+        'frmMain.SendCMSTXT.SetFocus
     End If
 End Sub
 
@@ -1133,7 +1139,8 @@ Public Sub CleanDialogs()
 'Removes all text from the console and dialogs
 '**************************************************************
     'Clean console and dialogs
-    frmMain.RecTxt.Text = vbNullString
+    'todo
+    'frmMain.RecTxt.Text = vbNullString
     
   '  Call DialogosClanes.RemoveDialogs
     

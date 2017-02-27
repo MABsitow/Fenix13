@@ -33,24 +33,30 @@ Attribute VB_Name = "Mod_TileEngine"
 
 Option Explicit
 
+Private Program As Long
+
 Public Type Texture
         Ptr As Long
         Width As Integer
         Height As Integer
 End Type
 
-Private Type RECT
-        X1 As Long
-        X2 As Long
-        Y1 As Long
-        Y2 As Long
+Public Type Rect
+        x1 As Long
+        x2 As Long
+        y1 As Long
+        y2 As Long
 End Type
 
 Private SpriteBatch As clsBGFXSpriteBatch
 
+Private MainUITex As Texture
+
 'Private Viewport As D3DVIEWPORT8
-Private Projection As TYPE_MATH_MATRIX
-Private View As TYPE_MATH_MATRIX
+Private UIProjection As TYPE_MATH_MATRIX
+Private MProjection As TYPE_MATH_MATRIX
+Private UIView As TYPE_MATH_MATRIX
+Private MView As TYPE_MATH_MATRIX
 'Private Camera As D3DVECTOR
 
 'Map sizes in tiles
@@ -242,9 +248,9 @@ Public UserCharIndex As Integer
 
 Public EngineRun As Boolean
 
-Public FPS As Long
-Public FramesPerSecCounter As Long
-Private fpsLastCheck As Long
+'Public FPS As Long
+'Public FramesPerSecCounter As Long
+'Private fpsLastCheck As Long
 
 'Tamaño del la vista en Tiles
 Private WindowTileWidth As Integer
@@ -1094,7 +1100,7 @@ Function InMapBounds(ByVal X As Integer, ByVal Y As Integer) As Boolean
     InMapBounds = True
 End Function
 
-Private Sub DDrawGrhtoSurface(ByVal Batch As clsBGFXSpriteBatch, ByRef Grh As Grh, ByVal X As Integer, ByVal Y As Integer, ByVal Z As Integer, ByVal Center As Byte, ByVal Animate As Byte, Color() As Long)
+Private Sub DDrawGrhtoSurface(ByRef Grh As Grh, ByVal X As Integer, ByVal Y As Integer, ByVal Z As Integer, ByVal Center As Byte, ByVal Animate As Byte, Color() As Long)
     Dim CurrentGrhIndex As Integer
 'On Error GoTo error
     
@@ -1131,7 +1137,7 @@ Private Sub DDrawGrhtoSurface(ByVal Batch As clsBGFXSpriteBatch, ByRef Grh As Gr
         End If
         
         'Draw
-        Device_Textured_Render Batch, X, Y, .pixelWidth, .pixelHeight, .sX, .sY, SurfaceDB.Surface(.FileNum), Color
+        Device_Textured_Render X, Y, .pixelWidth, .pixelHeight, .sX, .sY, SurfaceDB.Surface(.FileNum), Color
         
     End With
 Exit Sub
@@ -1147,7 +1153,7 @@ error:
     End If
 End Sub
 
-Sub DDrawTransGrhIndextoSurface(ByVal Batch As clsBGFXSpriteBatch, ByVal GrhIndex As Integer, ByVal X As Integer, ByVal Y As Integer, ByVal Center As Byte, Color() As Long)
+Sub DDrawTransGrhIndextoSurface(ByVal GrhIndex As Integer, ByVal X As Integer, ByVal Y As Integer, ByVal Center As Byte, Color() As Long)
 
     With GrhData(GrhIndex)
         'Center Grh over X,Y pos
@@ -1162,11 +1168,11 @@ Sub DDrawTransGrhIndextoSurface(ByVal Batch As clsBGFXSpriteBatch, ByVal GrhInde
         End If
         
         'Draw
-        Device_Textured_Render Batch, X, Y, .pixelWidth, .pixelHeight, .sX, .sY, SurfaceDB.Surface(.FileNum), Color
+        Device_Textured_Render X, Y, .pixelWidth, .pixelHeight, .sX, .sY, SurfaceDB.Surface(.FileNum), Color
     End With
 End Sub
 
-Sub DDrawTransGrhtoSurface(ByVal Batch As clsBGFXSpriteBatch, ByRef Grh As Grh, ByVal X As Integer, ByVal Y As Integer, ByVal Center As Byte, ByVal Animate As Byte, Color() As Long)
+Sub DDrawTransGrhtoSurface(ByRef Grh As Grh, ByVal X As Integer, ByVal Y As Integer, ByVal Center As Byte, ByVal Animate As Byte, Color() As Long)
 '*****************************************************************
 'Draws a GRH transparently to a X and Y position
 '*****************************************************************
@@ -1208,7 +1214,7 @@ Sub DDrawTransGrhtoSurface(ByVal Batch As clsBGFXSpriteBatch, ByRef Grh As Grh, 
         End If
 
         'Draw
-        Device_Textured_Render Batch, X, Y, .pixelWidth, .pixelHeight, .sX, .sY, SurfaceDB.Surface(.FileNum), Color
+        Device_Textured_Render X, Y, .pixelWidth, .pixelHeight, .sX, .sY, SurfaceDB.Surface(.FileNum), Color
     End With
 Exit Sub
 
@@ -1246,7 +1252,6 @@ Sub RenderScreen(ByVal PixelOffsetX As Integer, ByVal PixelOffsetY As Integer)
     Dim minYOffset  As Integer
     Dim PixelOffsetXTemp As Integer 'For centering grhs
     Dim PixelOffsetYTemp As Integer 'For centering grhs
-    Dim wCommon As TYPE_VIDEO_STATE
     
     'Figure out Ends and Starts of screen
     ScreenMinY = (UserPos.Y - AddtoUserPos.Y) - HalfWindowTileHeight
@@ -1294,51 +1299,59 @@ Sub RenderScreen(ByVal PixelOffsetX As Integer, ByVal PixelOffsetY As Integer)
     
     If ScreenMaxX < XMaxMapSize Then ScreenMaxX = ScreenMaxX + 1
     
-    wCommon = Video.AsState(STATE_ALPHA_WRITE, STATE_RGB_WRITE)
-    SpriteBatch.Begin
     
-    Call SpriteBatch.SetState(wCommon)
+    
+    screenX = screenX - 1
+    screenY = screenY - 1
+    
+    PixelOffsetXTemp = screenX * TilePixelWidth + PixelOffsetX
     
     'Draw floor layer
-    For Y = ScreenMinY To ScreenMaxY
-        For X = ScreenMinX To ScreenMaxX
-    
+    For X = ScreenMinX To ScreenMaxX
+        For Y = ScreenMinY To ScreenMaxY
+                    
+            PixelOffsetYTemp = screenY * TilePixelHeight + PixelOffsetY
+            
             'Layer 1 **********************************
-            Call DDrawGrhtoSurface(SpriteBatch, MapData(X, Y).Graphic(1), _
-                (screenX - 1) * TilePixelWidth + PixelOffsetX, _
-                (screenY - 1) * TilePixelHeight + PixelOffsetY, _
+            Call DDrawGrhtoSurface(MapData(X, Y).Graphic(1), _
+                PixelOffsetXTemp, _
+                PixelOffsetYTemp, _
                 0, 0, 1, AmbientColor)
             '******************************************
             
             'Layer 2 **********************************
             If MapData(X, Y).Graphic(2).GrhIndex <> 0 Then
-                Call DDrawTransGrhtoSurface(SpriteBatch, MapData(X, Y).Graphic(2), _
-                        (screenX - 1) * TilePixelWidth + PixelOffsetX, _
-                        (screenY - 1) * TilePixelHeight + PixelOffsetY, _
+                Call DDrawTransGrhtoSurface(MapData(X, Y).Graphic(2), _
+                        PixelOffsetXTemp, _
+                        PixelOffsetYTemp, _
                         1, 1, AmbientColor)
             End If
             '******************************************
             
-            screenX = screenX + 1
-        Next X
+            screenY = screenY + 1
+        Next Y
     
         'Reset ScreenX to original value and increment ScreenY
-        screenX = screenX - X + ScreenMinX
-        screenY = screenY + 1
-    Next Y
+        screenY = screenY - Y + ScreenMinY
+        screenX = screenX + 1
+        PixelOffsetXTemp = screenX * TilePixelWidth + PixelOffsetX
+    Next X
     
    'Draw Transparent Layers
    screenY = (minYOffset - TileBufferSize)
-    For Y = minY To maxY
-        screenX = (minXOffset - TileBufferSize)
-        For X = minX To maxX
-            PixelOffsetXTemp = screenX * TilePixelWidth + PixelOffsetX
+   screenX = (minXOffset - TileBufferSize)
+   
+   PixelOffsetXTemp = screenX * TilePixelWidth + PixelOffsetX
+   
+    For X = minX To maxX
+        For Y = minY To maxY
+        
             PixelOffsetYTemp = screenY * TilePixelHeight + PixelOffsetY
     
             With MapData(X, Y)
                 'Object Layer **********************************
                 If .ObjGrh.GrhIndex <> 0 Then
-                    Call DDrawTransGrhtoSurface(SpriteBatch, .ObjGrh, _
+                    Call DDrawTransGrhtoSurface(.ObjGrh, _
                             PixelOffsetXTemp, PixelOffsetYTemp, 1, 1, AmbientColor)
                 End If
                 '***********************************************
@@ -1346,7 +1359,7 @@ Sub RenderScreen(ByVal PixelOffsetX As Integer, ByVal PixelOffsetY As Integer)
     
                 'Char layer ************************************
                 If .CharIndex <> 0 Then
-                    Call CharRender(SpriteBatch, .CharIndex, PixelOffsetXTemp, PixelOffsetYTemp)
+                    Call CharRender(.CharIndex, PixelOffsetXTemp, PixelOffsetYTemp)
                 End If
                 '*************************************************
     
@@ -1354,41 +1367,49 @@ Sub RenderScreen(ByVal PixelOffsetX As Integer, ByVal PixelOffsetY As Integer)
                 'Layer 3 *****************************************
                 If .Graphic(3).GrhIndex <> 0 Then
                     'Draw
-                    Call DDrawTransGrhtoSurface(SpriteBatch, .Graphic(3), _
+                    Call DDrawTransGrhtoSurface(.Graphic(3), _
                             PixelOffsetXTemp, PixelOffsetYTemp, 1, 1, AmbientColor)
                 End If
                 '************************************************
             End With
     
-            screenX = screenX + 1
-        Next X
-        screenY = screenY + 1
-    Next Y
+            screenY = screenY + 1
+        Next Y
+        screenY = screenY - Y + minY
+        screenX = screenX + 1
+        PixelOffsetXTemp = screenX * TilePixelWidth + PixelOffsetX
+    Next X
         
     If Not bTecho Then
         'Draw blocked tiles and grid
         screenY = (minYOffset - TileBufferSize)
-        For Y = minY To maxY
-            screenX = (minXOffset - TileBufferSize)
-            For X = minX To maxX
+        screenX = (minXOffset - TileBufferSize)
+        
+        PixelOffsetXTemp = screenX * TilePixelWidth + PixelOffsetX
+        
+        For X = minX To maxX
+            For Y = minY To maxY
+               
+               PixelOffsetYTemp = screenY * TilePixelHeight + PixelOffsetY
                
                 'Layer 4 **********************************
                 If MapData(X, Y).Graphic(4).GrhIndex Then
                     'Draw
-                    Call DDrawTransGrhtoSurface(SpriteBatch, MapData(X, Y).Graphic(4), _
-                        screenX * TilePixelWidth + PixelOffsetX, _
-                        screenY * TilePixelHeight + PixelOffsetY, _
+                    Call DDrawTransGrhtoSurface(MapData(X, Y).Graphic(4), _
+                        PixelOffsetXTemp, _
+                        PixelOffsetYTemp, _
                         1, 1, AmbientColor)
                 End If
                 '**********************************
                
-                screenX = screenX + 1
-            Next X
-            screenY = screenY + 1
-        Next Y
+                screenY = screenY + 1
+            Next Y
+            screenY = screenY - Y + minY
+            screenX = screenX + 1
+            PixelOffsetXTemp = screenX * TilePixelWidth + PixelOffsetX
+        
+        Next X
     End If
-
-    SpriteBatch.Finish
     
 End Sub
 
@@ -1461,8 +1482,8 @@ Public Function InitTileEngine(ByVal setDisplayFormhWnd As Long, ByVal setMainVi
     engineBaseSpeed = engineSpeed
     
     'Set FPS value to 60 for startup
-    FPS = 60
-    FramesPerSecCounter = 60
+    'FPS = 60
+    'FramesPerSecCounter = 60
     
     MinXBorder = XMinMapSize + (WindowTileWidth \ 2)
     MaxXBorder = XMaxMapSize - (WindowTileWidth \ 2)
@@ -1483,28 +1504,23 @@ Public Function InitTileEngine(ByVal setDisplayFormhWnd As Long, ByVal setMainVi
     ScrollPixelsPerFrameX = pixelsToScrollPerFrameX
     ScrollPixelsPerFrameY = pixelsToScrollPerFrameY
     
-    'Set the dest rect
-    'With MainDestRect
-    '    .X1 = 0
-    '    .Y1 = 0
-    '    .X2 = MainViewWidth
-    '    .Y2 = MainViewHeight
-    'End With
-    
     Call BGFX_Init(prgRun)
-    'Call DirectX_Init
+
     Call LoadGrhData
     Call CargarCuerpos
     Call CargarCabezas
     Call CargarCascos
     Call CargarFxs
     
+    Call Engine_Init_FontSettings
+    Call Engine_Init_FontTextures
+    Call InitComponentsImage
+    
     AmbientColor(0) = -1
     AmbientColor(1) = -1
     AmbientColor(2) = -1
     AmbientColor(3) = -1
-    
-    
+
     InitTileEngine = True
 End Function
 
@@ -1554,6 +1570,8 @@ Sub ShowNextFrame(ByVal DisplayFormTop As Integer, ByVal DisplayFormLeft As Inte
 'Last modified by: Juan Martín Sotuyo Dodero (Maraxus)
 'Updates the game's model and renders everything.
 '***************************************************
+    Dim wCommon As TYPE_VIDEO_STATE
+
     Static OffsetCounterX As Single
     Static OffsetCounterY As Single
     
@@ -1583,8 +1601,25 @@ Sub ShowNextFrame(ByVal DisplayFormTop As Integer, ByVal DisplayFormLeft As Inte
         'Update mouse position within view area
         Call ConvertCPtoTP(MouseViewX, MouseViewY, MouseTileX, MouseTileY)
         
-        Call Video.SetViewRect(MainView, 0, 0, MainViewWidth, MainViewHeight)
+        wCommon = Video.AsState(STATE_ALPHA_WRITE, STATE_RGB_WRITE)
                 
+        SpriteBatch.Begin
+
+        Call SpriteBatch.SetState(wCommon)
+        
+        Call SpriteBatch.SetView(MainView)
+        '
+        ' Draw the UI
+        '
+        Call RenderUserInterface
+        
+        Call RenderComponents(SpriteBatch)
+        
+        '
+        ' Draw the world
+        '
+        Call SpriteBatch.SetView(1)
+        
         '****** Update screen ******
         If UserCiego Then
             Call CleanViewPort
@@ -1598,24 +1633,26 @@ Sub ShowNextFrame(ByVal DisplayFormTop As Integer, ByVal DisplayFormLeft As Inte
                 isCapturePending = False
             End If
         End If
-        Call Dialogos.Render
+        
+        Call Dialogos.Render(SpriteBatch)
+        
         Call DibujarCartel
 
-            
        ' Call DialogosClanes.Draw
         'Call Inventario.LoopDrawInv
-        
+                
+        SpriteBatch.Finish
         
         Call Video.Frame
         
         'FPS update
-        If fpsLastCheck + 1000 < GetTickCount() Then
-            FPS = FramesPerSecCounter
-            FramesPerSecCounter = 1
-            fpsLastCheck = GetTickCount()
-        Else
-            FramesPerSecCounter = FramesPerSecCounter + 1
-        End If
+        'If fpsLastCheck + 1000 < GetTickCount() Then
+        '    FPS = FramesPerSecCounter
+        '    FramesPerSecCounter = 1
+        '    fpsLastCheck = GetTickCount()
+        'Else
+        '    FramesPerSecCounter = FramesPerSecCounter + 1
+        'End If
         
         'Get timing info
         timerElapsedTime = GetElapsedTime()
@@ -1648,7 +1685,7 @@ Private Function GetElapsedTime() As Single
     Call QueryPerformanceCounter(end_time)
 End Function
 
-Private Sub CharRender(ByVal Batch As clsBGFXSpriteBatch, ByVal CharIndex As Long, ByVal PixelOffsetX As Integer, ByVal PixelOffsetY As Integer)
+Private Sub CharRender(ByVal CharIndex As Long, ByVal PixelOffsetX As Integer, ByVal PixelOffsetY As Integer)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modify Date: 12/03/04
@@ -1657,7 +1694,7 @@ Private Sub CharRender(ByVal Batch As clsBGFXSpriteBatch, ByVal CharIndex As Lon
     Dim moved As Boolean
     Dim Pos As Integer
     Dim line As String
-    Dim Color As Long
+    Dim Color(3) As Long
     
 With charlist(CharIndex)
         If .Moving Then
@@ -1725,20 +1762,20 @@ With charlist(CharIndex)
         If .Head.Head(.Heading).GrhIndex Then
             If Not .invisible Then
                 'Draw Body
-                If .Body.Walk(.Heading).GrhIndex Then Call DDrawTransGrhtoSurface(Batch, .Body.Walk(.Heading), PixelOffsetX, PixelOffsetY, 1, 1, AmbientColor)
+                If .Body.Walk(.Heading).GrhIndex Then Call DDrawTransGrhtoSurface(.Body.Walk(.Heading), PixelOffsetX, PixelOffsetY, 1, 1, AmbientColor)
             
                 'Draw Head
-                If .Head.Head(.Heading).GrhIndex Then Call DDrawTransGrhtoSurface(Batch, .Head.Head(.Heading), PixelOffsetX + .Body.HeadOffset.X, PixelOffsetY + .Body.HeadOffset.Y, 1, 0, AmbientColor)
+                If .Head.Head(.Heading).GrhIndex Then Call DDrawTransGrhtoSurface(.Head.Head(.Heading), PixelOffsetX + .Body.HeadOffset.X, PixelOffsetY + .Body.HeadOffset.Y, 1, 0, AmbientColor)
                     
                 'Draw Helmet
-                If .Casco.Head(.Heading).GrhIndex Then Call DDrawTransGrhtoSurface(Batch, .Casco.Head(.Heading), PixelOffsetX + .Body.HeadOffset.X, PixelOffsetY + .Body.HeadOffset.Y, 1, 0, AmbientColor)
+                If .Casco.Head(.Heading).GrhIndex Then Call DDrawTransGrhtoSurface(.Casco.Head(.Heading), PixelOffsetX + .Body.HeadOffset.X, PixelOffsetY + .Body.HeadOffset.Y, 1, 0, AmbientColor)
                     ' Call DDrawTransGrhtoSurface(.Casco.Head(.Heading), PixelOffsetX + .Body.HeadOffset.X, PixelOffsetY + .Body.HeadOffset.Y + OFFSET_HEAD, 1, 0)
                 
                 'Draw Weapon
-                If .Arma.WeaponWalk(.Heading).GrhIndex Then Call DDrawTransGrhtoSurface(Batch, .Arma.WeaponWalk(.Heading), PixelOffsetX, PixelOffsetY, 1, 1, AmbientColor)
+                If .Arma.WeaponWalk(.Heading).GrhIndex Then Call DDrawTransGrhtoSurface(.Arma.WeaponWalk(.Heading), PixelOffsetX, PixelOffsetY, 1, 1, AmbientColor)
                     
                 'Draw Shield
-                If .Escudo.ShieldWalk(.Heading).GrhIndex Then Call DDrawTransGrhtoSurface(Batch, .Escudo.ShieldWalk(.Heading), PixelOffsetX, PixelOffsetY, 1, 1, AmbientColor)
+                If .Escudo.ShieldWalk(.Heading).GrhIndex Then Call DDrawTransGrhtoSurface(.Escudo.ShieldWalk(.Heading), PixelOffsetX, PixelOffsetY, 1, 1, AmbientColor)
                 
                 If LenB(.Nombre) > 0 Then
                     If Nombres Then
@@ -1750,21 +1787,36 @@ With charlist(CharIndex)
                             Select Case .Criminal
                             
                                 Case 2 'ciuda
-                                    Color = ColoresPJ(49)
+                                    Color(0) = ColoresPJ(49)
+                                    Color(1) = ColoresPJ(49)
+                                    Color(2) = ColoresPJ(49)
+                                    Color(3) = ColoresPJ(49)
                                 Case 3
-                                    Color = ColoresPJ(50)
+                                    Color(0) = ColoresPJ(50)
+                                    Color(1) = ColoresPJ(50)
+                                    Color(2) = ColoresPJ(50)
+                                    Color(3) = ColoresPJ(50)
                                 Case 4
-                                    Color = ColoresPJ(47)
+                                    Color(0) = ColoresPJ(47)
+                                    Color(1) = ColoresPJ(47)
+                                    Color(2) = ColoresPJ(47)
+                                    Color(3) = ColoresPJ(47)
                                 Case 5
-                                    Color = ColoresPJ(48)
+                                    Color(0) = ColoresPJ(48)
+                                    Color(1) = ColoresPJ(48)
+                                    Color(2) = ColoresPJ(48)
+                                    Color(3) = ColoresPJ(48)
                             End Select
                         Else
-                            Color = ColoresPJ(.priv)
+                            Color(0) = ColoresPJ(.priv)
+                            Color(1) = ColoresPJ(.priv)
+                            Color(2) = ColoresPJ(.priv)
+                            Color(3) = ColoresPJ(.priv)
                         End If
                             
                             'Nick
                             line = Left$(.Nombre, Pos - 2)
-                            'Call Text_Draw(PixelOffsetX - .NombreOffset, PixelOffsetY + 30, line, Color)
+                            Call Text_Draw(SpriteBatch, PixelOffsetX - .NombreOffset, PixelOffsetY + 30, line, Color)
                             
                             'Clan
                          '   line = mid$(.Nombre, Pos)
@@ -1775,7 +1827,7 @@ With charlist(CharIndex)
         Else
             'Draw Body
             If .Body.Walk(.Heading).GrhIndex Then _
-                Call DDrawTransGrhtoSurface(Batch, .Body.Walk(.Heading), PixelOffsetX, PixelOffsetY, 1, 1, AmbientColor)
+                Call DDrawTransGrhtoSurface(.Body.Walk(.Heading), PixelOffsetX, PixelOffsetY, 1, 1, AmbientColor)
         End If
         
         'Update dialogs
@@ -1820,35 +1872,66 @@ Private Sub CleanViewPort()
 End Sub
 
 Private Sub BGFX_Init(ByRef isRunning As Boolean)
-    isRunning = Video.Create(frmMain.MainViewPic.hwnd, RENDERER_DIRECT3D11)
+    isRunning = Video.Create(frmMain.hWnd, RENDERER_DIRECT3D11)
+
+    MainView = 0
     
-    Call Video.Reset(MainViewWidth, MainViewHeight)
     
+    Call Video.Reset(frmMain.ScaleWidth, frmMain.ScaleHeight)
+    
+    'Main UI
     Call Video.SetViewClear(MainView, CLEAR_COLOR, &HFF)
     
-    Call Video.SetDebug(DEBUG_MODE_STATS)
+    Call Video.SetViewRect(MainView, 0, 0, frmMain.ScaleWidth, frmMain.ScaleHeight)
     
-    Call Mathematic.MxToOrtho2D(Projection, 0#, MainViewWidth, MainViewHeight, 0#)
-    Call Mathematic.MxToIdentity(View)
+    Call Mathematic.MxToOrtho2D(UIProjection, 0, frmMain.ScaleWidth, frmMain.ScaleHeight, 0)
     
-    Call Video.SetViewTransform(MainView, View, Projection)
-    Call Video.SetTransform(View)
+    Call Mathematic.MxToIdentity(UIView)
+    
+    Call Video.SetViewTransform(MainView, UIView, UIProjection)
+    Call Video.SetTransform(UIView)
+    
+    Call Video.SetViewSequencialMode(MainView, True)
+    
+    'World View
+    Call Video.SetViewClear(1, CLEAR_COLOR, &HFF)
+    
+    Call Video.SetViewRect(1, MainViewLeft, MainViewTop, MainViewWidth, MainViewHeight)
+    
+    Call Mathematic.MxToOrtho2D(MProjection, 0, MainViewWidth, MainViewHeight, 0)
+    
+    Call Mathematic.MxToIdentity(MView)
+    
+    Call Video.SetViewTransform(1, MView, MProjection)
+    'Call Video.SetTransform(MView)
+    
+    Call Video.SetViewSequencialMode(1, True)
     
     Set SpriteBatch = New clsBGFXSpriteBatch
     
     Call SpriteBatch.Initialise(1000)
     
-    Call SpriteBatch.SetProgram(Video.CreateProgram( _
+    Program = Video.CreateProgram( _
        Video.CreateShaderFromMemory(Video.Copy8I(ReadFile("INIT/Shader/D3D11/vs_simple.bin"))), _
-       Video.CreateShaderFromMemory(Video.Copy8I(ReadFile("INIT/Shader/D3D11/fs_simple.bin")))))
+       Video.CreateShaderFromMemory(Video.Copy8I(ReadFile("INIT/Shader/D3D11/fs_simple.bin"))))
        
+    Call SpriteBatch.SetProgram(Program)
+       
+    
+    Dim Image As TYPE_VIDEO_IMAGE
+    
+    Image = Video.CreateImageFromFilename(DirGraficos & "main.png")
+    
+    MainUITex.Ptr = Image.mHandle
+    MainUITex.Width = Image.mX
+    MainUITex.Height = Image.mY
+    
     
     Call SurfaceDB.Initialize(DirGraficos, 90)
     
 End Sub
 
-Public Sub Device_Textured_Render(ByVal Batch As clsBGFXSpriteBatch, _
-                                  ByVal X As Integer, ByVal Y As Integer, _
+Public Sub Device_Textured_Render(ByVal X As Integer, ByVal Y As Integer, _
                                   ByVal Width As Integer, ByVal Height As Integer, _
                                   ByVal sX As Integer, ByVal sY As Integer, _
                                   tex As Texture, _
@@ -1859,7 +1942,7 @@ Public Sub Device_Textured_Render(ByVal Batch As clsBGFXSpriteBatch, _
         TexWidth = tex.Width
         TexHeight = tex.Height
                 
-        With Batch
+        With SpriteBatch
                 '// Seteamos la textura
                 Call .SetTexture(tex.Ptr)
                 
@@ -1872,6 +1955,12 @@ Public Sub Device_Textured_Render(ByVal Batch As clsBGFXSpriteBatch, _
 
 End Sub
 
+Public Sub RenderUserInterface()
+    SpriteBatch.SetTexture MainUITex.Ptr
+    
+    SpriteBatch.Draw 0, 0, MainUITex.Width, MainUITex.Height, AmbientColor
+    
+End Sub
 Public Sub SetCamera(ByVal X As Single, ByVal Y As Single)
     
     'Camera.X = X

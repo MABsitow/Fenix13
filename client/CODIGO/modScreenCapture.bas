@@ -160,7 +160,7 @@ End Type
 '
 Private Declare Function GetDC Lib "user32" (ByVal hwnd As Long) As Long
 Private Declare Function ReleaseDC Lib "user32" (ByVal hwnd As Long, ByVal hdc As Long) As Long
-Private Declare Sub CopyMemory Lib "kernel32" Alias "RtlMoveMemory" (ByRef dest As Any, ByRef source As Any, ByVal byteCount As Long)
+Private Declare Sub CopyMemory Lib "kernel32" Alias "RtlMoveMemory" (ByRef dest As Any, ByRef Source As Any, ByVal byteCount As Long)
 
 '
 
@@ -329,11 +329,13 @@ On Error GoTo Err:
     
     SaveJPG c, file
     
-    AddtoRichTextBox frmMain.RecTxt, "Screen Capturada!", 200, 200, 200, False, False, True
+    'todo
+    'AddtoRichTextBox frmMain.RecTxt, "Screen Capturada!", 200, 200, 200, False, False, True
 Exit Sub
 
 Err:
-    Call AddtoRichTextBox(frmMain.RecTxt, Err.number & "-" & Err.Description, 200, 200, 200, False, False, True)
+    'todo
+    'Call AddtoRichTextBox(frmMain.RecTxt, Err.Number & "-" & Err.Description, 200, 200, 200, False, False, True)
     
     If hdcc <> INVALID_HANDLE Then _
         Call ReleaseDC(frmMain.hwnd, hdcc)

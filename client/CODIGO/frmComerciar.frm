@@ -343,7 +343,7 @@ Private Function CalculateSellPrice(ByRef objValue As Single, ByVal objAmount As
     
     Exit Function
 error:
-    MsgBox Err.Description, vbExclamation, "Error: " & Err.number
+    MsgBox Err.Description, vbExclamation, "Error: " & Err.Number
 End Function
 ''
 ' Calculates the buying price of an item (The price that a merchant will buy you the item)
@@ -363,7 +363,7 @@ Private Function CalculateBuyPrice(ByRef objValue As Single, ByVal objAmount As 
     
     Exit Function
 error:
-    MsgBox Err.Description, vbExclamation, "Error: " & Err.number
+    MsgBox Err.Description, vbExclamation, "Error: " & Err.Number
 End Function
 
 Private Sub imgComprar_Click()
@@ -378,7 +378,8 @@ Private Sub imgComprar_Click()
     If UserGLD >= CalculateSellPrice(NPCInventory(InvComNpc.SelectedItem).Valor, Val(cantidad.Text)) Then
         Call WriteCommerceBuy(InvComNpc.SelectedItem, Val(cantidad.Text))
     Else
-        Call AddtoRichTextBox(frmMain.RecTxt, "No tienes suficiente oro.", 2, 51, 223, 1, 1)
+        'todo
+        Call AppendLineCC(frmMain.RecTxt, "No tienes suficiente oro.", 2, 51, 223, 1, 1)
         Exit Sub
     End If
     

@@ -20,20 +20,26 @@ Private Enum eGuiEvents
     KeyDown
 End Enum
 
-Private Rectangle       As D3DRect
+Private Rectangle       As Rect
 Private OEvents()       As Long 'eventos
 
 Public Name             As String
 Public OType            As eGuiObjectType 'tipo de objeto
 
 Public Text             As String
-Public TSV              As Long 'Text Start Vert
 
 Private Const MIN_BUTTON_WIDTH As Integer = 96
 
-Public Sub CreateObject(ByVal ObjectName As String, Rect As D3DRect, ByVal ObjectType As eGuiObjectType, events() As Long, ByVal ObjectText As String)
+Public Sub CreateObject(ByVal ObjectName As String, X As Long, Y As Long, W As Long, H As Long, ByVal ObjectType As eGuiObjectType, events() As Long, ByVal ObjectText As String)
     Name = ObjectName
-    Rectangle = Rect
+    
+    With Rectangle
+        .x1 = X
+        .x2 = W
+        .y1 = Y
+        .y2 = H
+    End With
+    
     OType = ObjectType
     
     If OType = eGuiObjectType.Button Then Call Normalize
@@ -48,6 +54,10 @@ Public Sub CreateObject(ByVal ObjectName As String, Rect As D3DRect, ByVal Objec
     End If
 End Sub
 
+Private Function Peek(ByVal lPtr As Long) As Long
+    Call CopyMemory(Peek, ByVal lPtr, 4)
+End Function
+
 Private Sub Normalize()
     
     'Buttons are width normalized (height is a fixed size)
@@ -57,8 +67,20 @@ Private Sub Normalize()
     Loop
     
 End Sub
-Public Property Get ObjectRectangle() As D3DRect
-    ObjectRectangle = Rectangle
+Public Property Get X() As Long
+    X = Rectangle.x1
+End Property
+
+Public Property Get Y() As Long
+    Y = Rectangle.y1
+End Property
+
+Public Property Get W() As Long
+    W = Rectangle.x2
+End Property
+
+Public Property Get H() As Long
+    H = Rectangle.y2
 End Property
 
 Public Property Get ObjectEvents() As Long()

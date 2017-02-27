@@ -51,34 +51,34 @@ If Not Cartel Then
     Cartel = True
     ReDim LeyendaFormateada(0 To (Len(Ley) \ (MAXLONG \ 2)))
                 
-    Dim I As Integer, k As Integer, anti As Integer
+    Dim i As Integer, k As Integer, anti As Integer
     anti = 1
     k = 0
-    I = 0
-    Call DarFormato(Leyenda, I, k, anti)
-    I = 0
-    Do While LeyendaFormateada(I) <> "" And I < UBound(LeyendaFormateada)
+    i = 0
+    Call DarFormato(Leyenda, i, k, anti)
+    i = 0
+    Do While LeyendaFormateada(i) <> "" And i < UBound(LeyendaFormateada)
         
-       I = I + 1
+       i = i + 1
     Loop
-    ReDim Preserve LeyendaFormateada(0 To I)
+    ReDim Preserve LeyendaFormateada(0 To i)
 Else
     Exit Sub
 End If
 End Sub
 
 
-Private Function DarFormato(s As String, I As Integer, k As Integer, anti As Integer)
-If anti + I <= Len(s) + 1 Then
-    If ((I >= MAXLONG) And mid$(s, anti + I, 1) = " ") Or (anti + I = Len(s)) Then
-        LeyendaFormateada(k) = mid(s, anti, I + 1)
+Private Function DarFormato(s As String, i As Integer, k As Integer, anti As Integer)
+If anti + i <= Len(s) + 1 Then
+    If ((i >= MAXLONG) And mid$(s, anti + i, 1) = " ") Or (anti + i = Len(s)) Then
+        LeyendaFormateada(k) = mid(s, anti, i + 1)
         k = k + 1
-        anti = anti + I + 1
-        I = 0
+        anti = anti + i + 1
+        i = 0
     Else
-        I = I + 1
+        i = i + 1
     End If
-    Call DarFormato(s, I, k, anti)
+    Call DarFormato(s, i, k, anti)
 End If
 End Function
 
@@ -89,11 +89,11 @@ Dim X As Integer, Y As Integer
 X = XPosCartel + 20
 Y = YPosCartel + 60
 'Call DDrawTransGrhIndextoSurface(textura, XPosCartel, YPosCartel, 0, AmbientColor)
-Dim J As Integer, desp As Integer
+Dim j As Integer, desp As Integer
 
-For J = 0 To UBound(LeyendaFormateada)
-    'Text_Draw X, Y + desp, LeyendaFormateada(J), vbWhite
-    desp = desp + (frmMain.Font.size) + 5
+For j = 0 To UBound(LeyendaFormateada)
+    'Text_Draw X, Y + desp, LeyendaFormateada(j), vbWhite
+    desp = desp + (frmMain.Font.Size) + 5
 Next
 End Sub
 
