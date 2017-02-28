@@ -1043,7 +1043,7 @@ Private Sub HandleRemoveCharDialog()
 '
 '***************************************************
     'Check if the packet is complete
-    If incomingData.Remaining < 3 Then
+    If incomingData.Remaining < 2 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
@@ -1483,7 +1483,7 @@ Private Sub HandleUpdateSta()
 '
 '***************************************************
     'Check packet is complete
-    If incomingData.Remaining < 3 Then
+    If incomingData.Remaining < 2 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
@@ -1518,7 +1518,7 @@ Private Sub HandleUpdateMana()
 '
 '***************************************************
     'Check packet is complete
-    If incomingData.Remaining < 3 Then
+    If incomingData.Remaining < 2 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
@@ -1553,7 +1553,7 @@ Private Sub HandleUpdateHP()
 '
 '***************************************************
     'Check packet is complete
-    If incomingData.Remaining < 3 Then
+    If incomingData.Remaining < 2 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
@@ -1596,7 +1596,7 @@ Private Sub HandleUpdateGold()
 '- 08/14/07: Added GldLbl color variation depending on User Gold and Level
 '***************************************************
     'Check packet is complete
-    If incomingData.Remaining < 5 Then
+    If incomingData.Remaining < 4 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
@@ -1628,7 +1628,7 @@ Private Sub HandleUpdateBankGold()
 '
 '***************************************************
     'Check packet is complete
-    If incomingData.Remaining < 5 Then
+    If incomingData.Remaining < 4 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
@@ -1650,7 +1650,7 @@ Private Sub HandleUpdateExp()
 '
 '***************************************************
     'Check packet is complete
-    If incomingData.Remaining < 5 Then
+    If incomingData.Remaining < 4 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
@@ -1675,7 +1675,7 @@ Private Sub HandleUpdateStrenghtAndDexterity()
 'Last Modification: 11/26/09
 '***************************************************
     'Check packet is complete
-    If incomingData.Remaining < 3 Then
+    If incomingData.Remaining < 2 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
@@ -1701,7 +1701,7 @@ Private Sub HandleUpdateStrenght()
 'Last Modification: 11/26/09
 '***************************************************
     'Check packet is complete
-    If incomingData.Remaining < 2 Then
+    If incomingData.Remaining < 1 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
@@ -1724,7 +1724,7 @@ Private Sub HandleUpdateDexterity()
 'Last Modification: 11/26/09
 '***************************************************
     'Check packet is complete
-    If incomingData.Remaining < 2 Then
+    If incomingData.Remaining < 1 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
@@ -1748,7 +1748,7 @@ Private Sub HandleChangeMap()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    If incomingData.Remaining < 5 Then
+    If incomingData.Remaining < 4 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
@@ -1790,7 +1790,7 @@ Private Sub HandlePosUpdate()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    If incomingData.Remaining < 3 Then
+    If incomingData.Remaining < 2 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
@@ -1832,7 +1832,7 @@ Private Sub HandleNPCHitUser()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    If incomingData.Remaining < 4 Then
+    If incomingData.Remaining < 3 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
@@ -1865,7 +1865,7 @@ Private Sub HandleUserHitNPC()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    If incomingData.Remaining < 5 Then
+    If incomingData.Remaining < 4 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
@@ -1885,7 +1885,7 @@ Private Sub HandleUserAttackedSwing()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    If incomingData.Remaining < 3 Then
+    If incomingData.Remaining < 2 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
@@ -1905,7 +1905,7 @@ Private Sub HandleUserHittedByUser()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    If incomingData.Remaining < 6 Then
+    If incomingData.Remaining < 5 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
@@ -1943,7 +1943,7 @@ Private Sub HandleUserHittedUser()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    If incomingData.Remaining < 6 Then
+    If incomingData.Remaining < 5 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
@@ -1980,7 +1980,7 @@ Private Sub HandleChatOverHead()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    If incomingData.Remaining < 8 Then
+    If incomingData.Remaining < 7 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
@@ -2025,7 +2025,7 @@ Private Sub HandleConsoleMessage()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    If incomingData.Remaining < 4 Then
+    If incomingData.Remaining < 3 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
@@ -2099,7 +2099,7 @@ Private Sub HandleCommerceChat()
 'Last Modification: 03/12/2009
 '
 '***************************************************
-    If incomingData.Remaining < 4 Then
+    If incomingData.Remaining < 3 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
@@ -2166,7 +2166,7 @@ Private Sub HandleShowMessageBox()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    If incomingData.Remaining < 3 Then
+    If incomingData.Remaining < 2 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
@@ -2197,7 +2197,7 @@ Private Sub HandleUserIndexInServer()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    If incomingData.Remaining < 3 Then
+    If incomingData.Remaining < 2 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
@@ -2217,7 +2217,7 @@ Private Sub HandleUserCharIndexInServer()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    If incomingData.Remaining < 3 Then
+    If incomingData.Remaining < 2 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
@@ -2246,7 +2246,7 @@ Private Sub HandleCharacterCreate()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    If incomingData.Remaining < 24 Then
+    If incomingData.Remaining < 13 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
@@ -2332,7 +2332,7 @@ Private Sub HandleCharacterChangeNick()
 'Last Modification: 07/23/09
 '
 '***************************************************
-    If incomingData.Remaining < 6 Then
+    If incomingData.Remaining < 5 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
@@ -2354,7 +2354,7 @@ Private Sub HandleCharacterRemove()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    If incomingData.Remaining < 3 Then
+    If incomingData.Remaining < 2 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
@@ -2379,7 +2379,7 @@ Private Sub HandleCharacterMove()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    If incomingData.Remaining < 5 Then
+    If incomingData.Remaining < 4 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
@@ -2416,7 +2416,7 @@ End Sub
 
 Private Sub HandleForceCharMove()
     
-    If incomingData.Remaining < 2 Then
+    If incomingData.Remaining < 1 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
@@ -2443,7 +2443,7 @@ Private Sub HandleCharacterChange()
 'Last Modification: 25/08/2009
 '25/08/2009: ZaMa - Changed a variable used incorrectly.
 '***************************************************
-    If incomingData.Remaining < 18 Then
+    If incomingData.Remaining < 17 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
@@ -2507,7 +2507,7 @@ Private Sub HandleObjectCreate()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    If incomingData.Remaining < 5 Then
+    If incomingData.Remaining < 4 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
@@ -2535,7 +2535,7 @@ Private Sub HandleObjectDelete()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    If incomingData.Remaining < 3 Then
+    If incomingData.Remaining < 2 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
@@ -2560,7 +2560,7 @@ Private Sub HandleBlockPosition()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    If incomingData.Remaining < 4 Then
+    If incomingData.Remaining < 3 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
@@ -2590,7 +2590,7 @@ Private Sub HandlePlayMIDI()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    If incomingData.Remaining < 4 Then
+    If incomingData.Remaining < 3 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
@@ -2621,7 +2621,7 @@ Private Sub HandlePlayWave()
 'Last Modified by: Rapsodius
 'Added support for 3D Sounds.
 '***************************************************
-    If incomingData.Remaining < 3 Then
+    If incomingData.Remaining < 2 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
@@ -2649,7 +2649,7 @@ Private Sub HandleAreaChanged()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    If incomingData.Remaining < 3 Then
+    If incomingData.Remaining < 2 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
@@ -2724,7 +2724,7 @@ Private Sub HandleCreateFX()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    If incomingData.Remaining < 7 Then
+    If incomingData.Remaining < 6 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
@@ -2752,7 +2752,7 @@ Private Sub HandleUpdateUserStats()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    If incomingData.Remaining < 26 Then
+    If incomingData.Remaining < 15 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
@@ -2842,7 +2842,7 @@ Private Sub HandleWorkRequestTarget()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    If incomingData.Remaining < 2 Then
+    If incomingData.Remaining < 1 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
@@ -2881,7 +2881,7 @@ Private Sub HandleChangeInventorySlot()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    If incomingData.Remaining < 22 Then
+    If incomingData.Remaining < 11 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
@@ -3040,7 +3040,7 @@ Private Sub HandleChangeBankSlot()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    If incomingData.Remaining < 21 Then
+    If incomingData.Remaining < 10 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
@@ -3093,7 +3093,7 @@ Private Sub HandleChangeSpellSlot()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    If incomingData.Remaining < 6 Then
+    If incomingData.Remaining < 5 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
@@ -3177,7 +3177,7 @@ Private Sub HandleBlacksmithWeapons()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    If incomingData.Remaining < 3 Then
+    If incomingData.Remaining < 2 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
@@ -3239,7 +3239,7 @@ Private Sub HandleBlacksmithArmors()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    If incomingData.Remaining < 3 Then
+    If incomingData.Remaining < 2 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
@@ -3287,7 +3287,7 @@ Private Sub HandleCarpenterObjects()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    If incomingData.Remaining < 3 Then
+    If incomingData.Remaining < 2 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
@@ -3359,7 +3359,7 @@ Private Sub HandleErrorMessage()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    If incomingData.Remaining < 3 Then
+    If incomingData.Remaining < 2 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
@@ -3424,7 +3424,7 @@ Private Sub HandleShowSignal()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    If incomingData.Remaining < 5 Then
+    If incomingData.Remaining < 4 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
@@ -3457,7 +3457,7 @@ Private Sub HandleChangeNPCInventorySlot()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    If incomingData.Remaining < 21 Then
+    If incomingData.Remaining < 10 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
@@ -3501,7 +3501,7 @@ Private Sub HandleUpdateHungerAndThirst()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    If incomingData.Remaining < 5 Then
+    If incomingData.Remaining < 4 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
@@ -3566,7 +3566,7 @@ Private Sub HandleMiniStats()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    If incomingData.Remaining < 20 Then
+    If incomingData.Remaining < 9 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
@@ -3594,7 +3594,7 @@ Private Sub HandleLevelUp()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    If incomingData.Remaining < 3 Then
+    If incomingData.Remaining < 2 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
@@ -3616,7 +3616,7 @@ Private Sub HandleAddForumMessage()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    If incomingData.Remaining < 8 Then
+    If incomingData.Remaining < 7 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
@@ -3682,7 +3682,7 @@ Private Sub HandleSetInvisible()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    If incomingData.Remaining < 4 Then
+    If incomingData.Remaining < 3 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
@@ -3706,7 +3706,7 @@ Private Sub HandleDiceRoll()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    If incomingData.Remaining < 6 Then
+    If incomingData.Remaining < 5 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
@@ -3785,7 +3785,7 @@ Private Sub HandleSendSkills()
 'Last Modification: 11/19/09
 '11/19/09: Pato - Now the server send the percentage of progress of the skills.
 '***************************************************
-    If incomingData.Remaining < 2 + NUMSKILLS Then
+    If incomingData.Remaining < 1 + NUMSKILLS Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
@@ -3811,7 +3811,7 @@ Private Sub HandleTrainerCreatureList()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    If incomingData.Remaining < 3 Then
+    If incomingData.Remaining < 2 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
@@ -3864,7 +3864,7 @@ Private Sub HandleShowUserRequest()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    If incomingData.Remaining < 3 Then
+    If incomingData.Remaining < 2 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
@@ -3983,7 +3983,7 @@ Private Sub HandleChangeUserTradeSlot()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    If incomingData.Remaining < 22 Then
+    If incomingData.Remaining < 11 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
@@ -4029,7 +4029,7 @@ Private Sub HandleSendNight()
 'Last Modification: 01/08/07
 '
 '***************************************************
-    If incomingData.Remaining < 2 Then
+    If incomingData.Remaining < 1 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
@@ -4050,7 +4050,7 @@ Private Sub HandleSpawnList()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    If incomingData.Remaining < 3 Then
+    If incomingData.Remaining < 2 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
@@ -4088,7 +4088,7 @@ Private Sub HandleShowSOSForm()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    If incomingData.Remaining < 3 Then
+    If incomingData.Remaining < 2 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
@@ -4132,7 +4132,7 @@ Private Sub HandleShowMOTDEditionForm()
 'Last Modification: 05/17/06
 '
 '*************************************Su**************
-    If incomingData.Remaining < 3 Then
+    If incomingData.Remaining < 2 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
@@ -4178,7 +4178,7 @@ Private Sub HandleUserNameList()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    If incomingData.Remaining < 3 Then
+    If incomingData.Remaining < 2 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
@@ -4236,7 +4236,7 @@ Private Sub HandleUpdateTagAndStatus()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    If incomingData.Remaining < 6 Then
+    If incomingData.Remaining < 5 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If

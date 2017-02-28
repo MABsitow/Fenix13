@@ -1192,7 +1192,7 @@ Private Sub Socket1_Connect()
 
     Select Case EstadoLogin
         Case E_MODO.CrearNuevoPj
-           Call Login
+            Call Login
         
         Case E_MODO.Normal
            Call Login
