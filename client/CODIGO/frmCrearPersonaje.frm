@@ -1180,7 +1180,7 @@ Private uSkills(1 To NUMSKILLS) As Byte
 Private MouseButton As Integer
 Private MouseShift As Integer
 
-Private Declare Sub CopyMemory Lib "kernel32" Alias "RtlMoveMemory" (ByRef destination As Any, ByRef source As Any, ByVal length As Long)
+Private Declare Sub CopyMemory Lib "kernel32" Alias "RtlMoveMemory" (ByRef Destination As Any, ByRef Source As Any, ByVal Length As Long)
 
 
 Private Sub command1_Click()
@@ -1221,7 +1221,7 @@ Private Sub Form_Load()
     
     Dim i As Long
 
-    For i = 0 To lblSkill1.ubound
+    For i = 0 To lblSkill1.UBound
         lblSkill1(i).Caption = SkillsNames(i + 1)
     Next
     
@@ -1476,7 +1476,7 @@ Else
     TopList = TopList - 1
 End If
 
-For i = 0 To lblSkill1.ubound
+For i = 0 To lblSkill1.UBound
     lblSkill1(i).Caption = IIf(uSkills(i + 1 + TopList) > 0, SkillsNames(i + 1 + TopList) & " (" & uSkills(i + 1 + TopList) & ")", SkillsNames(i + 1 + TopList))
 Next
 
@@ -1500,7 +1500,7 @@ Else
     TopList = TopList + 1
 End If
 
-For i = 0 To lblSkill1.ubound
+For i = 0 To lblSkill1.UBound
     lblSkill1(i).Caption = IIf(uSkills(i + 1 + TopList) > 0, SkillsNames(i + 1 + TopList) & " (" & uSkills(i + 1 + TopList) & ")", SkillsNames(i + 1 + TopList))
 Next
 
@@ -1518,7 +1518,7 @@ Else
     TopList = TopList - 1
 End If
 
-For i = 0 To lblSkill1.ubound
+For i = 0 To lblSkill1.UBound
     lblSkill1(i).Caption = IIf(uSkills(i + 1 + TopList) > 0, SkillsNames(i + 1 + TopList) & " (" & uSkills(i + 1 + TopList) & ")", SkillsNames(i + 1 + TopList))
 Next
 
@@ -1534,7 +1534,7 @@ Else
     TopList = TopList + 1
 End If
 
-For i = 0 To lblSkill1.ubound
+For i = 0 To lblSkill1.UBound
     lblSkill1(i).Caption = IIf(uSkills(i + 1 + TopList) > 0, SkillsNames(i + 1 + TopList) & " (" & uSkills(i + 1 + TopList) & ")", SkillsNames(i + 1 + TopList))
 Next
 
@@ -1594,7 +1594,9 @@ Private Sub imgCrear_Click()
         Unload Me
         
     Else
+        
         Call Login
+        
     End If
     
     bShowTutorial = True
@@ -1760,7 +1762,7 @@ End Sub
 
 Private Sub picSkills_Click()
 
-If YTemp < 0 Or YTemp > lblSkill1.ubound Then Exit Sub
+If YTemp < 0 Or YTemp > lblSkill1.UBound Then Exit Sub
 
 If MouseButton = vbLeftButton Then
     
@@ -1832,7 +1834,7 @@ YTemp = (Y - 1) \ 20
 
 Dim i As Long
 
-For i = 0 To lblSkill1.ubound
+For i = 0 To lblSkill1.UBound
     If YTemp = i Then
         lblSkill1(i).ForeColor = vbRed
     Else
@@ -1910,7 +1912,7 @@ Private Sub DrawSklPt(ByVal Skill As Integer)
             'SR.Right = SR.Left + .pixelWidth
             'SR.bottom = SR.Top + 20
             
-            For i = 0 To lblSkill1.ubound
+            For i = 0 To lblSkill1.UBound
                 'DR.Left = 0
                 'DR.Top = I * 20
                 'DR.Right = uSkills(I + 1 + TopList) * 17

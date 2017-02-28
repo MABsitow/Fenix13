@@ -496,24 +496,24 @@ End Sub
 Sub SwitchMap(ByVal Map As Integer)
     Dim Y As Long
     Dim X As Long
-    Dim handle As Integer
-    Dim reader As New clsByteBuffer
-    Dim data() As Byte
+    Dim Handle As Integer
+    Dim Reader As New CsBuffer
+    Dim Data() As Byte
     Dim ByFlags As Byte
         
-    handle = FreeFile()
+    Handle = FreeFile()
     
-    Open DirMapas & "Mapa" & Map & ".mcl" For Binary As handle
-        Seek handle, 1
-        ReDim data(0 To LOF(handle) - 1) As Byte
+    Open DirMapas & "Mapa" & Map & ".mcl" For Binary As Handle
+        Seek Handle, 1
+        ReDim Data(0 To LOF(Handle) - 1) As Byte
         
-        Get handle, , data
-    Close handle
+        Get Handle, , Data
+    Close Handle
     
-    Call reader.initializeReader(data)
+    Call Reader.Wrap(Data)
     
     'map :poop: Header
-    MapInfo.MapVersion = reader.getInteger
+    MapInfo.MapVersion = Reader.ReadInteger
     Dim i As Long
     
     'Load arrays
@@ -521,16 +521,16 @@ Sub SwitchMap(ByVal Map As Integer)
         For X = XMinMapSize To XMaxMapSize
         
             With MapData(X, Y)
-                ByFlags = reader.getByte
+                ByFlags = Reader.ReadByte
                     
                 .Blocked = ByFlags And 1
                     
-                .Graphic(1).GrhIndex = reader.getInteger
+                .Graphic(1).GrhIndex = Reader.ReadInteger
                 Call InitGrh(.Graphic(1), .Graphic(1).GrhIndex)
                 
                 For i = 2 To 4
                     If ByFlags And (2 ^ (i - 1)) Then
-                        .Graphic(i).GrhIndex = reader.getInteger
+                        .Graphic(i).GrhIndex = Reader.ReadInteger
                         Call InitGrh(.Graphic(i), .Graphic(i).GrhIndex)
                     Else
                         .Graphic(i).GrhIndex = 0

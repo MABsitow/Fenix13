@@ -1190,15 +1190,14 @@ End Sub
 Private Sub Socket1_Connect()
     
     'Clean input and output buffers
-    Call incomingData.ReadASCIIStringFixed(incomingData.Length)
-    Call outgoingData.ReadASCIIStringFixed(outgoingData.Length)
-    
+    Call incomingData.Clear
+    Call outgoingData.Clear
 
     Second.Enabled = True
 
     Select Case EstadoLogin
         Case E_MODO.CrearNuevoPj
-           Call Login
+            Call Login
         
         Case E_MODO.Normal
            Call Login
@@ -1287,15 +1286,15 @@ End Sub
 
 Private Sub Socket1_Read(dataLength As Integer, IsUrgent As Integer)
     Dim RD As String
-    Dim data() As Byte
+    Dim Data() As Byte
     
     Call Socket1.Read(RD, dataLength)
-    data = StrConv(RD, vbFromUnicode)
+    Data = StrConv(RD, vbFromUnicode)
     
     If RD = vbNullString Then Exit Sub
 
     'Put data in the buffer
-    Call incomingData.WriteBlock(data)
+    Call incomingData.Wrap(Data)
     
     'Send buffer to Handle data
     Call HandleIncomingData
