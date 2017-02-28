@@ -60,8 +60,8 @@ Public InvMaderasCarpinteria(1 To MAX_LIST_ITEMS) As New clsGraphicalInventory
 Public CustomKeys As New clsCustomKeys
 Public CustomMessages As New clsCustomMessages
 
-Public incomingData As New clsByteQueue
-Public outgoingData As New clsByteQueue
+Public incomingData As New CsBuffer
+Public outgoingData As New CsBuffer
 
 ''
 'The main timer of the game.
