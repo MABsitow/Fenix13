@@ -1207,26 +1207,6 @@ End If
 getTagPosition = Len(Nick) + 2
 End Function
 
-Public Sub checkText(ByVal Text As String)
-Dim Nivel As Integer
-If Right(Text, Len(MENSAJE_FRAGSHOOTER_TE_HA_MATADO)) = MENSAJE_FRAGSHOOTER_TE_HA_MATADO Then
-    Call ScreenCapture(True)
-    Exit Sub
-End If
-If Left(Text, Len(MENSAJE_FRAGSHOOTER_HAS_MATADO)) = MENSAJE_FRAGSHOOTER_HAS_MATADO Then
-    EsperandoLevel = True
-    Exit Sub
-End If
-If EsperandoLevel Then
-    If Right(Text, Len(MENSAJE_FRAGSHOOTER_PUNTOS_DE_EXPERIENCIA)) = MENSAJE_FRAGSHOOTER_PUNTOS_DE_EXPERIENCIA Then
-        If CInt(mid(Text, Len(MENSAJE_FRAGSHOOTER_HAS_GANADO), (Len(Text) - (Len(MENSAJE_FRAGSHOOTER_PUNTOS_DE_EXPERIENCIA) + Len(MENSAJE_FRAGSHOOTER_HAS_GANADO))))) / 2 > ClientSetup.byMurderedLevel Then
-            Call ScreenCapture(True)
-        End If
-    End If
-End If
-EsperandoLevel = False
-End Sub
-
 Public Function getStrenghtColor() As Long
 Dim M As Long
 M = 255 / MAXATRIBUTOS

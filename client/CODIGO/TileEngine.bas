@@ -1627,13 +1627,6 @@ Sub ShowNextFrame(ByVal DisplayFormTop As Integer, ByVal DisplayFormLeft As Inte
             Call RenderScreen(OffsetCounterX, OffsetCounterY)
         End If
         
-        If ClientSetup.bActive Then
-            If isCapturePending Then
-                Call ScreenCapture(True)
-                isCapturePending = False
-            End If
-        End If
-        
         Call Dialogos.Render(SpriteBatch)
         
         Call DibujarCartel

@@ -1,5 +1,5 @@
 VERSION 5.00
-Object = "{33101C00-75C3-11CF-A8A0-444553540000}#1.0#0"; "CSWSK32.OCX"
+Object = "{33101C00-75C3-11CF-A8A0-444553540000}#1.0#0"; "cswsk32.ocx"
 Begin VB.Form frmMain 
    AutoRedraw      =   -1  'True
    BackColor       =   &H00404040&
@@ -426,9 +426,6 @@ Private Sub Form_KeyUp(KeyCode As Integer, Shift As Integer)
                 Call Video.SetDebug(DEBUG_MODE_STATS)
                 isDebug = True
             End If
-                
-        Case CustomKeys.BindedKey(eKeyType.mKeyTakeScreenShot)
-            Call ScreenCapture
                 
       '  Case CustomKeys.BindedKey(eKeyType.mKeyShowOptions)
        '     Call frmOpciones.Show(vbModeless, frmMain)

@@ -896,15 +896,8 @@ With incomingData
             Call ShowConsoleMsg(MENSAJE_HAS_MATADO_A & charlist(.ReadInteger).Nombre & MENSAJE_22, 255, 0, 0, True, False)
             level = .ReadLong
             Call ShowConsoleMsg(MENSAJE_HAS_GANADO_EXPE_1 & level & MENSAJE_HAS_GANADO_EXPE_2, 255, 0, 0, True, False)
-            If ClientSetup.bKill And ClientSetup.bActive Then
-                If level / 2 > ClientSetup.byMurderedLevel Then
-                    isCapturePending = True
-                End If
-            End If
         Case eMessages.UserKill
             Call ShowConsoleMsg(charlist(.ReadInteger).Nombre & MENSAJE_TE_HA_MATADO, 255, 0, 0, True, False)
-            If ClientSetup.bDie And ClientSetup.bActive Then _
-                isCapturePending = True
         Case eMessages.EarnExp
             Call ShowConsoleMsg(MENSAJE_HAS_GANADO_EXPE_1 & .ReadLong & MENSAJE_HAS_GANADO_EXPE_2, 255, 0, 0, True, False)
         Case eMessages.GoHome
@@ -2102,7 +2095,7 @@ On Error GoTo ErrHandler
       '      If MirandoParty Then frmParty.SendTxt.SetFocus
      '   End If
     End If
-   Call checkText(chat)
+
     'If we got here then packet is complete, copy data back to original queue
     Call incomingData.CopyBuffer(Buffer)
     
