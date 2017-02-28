@@ -2246,7 +2246,7 @@ Private Sub HandleCharacterCreate()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    If incomingData.Remaining < 13 Then
+    If incomingData.Remaining < 23 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
@@ -2752,7 +2752,7 @@ Private Sub HandleUpdateUserStats()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    If incomingData.Remaining < 15 Then
+    If incomingData.Remaining < 25 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
@@ -3983,7 +3983,7 @@ Private Sub HandleChangeUserTradeSlot()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    If incomingData.Remaining < 11 Then
+    If incomingData.Remaining < 21 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
