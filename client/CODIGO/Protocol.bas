@@ -433,7 +433,7 @@ Public Sub HandleIncomingData()
     
     Call incomingData.Mark
         
-    Select Case incomingData.PeekByte
+    Select Case incomingData.ReadByte
         Case ServerPacketID.Logged                  ' LOGGED
             Call HandleLogged
         
