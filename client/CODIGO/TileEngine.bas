@@ -1615,6 +1615,8 @@ Sub ShowNextFrame(ByVal DisplayFormTop As Integer, ByVal DisplayFormLeft As Inte
         
         Call RenderComponents(SpriteBatch)
         
+        Call Inventario.LoopDrawInv(SpriteBatch)
+        
         '
         ' Draw the world
         '
@@ -1632,8 +1634,7 @@ Sub ShowNextFrame(ByVal DisplayFormTop As Integer, ByVal DisplayFormLeft As Inte
         Call DibujarCartel
 
        ' Call DialogosClanes.Draw
-        'Call Inventario.LoopDrawInv
-                
+        
         SpriteBatch.Finish
         
         Call Video.Frame

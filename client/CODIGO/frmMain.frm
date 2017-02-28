@@ -1,5 +1,5 @@
 VERSION 5.00
-Object = "{33101C00-75C3-11CF-A8A0-444553540000}#1.0#0"; "cswsk32.ocx"
+Object = "{33101C00-75C3-11CF-A8A0-444553540000}#1.0#0"; "CSWSK32.OCX"
 Begin VB.Form frmMain 
    AutoRedraw      =   -1  'True
    BackColor       =   &H00404040&
@@ -148,6 +148,8 @@ Public lblHelm          As Integer
 Public lblName          As Integer
 Public RecTxt           As Integer
 
+Public PicInv           As Integer
+
 '***************COMPONENTS********************
 
 
@@ -228,6 +230,10 @@ Private Sub InitComponents()
     
     AppendLine RecTxt, "Esto es un motd", White()
     AppendLine RecTxt, "Hola", Red()
+    
+    PicInv = AddRect(800, 223, 160, 160)
+    
+    Call SetEvents(PicInv, Callback(AddressOf PicInv_EventHandler))
     
 End Sub
 
@@ -1184,8 +1190,8 @@ End Sub
 Private Sub Socket1_Connect()
     
     'Clean input and output buffers
-    Call incomingData.ReadASCIIStringFixed(incomingData.length)
-    Call outgoingData.ReadASCIIStringFixed(outgoingData.length)
+    Call incomingData.ReadASCIIStringFixed(incomingData.Length)
+    Call outgoingData.ReadASCIIStringFixed(outgoingData.Length)
     
 
     Second.Enabled = True

@@ -792,9 +792,9 @@ UserMap = 1
     'audio.MusicActivated = Not ClientSetup.bNoMusic
     'audio.SoundActivated = Not ClientSetup.bNoSound
     'audio.SoundEffectsActivated = Not ClientSetup.bNoSoundEffects
+    
     'Inicializamos el inventario gráfico
-    'todo
-    'Call Inventario.Initialize(frmMain.PicInv, MAX_INVENTORY_SLOTS)
+    Call Inventario.Initialize(800, 223, 160, 160, MAX_INVENTORY_SLOTS)
     
     'call 'audio.MusicMP3Play(App.path & "\MP3\" & MP3_Inicio & ".mp3")
     

@@ -35,6 +35,15 @@ Attribute VB_Exposed = False
 
 Option Explicit
 
+Private Type TYPE_INVENTORY_POSITION
+        X   As Integer
+        Y   As Integer
+        W   As Integer
+        H   As Integer
+End Type
+
+Private Position                   As TYPE_INVENTORY_POSITION
+
 Private InventoryOffset            As Long             'Number of lines we scrolled down from topmost
 Private InvSelectedItem            As Long             'Currently selected item
 Private MouseDownSelectedItem      As Long
@@ -51,9 +60,6 @@ Private ShowValue                  As Boolean
 Private ImgContainer               As Boolean
 
 Private Inventory()                As Inventory    'User's inventory
-
-Private WithEvents InventoryWindow As PictureBox    'Placeholder where to render the inventory
-Attribute InventoryWindow.VB_VarHelpID = -1
 
 Public Sub SelectGold()
         '***************************************************
@@ -301,10 +307,10 @@ Private Function ClickItem(ByVal X As Long, ByVal Y As Long) As Long
         Dim temp_x As Long
         Dim temp_y As Long
     
-        temp_x = X \ 32 '34
-        temp_y = Y \ 32 '34
+        temp_x = (X - Position.X) \ ownTilePixelWidth '34
+        temp_y = (Y - Position.Y) \ ownTilePixelHeight
     
-        TempItem = temp_x + (temp_y + InventoryOffset) * (InventoryWindow.ScaleWidth \ ownTilePixelWidth) + 1
+        TempItem = temp_x + temp_y * (Position.W \ ownTilePixelWidth) + 1
     
         'Make sure it's within limits
 
@@ -320,16 +326,16 @@ Private Function ClickItem(ByVal X As Long, ByVal Y As Long) As Long
 
 End Function
 
-Public Sub LoopDrawInv()
+Public Sub LoopDrawInv(Batch As clsBGFXSpriteBatch)
 
-        If GetTickCount - InventoryTickCount > 100 Then
-                Call DrawInventory
-                InventoryTickCount = GetTickCount
-        End If
+        'If GetTickCount - InventoryTickCount > 100 Then
+                Call DrawInventory(Batch)
+        '        InventoryTickCount = GetTickCount
+        'End If
     
 End Sub
 
-Private Sub DrawInventory()
+Private Sub DrawInventory(Batch As clsBGFXSpriteBatch)
 
         '***************************************************
         'Author: Juan Martín Sotuyo Dodero (Maraxus)
@@ -338,69 +344,50 @@ Private Sub DrawInventory()
         '***************************************************
 
         Dim loopC          As Long
-        'Dim SrcRect        As D3DRect
-        'Dim TempRect       As D3DRect
-        Dim lighthandle(3) As Long
-        
-        lighthandle(0) = AmbientColor(0)
-        lighthandle(1) = lighthandle(0)
-        lighthandle(2) = lighthandle(0)
-        lighthandle(3) = lighthandle(0)
-        
-        'With TempRect
-        '        .Y2 = InventoryWindow.Height
-        '        .X2 = InventoryWindow.Width
-        'End With
 
-        'Clear the inventory window
-        'Call DirectX_Scene_BeginCustom(1, TempRect)
-
-        For loopC = InventoryOffset * (InventoryWindow.ScaleWidth \ ownTilePixelWidth) + 1 To UBound(Inventory)
-                startdX = 5 + ((loopC - 1) Mod (InventoryWindow.Width / 32)) * 32
-                startdY = ((loopC - 1) \ (InventoryWindow.Width / 32)) * 32
+        For loopC = 1 To UBound(Inventory)
+                startdX = Position.X + ((loopC - 1) Mod (Position.W / 32)) * 32
+                startdY = Position.Y + ((loopC - 1) \ (Position.H / 32)) * 32
 
                 If Inventory(loopC).GrhIndex Then
-
-                        'Get source rect
-
-                        'With SrcRect
-                        '        .X1 = GrhData(Inventory(loopC).GrhIndex).sX
-                        '        .Y1 = GrhData(Inventory(loopC).GrhIndex).sY
-                        '        .X2 = .X1 + ownTilePixelWidth
-                        '        .Y2 = .Y1 + ownTilePixelHeight
-                        'End With
-
-                        
+                
                         If InvSelectedItem = loopC Then
                                 If ImgContainer Then
-                                        'Call Device_Textured_Render(startdX, startdY, SurfaceDB.Surface(CLng(GrhData(Inventory(loopC).GrhIndex).FileNum)), SrcRect, lighthandle)
+                                        Call Device_Textured_Render(startdX, startdY, _
+                                                                    ownTilePixelWidth, ownTilePixelHeight, _
+                                                                    0, 0, _
+                                                                    SurfaceDB.Surface(2), _
+                                                                    White())
                                 End If
 
                         Else
-                                'Call Device_Textured_Render(startdX, startdY, SurfaceDB.Surface(CLng(GrhData(Inventory(loopC).GrhIndex).FileNum)), SrcRect, lighthandle)
+                                Call Device_Textured_Render(startdX, startdY, _
+                                                                    ownTilePixelWidth, ownTilePixelHeight, _
+                                                                    GrhData(Inventory(loopC).GrhIndex).sX, GrhData(Inventory(loopC).GrhIndex).sY, _
+                                                                    SurfaceDB.Surface(GrhData(Inventory(loopC).GrhIndex).FileNum), _
+                                                                    White())
                         End If
                         
                         'If equipped we render "E"
 
                         If Inventory(loopC).Equipped Then
-                                'Text_Draw startdX + 20, startdY + 20, "+", -256
+                                Text_Draw Batch, startdX + 20, startdY + 20, "+", Red
                         End If
 
                         'Render the item grh and the amount
 
                         If ShowValue Then
-                                'Text_Draw startdX, startdY, CStr(Inventory(loopC).Amount), -1
+                                Text_Draw Batch, startdX, startdY, CStr(Inventory(loopC).Amount), White
                         End If
                 End If
 
         Next loopC
-
-        'Call DirectX_Scene_EndCustom(TempRect, InventoryWindow.hwnd)
         
 End Sub
 
 
-Public Sub Initialize(ByRef InvPic As PictureBox, _
+Public Sub Initialize(ByVal X As Integer, ByVal Y As Integer, _
+                      ByVal W As Integer, ByVal H As Integer, _
                       ByVal MaxObjs As Byte, _
                       Optional ByVal TileWidth As Integer = 32, _
                       Optional ByVal TileHeight As Integer = 32, _
@@ -415,18 +402,14 @@ Public Sub Initialize(ByRef InvPic As PictureBox, _
         'Sets the reference to the picture box on which to render the inventory
         '03/12/09: I added the optionals args FontSize, TileWidth, TileHeight, startX and startY. (Budi)
         '***************************************************
-        Set InventoryWindow = InvPic
-    
-        'Make sure auto-redraw is set to true
-        InventoryWindow.AutoRedraw = True
-    
-        'Set apropiate scale (pixel)
-        InventoryWindow.ScaleMode = 3
     
         ReDim Inventory(1 To MaxObjs) As Inventory
-    
-        'If DirectD3D Is Nothing Then Exit Sub
-
+        
+        Position.X = X
+        Position.Y = Y
+        Position.W = W
+        Position.H = H
+        
         ownTilePixelHeight = TileHeight
         ownTilePixelWidth = TileWidth
         startdX = startX
@@ -437,7 +420,7 @@ Public Sub Initialize(ByRef InvPic As PictureBox, _
     
         '\TODO
     
-        If ImgContainer Then InvSelectedItem = ClickItem(1, 1)   'If there is anything there we select the top left item
+        If ImgContainer Then InvSelectedItem = ClickItem(Position.X, Position.Y)   'If there is anything there we select the top left item
       
 End Sub
 
@@ -470,7 +453,7 @@ Private Sub InventoryWindow_MouseMove(Button As Integer, _
 
 End Sub
 
-Private Sub InventoryWindow_MouseDown(Button As Integer, _
+Public Sub Inventory_MouseDown(Button As Integer, _
                                       Shift As Integer, _
                                       X As Single, _
                                       Y As Single)
@@ -493,7 +476,7 @@ Private Sub InventoryWindow_MouseDown(Button As Integer, _
         'MouseDownSelectedItem = 0
 End Sub
 
-Private Sub InventoryWindow_MouseUp(Button As Integer, _
+Public Sub Inventory_MouseUp(Button As Integer, _
                                     Shift As Integer, _
                                     X As Single, _
                                     Y As Single)

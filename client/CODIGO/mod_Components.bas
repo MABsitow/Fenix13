@@ -13,6 +13,7 @@ Public Enum eComponentEvent
         KeyPress = 4
         MouseScrollUp = 5
         MouseScrollDown = 6
+        MouseUp
 End Enum
 
 Public Enum eComponentType
@@ -20,6 +21,7 @@ Public Enum eComponentType
         TextBox = 1
         Shape = 2
         TextArea = 3
+        Rect = 4
 End Enum
 
 Private Type TYPE_CONSOLE_LINE
@@ -69,8 +71,29 @@ Private Declare Function CallWindowProc Lib "user32" Alias "CallWindowProcA" (By
 Public Sub InitComponentsImage()
     
     BackgroundImage = Video.CreateImageFromFilename(DirGraficos & "4.png")
+    Focused = -1
     
 End Sub
+
+Public Function AddRect(ByVal X As Integer, ByVal Y As Integer, _
+                        ByVal W As Integer, ByVal H As Integer) As Integer
+                            
+    LastComponent = LastComponent + 1
+    
+    ReDim Preserve Components(1 To LastComponent) As tComponent
+    
+    With Components(LastComponent)
+    
+        .X = X: .W = W
+        .Y = Y: .H = H
+        
+        .Component = eComponentType.Rect
+        
+    End With
+    
+    AddRect = LastComponent
+    
+End Function
 
 Public Function AddTextArea(ByVal X As Integer, ByVal Y As Integer, _
                             ByVal W As Integer, ByVal H As Integer, _
@@ -572,3 +595,19 @@ Public Sub RecTxt_EventHandler(ByVal hWnd As Long, _
             ScrollConsoleDown hWnd
     End Select
 End Sub
+
+Public Sub PicInv_EventHandler(ByVal hWnd As Long, _
+                                ByVal msg As Long, _
+                                ByVal param3 As Long, _
+                                ByVal param4 As Long)
+    
+    Select Case msg
+    
+        Case eComponentEvent.MouseDown
+            Call Inventario.Inventory_MouseDown(Btn, Shf, X, Y)
+        Case eComponentEvent.MouseUp
+            Call Inventario.Inventory_MouseUp(Btn, Shf, X, Y)
+    End Select
+End Sub
+
+
