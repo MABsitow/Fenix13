@@ -1,7 +1,7 @@
 Attribute VB_Name = "Mod_Fonts"
  Option Explicit
 
-Private Declare Sub CopyMemory Lib "kernel32" Alias "RtlMoveMemory" (ByRef destination As Any, ByRef source As Any, ByVal length As Long)
+Private Declare Sub CopyMemory Lib "kernel32" Alias "RtlMoveMemory" (ByRef Destination As Any, ByRef Source As Any, ByVal Length As Long)
 
 
 Private Type POINTAPI
@@ -92,7 +92,7 @@ Private Sub Engine_Render_Text(ByRef Batch As clsBGFXSpriteBatch, ByRef UseFont 
                 TempVA.X = X + Count
                 TempVA.Y = Y + yOffset
             
-                Batch.Draw TempVA.X, TempVA.Y, TempVA.W, TempVA.H, Color, _
+                Batch.Draw TempVA.X, TempVA.Y, 0, TempVA.W, TempVA.H, Color, _
                     TempVA.Tx1, TempVA.Ty1, TempVA.Tx2, TempVA.Ty2
                 
                 'Shift over the the position to render the next character

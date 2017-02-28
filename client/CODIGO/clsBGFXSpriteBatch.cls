@@ -34,7 +34,7 @@ Option Explicit
 '
 ' API
 '
-Private Declare Sub RtlMoveMemory Lib "kernel32" (destination As Any, source As Any, ByVal length As Long)
+Private Declare Sub RtlMoveMemory Lib "kernel32" (Destination As Any, Source As Any, ByVal Length As Long)
 
 '
 ' 2D vertex structure
@@ -43,6 +43,7 @@ Private Type TYPE_VERTEX
             
     X       As Single
     Y       As Single
+    Z       As Single
     
     Colour  As Long
     
@@ -112,6 +113,7 @@ End Sub
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 Public Sub Draw(ByVal X As Long, _
                 ByVal Y As Long, _
+                ByVal Z As Long, _
                 ByVal Width As Long, _
                 ByVal Height As Long, _
                 ByRef Color() As Long, _
@@ -122,6 +124,7 @@ Public Sub Draw(ByVal X As Long, _
 
     m_Data(m_Position).X = X
     m_Data(m_Position).Y = Y
+    m_Data(m_Position).Z = Z
     m_Data(m_Position).Colour = Color(0)
     m_Data(m_Position).TX = Tx1
     m_Data(m_Position).TY = Ty1
@@ -130,6 +133,7 @@ Public Sub Draw(ByVal X As Long, _
     
     m_Data(m_Position).X = X
     m_Data(m_Position).Y = Y + Height
+    m_Data(m_Position).Z = Z
     m_Data(m_Position).Colour = Color(1)
     m_Data(m_Position).TX = Tx1
     m_Data(m_Position).TY = Ty2
@@ -138,6 +142,7 @@ Public Sub Draw(ByVal X As Long, _
     
     m_Data(m_Position).X = X + Width
     m_Data(m_Position).Y = Y + Height
+    m_Data(m_Position).Z = Z
     m_Data(m_Position).Colour = Color(2)
     m_Data(m_Position).TX = Tx2
     m_Data(m_Position).TY = Ty2
@@ -146,6 +151,7 @@ Public Sub Draw(ByVal X As Long, _
     
     m_Data(m_Position).X = X + Width
     m_Data(m_Position).Y = Y
+    m_Data(m_Position).Z = Z
     m_Data(m_Position).Colour = Color(3)
     m_Data(m_Position).TX = Tx2
     m_Data(m_Position).TY = Ty1
@@ -178,14 +184,14 @@ Public Sub Flush()
     '
     If m_Position > 0 Then
         '
-        ' Allocate a new transient vertex buffer and copy the data
+        ' Update
         '
         m_Vertices = Video.CreateTransientVertexBuffer(m_Position, m_Layout)
         
-        Call RtlMoveMemory(ByVal m_Vertices.mPointer, ByVal VarPtr(m_Data(0)), LenB(m_Data(0)) * m_Position)
+        Call RtlMoveMemory(ByVal m_Vertices.mPointer, m_Data(0), 24 * m_Position)
         
         '
-        ' Apply states (TODO)
+        ' Apply states
         '
         Call Video.SetState(m_State)
         
@@ -202,7 +208,7 @@ Public Sub Flush()
         ' Apply vertex buffer state
         '
         Call Video.SetTransientVertexBuffer(m_Vertices, 0, m_Position)
-          
+    
         '
         ' Submit all primitives to the target view
         '
@@ -225,7 +231,7 @@ Public Sub Initialise(ByVal Capacity As Long)
     ' Create the vertex's format
     '
     Call Video.VertexDeclBegin(m_Layout)
-    Call Video.VertexDeclAdd(m_Layout, ATTRIBUTE_POSITION, 2, ATTRIBUTE_TYPE_FLOAT)
+    Call Video.VertexDeclAdd(m_Layout, ATTRIBUTE_POSITION, 3, ATTRIBUTE_TYPE_FLOAT)
     Call Video.VertexDeclAdd(m_Layout, ATTRIBUTE_COLOR0, 4, ATTRIBUTE_TYPE_UINT8, True)
     Call Video.VertexDeclAdd(m_Layout, ATTRIBUTE_TEXCOORD0, 2, ATTRIBUTE_TYPE_FLOAT)
     Call Video.VertexDeclEnd(m_Layout)
@@ -254,6 +260,7 @@ Public Sub Initialise(ByVal Capacity As Long)
     Next
 
     m_Indices = Video.CreateIndexBufferFromMemory(Video.Copy16I(wData))
+    
     
 End Sub
 

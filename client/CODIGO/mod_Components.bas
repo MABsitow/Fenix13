@@ -335,24 +335,24 @@ Public Sub RenderComponents(Batch As clsBGFXSpriteBatch)
                 
                 Case eComponentType.Shape
                     Call Batch.SetTexture(BackgroundImage.mHandle)
-                    Call Batch.Draw(.X, .Y, .W, .H, .Color)
+                    Call Batch.Draw(.X, .Y, 0, .W, .H, .Color)
                     
                 Case eComponentType.TextBox
                     If .ShowOnFocus Then
                         If Focused = i Then
                             Call Batch.SetTexture(BackgroundImage.mHandle)
-                            Call Batch.Draw(.X, .Y, .W, .H, .Color)
+                            Call Batch.Draw(.X, .Y, 0, .W, .H, .Color)
                             Call UpdateTextBoxBuffer(Batch, i)
                         End If
                     Else
                         Call Batch.SetTexture(BackgroundImage.mHandle)
-                        Call Batch.Draw(.X, .Y, .W, .H, .Color)
+                        Call Batch.Draw(.X, .Y, 0, .W, .H, .Color)
                         Call UpdateTextBoxBuffer(Batch, i)
                     End If
                 
                 Case eComponentType.TextArea
                     Call Batch.SetTexture(BackgroundImage.mHandle)
-                    Call Batch.Draw(.X, .Y, .W, .H, .Color())
+                    Call Batch.Draw(.X, .Y, 0, .W, .H, .Color())
                     Call UpdateTextArea(Batch, i)
             End Select
             
