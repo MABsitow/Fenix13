@@ -79,7 +79,7 @@ Private Type dialog
     startTime   As Long
     lifeTime    As Long
     CharIndex   As Integer
-    Color       As Long
+    Color(3)    As Long
     renderable  As Boolean
 End Type
 
@@ -174,7 +174,7 @@ Public Sub CreateDialog(ByRef chat As String, ByVal CharIndex As Integer, ByVal 
 'depending on the number of chars
 '**************************************************************
     Dim slot As Integer
-    Dim I As Long
+    Dim i As Long
     
     slot = BinarySearch(CharIndex)
     
@@ -184,16 +184,19 @@ Public Sub CreateDialog(ByRef chat As String, ByVal CharIndex As Integer, ByVal 
         'We need to add it. Get insertion index and move list backwards.
         slot = Not slot
         
-        For I = dialogCount To slot + 1 Step -1
-            dialogs(I) = dialogs(I - 1)
-        Next I
+        For i = dialogCount To slot + 1 Step -1
+            dialogs(i) = dialogs(i - 1)
+        Next i
         
         dialogCount = dialogCount + 1
     End If
     
     With dialogs(slot)
         .CharIndex = CharIndex
-        .Color = Color
+        .Color(0) = Color
+        .Color(1) = Color
+        .Color(2) = Color
+        .Color(3) = Color
         .renderable = False
         .startTime = GetTickCount()
         .textLine = FormatChat(chat)
@@ -218,7 +221,7 @@ Private Function FormatChat(ByRef chat As String) As String()
 '**************************************************************
     Dim word As String
     Dim curPos As Long
-    Dim Length As Long
+    Dim length As Long
     Dim acumLength As Long
     Dim lineLength As Long
     Dim wordLength As Long
@@ -228,13 +231,13 @@ Private Function FormatChat(ByRef chat As String) As String()
     'Initialize variables
     curLine = 0
     curPos = 1
-    Length = Len(chat)
+    length = Len(chat)
     acumLength = 0
     lineLength = -1
     ReDim chatLines(FieldCount(chat, 32)) As String
     
     'Start formating
-    Do While acumLength < Length
+    Do While acumLength < length
         word = ReadField(curPos, chat, 32)
         
         wordLength = Len(word)
@@ -268,8 +271,8 @@ Private Function FormatChat(ByRef chat As String) As String()
     Loop
     
     ' If it's only one line, center text
-    If curLine = 0 And Length < MAX_LENGTH Then
-        chatLines(curLine) = String((MAX_LENGTH - Length) \ 2 + 1, " ") & chatLines(curLine)
+    If curLine = 0 And length < MAX_LENGTH Then
+        chatLines(curLine) = String((MAX_LENGTH - length) \ 2 + 1, " ") & chatLines(curLine)
     End If
     
     'Resize array to fit
@@ -307,39 +310,39 @@ End Sub
 ''
 ' Displays all renderable dialogs on screen.
 
-Public Sub Render()
+Public Sub Render(Batch As clsBGFXSpriteBatch)
 '**************************************************************
 'Author: Juan Martín Sotuyo Dodero
 'Last Modification: 08/29/07 by Rapsodius
 'Changed the way it gets rid of older dialogs.
 '**************************************************************
-    Dim I As Long
-    Dim J As Long
+    Dim i As Long
+    Dim j As Long
     Dim offset As Integer
     Dim removedDialogs As Long
     
-    For I = 0 To dialogCount - 1
+    For i = 0 To dialogCount - 1
         'Decrease index to prevent jumping over a dialog
         'Crappy VB will cache the limit of the For loop, so even if it changed, it won't matter
-        With dialogs(I - removedDialogs)
+        With dialogs(i - removedDialogs)
             If (GetTickCount() - .startTime) >= .lifeTime Then
                 Call RemoveDialog(.CharIndex)
                 
                 removedDialogs = removedDialogs + 1
             ElseIf .renderable Then
-                offset = -(usedFont.size + 2) * UBound(.textLine())
+                offset = -(usedFont.Size + 2) * UBound(.textLine())
                 
                 'Render it
-                For J = 0 To UBound(.textLine())
-                    'Call Text_Draw(.X, .Y + offset, .textLine(J), .Color)
-                    offset = offset + usedFont.size + 5
-                Next J
+                For j = 0 To UBound(.textLine())
+                    Call Text_Draw(Batch, .X, .Y + offset, .textLine(j), .Color)
+                    offset = offset + usedFont.Size + 5
+                Next j
                 
                 'Won't render it unless it's updated in next frmae
                 .renderable = False
             End If
         End With
-    Next I
+    Next i
 End Sub
 
 ''
@@ -354,15 +357,15 @@ Public Sub RemoveDialog(ByVal CharIndex As Integer)
 'Removes the dialog from the requested char.
 '**************************************************************
     Dim slot As Integer
-    Dim I As Long
+    Dim i As Long
     
     slot = BinarySearch(CharIndex)
     
     If slot < 0 Then Exit Sub
     
-    For I = slot To MAX_DIALOGS - 2
-        dialogs(I) = dialogs(I + 1)
-    Next I
+    For i = slot To MAX_DIALOGS - 2
+        dialogs(i) = dialogs(i + 1)
+    Next i
     
     dialogCount = dialogCount - 1
 End Sub

@@ -60,8 +60,8 @@ Public InvMaderasCarpinteria(1 To MAX_LIST_ITEMS) As New clsGraphicalInventory
 Public CustomKeys As New clsCustomKeys
 Public CustomMessages As New clsCustomMessages
 
-Public incomingData As New clsByteQueue
-Public outgoingData As New clsByteQueue
+Public incomingData As New CsBuffer
+Public outgoingData As New CsBuffer
 
 ''
 'The main timer of the game.
@@ -869,7 +869,7 @@ Public Declare Sub Sleep Lib "kernel32" (ByVal dwMilliseconds As Long)
 
 'Para ejecutar el browser y programas externos
 Public Const SW_SHOWNORMAL As Long = 1
-Public Declare Function ShellExecute Lib "shell32.dll" Alias "ShellExecuteA" (ByVal hwnd As Long, ByVal lpOperation As String, ByVal lpFile As String, ByVal lpParameters As String, ByVal lpDirectory As String, ByVal nShowCmd As Long) As Long
+Public Declare Function ShellExecute Lib "shell32.dll" Alias "ShellExecuteA" (ByVal hWnd As Long, ByVal lpOperation As String, ByVal lpFile As String, ByVal lpParameters As String, ByVal lpDirectory As String, ByVal nShowCmd As Long) As Long
 
 'Lista de cabezas
 Public Type tIndiceCabeza
@@ -935,7 +935,6 @@ Public Foros(0 To 2) As tForo
 ' Forum info handler
 Public clsForos As New clsForum
 
-Public isCapturePending As Boolean
 Public Traveling As Boolean
 
 'Public GuildNames() As String

@@ -1219,10 +1219,10 @@ Private Sub Form_Load()
     UserEmail = ""
     UserHead = 0
     
-    Dim I As Long
+    Dim i As Long
 
-    For I = 0 To lblSkill1.UBound
-        lblSkill1(I).Caption = SkillsNames(I + 1)
+    For i = 0 To lblSkill1.UBound
+        lblSkill1(i).Caption = SkillsNames(i + 1)
     Next
     
     'clear
@@ -1233,11 +1233,6 @@ Private Sub Form_Load()
     lblPuntosRestantes.Caption = "Puntos restantes: " & SkillPts
     DrawSklPt TopList + YTemp + 1
     
-    ' set the module level callback pointer
-    lpFormObj = ObjPtr(Me)
-
-    SetProp Me.hwnd, "PrevWndProc", SetWindowLong(Me.hwnd, GWL_WNDPROC, AddressOf WndProc)
-
 End Sub
 
 Private Sub CargarEspecialidades()
@@ -1353,20 +1348,20 @@ Private Sub IniciarGraficos()
 End Sub
 
 Private Sub CargarCombos()
-    Dim I As Integer
+    Dim i As Integer
     
     
     lstHogar.Clear
     
-    For I = LBound(Ciudades()) To UBound(Ciudades())
-        lstHogar.AddItem Ciudades(I)
-    Next I
+    For i = LBound(Ciudades()) To UBound(Ciudades())
+        lstHogar.AddItem Ciudades(i)
+    Next i
     
     lstRaza.Clear
     
-    For I = LBound(ListaRazas()) To NroRazas
-        lstRaza.AddItem ListaRazas(I)
-    Next I
+    For i = LBound(ListaRazas()) To NroRazas
+        lstRaza.AddItem ListaRazas(i)
+    Next i
     
 End Sub
 
@@ -1396,13 +1391,13 @@ Function CheckData() As Boolean
         Exit Function
     End If
     
-    Dim I As Integer
-    For I = 1 To NUMATRIBUTOS
-        If UserAtributos(I) = 0 Then
+    Dim i As Integer
+    For i = 1 To NUMATRIBUTOS
+        If UserAtributos(i) = 0 Then
             MsgBox "Los atributos del personaje son invalidos."
             Exit Function
         End If
-    Next I
+    Next i
     
     If Len(UserName) > 30 Then
         MsgBox ("El nombre debe tener menos de 30 letras.")
@@ -1474,15 +1469,15 @@ Public Sub ScrollUp()
 '  received
 
 
-Dim I As Long
+Dim i As Long
 If TopList < 1 Then
     TopList = 0
 Else
     TopList = TopList - 1
 End If
 
-For I = 0 To lblSkill1.UBound
-    lblSkill1(I).Caption = IIf(uSkills(I + 1 + TopList) > 0, SkillsNames(I + 1 + TopList) & " (" & uSkills(I + 1 + TopList) & ")", SkillsNames(I + 1 + TopList))
+For i = 0 To lblSkill1.UBound
+    lblSkill1(i).Caption = IIf(uSkills(i + 1 + TopList) > 0, SkillsNames(i + 1 + TopList) & " (" & uSkills(i + 1 + TopList) & ")", SkillsNames(i + 1 + TopList))
 Next
 
 DrawSklPt TopList + YTemp + 1
@@ -1498,15 +1493,15 @@ Public Sub ScrollDown()
 '
 
 
-Dim I As Long
+Dim i As Long
 If TopList >= NUMSKILLS - lblSkill1.Count Then
     TopList = NUMSKILLS - lblSkill1.Count
 Else
     TopList = TopList + 1
 End If
 
-For I = 0 To lblSkill1.UBound
-    lblSkill1(I).Caption = IIf(uSkills(I + 1 + TopList) > 0, SkillsNames(I + 1 + TopList) & " (" & uSkills(I + 1 + TopList) & ")", SkillsNames(I + 1 + TopList))
+For i = 0 To lblSkill1.UBound
+    lblSkill1(i).Caption = IIf(uSkills(i + 1 + TopList) > 0, SkillsNames(i + 1 + TopList) & " (" & uSkills(i + 1 + TopList) & ")", SkillsNames(i + 1 + TopList))
 Next
 
 DrawSklPt TopList + YTemp + 1
@@ -1516,15 +1511,15 @@ End Sub
 
 
 Private Sub Image2_Click()
-Dim I As Long
+Dim i As Long
 If TopList < 1 Then
     TopList = 0
 Else
     TopList = TopList - 1
 End If
 
-For I = 0 To lblSkill1.UBound
-    lblSkill1(I).Caption = IIf(uSkills(I + 1 + TopList) > 0, SkillsNames(I + 1 + TopList) & " (" & uSkills(I + 1 + TopList) & ")", SkillsNames(I + 1 + TopList))
+For i = 0 To lblSkill1.UBound
+    lblSkill1(i).Caption = IIf(uSkills(i + 1 + TopList) > 0, SkillsNames(i + 1 + TopList) & " (" & uSkills(i + 1 + TopList) & ")", SkillsNames(i + 1 + TopList))
 Next
 
 DrawSklPt TopList + YTemp + 1
@@ -1532,15 +1527,15 @@ End Sub
 
 Private Sub Image3_Click()
 'Lo hago de modo que no tengan que tocar mucho código si quieren agrandar el picture
-Dim I As Long
+Dim i As Long
 If TopList >= NUMSKILLS - lblSkill1.Count Then
     TopList = NUMSKILLS - lblSkill1.Count
 Else
     TopList = TopList + 1
 End If
 
-For I = 0 To lblSkill1.UBound
-    lblSkill1(I).Caption = IIf(uSkills(I + 1 + TopList) > 0, SkillsNames(I + 1 + TopList) & " (" & uSkills(I + 1 + TopList) & ")", SkillsNames(I + 1 + TopList))
+For i = 0 To lblSkill1.UBound
+    lblSkill1(i).Caption = IIf(uSkills(i + 1 + TopList) > 0, SkillsNames(i + 1 + TopList) & " (" & uSkills(i + 1 + TopList) & ")", SkillsNames(i + 1 + TopList))
 Next
 
 DrawSklPt TopList + YTemp + 1
@@ -1548,7 +1543,7 @@ End Sub
 
 Private Sub imgCrear_Click()
 
-    Dim I As Integer
+    Dim i As Integer
     Dim CharAscii As Byte
     
     UserName = txtNombre.Text
@@ -1561,9 +1556,9 @@ Private Sub imgCrear_Click()
     UserRaza = lstRaza.ListIndex + 1
     UserSexo = lstGenero.ListIndex + 1
     
-    For I = 1 To NUMATRIBUTES
-        UserAtributos(I) = Val(lblAtributos(I).Caption)
-    Next I
+    For i = 1 To NUMATRIBUTES
+        UserAtributos(i) = Val(lblAtributos(i).Caption)
+    Next i
     
     UserHogar = lstHogar.ListIndex + 1
     
@@ -1571,13 +1566,13 @@ Private Sub imgCrear_Click()
 
     UserPassword = txtPasswd.Text
     
-    For I = 1 To Len(UserPassword)
-        CharAscii = Asc(mid$(UserPassword, I, 1))
+    For i = 1 To Len(UserPassword)
+        CharAscii = Asc(mid$(UserPassword, i, 1))
         If Not LegalCharacter(CharAscii) Then
             MsgBox ("Password inválido. El caractér " & Chr$(CharAscii) & " no está permitido.")
             Exit Sub
         End If
-    Next I
+    Next i
     
     UserEmail = txtMail.Text
     
@@ -1599,7 +1594,9 @@ Private Sub imgCrear_Click()
         Unload Me
         
     Else
+        
         Call Login
+        
     End If
     
     bShowTutorial = True
@@ -1835,13 +1832,13 @@ lblHelp.Caption = "Asigna puntos a las habilidades que creas conveniente." & vbN
                 
 YTemp = (Y - 1) \ 20
 
-Dim I As Long
+Dim i As Long
 
-For I = 0 To lblSkill1.UBound
-    If YTemp = I Then
-        lblSkill1(I).ForeColor = vbRed
+For i = 0 To lblSkill1.UBound
+    If YTemp = i Then
+        lblSkill1(i).ForeColor = vbRed
     Else
-        lblSkill1(I).ForeColor = vbWhite
+        lblSkill1(i).ForeColor = vbWhite
     End If
 Next
 
@@ -1906,7 +1903,7 @@ Private Sub DrawSklPt(ByVal Skill As Integer)
     
     'Call DrawImageInPicture(picSkills, Me.Picture, 0, 0, , , picSkills.Left, picSkills.Top)
     
-    Dim I As Long
+    Dim i As Long
     
         With GrhData(14622)
         
@@ -1915,7 +1912,7 @@ Private Sub DrawSklPt(ByVal Skill As Integer)
             'SR.Right = SR.Left + .pixelWidth
             'SR.bottom = SR.Top + 20
             
-            For I = 0 To lblSkill1.UBound
+            For i = 0 To lblSkill1.UBound
                 'DR.Left = 0
                 'DR.Top = I * 20
                 'DR.Right = uSkills(I + 1 + TopList) * 17
@@ -2235,7 +2232,7 @@ End Sub
 
 Private Sub UpdateRazaMod()
     Dim SelRaza As Integer
-    Dim I As Integer
+    Dim i As Integer
     
     
     If lstRaza.ListIndex > -1 Then
@@ -2252,15 +2249,15 @@ Private Sub UpdateRazaMod()
     End If
     
     ' Atributo total
-    For I = 1 To NUMATRIBUTES
-        lblAtributoFinal(I).Caption = Val(lblAtributos(I).Caption) + Val(lblModRaza(I))
-    Next I
+    For i = 1 To NUMATRIBUTES
+        lblAtributoFinal(i).Caption = Val(lblAtributos(i).Caption) + Val(lblModRaza(i))
+    Next i
     
 End Sub
 
 Private Sub LoadCharInfo()
     Dim SearchVar As String
-    Dim I As Integer
+    Dim i As Integer
     
     NroRazas = UBound(ListaRazas())
     'NroClases = UBound(ListaClases())
@@ -2286,9 +2283,9 @@ Private Sub LoadCharInfo()
     'Next i
     
     'Modificadores de Raza
-    For I = 1 To NroRazas
-        With ModRaza(I)
-            SearchVar = Replace(ListaRazas(I), " ", "")
+    For i = 1 To NroRazas
+        With ModRaza(i)
+            SearchVar = Replace(ListaRazas(i), " ", "")
         
             .Fuerza = Val(GetVar(IniPath & "CharInfo.dat", "MODRAZA", SearchVar + "Fuerza"))
             .Agilidad = Val(GetVar(IniPath & "CharInfo.dat", "MODRAZA", SearchVar + "Agilidad"))
@@ -2296,7 +2293,7 @@ Private Sub LoadCharInfo()
             .Carisma = Val(GetVar(IniPath & "CharInfo.dat", "MODRAZA", SearchVar + "Carisma"))
             .Constitucion = Val(GetVar(IniPath & "CharInfo.dat", "MODRAZA", SearchVar + "Constitucion"))
         End With
-    Next I
+    Next i
 
 End Sub
 
