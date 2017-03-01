@@ -137,7 +137,7 @@ Attribute VB_Exposed = False
 Private Sub Eleccion_Click(Index As Integer)
 
 Call WriteEligioRecompensa(Index)
-Call AddtoRichTextBox(frmMain.RecTxt, "¡Has elegido la recompensa " & Nombre(Index) & "!", 255, 250, 55, 1, 0)
+'Call AddtoRichTextBox(frmMain.RecTxt, "¡Has elegido la recompensa " & Nombre(Index) & "!", 255, 250, 55, 1, 0)
 Unload Me
 
 End Sub

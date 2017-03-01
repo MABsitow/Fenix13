@@ -43,11 +43,11 @@ Option Explicit
 Private Const SEPARATOR As String * 1 = vbNullChar
 
 Private Type tFont
-    red As Byte
-    green As Byte
-    blue As Byte
-    bold As Boolean
-    italic As Boolean
+    Red As Byte
+    Green As Byte
+    Blue As Byte
+    Bold As Boolean
+    Italic As Boolean
 End Type
 
 Private Enum ServerPacketID
@@ -282,142 +282,142 @@ Public Sub InitFonts()
 '
 '***************************************************
     With FontTypes(FontTypeNames.FONTTYPE_TALK)
-        .red = 255
-        .green = 255
-        .blue = 255
+        .Red = 255
+        .Green = 255
+        .Blue = 255
     End With
     
     With FontTypes(FontTypeNames.FONTTYPE_FIGHT)
-        .red = 255
-        .bold = 1
+        .Red = 255
+        .Bold = 1
     End With
     
     With FontTypes(FontTypeNames.FONTTYPE_WARNING)
-        .red = 32
-        .green = 51
-        .blue = 223
-        .bold = 1
-        .italic = 1
+        .Red = 32
+        .Green = 51
+        .Blue = 223
+        .Bold = 1
+        .Italic = 1
     End With
     
     With FontTypes(FontTypeNames.FONTTYPE_INFO)
-        .red = 65
-        .green = 190
-        .blue = 156
+        .Red = 65
+        .Green = 190
+        .Blue = 156
     End With
     
     With FontTypes(FontTypeNames.FONTTYPE_INFOBOLD)
-        .red = 65
-        .green = 190
-        .blue = 156
-        .bold = 1
+        .Red = 65
+        .Green = 190
+        .Blue = 156
+        .Bold = 1
     End With
     
     With FontTypes(FontTypeNames.FONTTYPE_EJECUCION)
-        .red = 130
-        .green = 130
-        .blue = 130
-        .bold = 1
+        .Red = 130
+        .Green = 130
+        .Blue = 130
+        .Bold = 1
     End With
     
     With FontTypes(FontTypeNames.FONTTYPE_PARTY)
-        .red = 255
-        .green = 180
-        .blue = 250
+        .Red = 255
+        .Green = 180
+        .Blue = 250
     End With
     
-    FontTypes(FontTypeNames.FONTTYPE_VENENO).green = 255
+    FontTypes(FontTypeNames.FONTTYPE_VENENO).Green = 255
     
     With FontTypes(FontTypeNames.FONTTYPE_GUILD)
-        .red = 255
-        .green = 255
-        .blue = 255
-        .bold = 1
+        .Red = 255
+        .Green = 255
+        .Blue = 255
+        .Bold = 1
     End With
     
-    FontTypes(FontTypeNames.FONTTYPE_SERVER).green = 185
+    FontTypes(FontTypeNames.FONTTYPE_SERVER).Green = 185
     
     With FontTypes(FontTypeNames.FONTTYPE_GUILDMSG)
-        .red = 228
-        .green = 199
-        .blue = 27
+        .Red = 228
+        .Green = 199
+        .Blue = 27
     End With
     
     With FontTypes(FontTypeNames.FONTTYPE_CONSEJO)
-        .red = 130
-        .green = 130
-        .blue = 255
-        .bold = 1
+        .Red = 130
+        .Green = 130
+        .Blue = 255
+        .Bold = 1
     End With
     
     With FontTypes(FontTypeNames.FONTTYPE_CONSEJOCAOS)
-        .red = 255
-        .green = 60
-        .bold = 1
+        .Red = 255
+        .Green = 60
+        .Bold = 1
     End With
     
     With FontTypes(FontTypeNames.FONTTYPE_CONSEJOVesA)
-        .green = 200
-        .blue = 255
-        .bold = 1
+        .Green = 200
+        .Blue = 255
+        .Bold = 1
     End With
     
     With FontTypes(FontTypeNames.FONTTYPE_CONSEJOCAOSVesA)
-        .red = 255
-        .green = 50
-        .bold = 1
+        .Red = 255
+        .Green = 50
+        .Bold = 1
     End With
     
     With FontTypes(FontTypeNames.FONTTYPE_CENTINELA)
-        .green = 255
-        .bold = 1
+        .Green = 255
+        .Bold = 1
     End With
     
     With FontTypes(FontTypeNames.FONTTYPE_GMMSG)
-        .red = 255
-        .green = 255
-        .blue = 255
-        .italic = 1
+        .Red = 255
+        .Green = 255
+        .Blue = 255
+        .Italic = 1
     End With
     
     With FontTypes(FontTypeNames.FONTTYPE_GM)
-        .red = 255
-        .green = 128
-        .blue = 32
-        .bold = 1
+        .Red = 255
+        .Green = 128
+        .Blue = 32
+        .Bold = 1
     End With
     
     With FontTypes(FontTypeNames.FONTTYPE_CITIZEN)
-        .blue = 200
-        .bold = 1
+        .Blue = 200
+        .Bold = 1
     End With
     
     With FontTypes(FontTypeNames.FONTTYPE_CONSE)
-        .red = 30
-        .green = 150
-        .blue = 30
-        .bold = 1
+        .Red = 30
+        .Green = 150
+        .Blue = 30
+        .Bold = 1
     End With
     
     With FontTypes(FontTypeNames.FONTTYPE_DIOS)
-        .red = 250
-        .green = 250
-        .blue = 150
-        .bold = 1
+        .Red = 250
+        .Green = 250
+        .Blue = 150
+        .Bold = 1
     End With
 
     With FontTypes(FontTypeNames.FONTTYPE_NEWBIE)
-        .red = 100
-        .green = 200
-        .blue = 100
-        .bold = 1
+        .Red = 100
+        .Green = 200
+        .Blue = 100
+        .Bold = 1
     End With
     
     With FontTypes(FontTypeNames.FONTTYPE_NEUTRAL)
-        .red = 180
-        .green = 180
-        .blue = 180
-        .bold = 1
+        .Red = 180
+        .Green = 180
+        .Blue = 180
+        .Bold = 1
     End With
 End Sub
 
@@ -430,9 +430,10 @@ Public Sub HandleIncomingData()
 'Last Modification: 05/17/06
 '
 '***************************************************
-
     
-    Select Case incomingData.PeekByte
+    Call incomingData.Mark
+        
+    Select Case incomingData.ReadByte
         Case ServerPacketID.Logged                  ' LOGGED
             Call HandleLogged
         
@@ -741,10 +742,16 @@ Public Sub HandleIncomingData()
     End Select
     
     'Done with this packet, move on to next one
-    If incomingData.Length > 0 And Err.Number <> incomingData.NotEnoughDataErrCode Then
+    If incomingData.Remaining > 0 And Err.Number <> incomingData.NotEnoughDataErrCode Then
         Err.Clear
         Call HandleIncomingData
+        
+    Else
+    
+        Call incomingData.Reset
+        
     End If
+    
 End Sub
 
 Public Sub HandleMultiMessage()
@@ -752,60 +759,60 @@ Public Sub HandleMultiMessage()
     Dim BodyPart As Byte
     Dim Daño As Integer
     
+    'ultra todo
 With incomingData
-    Call .ReadByte
-    
+
     Select Case .ReadByte
         Case eMessages.DontSeeAnything
-            Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_NO_VES_NADA_INTERESANTE, 65, 190, 156, False, False, True)
+            Call AppendLineCC(frmMain.RecTxt, MENSAJE_NO_VES_NADA_INTERESANTE, 65, 190, 156, False, False)
         
         Case eMessages.NPCSwing
-            Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_CRIATURA_FALLA_GOLPE, 255, 0, 0, True, False, True)
+            Call AppendLineCC(frmMain.RecTxt, MENSAJE_CRIATURA_FALLA_GOLPE, 255, 0, 0, True, False)
         
         Case eMessages.NPCKillUser
-            Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_CRIATURA_MATADO, 255, 0, 0, True, False, True)
+            Call AppendLineCC(frmMain.RecTxt, MENSAJE_CRIATURA_MATADO, 255, 0, 0, True, False)
         
         Case eMessages.BlockedWithShieldUser
-            Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_RECHAZO_ATAQUE_ESCUDO, 255, 0, 0, True, False, True)
+            Call AppendLineCC(frmMain.RecTxt, MENSAJE_RECHAZO_ATAQUE_ESCUDO, 255, 0, 0, True, False)
         
         Case eMessages.BlockedWithShieldOther
-            Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_USUARIO_RECHAZO_ATAQUE_ESCUDO, 255, 0, 0, True, False, True)
+            Call AppendLineCC(frmMain.RecTxt, MENSAJE_USUARIO_RECHAZO_ATAQUE_ESCUDO, 255, 0, 0, True, False)
         
         Case eMessages.UserSwing
-            Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_FALLADO_GOLPE, 255, 0, 0, True, False, True)
+            Call AppendLineCC(frmMain.RecTxt, MENSAJE_FALLADO_GOLPE, 255, 0, 0, True, False)
         
         Case eMessages.NobilityLost
-            Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_PIERDE_NOBLEZA, 255, 0, 0, False, False, True)
+            Call AppendLineCC(frmMain.RecTxt, MENSAJE_PIERDE_NOBLEZA, 255, 0, 0, False, False)
         
         Case eMessages.CantUseWhileMeditating
-            Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_USAR_MEDITANDO, 255, 0, 0, False, False, True)
+            Call AppendLineCC(frmMain.RecTxt, MENSAJE_USAR_MEDITANDO, 255, 0, 0, False, False)
         
         Case eMessages.NPCHitUser
             Select Case incomingData.ReadByte()
                 Case bCabeza
-                    Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_GOLPE_CABEZA & CStr(incomingData.ReadInteger()) & "!!", 255, 0, 0, True, False, True)
+                    Call AppendLineCC(frmMain.RecTxt, MENSAJE_GOLPE_CABEZA & CStr(incomingData.ReadInteger()) & "!!", 255, 0, 0, True, False)
                 
                 Case bBrazoIzquierdo
-                    Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_GOLPE_BRAZO_IZQ & CStr(incomingData.ReadInteger()) & "!!", 255, 0, 0, True, False, True)
+                    Call AppendLineCC(frmMain.RecTxt, MENSAJE_GOLPE_BRAZO_IZQ & CStr(incomingData.ReadInteger()) & "!!", 255, 0, 0, True, False)
                 
                 Case bBrazoDerecho
-                    Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_GOLPE_BRAZO_DER & CStr(incomingData.ReadInteger()) & "!!", 255, 0, 0, True, False, True)
+                    Call AppendLineCC(frmMain.RecTxt, MENSAJE_GOLPE_BRAZO_DER & CStr(incomingData.ReadInteger()) & "!!", 255, 0, 0, True, False)
                 
                 Case bPiernaIzquierda
-                    Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_GOLPE_PIERNA_IZQ & CStr(incomingData.ReadInteger()) & "!!", 255, 0, 0, True, False, True)
+                    Call AppendLineCC(frmMain.RecTxt, MENSAJE_GOLPE_PIERNA_IZQ & CStr(incomingData.ReadInteger()) & "!!", 255, 0, 0, True, False)
                 
                 Case bPiernaDerecha
-                    Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_GOLPE_PIERNA_DER & CStr(incomingData.ReadInteger()) & "!!", 255, 0, 0, True, False, True)
+                    Call AppendLineCC(frmMain.RecTxt, MENSAJE_GOLPE_PIERNA_DER & CStr(incomingData.ReadInteger()) & "!!", 255, 0, 0, True, False)
                 
                 Case bTorso
-                    Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_GOLPE_TORSO & CStr(incomingData.ReadInteger() & "!!"), 255, 0, 0, True, False, True)
+                    Call AppendLineCC(frmMain.RecTxt, MENSAJE_GOLPE_TORSO & CStr(incomingData.ReadInteger() & "!!"), 255, 0, 0, True, False)
             End Select
         
         Case eMessages.UserHitNPC
-            Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_GOLPE_CRIATURA_1 & CStr(incomingData.ReadLong()) & MENSAJE_2, 255, 0, 0, True, False, True)
+            Call AppendLineCC(frmMain.RecTxt, MENSAJE_GOLPE_CRIATURA_1 & CStr(incomingData.ReadLong()) & MENSAJE_2, 255, 0, 0, True, False)
         
         Case eMessages.UserAttackedSwing
-            Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_1 & charlist(incomingData.ReadInteger()).Nombre & MENSAJE_ATAQUE_FALLO, 255, 0, 0, True, False, True)
+            Call AppendLineCC(frmMain.RecTxt, MENSAJE_1 & charlist(incomingData.ReadInteger()).Nombre & MENSAJE_ATAQUE_FALLO, 255, 0, 0, True, False)
         
         Case eMessages.UserHittedByUser
             Dim AttackerName As String
@@ -816,22 +823,22 @@ With incomingData
             
             Select Case BodyPart
                 Case bCabeza
-                    Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_1 & AttackerName & MENSAJE_RECIVE_IMPACTO_CABEZA & Daño & MENSAJE_2, 255, 0, 0, True, False, True)
+                    Call AppendLineCC(frmMain.RecTxt, MENSAJE_1 & AttackerName & MENSAJE_RECIVE_IMPACTO_CABEZA & Daño & MENSAJE_2, 255, 0, 0, True, False)
                 
                 Case bBrazoIzquierdo
-                    Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_1 & AttackerName & MENSAJE_RECIVE_IMPACTO_BRAZO_IZQ & Daño & MENSAJE_2, 255, 0, 0, True, False, True)
+                    Call AppendLineCC(frmMain.RecTxt, MENSAJE_1 & AttackerName & MENSAJE_RECIVE_IMPACTO_BRAZO_IZQ & Daño & MENSAJE_2, 255, 0, 0, True, False, True)
                 
                 Case bBrazoDerecho
-                    Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_1 & AttackerName & MENSAJE_RECIVE_IMPACTO_BRAZO_DER & Daño & MENSAJE_2, 255, 0, 0, True, False, True)
+                    Call AppendLineCC(frmMain.RecTxt, MENSAJE_1 & AttackerName & MENSAJE_RECIVE_IMPACTO_BRAZO_DER & Daño & MENSAJE_2, 255, 0, 0, True, False, True)
                 
                 Case bPiernaIzquierda
-                    Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_1 & AttackerName & MENSAJE_RECIVE_IMPACTO_PIERNA_IZQ & Daño & MENSAJE_2, 255, 0, 0, True, False, True)
+                    Call AppendLineCC(frmMain.RecTxt, MENSAJE_1 & AttackerName & MENSAJE_RECIVE_IMPACTO_PIERNA_IZQ & Daño & MENSAJE_2, 255, 0, 0, True, False, True)
                 
                 Case bPiernaDerecha
-                    Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_1 & AttackerName & MENSAJE_RECIVE_IMPACTO_PIERNA_DER & Daño & MENSAJE_2, 255, 0, 0, True, False, True)
+                    Call AppendLineCC(frmMain.RecTxt, MENSAJE_1 & AttackerName & MENSAJE_RECIVE_IMPACTO_PIERNA_DER & Daño & MENSAJE_2, 255, 0, 0, True, False, True)
                 
                 Case bTorso
-                    Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_1 & AttackerName & MENSAJE_RECIVE_IMPACTO_TORSO & Daño & MENSAJE_2, 255, 0, 0, True, False, True)
+                    Call AppendLineCC(frmMain.RecTxt, MENSAJE_1 & AttackerName & MENSAJE_RECIVE_IMPACTO_TORSO & Daño & MENSAJE_2, 255, 0, 0, True, False, True)
             End Select
         
         Case eMessages.UserHittedUser
@@ -844,22 +851,22 @@ With incomingData
             
             Select Case BodyPart
                 Case bCabeza
-                    Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_PRODUCE_IMPACTO_1 & VictimName & MENSAJE_PRODUCE_IMPACTO_CABEZA & Daño & MENSAJE_2, 255, 0, 0, True, False, True)
+                    Call AppendLineCC(frmMain.RecTxt, MENSAJE_PRODUCE_IMPACTO_1 & VictimName & MENSAJE_PRODUCE_IMPACTO_CABEZA & Daño & MENSAJE_2, 255, 0, 0, True, False, True)
                 
                 Case bBrazoIzquierdo
-                    Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_PRODUCE_IMPACTO_1 & VictimName & MENSAJE_PRODUCE_IMPACTO_BRAZO_IZQ & Daño & MENSAJE_2, 255, 0, 0, True, False, True)
+                    Call AppendLineCC(frmMain.RecTxt, MENSAJE_PRODUCE_IMPACTO_1 & VictimName & MENSAJE_PRODUCE_IMPACTO_BRAZO_IZQ & Daño & MENSAJE_2, 255, 0, 0, True, False, True)
                 
                 Case bBrazoDerecho
-                    Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_PRODUCE_IMPACTO_1 & VictimName & MENSAJE_PRODUCE_IMPACTO_BRAZO_DER & Daño & MENSAJE_2, 255, 0, 0, True, False, True)
+                    Call AppendLineCC(frmMain.RecTxt, MENSAJE_PRODUCE_IMPACTO_1 & VictimName & MENSAJE_PRODUCE_IMPACTO_BRAZO_DER & Daño & MENSAJE_2, 255, 0, 0, True, False, True)
                 
                 Case bPiernaIzquierda
-                    Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_PRODUCE_IMPACTO_1 & VictimName & MENSAJE_PRODUCE_IMPACTO_PIERNA_IZQ & Daño & MENSAJE_2, 255, 0, 0, True, False, True)
+                    Call AppendLineCC(frmMain.RecTxt, MENSAJE_PRODUCE_IMPACTO_1 & VictimName & MENSAJE_PRODUCE_IMPACTO_PIERNA_IZQ & Daño & MENSAJE_2, 255, 0, 0, True, False, True)
                 
                 Case bPiernaDerecha
-                    Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_PRODUCE_IMPACTO_1 & VictimName & MENSAJE_PRODUCE_IMPACTO_PIERNA_DER & Daño & MENSAJE_2, 255, 0, 0, True, False, True)
+                    Call AppendLineCC(frmMain.RecTxt, MENSAJE_PRODUCE_IMPACTO_1 & VictimName & MENSAJE_PRODUCE_IMPACTO_PIERNA_DER & Daño & MENSAJE_2, 255, 0, 0, True, False, True)
                 
                 Case bTorso
-                    Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_PRODUCE_IMPACTO_1 & VictimName & MENSAJE_PRODUCE_IMPACTO_TORSO & Daño & MENSAJE_2, 255, 0, 0, True, False, True)
+                    Call AppendLineCC(frmMain.RecTxt, MENSAJE_PRODUCE_IMPACTO_1 & VictimName & MENSAJE_PRODUCE_IMPACTO_TORSO & Daño & MENSAJE_2, 255, 0, 0, True, False, True)
             End Select
         
         Case eMessages.WorkRequestTarget
@@ -869,25 +876,25 @@ With incomingData
             
             Select Case UsingSkill
                 Case Magia
-                    Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_TRABAJO_MAGIA, 100, 100, 120, 0, 0)
+                    Call AppendLineCC(frmMain.RecTxt, MENSAJE_TRABAJO_MAGIA, 100, 100, 120, 0, 0)
                 
                 Case Pesca
-                    Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_TRABAJO_PESCA, 100, 100, 120, 0, 0)
+                    Call AppendLineCC(frmMain.RecTxt, MENSAJE_TRABAJO_PESCA, 100, 100, 120, 0, 0)
                 
                 Case Robar
-                    Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_TRABAJO_ROBAR, 100, 100, 120, 0, 0)
+                    Call AppendLineCC(frmMain.RecTxt, MENSAJE_TRABAJO_ROBAR, 100, 100, 120, 0, 0)
                 
                 Case Talar
-                    Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_TRABAJO_TALAR, 100, 100, 120, 0, 0)
+                    Call AppendLineCC(frmMain.RecTxt, MENSAJE_TRABAJO_TALAR, 100, 100, 120, 0, 0)
                 
                 Case Mineria
-                    Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_TRABAJO_MINERIA, 100, 100, 120, 0, 0)
+                    Call AppendLineCC(frmMain.RecTxt, MENSAJE_TRABAJO_MINERIA, 100, 100, 120, 0, 0)
                 
                 Case FundirMetal
-                    Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_TRABAJO_FUNDIRMETAL, 100, 100, 120, 0, 0)
+                    Call AppendLineCC(frmMain.RecTxt, MENSAJE_TRABAJO_FUNDIRMETAL, 100, 100, 120, 0, 0)
                 
                 Case Proyectiles
-                    Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_TRABAJO_PROYECTILES, 100, 100, 120, 0, 0)
+                    Call AppendLineCC(frmMain.RecTxt, MENSAJE_TRABAJO_PROYECTILES, 100, 100, 120, 0, 0)
             End Select
 
         Case eMessages.HaveKilledUser
@@ -895,15 +902,8 @@ With incomingData
             Call ShowConsoleMsg(MENSAJE_HAS_MATADO_A & charlist(.ReadInteger).Nombre & MENSAJE_22, 255, 0, 0, True, False)
             level = .ReadLong
             Call ShowConsoleMsg(MENSAJE_HAS_GANADO_EXPE_1 & level & MENSAJE_HAS_GANADO_EXPE_2, 255, 0, 0, True, False)
-            If ClientSetup.bKill And ClientSetup.bActive Then
-                If level / 2 > ClientSetup.byMurderedLevel Then
-                    isCapturePending = True
-                End If
-            End If
         Case eMessages.UserKill
             Call ShowConsoleMsg(charlist(.ReadInteger).Nombre & MENSAJE_TE_HA_MATADO, 255, 0, 0, True, False)
-            If ClientSetup.bDie And ClientSetup.bActive Then _
-                isCapturePending = True
         Case eMessages.EarnExp
             Call ShowConsoleMsg(MENSAJE_HAS_GANADO_EXPE_1 & .ReadLong & MENSAJE_HAS_GANADO_EXPE_2, 255, 0, 0, True, False)
         Case eMessages.GoHome
@@ -912,7 +912,7 @@ With incomingData
             Dim tiempo As Integer
             Distance = .ReadByte
             tiempo = .ReadInteger
-            Hogar = .ReadASCIIString
+            Hogar = .ReadString
             Call ShowConsoleMsg("Estás a " & Distance & " mapas de distancia de " & Hogar & ", este viaje durará " & tiempo & " segundos.", 255, 0, 0, True)
             Traveling = True
         Case eMessages.FinishHome
@@ -937,9 +937,9 @@ With incomingData
             End If
         Case eMessages.HierarchyUpgrade
             If UserFaccion = eFaccion.Real Then
-                Call ShowConsoleMsg("¡Has ascendido de jerarquía! Ahora eres " & .ReadASCIIString & ".", 0, 128, 255, True)
+                Call ShowConsoleMsg("¡Has ascendido de jerarquía! Ahora eres " & .ReadString & ".", 0, 128, 255, True)
             Else
-                Call ShowConsoleMsg("¡Has ascendido de jerarquía! Ahora eres " & .ReadASCIIString & ".", 255, 0, 0, True)
+                Call ShowConsoleMsg("¡Has ascendido de jerarquía! Ahora eres " & .ReadString & ".", 255, 0, 0, True)
             End If
         Case eMessages.LastHierarchy
             If UserFaccion = eFaccion.Real Then
@@ -1000,9 +1000,7 @@ Private Sub HandleLogged()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    'Remove packet ID
-    Call incomingData.ReadByte
-    
+
     ' Variable initialization
     EngineRun = True
     Nombres = True
@@ -1029,8 +1027,8 @@ Private Sub HandleRemoveDialogs()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    'Remove packet ID
-    Call incomingData.ReadByte
+
+
     
     Call Dialogos.RemoveAllDialogs
 End Sub
@@ -1045,13 +1043,10 @@ Private Sub HandleRemoveCharDialog()
 '
 '***************************************************
     'Check if the packet is complete
-    If incomingData.Length < 3 Then
+    If incomingData.Remaining < 2 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
-    
-    'Remove packet ID
-    Call incomingData.ReadByte
     
     Call Dialogos.RemoveDialog(incomingData.ReadInteger())
 End Sub
@@ -1065,9 +1060,7 @@ Private Sub HandleNavigateToggle()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    'Remove packet ID
-    Call incomingData.ReadByte
-    
+
     UserNavegando = Not UserNavegando
 End Sub
 
@@ -1081,10 +1074,7 @@ Private Sub HandleDisconnect()
 '
 '***************************************************
     Dim i As Long
-    
-    'Remove packet ID
-    Call incomingData.ReadByte
-    
+
     'Close connection
     frmMain.Socket1.Disconnect
     
@@ -1129,7 +1119,7 @@ Private Sub HandleDisconnect()
     Next
     
     For i = 1 To MAX_INVENTORY_SLOTS
-        Call Inventario.SetItem(i, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "")
+        'Call Inventario.SetItem(i, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "")
     Next i
     
     'call 'audio.PlayMIDI("2.mid")
@@ -1144,8 +1134,8 @@ Private Sub HandleCommerceEnd()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    'Remove packet ID
-    Call incomingData.ReadByte
+
+
     
     'Reset vars
     Comerciando = False
@@ -1163,8 +1153,8 @@ Private Sub HandleBankEnd()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    'Remove packet ID
-    Call incomingData.ReadByte
+
+
     
     Set InvBanco(0) = Nothing
     Set InvBanco(1) = Nothing
@@ -1184,8 +1174,8 @@ Private Sub HandleCommerceInit()
 '***************************************************
     Dim i As Long
     
-    'Remove packet ID
-    Call incomingData.ReadByte
+
+
     
     ' Initialize commerce inventories
     Call InvComUsu.Initialize(frmComerciar.picInvUser, Inventario.MaxObjs)
@@ -1195,7 +1185,7 @@ Private Sub HandleCommerceInit()
     For i = 1 To MAX_INVENTORY_SLOTS
         If Inventario.OBJIndex(i) <> 0 Then
             With Inventario
-                Call InvComUsu.SetItem(i, .OBJIndex(i), _
+                'Call InvComUsu.SetItem(i, .OBJIndex(i), _
                 .Amount(i), .Equipped(i), .GrhIndex(i), _
                 .OBJType(i), .MaxHit(i), .MinHit(i), .MaxDef(i), .MinDef(i), _
                 .Valor(i), .ItemName(i))
@@ -1207,7 +1197,7 @@ Private Sub HandleCommerceInit()
     For i = 1 To 50
         If NPCInventory(i).OBJIndex <> 0 Then
             With NPCInventory(i)
-                Call InvComNpc.SetItem(i, .OBJIndex, _
+                'Call InvComNpc.SetItem(i, .OBJIndex, _
                 .Amount, 0, .GrhIndex, _
                 .OBJType, .MaxHit, .MinHit, .MaxDef, .MinDef, _
                 .Valor, .Name)
@@ -1232,16 +1222,16 @@ Private Sub HandleBankInit()
     Dim i As Long
     Dim BankGold As Long
     
-    'Remove packet ID
-    Call incomingData.ReadByte
+
+
     
         BankGold = incomingData.ReadLong
     Call InvBanco(0).Initialize(frmBancoObj.PicBancoInv, MAX_BANCOINVENTORY_SLOTS)
-    Call InvBanco(1).Initialize(frmBancoObj.picInv, Inventario.MaxObjs)
+    Call InvBanco(1).Initialize(frmBancoObj.PicInv, Inventario.MaxObjs)
     
     For i = 1 To Inventario.MaxObjs
         With Inventario
-            Call InvBanco(1).SetItem(i, .OBJIndex(i), _
+            'Call InvBanco(1).SetItem(i, .OBJIndex(i), _
                 .Amount(i), .Equipped(i), .GrhIndex(i), _
                 .OBJType(i), .MaxHit(i), .MinHit(i), .MaxDef(i), .MinDef(i), _
                 .Valor(i), .ItemName(i))
@@ -1250,7 +1240,7 @@ Private Sub HandleBankInit()
     
     For i = 1 To MAX_BANCOINVENTORY_SLOTS
         With UserBancoInventory(i)
-            Call InvBanco(0).SetItem(i, .OBJIndex, _
+            'Call InvBanco(0).SetItem(i, .OBJIndex, _
                 .Amount, .Equipped, .GrhIndex, _
                 .OBJType, .MaxHit, .MinHit, .MaxDef, .MinDef, _
                 .Valor, .Name)
@@ -1276,9 +1266,9 @@ Private Sub HandleUserCommerceInit()
 '***************************************************
     Dim i As Long
     
-    'Remove packet ID
-    Call incomingData.ReadByte
-    TradingUserName = incomingData.ReadASCIIString
+
+
+    TradingUserName = incomingData.ReadString
     
     ' Initialize commerce inventories
     Call InvComUsu.Initialize(frmComerciarUsu.picInvComercio, Inventario.MaxObjs)
@@ -1292,7 +1282,7 @@ Private Sub HandleUserCommerceInit()
     For i = 1 To MAX_INVENTORY_SLOTS
         If Inventario.OBJIndex(i) <> 0 Then
             With Inventario
-                Call InvComUsu.SetItem(i, .OBJIndex(i), _
+                'Call InvComUsu.SetItem(i, .OBJIndex(i), _
                 .Amount(i), .Equipped(i), .GrhIndex(i), _
                 .OBJType(i), .MaxHit(i), .MinHit(i), .MaxDef(i), .MinDef(i), _
                 .Valor(i), .ItemName(i))
@@ -1301,9 +1291,9 @@ Private Sub HandleUserCommerceInit()
     Next i
 
     ' Inventarios de oro
-    Call InvOroComUsu(0).SetItem(1, ORO_INDEX, UserGLD, 0, ORO_GRH, 0, 0, 0, 0, 0, 0, "Oro")
-    Call InvOroComUsu(1).SetItem(1, ORO_INDEX, 0, 0, ORO_GRH, 0, 0, 0, 0, 0, 0, "Oro")
-    Call InvOroComUsu(2).SetItem(1, ORO_INDEX, 0, 0, ORO_GRH, 0, 0, 0, 0, 0, 0, "Oro")
+    'Call InvOroComUsu(0).SetItem(1, ORO_INDEX, UserGLD, 0, ORO_GRH, 0, 0, 0, 0, 0, 0, "Oro")
+    'Call InvOroComUsu(1).SetItem(1, ORO_INDEX, 0, 0, ORO_GRH, 0, 0, 0, 0, 0, 0, "Oro")
+    'Call InvOroComUsu(2).SetItem(1, ORO_INDEX, 0, 0, ORO_GRH, 0, 0, 0, 0, 0, 0, "Oro")
 
 
     'Set state and show form
@@ -1320,8 +1310,8 @@ Private Sub HandleUserCommerceEnd()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    'Remove packet ID
-    Call incomingData.ReadByte
+
+
     
     Set InvComUsu = Nothing
     Set InvOroComUsu(0) = Nothing
@@ -1343,8 +1333,8 @@ Private Sub HandleUserOfferConfirm()
 'Last Modification: 14/12/2009
 '
 '***************************************************
-    'Remove packet ID
-    Call incomingData.ReadByte
+
+
     
     With frmComerciarUsu
         ' Now he can accept the offer or reject it
@@ -1364,8 +1354,8 @@ Private Sub HandleShowBlacksmithForm()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    'Remove packet ID
-    Call incomingData.ReadByte
+
+
     
     If frmMain.macrotrabajo.Enabled And (MacroBltIndex > 0) Then
         Call WriteCraftBlacksmith(MacroBltIndex)
@@ -1383,8 +1373,8 @@ Private Sub HandleShowCarpenterForm()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    'Remove packet ID
-    Call incomingData.ReadByte
+
+
     
     If frmMain.macrotrabajo.Enabled And (MacroBltIndex > 0) Then
         Call WriteCraftCarpenter(MacroBltIndex)
@@ -1402,10 +1392,10 @@ Private Sub HandleNPCSwing()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    'Remove packet ID
-    Call incomingData.ReadByte
-    
-    Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_CRIATURA_FALLA_GOLPE, 255, 0, 0, True, False, True)
+
+
+    'todo
+    'Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_CRIATURA_FALLA_GOLPE, 255, 0, 0, True, False, True)
 End Sub
 
 ''
@@ -1417,10 +1407,10 @@ Private Sub HandleNPCKillUser()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    'Remove packet ID
-    Call incomingData.ReadByte
-    
-    Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_CRIATURA_MATADO, 255, 0, 0, True, False, True)
+
+
+    'todo
+    'Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_CRIATURA_MATADO, 255, 0, 0, True, False, True)
 End Sub
 
 ''
@@ -1432,10 +1422,10 @@ Private Sub HandleBlockedWithShieldUser()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    'Remove packet ID
-    Call incomingData.ReadByte
-    
-    Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_RECHAZO_ATAQUE_ESCUDO, 255, 0, 0, True, False, True)
+
+
+    'todo
+    'Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_RECHAZO_ATAQUE_ESCUDO, 255, 0, 0, True, False, True)
 End Sub
 
 ''
@@ -1447,10 +1437,10 @@ Private Sub HandleBlockedWithShieldOther()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    'Remove packet ID
-    Call incomingData.ReadByte
-    
-    Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_USUARIO_RECHAZO_ATAQUE_ESCUDO, 255, 0, 0, True, False, True)
+
+
+    'todo
+    'Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_USUARIO_RECHAZO_ATAQUE_ESCUDO, 255, 0, 0, True, False, True)
 End Sub
 
 ''
@@ -1462,83 +1452,10 @@ Private Sub HandleUserSwing()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    'Remove packet ID
-    Call incomingData.ReadByte
-    
-    Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_FALLADO_GOLPE, 255, 0, 0, True, False, True)
-End Sub
 
-''
-' Handles the SafeModeOn message.
 
-Private Sub HandleSafeModeOn()
-'***************************************************
-'Author: Juan Martín Sotuyo Dodero (Maraxus)
-'Last Modification: 05/17/06
-'
-'***************************************************
-    'Remove packet ID
-    Call incomingData.ReadByte
-    
-    'Call frmMain.ControlSM(eSMType.sSafemode, True)
-End Sub
-
-''
-' Handles the SafeModeOff message.
-
-Private Sub HandleSafeModeOff()
-'***************************************************
-'Author: Juan Martín Sotuyo Dodero (Maraxus)
-'Last Modification: 05/17/06
-'
-'***************************************************
-    'Remove packet ID
-    Call incomingData.ReadByte
-    
-    'Call frmMain.ControlSM(eSMType.sSafemode, False)
-End Sub
-
-''
-' Handles the ResuscitationSafeOff message.
-
-Private Sub HandleResuscitationSafeOff()
-'***************************************************
-'Author: Rapsodius
-'Creation date: 10/10/07
-'***************************************************
-    'Remove packet ID
-    Call incomingData.ReadByte
-    
-    'Call frmMain.ControlSM(eSMType.sResucitation, False)
-End Sub
-
-''
-' Handles the ResuscitationSafeOn message.
-
-Private Sub HandleResuscitationSafeOn()
-'***************************************************
-'Author: Rapsodius
-'Creation date: 10/10/07
-'***************************************************
-    'Remove packet ID
-    Call incomingData.ReadByte
-    
-    'Call frmMain.ControlSM(eSMType.sResucitation, True)
-End Sub
-
-''
-' Handles the NobilityLost message.
-
-Private Sub HandleNobilityLost()
-'***************************************************
-'Author: Juan Martín Sotuyo Dodero (Maraxus)
-'Last Modification: 05/17/06
-'
-'***************************************************
-    'Remove packet ID
-    Call incomingData.ReadByte
-    
-    Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_PIERDE_NOBLEZA, 255, 0, 0, False, False, True)
+    'todo'
+    'Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_FALLADO_GOLPE, 255, 0, 0, True, False, True)
 End Sub
 
 ''
@@ -1550,10 +1467,10 @@ Private Sub HandleCantUseWhileMeditating()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    'Remove packet ID
-    Call incomingData.ReadByte
-    
-    Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_USAR_MEDITANDO, 255, 0, 0, False, False, True)
+
+
+    'todo
+    'Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_USAR_MEDITANDO, 255, 0, 0, False, False, True)
 End Sub
 
 ''
@@ -1566,27 +1483,28 @@ Private Sub HandleUpdateSta()
 '
 '***************************************************
     'Check packet is complete
-    If incomingData.Length < 3 Then
+    If incomingData.Remaining < 2 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
     
-    'Remove packet ID
-    Call incomingData.ReadByte
+
+
     
     'Get data and update form
     UserMinSTA = incomingData.ReadInteger()
     
-    frmMain.lblEnergia = UserMinSTA & "/" & UserMaxSTA
+    'todo
+    'frmMain.lblEnergia = UserMinSTA & "/" & UserMaxSTA
     
     Dim bWidth As Byte
     
     bWidth = (((UserMinSTA / 100) / (UserMaxSTA / 100)) * 75)
     
-    frmMain.shpEnergia.Width = 75 - bWidth
-    frmMain.shpEnergia.Left = 584 + (75 - frmMain.shpEnergia.Width)
+    'frmMain.shpEnergia.Width = 75 - bWidth
+    'frmMain.shpEnergia.Left = 584 + (75 - frmMain.shpEnergia.Width)
     
-    frmMain.shpEnergia.Visible = (bWidth <> 75)
+    'frmMain.shpEnergia.Visible = (bWidth <> 75)
     
 End Sub
 
@@ -1600,28 +1518,29 @@ Private Sub HandleUpdateMana()
 '
 '***************************************************
     'Check packet is complete
-    If incomingData.Length < 3 Then
+    If incomingData.Remaining < 2 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
     
-    'Remove packet ID
-    Call incomingData.ReadByte
+
+
     
     'Get data and update form
     UserMinMAN = incomingData.ReadInteger()
     
-    frmMain.lblMana = UserMinMAN & "/" & UserMaxMAN
+    'todo
+    'frmMain.lblMana = UserMinMAN & "/" & UserMaxMAN
     
     Dim bWidth As Byte
     
     If UserMaxMAN > 0 Then _
         bWidth = (((UserMinMAN / 100) / (UserMaxMAN / 100)) * 75)
         
-    frmMain.shpMana.Width = 75 - bWidth
-    frmMain.shpMana.Left = 584 + (75 - frmMain.shpMana.Width)
+    'frmMain.shpMana.Width = 75 - bWidth
+    'frmMain.shpMana.Left = 584 + (75 - frmMain.shpMana.Width)
     
-    frmMain.shpMana.Visible = (bWidth <> 75)
+    'frmMain.shpMana.Visible = (bWidth <> 75)
 End Sub
 
 ''
@@ -1634,27 +1553,27 @@ Private Sub HandleUpdateHP()
 '
 '***************************************************
     'Check packet is complete
-    If incomingData.Length < 3 Then
+    If incomingData.Remaining < 2 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
     
-    'Remove packet ID
-    Call incomingData.ReadByte
+
+
     
     'Get data and update form
     UserMinHP = incomingData.ReadInteger()
-    
-    frmMain.lblVida = UserMinHP & "/" & UserMaxHP
+    'todo
+    'frmMain.lblVida = UserMinHP & "/" & UserMaxHP
     
     Dim bWidth As Byte
     
     bWidth = (((UserMinHP / 100) / (UserMaxHP / 100)) * 75)
     
-    frmMain.shpVida.Width = 75 - bWidth
-    frmMain.shpVida.Left = 584 + (75 - frmMain.shpVida.Width)
+    'frmMain.shpVida.Width = 75 - bWidth
+    'frmMain.shpVida.Left = 584 + (75 - frmMain.shpVida.Width)
     
-    frmMain.shpVida.Visible = (bWidth <> 75)
+    'frmMain.shpVida.Visible = (bWidth <> 75)
     
     'Is the user alive??
     If UserMinHP = 0 Then
@@ -1677,26 +1596,26 @@ Private Sub HandleUpdateGold()
 '- 08/14/07: Added GldLbl color variation depending on User Gold and Level
 '***************************************************
     'Check packet is complete
-    If incomingData.Length < 5 Then
+    If incomingData.Remaining < 4 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
     
-    'Remove packet ID
-    Call incomingData.ReadByte
+
+
     
     'Get data and update form
     UserGLD = incomingData.ReadLong()
-    
+    'todo
     If UserGLD >= CLng(UserLvl) * 10000 Then
         'Changes color
-        frmMain.GldLbl.ForeColor = &HFF& 'Red
+        'frmMain.GldLbl.ForeColor = &HFF& 'Red
     Else
         'Changes color
-        frmMain.GldLbl.ForeColor = &HFFFF& 'Yellow
+        'frmMain.GldLbl.ForeColor = &HFFFF& 'Yellow
     End If
     
-    frmMain.GldLbl.Caption = UserGLD
+    'frmMain.GldLbl.Caption = UserGLD
 End Sub
 
 ''
@@ -1709,13 +1628,13 @@ Private Sub HandleUpdateBankGold()
 '
 '***************************************************
     'Check packet is complete
-    If incomingData.Length < 5 Then
+    If incomingData.Remaining < 4 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
     
-    'Remove packet ID
-    Call incomingData.ReadByte
+
+
     
     frmBancoObj.lblUserGld.Caption = incomingData.ReadLong
     
@@ -1731,18 +1650,20 @@ Private Sub HandleUpdateExp()
 '
 '***************************************************
     'Check packet is complete
-    If incomingData.Length < 5 Then
+    If incomingData.Remaining < 4 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
     
-    'Remove packet ID
-    Call incomingData.ReadByte
+
+
     
     'Get data and update form
     UserExp = incomingData.ReadLong()
-    frmMain.lblExp.Caption = "Exp: " & UserExp & "/" & UserPasarNivel
-    frmMain.lblPorcLvl.Caption = "[" & Round(CDbl(UserExp) * CDbl(100) / CDbl(UserPasarNivel), 2) & "%]"
+    
+    'todo
+    'frmMain.lblExp.Caption = "Exp: " & UserExp & "/" & UserPasarNivel
+    'frmMain.lblPorcLvl.Caption = "[" & Round(CDbl(UserExp) * CDbl(100) / CDbl(UserPasarNivel), 2) & "%]"
 End Sub
 
 ''
@@ -1754,21 +1675,22 @@ Private Sub HandleUpdateStrenghtAndDexterity()
 'Last Modification: 11/26/09
 '***************************************************
     'Check packet is complete
-    If incomingData.Length < 3 Then
+    If incomingData.Remaining < 2 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
     
-    'Remove packet ID
-    Call incomingData.ReadByte
+
+
     
     'Get data and update form
     UserFuerza = incomingData.ReadByte
     UserAgilidad = incomingData.ReadByte
-    frmMain.lblStrg.Caption = UserFuerza
-    frmMain.lblDext.Caption = UserAgilidad
-    frmMain.lblStrg.ForeColor = getStrenghtColor()
-    frmMain.lblDext.ForeColor = getDexterityColor()
+    'todo
+    'frmMain.lblStrg.Caption = UserFuerza
+    'frmMain.lblDext.Caption = UserAgilidad
+    'frmMain.lblStrg.ForeColor = getStrenghtColor()
+    'frmMain.lblDext.ForeColor = getDexterityColor()
 End Sub
 
 ' Handles the UpdateStrenghtAndDexterity message.
@@ -1779,18 +1701,19 @@ Private Sub HandleUpdateStrenght()
 'Last Modification: 11/26/09
 '***************************************************
     'Check packet is complete
-    If incomingData.Length < 2 Then
+    If incomingData.Remaining < 1 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
     
-    'Remove packet ID
-    Call incomingData.ReadByte
+
+
     
     'Get data and update form
     UserFuerza = incomingData.ReadByte
-    frmMain.lblStrg.Caption = UserFuerza
-    frmMain.lblStrg.ForeColor = getStrenghtColor()
+    'todo
+    'frmMain.lblStrg.Caption = UserFuerza
+    'frmMain.lblStrg.ForeColor = getStrenghtColor()
 End Sub
 
 ' Handles the UpdateStrenghtAndDexterity message.
@@ -1801,18 +1724,20 @@ Private Sub HandleUpdateDexterity()
 'Last Modification: 11/26/09
 '***************************************************
     'Check packet is complete
-    If incomingData.Length < 2 Then
+    If incomingData.Remaining < 1 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
     
-    'Remove packet ID
-    Call incomingData.ReadByte
+
+
     
     'Get data and update form
     UserAgilidad = incomingData.ReadByte
-    frmMain.lblDext.Caption = UserAgilidad
-    frmMain.lblDext.ForeColor = getDexterityColor()
+    
+    'todo
+    'frmMain.lblDext.Caption = UserAgilidad
+    'frmMain.lblDext.ForeColor = getDexterityColor()
 End Sub
 
 ''
@@ -1823,13 +1748,13 @@ Private Sub HandleChangeMap()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    If incomingData.Length < 5 Then
+    If incomingData.Remaining < 4 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
     
-    'Remove packet ID
-    Call incomingData.ReadByte
+
+
     
     UserMap = incomingData.ReadInteger()
     
@@ -1865,13 +1790,13 @@ Private Sub HandlePosUpdate()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    If incomingData.Length < 3 Then
+    If incomingData.Remaining < 2 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
     
-    'Remove packet ID
-    Call incomingData.ReadByte
+
+
     
     'Remove char from old position
     If MapData(UserPos.X, UserPos.Y).CharIndex = UserCharIndex Then
@@ -1894,7 +1819,8 @@ Private Sub HandlePosUpdate()
             MapData(UserPos.X, UserPos.Y).Trigger = 4, True, False)
                 
     'Update pos label
-    frmMain.Coord.Caption = UserMap & " X: " & UserPos.X & " Y: " & UserPos.Y
+    'todo
+    'frmMain.Coord.Caption = UserMap & " X: " & UserPos.X & " Y: " & UserPos.Y
 End Sub
 
 ''
@@ -1906,27 +1832,27 @@ Private Sub HandleNPCHitUser()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    If incomingData.Length < 4 Then
+    If incomingData.Remaining < 3 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
     
-    'Remove packet ID
-    Call incomingData.ReadByte
-    
+
+
+    'todo
     Select Case incomingData.ReadByte()
         Case bCabeza
-            Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_GOLPE_CABEZA & CStr(incomingData.ReadInteger()) & "!!", 255, 0, 0, True, False, True)
+            Call AppendLineCC(frmMain.RecTxt, MENSAJE_GOLPE_CABEZA & CStr(incomingData.ReadInteger()) & "!!", 255, 0, 0, True, False, True)
         Case bBrazoIzquierdo
-            Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_GOLPE_BRAZO_IZQ & CStr(incomingData.ReadInteger()) & "!!", 255, 0, 0, True, False, True)
+            Call AppendLineCC(frmMain.RecTxt, MENSAJE_GOLPE_BRAZO_IZQ & CStr(incomingData.ReadInteger()) & "!!", 255, 0, 0, True, False, True)
         Case bBrazoDerecho
-            Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_GOLPE_BRAZO_DER & CStr(incomingData.ReadInteger()) & "!!", 255, 0, 0, True, False, True)
+            Call AppendLineCC(frmMain.RecTxt, MENSAJE_GOLPE_BRAZO_DER & CStr(incomingData.ReadInteger()) & "!!", 255, 0, 0, True, False, True)
         Case bPiernaIzquierda
-            Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_GOLPE_PIERNA_IZQ & CStr(incomingData.ReadInteger()) & "!!", 255, 0, 0, True, False, True)
+            Call AppendLineCC(frmMain.RecTxt, MENSAJE_GOLPE_PIERNA_IZQ & CStr(incomingData.ReadInteger()) & "!!", 255, 0, 0, True, False, True)
         Case bPiernaDerecha
-            Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_GOLPE_PIERNA_DER & CStr(incomingData.ReadInteger()) & "!!", 255, 0, 0, True, False, True)
+            Call AppendLineCC(frmMain.RecTxt, MENSAJE_GOLPE_PIERNA_DER & CStr(incomingData.ReadInteger()) & "!!", 255, 0, 0, True, False, True)
         Case bTorso
-            Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_GOLPE_TORSO & CStr(incomingData.ReadInteger() & "!!"), 255, 0, 0, True, False, True)
+            Call AppendLineCC(frmMain.RecTxt, MENSAJE_GOLPE_TORSO & CStr(incomingData.ReadInteger() & "!!"), 255, 0, 0, True, False, True)
     End Select
 End Sub
 
@@ -1939,15 +1865,15 @@ Private Sub HandleUserHitNPC()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    If incomingData.Length < 5 Then
+    If incomingData.Remaining < 4 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
     
-    'Remove packet ID
-    Call incomingData.ReadByte
-    
-    Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_GOLPE_CRIATURA_1 & CStr(incomingData.ReadLong()) & MENSAJE_2, 255, 0, 0, True, False, True)
+
+
+    'todo
+    Call AppendLineCC(frmMain.RecTxt, MENSAJE_GOLPE_CRIATURA_1 & CStr(incomingData.ReadLong()) & MENSAJE_2, 255, 0, 0, True, False, True)
 End Sub
 
 ''
@@ -1959,15 +1885,15 @@ Private Sub HandleUserAttackedSwing()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    If incomingData.Length < 3 Then
+    If incomingData.Remaining < 2 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
     
-    'Remove packet ID
-    Call incomingData.ReadByte
-    
-    Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_1 & charlist(incomingData.ReadInteger()).Nombre & MENSAJE_ATAQUE_FALLO, 255, 0, 0, True, False, True)
+
+
+    'todo
+    Call AppendLineCC(frmMain.RecTxt, MENSAJE_1 & charlist(incomingData.ReadInteger()).Nombre & MENSAJE_ATAQUE_FALLO, 255, 0, 0, True, False, True)
 End Sub
 
 ''
@@ -1979,31 +1905,32 @@ Private Sub HandleUserHittedByUser()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    If incomingData.Length < 6 Then
+    If incomingData.Remaining < 5 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
     
-    'Remove packet ID
-    Call incomingData.ReadByte
+
+
     
+    'todo
     Dim attacker As String
     
     attacker = charlist(incomingData.ReadInteger()).Nombre
     
     Select Case incomingData.ReadByte
         Case bCabeza
-            Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_1 & attacker & MENSAJE_RECIVE_IMPACTO_CABEZA & CStr(incomingData.ReadInteger() & MENSAJE_2), 255, 0, 0, True, False, True)
+            Call AppendLineCC(frmMain.RecTxt, MENSAJE_1 & attacker & MENSAJE_RECIVE_IMPACTO_CABEZA & CStr(incomingData.ReadInteger() & MENSAJE_2), 255, 0, 0, True, False, True)
         Case bBrazoIzquierdo
-            Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_1 & attacker & MENSAJE_RECIVE_IMPACTO_BRAZO_IZQ & CStr(incomingData.ReadInteger() & MENSAJE_2), 255, 0, 0, True, False, True)
+            Call AppendLineCC(frmMain.RecTxt, MENSAJE_1 & attacker & MENSAJE_RECIVE_IMPACTO_BRAZO_IZQ & CStr(incomingData.ReadInteger() & MENSAJE_2), 255, 0, 0, True, False, True)
         Case bBrazoDerecho
-            Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_1 & attacker & MENSAJE_RECIVE_IMPACTO_BRAZO_DER & CStr(incomingData.ReadInteger() & MENSAJE_2), 255, 0, 0, True, False, True)
+            Call AppendLineCC(frmMain.RecTxt, MENSAJE_1 & attacker & MENSAJE_RECIVE_IMPACTO_BRAZO_DER & CStr(incomingData.ReadInteger() & MENSAJE_2), 255, 0, 0, True, False, True)
         Case bPiernaIzquierda
-            Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_1 & attacker & MENSAJE_RECIVE_IMPACTO_PIERNA_IZQ & CStr(incomingData.ReadInteger() & MENSAJE_2), 255, 0, 0, True, False, True)
+            Call AppendLineCC(frmMain.RecTxt, MENSAJE_1 & attacker & MENSAJE_RECIVE_IMPACTO_PIERNA_IZQ & CStr(incomingData.ReadInteger() & MENSAJE_2), 255, 0, 0, True, False, True)
         Case bPiernaDerecha
-            Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_1 & attacker & MENSAJE_RECIVE_IMPACTO_PIERNA_DER & CStr(incomingData.ReadInteger() & MENSAJE_2), 255, 0, 0, True, False, True)
+            Call AppendLineCC(frmMain.RecTxt, MENSAJE_1 & attacker & MENSAJE_RECIVE_IMPACTO_PIERNA_DER & CStr(incomingData.ReadInteger() & MENSAJE_2), 255, 0, 0, True, False, True)
         Case bTorso
-            Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_1 & attacker & MENSAJE_RECIVE_IMPACTO_TORSO & CStr(incomingData.ReadInteger() & MENSAJE_2), 255, 0, 0, True, False, True)
+            Call AppendLineCC(frmMain.RecTxt, MENSAJE_1 & attacker & MENSAJE_RECIVE_IMPACTO_TORSO & CStr(incomingData.ReadInteger() & MENSAJE_2), 255, 0, 0, True, False, True)
     End Select
 End Sub
 
@@ -2016,31 +1943,31 @@ Private Sub HandleUserHittedUser()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    If incomingData.Length < 6 Then
+    If incomingData.Remaining < 5 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
     
-    'Remove packet ID
-    Call incomingData.ReadByte
-    
+
+
+    'todo
     Dim Victim As String
     
     Victim = charlist(incomingData.ReadInteger()).Nombre
     
     Select Case incomingData.ReadByte
         Case bCabeza
-            Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_PRODUCE_IMPACTO_1 & Victim & MENSAJE_PRODUCE_IMPACTO_CABEZA & CStr(incomingData.ReadInteger() & MENSAJE_2), 255, 0, 0, True, False, True)
+            Call AppendLineCC(frmMain.RecTxt, MENSAJE_PRODUCE_IMPACTO_1 & Victim & MENSAJE_PRODUCE_IMPACTO_CABEZA & CStr(incomingData.ReadInteger() & MENSAJE_2), 255, 0, 0, True, False, True)
         Case bBrazoIzquierdo
-            Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_PRODUCE_IMPACTO_1 & Victim & MENSAJE_PRODUCE_IMPACTO_BRAZO_IZQ & CStr(incomingData.ReadInteger() & MENSAJE_2), 255, 0, 0, True, False, True)
+            Call AppendLineCC(frmMain.RecTxt, MENSAJE_PRODUCE_IMPACTO_1 & Victim & MENSAJE_PRODUCE_IMPACTO_BRAZO_IZQ & CStr(incomingData.ReadInteger() & MENSAJE_2), 255, 0, 0, True, False, True)
         Case bBrazoDerecho
-            Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_PRODUCE_IMPACTO_1 & Victim & MENSAJE_PRODUCE_IMPACTO_BRAZO_DER & CStr(incomingData.ReadInteger() & MENSAJE_2), 255, 0, 0, True, False, True)
+            Call AppendLineCC(frmMain.RecTxt, MENSAJE_PRODUCE_IMPACTO_1 & Victim & MENSAJE_PRODUCE_IMPACTO_BRAZO_DER & CStr(incomingData.ReadInteger() & MENSAJE_2), 255, 0, 0, True, False, True)
         Case bPiernaIzquierda
-            Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_PRODUCE_IMPACTO_1 & Victim & MENSAJE_PRODUCE_IMPACTO_PIERNA_IZQ & CStr(incomingData.ReadInteger() & MENSAJE_2), 255, 0, 0, True, False, True)
+            Call AppendLineCC(frmMain.RecTxt, MENSAJE_PRODUCE_IMPACTO_1 & Victim & MENSAJE_PRODUCE_IMPACTO_PIERNA_IZQ & CStr(incomingData.ReadInteger() & MENSAJE_2), 255, 0, 0, True, False, True)
         Case bPiernaDerecha
-            Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_PRODUCE_IMPACTO_1 & Victim & MENSAJE_PRODUCE_IMPACTO_PIERNA_DER & CStr(incomingData.ReadInteger() & MENSAJE_2), 255, 0, 0, True, False, True)
+            Call AppendLineCC(frmMain.RecTxt, MENSAJE_PRODUCE_IMPACTO_1 & Victim & MENSAJE_PRODUCE_IMPACTO_PIERNA_DER & CStr(incomingData.ReadInteger() & MENSAJE_2), 255, 0, 0, True, False, True)
         Case bTorso
-            Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_PRODUCE_IMPACTO_1 & Victim & MENSAJE_PRODUCE_IMPACTO_TORSO & CStr(incomingData.ReadInteger() & MENSAJE_2), 255, 0, 0, True, False, True)
+            Call AppendLineCC(frmMain.RecTxt, MENSAJE_PRODUCE_IMPACTO_1 & Victim & MENSAJE_PRODUCE_IMPACTO_TORSO & CStr(incomingData.ReadInteger() & MENSAJE_2), 255, 0, 0, True, False, True)
     End Select
 End Sub
 
@@ -2053,18 +1980,15 @@ Private Sub HandleChatOverHead()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    If incomingData.Length < 8 Then
+    If incomingData.Remaining < 7 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
     
 On Error GoTo ErrHandler
-    'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet...
-    Dim Buffer As New clsByteQueue
-    Call Buffer.CopyBuffer(incomingData)
-    
-    'Remove packet ID
-    Call Buffer.ReadByte
+
+
+
     
     Dim chat As String
     Dim CharIndex As Integer
@@ -2072,28 +1996,22 @@ On Error GoTo ErrHandler
     Dim g As Byte
     Dim b As Byte
     
-    chat = Buffer.ReadASCIIString()
-    CharIndex = Buffer.ReadInteger()
+    chat = incomingData.ReadString()
+    CharIndex = incomingData.ReadInteger()
     
-    r = Buffer.ReadByte()
-    g = Buffer.ReadByte()
-    b = Buffer.ReadByte()
+    r = incomingData.ReadByte()
+    g = incomingData.ReadByte()
+    b = incomingData.ReadByte()
     
-    'Only add the chat if the character exists (a CharacterRemove may have been sent to the PC / NPC area before the buffer was flushed)
+    'Only add the chat if the character exists (a CharacterRemove may have been sent to the PC / NPC area before the incomingData was flushed)
     If charlist(CharIndex).Active Then _
         Call Dialogos.CreateDialog(Trim$(chat), CharIndex, RGB(r, g, b))
     
-    'If we got here then packet is complete, copy data back to original queue
-    Call incomingData.CopyBuffer(Buffer)
-
 ErrHandler:
     Dim error As Long
     error = Err.Number
 On Error GoTo 0
-    
-    'Destroy auxiliar buffer
-    Set Buffer = Nothing
-    
+
     If error <> 0 Then _
         Err.Raise error
 End Sub
@@ -2107,18 +2025,15 @@ Private Sub HandleConsoleMessage()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    If incomingData.Length < 4 Then
+    If incomingData.Remaining < 3 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
     
 On Error GoTo ErrHandler
-    'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet...
-    Dim Buffer As New clsByteQueue
-    Call Buffer.CopyBuffer(incomingData)
-    
-    'Remove packet ID
-    Call Buffer.ReadByte
+
+
+
     
     Dim chat As String
     Dim FontIndex As Integer
@@ -2127,8 +2042,8 @@ On Error GoTo ErrHandler
     Dim g As Byte
     Dim b As Byte
     
-    chat = Buffer.ReadASCIIString()
-    FontIndex = Buffer.ReadByte()
+    chat = incomingData.ReadString()
+    FontIndex = incomingData.ReadByte()
 
     If InStr(1, chat, "~") Then
         str = ReadField(2, chat, 126)
@@ -2152,10 +2067,11 @@ On Error GoTo ErrHandler
                 b = Val(str)
             End If
             
-        Call AddtoRichTextBox(frmMain.RecTxt, Left$(chat, InStr(1, chat, "~") - 1), r, g, b, Val(ReadField(5, chat, 126)) <> 0, Val(ReadField(6, chat, 126)) <> 0)
+            'todo
+        Call AppendLineCC(frmMain.RecTxt, Left$(chat, InStr(1, chat, "~") - 1), r, g, b, Val(ReadField(5, chat, 126)) <> 0, Val(ReadField(6, chat, 126)) <> 0)
     Else
         With FontTypes(FontIndex)
-            Call AddtoRichTextBox(frmMain.RecTxt, chat, .red, .green, .blue, .bold, .italic)
+            Call AppendLineCC(frmMain.RecTxt, chat, .Red, .Green, .Blue, .Bold, .Italic)
         End With
         
         ' Para no perder el foco cuando chatea por party
@@ -2163,17 +2079,11 @@ On Error GoTo ErrHandler
       '      If MirandoParty Then frmParty.SendTxt.SetFocus
      '   End If
     End If
-   Call checkText(chat)
-    'If we got here then packet is complete, copy data back to original queue
-    Call incomingData.CopyBuffer(Buffer)
-    
+
 ErrHandler:
     Dim error As Long
     error = Err.Number
 On Error GoTo 0
-    
-    'Destroy auxiliar buffer
-    Set Buffer = Nothing
 
     If error <> 0 Then _
         Err.Raise error
@@ -2189,18 +2099,15 @@ Private Sub HandleCommerceChat()
 'Last Modification: 03/12/2009
 '
 '***************************************************
-    If incomingData.Length < 4 Then
+    If incomingData.Remaining < 3 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
     
 On Error GoTo ErrHandler
-    'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet...
-    Dim Buffer As New clsByteQueue
-    Call Buffer.CopyBuffer(incomingData)
-    
-    'Remove packet ID
-    Call Buffer.ReadByte
+
+
+
     
     Dim chat As String
     Dim FontIndex As Integer
@@ -2209,8 +2116,8 @@ On Error GoTo ErrHandler
     Dim g As Byte
     Dim b As Byte
     
-    chat = Buffer.ReadASCIIString()
-    FontIndex = Buffer.ReadByte()
+    chat = incomingData.ReadString()
+    FontIndex = incomingData.ReadByte()
     
     If InStr(1, chat, "~") Then
         str = ReadField(2, chat, 126)
@@ -2237,20 +2144,14 @@ On Error GoTo ErrHandler
         Call AddtoRichTextBox(frmComerciarUsu.CommerceConsole, Left$(chat, InStr(1, chat, "~") - 1), r, g, b, Val(ReadField(5, chat, 126)) <> 0, Val(ReadField(6, chat, 126)) <> 0)
     Else
         With FontTypes(FontIndex)
-            Call AddtoRichTextBox(frmComerciarUsu.CommerceConsole, chat, .red, .green, .blue, .bold, .italic)
+            Call AddtoRichTextBox(frmComerciarUsu.CommerceConsole, chat, .Red, .Green, .Blue, .Bold, .Italic)
         End With
     End If
-    
-    'If we got here then packet is complete, copy data back to original queue
-    Call incomingData.CopyBuffer(Buffer)
-    
+
 ErrHandler:
     Dim error As Long
     error = Err.Number
 On Error GoTo 0
-    
-    'Destroy auxiliar buffer
-    Set Buffer = Nothing
 
     If error <> 0 Then _
         Err.Raise error
@@ -2265,32 +2166,23 @@ Private Sub HandleShowMessageBox()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    If incomingData.Length < 3 Then
+    If incomingData.Remaining < 2 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
     
 On Error GoTo ErrHandler
-    'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet...
-    Dim Buffer As New clsByteQueue
-    Call Buffer.CopyBuffer(incomingData)
+
+
+
     
-    'Remove packet ID
-    Call Buffer.ReadByte
-    
-    frmMensaje.msg.Caption = Buffer.ReadASCIIString()
+    frmMensaje.msg.Caption = incomingData.ReadString()
     frmMensaje.Show
-    
-    'If we got here then packet is complete, copy data back to original queue
-    Call incomingData.CopyBuffer(Buffer)
     
 ErrHandler:
     Dim error As Long
     error = Err.Number
 On Error GoTo 0
-    
-    'Destroy auxiliar buffer
-    Set Buffer = Nothing
 
     If error <> 0 Then _
         Err.Raise error
@@ -2305,13 +2197,13 @@ Private Sub HandleUserIndexInServer()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    If incomingData.Length < 3 Then
+    If incomingData.Remaining < 2 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
     
-    'Remove packet ID
-    Call incomingData.ReadByte
+
+
     
     UserIndex = incomingData.ReadInteger()
 End Sub
@@ -2325,13 +2217,13 @@ Private Sub HandleUserCharIndexInServer()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    If incomingData.Length < 3 Then
+    If incomingData.Remaining < 2 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
     
-    'Remove packet ID
-    Call incomingData.ReadByte
+
+
     
     UserCharIndex = incomingData.ReadInteger()
     UserPos = charlist(UserCharIndex).Pos
@@ -2341,7 +2233,8 @@ Private Sub HandleUserCharIndexInServer()
             MapData(UserPos.X, UserPos.Y).Trigger = 2 Or _
             MapData(UserPos.X, UserPos.Y).Trigger = 4, True, False)
 
-    frmMain.Coord.Caption = UserMap & " X: " & UserPos.X & " Y: " & UserPos.Y
+    'todo
+    'frmMain.Coord.Caption = UserMap & " X: " & UserPos.X & " Y: " & UserPos.Y
 End Sub
 
 ''
@@ -2353,18 +2246,15 @@ Private Sub HandleCharacterCreate()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    If incomingData.Length < 24 Then
+    If incomingData.Remaining < 23 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
     
 On Error GoTo ErrHandler
-    'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet...
-    Dim Buffer As New clsByteQueue
-    Call Buffer.CopyBuffer(incomingData)
-    
-    'Remove packet ID
-    Call Buffer.ReadByte
+
+
+
     
     Dim CharIndex As Integer
     Dim Body As Integer
@@ -2378,28 +2268,28 @@ On Error GoTo ErrHandler
     Dim privs As Integer
     Dim NickColor As Byte
     
-    CharIndex = Buffer.ReadInteger()
-    Body = Buffer.ReadInteger()
-    Head = Buffer.ReadInteger()
-    Heading = Buffer.ReadByte()
-    X = Buffer.ReadByte()
-    Y = Buffer.ReadByte()
-    weapon = Buffer.ReadInteger()
-    shield = Buffer.ReadInteger()
-    helmet = Buffer.ReadInteger()
+    CharIndex = incomingData.ReadInteger()
+    Body = incomingData.ReadInteger()
+    Head = incomingData.ReadInteger()
+    Heading = incomingData.ReadByte()
+    X = incomingData.ReadByte()
+    Y = incomingData.ReadByte()
+    weapon = incomingData.ReadInteger()
+    shield = incomingData.ReadInteger()
+    helmet = incomingData.ReadInteger()
     
     
     With charlist(CharIndex)
-        Call SetCharacterFx(CharIndex, Buffer.ReadInteger(), Buffer.ReadInteger())
+        Call SetCharacterFx(CharIndex, incomingData.ReadInteger(), incomingData.ReadInteger())
         
-        .Nombre = Buffer.ReadASCIIString()
+        .Nombre = incomingData.ReadString()
         .NombreOffset = 0 '(Text_GetWidth(cfonts(1), .Nombre) \ 2) - cfonts(1).RowPitch
         
-        NickColor = Buffer.ReadByte()
+        NickColor = incomingData.ReadByte()
         
         .Criminal = NickColor
                 
-        privs = Buffer.ReadByte()
+        privs = incomingData.ReadByte()
         
         If privs <> 0 Then
             'If the player belongs to a council AND is an admin, only whos as an admin
@@ -2426,17 +2316,11 @@ On Error GoTo ErrHandler
     Call MakeChar(CharIndex, Body, Head, Heading, X, Y, weapon, shield, helmet)
     
     Call RefreshAllChars
-    
-    'If we got here then packet is complete, copy data back to original queue
-    Call incomingData.CopyBuffer(Buffer)
-    
+
 ErrHandler:
     Dim error As Long
     error = Err.Number
 On Error GoTo 0
-    
-    'Destroy auxiliar buffer
-    Set Buffer = Nothing
 
     If error <> 0 Then _
         Err.Raise error
@@ -2448,16 +2332,16 @@ Private Sub HandleCharacterChangeNick()
 'Last Modification: 07/23/09
 '
 '***************************************************
-    If incomingData.Length < 6 Then
+    If incomingData.Remaining < 5 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
     
-    'Remove packet id
-    Call incomingData.ReadByte
+
+
     Dim CharIndex As Integer
     CharIndex = incomingData.ReadInteger
-    charlist(CharIndex).Nombre = incomingData.ReadASCIIString
+    charlist(CharIndex).Nombre = incomingData.ReadString
     charlist(CharIndex).NombreOffset = 0 '(Text_GetWidth(cfonts(1), charlist(CharIndex).Nombre) \ 2) - cfonts(1).RowPitch
 End Sub
 
@@ -2470,13 +2354,13 @@ Private Sub HandleCharacterRemove()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    If incomingData.Length < 3 Then
+    If incomingData.Remaining < 2 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
     
-    'Remove packet ID
-    Call incomingData.ReadByte
+
+
     
     Dim CharIndex As Integer
     
@@ -2495,13 +2379,13 @@ Private Sub HandleCharacterMove()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    If incomingData.Length < 5 Then
+    If incomingData.Remaining < 4 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
     
-    'Remove packet ID
-    Call incomingData.ReadByte
+
+
     
     Dim CharIndex As Integer
     Dim X As Byte
@@ -2532,13 +2416,13 @@ End Sub
 
 Private Sub HandleForceCharMove()
     
-    If incomingData.Length < 2 Then
+    If incomingData.Remaining < 1 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
     
-    'Remove packet ID
-    Call incomingData.ReadByte
+
+
     
     Dim Direccion As Byte
     
@@ -2559,13 +2443,13 @@ Private Sub HandleCharacterChange()
 'Last Modification: 25/08/2009
 '25/08/2009: ZaMa - Changed a variable used incorrectly.
 '***************************************************
-    If incomingData.Length < 18 Then
+    If incomingData.Remaining < 17 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
     
-    'Remove packet ID
-    Call incomingData.ReadByte
+
+
     
     Dim CharIndex As Integer
     Dim tempint As Integer
@@ -2623,13 +2507,13 @@ Private Sub HandleObjectCreate()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    If incomingData.Length < 5 Then
+    If incomingData.Remaining < 4 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
     
-    'Remove packet ID
-    Call incomingData.ReadByte
+
+
     
     Dim X As Byte
     Dim Y As Byte
@@ -2651,13 +2535,13 @@ Private Sub HandleObjectDelete()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    If incomingData.Length < 3 Then
+    If incomingData.Remaining < 2 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
     
-    'Remove packet ID
-    Call incomingData.ReadByte
+
+
     
     Dim X As Byte
     Dim Y As Byte
@@ -2676,13 +2560,13 @@ Private Sub HandleBlockPosition()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    If incomingData.Length < 4 Then
+    If incomingData.Remaining < 3 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
     
-    'Remove packet ID
-    Call incomingData.ReadByte
+
+
     
     Dim X As Byte
     Dim Y As Byte
@@ -2706,15 +2590,15 @@ Private Sub HandlePlayMIDI()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    If incomingData.Length < 4 Then
+    If incomingData.Remaining < 3 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
     
     Dim currentMidi As Byte
     
-    'Remove packet ID
-    Call incomingData.ReadByte
+
+
     
     currentMidi = incomingData.ReadByte()
     
@@ -2737,13 +2621,13 @@ Private Sub HandlePlayWave()
 'Last Modified by: Rapsodius
 'Added support for 3D Sounds.
 '***************************************************
-    If incomingData.Length < 3 Then
+    If incomingData.Remaining < 2 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
     
-    'Remove packet ID
-    Call incomingData.ReadByte
+
+
         
     Dim wave As Byte
     Dim srcX As Byte
@@ -2765,13 +2649,13 @@ Private Sub HandleAreaChanged()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    If incomingData.Length < 3 Then
+    If incomingData.Remaining < 2 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
     
-    'Remove packet ID
-    Call incomingData.ReadByte
+
+
     
     Dim X As Byte
     Dim Y As Byte
@@ -2791,8 +2675,8 @@ Private Sub HandlePauseToggle()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    'Remove packet ID
-    Call incomingData.ReadByte
+
+
     
     pausa = Not pausa
 End Sub
@@ -2806,8 +2690,8 @@ Private Sub HandleRainToggle()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    'Remove packet ID
-    Call incomingData.ReadByte
+
+
     
     If Not InMapBounds(UserPos.X, UserPos.Y) Then Exit Sub
     
@@ -2840,13 +2724,13 @@ Private Sub HandleCreateFX()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    If incomingData.Length < 7 Then
+    If incomingData.Remaining < 6 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
     
-    'Remove packet ID
-    Call incomingData.ReadByte
+
+
     
     Dim CharIndex As Integer
     Dim fX As Integer
@@ -2868,13 +2752,13 @@ Private Sub HandleUpdateUserStats()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    If incomingData.Length < 26 Then
+    If incomingData.Remaining < 25 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
     
-    'Remove packet ID
-    Call incomingData.ReadByte
+
+
     
     UserMaxHP = incomingData.ReadInteger()
     UserMinHP = incomingData.ReadInteger()
@@ -2887,21 +2771,22 @@ Private Sub HandleUpdateUserStats()
     UserPasarNivel = incomingData.ReadLong()
     UserExp = incomingData.ReadLong()
     
-    frmMain.lblExp.Caption = "Exp: " & UserExp & "/" & UserPasarNivel
+    'todo
+    'frmMain.lblExp.Caption = "Exp: " & UserExp & "/" & UserPasarNivel
     
     If UserPasarNivel > 0 Then
-        frmMain.lblPorcLvl.Caption = "[" & Round(CDbl(UserExp) * CDbl(100) / CDbl(UserPasarNivel), 2) & "%]"
+       ' frmMain.lblPorcLvl.Caption = "[" & Round(CDbl(UserExp) * CDbl(100) / CDbl(UserPasarNivel), 2) & "%]"
     Else
-        frmMain.lblPorcLvl.Caption = "[N/A]"
+       ' frmMain.lblPorcLvl.Caption = "[N/A]"
     End If
     
-    frmMain.GldLbl.Caption = UserGLD
-    frmMain.lblLvl.Caption = UserLvl
+   ' frmMain.GldLbl.Caption = UserGLD
+   ' frmMain.lblLvl.Caption = UserLvl
     
     'Stats
-    frmMain.lblMana = UserMinMAN & "/" & UserMaxMAN
-    frmMain.lblVida = UserMinHP & "/" & UserMaxHP
-    frmMain.lblEnergia = UserMinSTA & "/" & UserMaxSTA
+   ' frmMain.lblMana = UserMinMAN & "/" & UserMaxMAN
+   ' frmMain.lblVida = UserMinHP & "/" & UserMaxHP
+   ' frmMain.lblEnergia = UserMinSTA & "/" & UserMaxSTA
     
     Dim bWidth As Byte
     
@@ -2909,26 +2794,26 @@ Private Sub HandleUpdateUserStats()
     If UserMaxMAN > 0 Then _
         bWidth = (((UserMinMAN / 100) / (UserMaxMAN / 100)) * 75)
         
-    frmMain.shpMana.Width = 75 - bWidth
-    frmMain.shpMana.Left = 584 + (75 - frmMain.shpMana.Width)
+    'frmMain.shpMana.Width = 75 - bWidth
+    'frmMain.shpMana.Left = 584 + (75 - frmMain.shpMana.Width)
     
-    frmMain.shpMana.Visible = (bWidth <> 75)
+    'frmMain.shpMana.Visible = (bWidth <> 75)
     '***************************
     
     bWidth = (((UserMinHP / 100) / (UserMaxHP / 100)) * 75)
     
-    frmMain.shpVida.Width = 75 - bWidth
-    frmMain.shpVida.Left = 584 + (75 - frmMain.shpVida.Width)
+   ' frmMain.shpVida.Width = 75 - bWidth
+   ' frmMain.shpVida.Left = 584 + (75 - frmMain.shpVida.Width)
     
-    frmMain.shpVida.Visible = (bWidth <> 75)
+   ' frmMain.shpVida.Visible = (bWidth <> 75)
     '***************************
     
     bWidth = (((UserMinSTA / 100) / (UserMaxSTA / 100)) * 75)
     
-    frmMain.shpEnergia.Width = 75 - bWidth
-    frmMain.shpEnergia.Left = 584 + (75 - frmMain.shpEnergia.Width)
+    'frmMain.shpEnergia.Width = 75 - bWidth
+   ' frmMain.shpEnergia.Left = 584 + (75 - frmMain.shpEnergia.Width)
     
-    frmMain.shpEnergia.Visible = (bWidth <> 75)
+    'frmMain.shpEnergia.Visible = (bWidth <> 75)
     '***************************
     
     If UserMinHP = 0 Then
@@ -2941,10 +2826,10 @@ Private Sub HandleUpdateUserStats()
     
     If UserGLD >= CLng(UserLvl) * 10000 Then
         'Changes color
-        frmMain.GldLbl.ForeColor = &HFF& 'Red
+       ' frmMain.GldLbl.ForeColor = &HFF& 'Red
     Else
         'Changes color
-        frmMain.GldLbl.ForeColor = &HFFFF& 'Yellow
+        'frmMain.GldLbl.ForeColor = &HFFFF& 'Yellow
     End If
 End Sub
 
@@ -2957,33 +2842,33 @@ Private Sub HandleWorkRequestTarget()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    If incomingData.Length < 2 Then
+    If incomingData.Remaining < 1 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
     
-    'Remove packet ID
-    Call incomingData.ReadByte
+
+
     
     UsingSkill = incomingData.ReadByte()
 
     frmMain.MousePointer = 2
-    
+    'todo
     Select Case UsingSkill
         Case Magia
-            Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_TRABAJO_MAGIA, 100, 100, 120, 0, 0)
+            Call AppendLineCC(frmMain.RecTxt, MENSAJE_TRABAJO_MAGIA, 100, 100, 120, 0, 0)
         Case Pesca
-            Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_TRABAJO_PESCA, 100, 100, 120, 0, 0)
+            Call AppendLineCC(frmMain.RecTxt, MENSAJE_TRABAJO_PESCA, 100, 100, 120, 0, 0)
         Case Robar
-            Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_TRABAJO_ROBAR, 100, 100, 120, 0, 0)
+            Call AppendLineCC(frmMain.RecTxt, MENSAJE_TRABAJO_ROBAR, 100, 100, 120, 0, 0)
         Case Talar
-            Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_TRABAJO_TALAR, 100, 100, 120, 0, 0)
+            Call AppendLineCC(frmMain.RecTxt, MENSAJE_TRABAJO_TALAR, 100, 100, 120, 0, 0)
         Case Mineria
-            Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_TRABAJO_MINERIA, 100, 100, 120, 0, 0)
+            Call AppendLineCC(frmMain.RecTxt, MENSAJE_TRABAJO_MINERIA, 100, 100, 120, 0, 0)
         Case FundirMetal
-            Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_TRABAJO_FUNDIRMETAL, 100, 100, 120, 0, 0)
+            Call AppendLineCC(frmMain.RecTxt, MENSAJE_TRABAJO_FUNDIRMETAL, 100, 100, 120, 0, 0)
         Case Proyectiles
-            Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_TRABAJO_PROYECTILES, 100, 100, 120, 0, 0)
+            Call AppendLineCC(frmMain.RecTxt, MENSAJE_TRABAJO_PROYECTILES, 100, 100, 120, 0, 0)
     End Select
 End Sub
 
@@ -2996,18 +2881,15 @@ Private Sub HandleChangeInventorySlot()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    If incomingData.Length < 22 Then
+    If incomingData.Remaining < 11 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
     
 On Error GoTo ErrHandler
-    'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet...
-    Dim Buffer As New clsByteQueue
-    Call Buffer.CopyBuffer(incomingData)
-    
-    'Remove packet ID
-    Call Buffer.ReadByte
+
+
+
     
     Dim slot As Byte
     Dim OBJIndex As Integer
@@ -3022,66 +2904,64 @@ On Error GoTo ErrHandler
     Dim MinDef As Integer
     Dim Value As Single
     
-    slot = Buffer.ReadByte()
-    OBJIndex = Buffer.ReadInteger()
-    Name = Buffer.ReadASCIIString()
-    Amount = Buffer.ReadInteger()
-    Equipped = Buffer.ReadBoolean()
-    GrhIndex = Buffer.ReadInteger()
-    OBJType = Buffer.ReadByte()
-    MaxHit = Buffer.ReadInteger()
-    MinHit = Buffer.ReadInteger()
-    MaxDef = Buffer.ReadInteger()
-    MinDef = Buffer.ReadInteger
-    Value = Buffer.ReadSingle()
+    slot = incomingData.ReadByte()
+    OBJIndex = incomingData.ReadInteger()
+    Name = incomingData.ReadString()
+    Amount = incomingData.ReadInteger()
+    Equipped = incomingData.ReadBoolean()
+    GrhIndex = incomingData.ReadInteger()
+    OBJType = incomingData.ReadByte()
+    MaxHit = incomingData.ReadInteger()
+    MinHit = incomingData.ReadInteger()
+    MaxDef = incomingData.ReadInteger()
+    MinDef = incomingData.ReadInteger
+    Value = incomingData.ReadSingle()
     
+    'todo
     If Equipped Then
         Select Case OBJType
             Case eObjType.otWeapon
-                frmMain.lblWeapon = MinHit & "/" & MaxHit
+               ' frmMain.lblWeapon = MinHit & "/" & MaxHit
                 UserWeaponEqpSlot = slot
             Case eObjType.otArmadura
-                frmMain.lblArmor = MinDef & "/" & MaxDef
+                'frmMain.lblArmor = MinDef & "/" & MaxDef
                 UserArmourEqpSlot = slot
             Case eObjType.otescudo
-                frmMain.lblShielder = MinDef & "/" & MaxDef
+               ' frmMain.lblShielder = MinDef & "/" & MaxDef
                 UserHelmEqpSlot = slot
             Case eObjType.otcasco
-                frmMain.lblHelm = MinDef & "/" & MaxDef
+                'frmMain.lblHelm = MinDef & "/" & MaxDef
                 UserShieldEqpSlot = slot
         End Select
     Else
         Select Case slot
             Case UserWeaponEqpSlot
-                frmMain.lblWeapon = "0/0"
+               ' frmMain.lblWeapon = "0/0"
                 UserWeaponEqpSlot = 0
             Case UserArmourEqpSlot
-                frmMain.lblArmor = "0/0"
+               ' frmMain.lblArmor = "0/0"
                 UserArmourEqpSlot = 0
             Case UserHelmEqpSlot
-                frmMain.lblShielder = "0/0"
+                'frmMain.lblShielder = "0/0"
                 UserHelmEqpSlot = 0
             Case UserShieldEqpSlot
-                frmMain.lblHelm = "0/0"
+                'frmMain.lblHelm = "0/0"
                 UserShieldEqpSlot = 0
         End Select
     End If
     
-    Call Inventario.SetItem(slot, OBJIndex, Amount, Equipped, GrhIndex, OBJType, MaxHit, MinHit, MaxDef, MinDef, Value, Name)
+    'Call Inventario.SetItem(slot, OBJIndex, Amount, Equipped, GrhIndex, OBJType, MaxHit, MinHit, MaxDef, MinDef, Value, Name)
 
-    'If we got here then packet is complete, copy data back to original queue
-    Call incomingData.CopyBuffer(Buffer)
-    
 ErrHandler:
     Dim error As Long
     error = Err.Number
 On Error GoTo 0
     
-    'Destroy auxiliar buffer
-    Set Buffer = Nothing
+    If error <> 0 Then
 
-    If error <> 0 Then _
         Err.Raise error
+    End If
+    
 End Sub
 
 ' Handles the AddSlots message.
@@ -3092,7 +2972,7 @@ Private Sub HandleAddSlots()
 '
 '***************************************************
 
-    Call incomingData.ReadByte
+
     
     MaxInventorySlots = incomingData.ReadByte
 End Sub
@@ -3105,10 +2985,10 @@ Private Sub HandleStopWorking()
 '
 '***************************************************
 
-    Call incomingData.ReadByte
+
     
     With FontTypes(FontTypeNames.FONTTYPE_INFO)
-        Call ShowConsoleMsg("¡Has terminado de trabajar!", .red, .green, .blue, .bold, .italic)
+        Call ShowConsoleMsg("¡Has terminado de trabajar!", .Red, .Green, .Blue, .Bold, .Italic)
     End With
     
     If frmMain.macrotrabajo.Enabled Then Call frmMain.DesactivarMacroTrabajo
@@ -3125,7 +3005,7 @@ Private Sub HandleCancelOfferItem()
     Dim slot As Byte
     Dim Amount As Long
     
-    Call incomingData.ReadByte
+
     
     slot = incomingData.ReadByte
     
@@ -3138,7 +3018,7 @@ Private Sub HandleCancelOfferItem()
             Call frmComerciarUsu.UpdateInvCom(.OBJIndex(slot), Amount)
             
             ' Borro el item
-            Call .SetItem(slot, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "")
+            'Call .SetItem(slot, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "")
         End If
     End With
     
@@ -3160,54 +3040,48 @@ Private Sub HandleChangeBankSlot()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    If incomingData.Length < 21 Then
+    If incomingData.Remaining < 10 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
     
 On Error GoTo ErrHandler
-    'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet...
-    Dim Buffer As New clsByteQueue
-    Call Buffer.CopyBuffer(incomingData)
-    
-    'Remove packet ID
-    Call Buffer.ReadByte
+
+
+
     
     Dim slot As Byte
-    slot = Buffer.ReadByte()
+    slot = incomingData.ReadByte()
     
     With UserBancoInventory(slot)
-        .OBJIndex = Buffer.ReadInteger()
-        .Name = Buffer.ReadASCIIString()
-        .Amount = Buffer.ReadInteger()
-        .GrhIndex = Buffer.ReadInteger()
-        .OBJType = Buffer.ReadByte()
-        .MaxHit = Buffer.ReadInteger()
-        .MinHit = Buffer.ReadInteger()
-        .MaxDef = Buffer.ReadInteger()
-        .MinDef = Buffer.ReadInteger
-        .Valor = Buffer.ReadLong()
+        .OBJIndex = incomingData.ReadInteger()
+        .Name = incomingData.ReadString()
+        .Amount = incomingData.ReadInteger()
+        .GrhIndex = incomingData.ReadInteger()
+        .OBJType = incomingData.ReadByte()
+        .MaxHit = incomingData.ReadInteger()
+        .MinHit = incomingData.ReadInteger()
+        .MaxDef = incomingData.ReadInteger()
+        .MinDef = incomingData.ReadInteger
+        .Valor = incomingData.ReadLong()
         
         If Comerciando Then
-            Call InvBanco(0).SetItem(slot, .OBJIndex, .Amount, _
+            'Call InvBanco(0).SetItem(slot, .OBJIndex, .Amount, _
                 .Equipped, .GrhIndex, .OBJType, .MaxHit, _
                 .MinHit, .MaxDef, .MinDef, .Valor, .Name)
         End If
     End With
     
-    'If we got here then packet is complete, copy data back to original queue
-    Call incomingData.CopyBuffer(Buffer)
-    
 ErrHandler:
     Dim error As Long
     error = Err.Number
 On Error GoTo 0
-    
-    'Destroy auxiliar buffer
-    Set Buffer = Nothing
 
-    If error <> 0 Then _
+    If error <> 0 Then
+
         Err.Raise error
+    End If
+    
 End Sub
 
 ''
@@ -3219,43 +3093,40 @@ Private Sub HandleChangeSpellSlot()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    If incomingData.Length < 6 Then
+    If incomingData.Remaining < 5 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
     
 On Error GoTo ErrHandler
-    'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet...
-    Dim Buffer As New clsByteQueue
-    Call Buffer.CopyBuffer(incomingData)
-    
-    'Remove packet ID
-    Call Buffer.ReadByte
+
+
+
     
     Dim slot As Byte
-    slot = Buffer.ReadByte()
+    slot = incomingData.ReadByte()
     
-    UserHechizos(slot) = Buffer.ReadInteger()
+    UserHechizos(slot) = incomingData.ReadInteger()
     
-    If slot <= frmMain.hlst.ListCount Then
-        frmMain.hlst.List(slot - 1) = Buffer.ReadASCIIString()
-    Else
-        Call frmMain.hlst.AddItem(Buffer.ReadASCIIString())
-    End If
+    'todo
+    incomingData.ReadString
     
-    'If we got here then packet is complete, copy data back to original queue
-    Call incomingData.CopyBuffer(Buffer)
-    
+    'If slot <= frmMain.hlst.ListCount Then
+    '    frmMain.hlst.List(slot - 1) = incomingData.ReadString()
+    'Else
+    '    Call frmMain.hlst.AddItem(incomingData.ReadString())
+    'End If
+
 ErrHandler:
     Dim error As Long
     error = Err.Number
 On Error GoTo 0
-    
-    'Destroy auxiliar buffer
-    Set Buffer = Nothing
 
-    If error <> 0 Then _
+    If error <> 0 Then
+
         Err.Raise error
+    End If
+    
 End Sub
 
 ''
@@ -3267,13 +3138,13 @@ Private Sub HandleAtributes()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    If incomingData.Length < 1 + NUMATRIBUTES Then
+    If incomingData.Remaining < 1 + NUMATRIBUTES Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
     
-    'Remove packet ID
-    Call incomingData.ReadByte
+
+
     
     Dim i As Long
     
@@ -3306,36 +3177,33 @@ Private Sub HandleBlacksmithWeapons()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    If incomingData.Length < 3 Then
+    If incomingData.Remaining < 2 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
     
 On Error GoTo ErrHandler
-    'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet...
-    Dim Buffer As New clsByteQueue
-    Call Buffer.CopyBuffer(incomingData)
-    
-    'Remove packet ID
-    Call Buffer.ReadByte
+
+
+
     
     Dim Count As Integer
     Dim i As Long
     Dim k As Long
     
-    Count = Buffer.ReadInteger()
+    Count = incomingData.ReadInteger()
     
     ReDim ArmasHerrero(Count) As tItemsConstruibles
     ReDim HerreroMejorar(0) As tItemsConstruibles
     
     For i = 1 To Count
         With ArmasHerrero(i)
-            .Name = Buffer.ReadASCIIString()    'Get the object's name
-            .GrhIndex = Buffer.ReadInteger()
-            .LinH = Buffer.ReadInteger()        'The iron needed
-            .LinP = Buffer.ReadInteger()        'The silver needed
-            .LinO = Buffer.ReadInteger()        'The gold needed
-            .OBJIndex = Buffer.ReadInteger()
+            .Name = incomingData.ReadString()    'Get the object's name
+            .GrhIndex = incomingData.ReadInteger()
+            .LinH = incomingData.ReadInteger()        'The iron needed
+            .LinP = incomingData.ReadInteger()        'The silver needed
+            .LinO = incomingData.ReadInteger()        'The gold needed
+            .OBJIndex = incomingData.ReadInteger()
         End With
     Next i
     
@@ -3349,20 +3217,17 @@ On Error GoTo ErrHandler
         Call .HideExtraControls(Count)
         Call .RenderList(1, True)
     End With
-    
-    'If we got here then packet is complete, copy data back to original queue
-    Call incomingData.CopyBuffer(Buffer)
-    
+
 ErrHandler:
     Dim error As Long
     error = Err.Number
 On Error GoTo 0
     
-    'Destroy auxiliar buffer
-    Set Buffer = Nothing
+    If error <> 0 Then
 
-    If error <> 0 Then _
         Err.Raise error
+    End If
+    
 End Sub
 
 ''
@@ -3374,50 +3239,43 @@ Private Sub HandleBlacksmithArmors()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    If incomingData.Length < 3 Then
+    If incomingData.Remaining < 2 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
     
 On Error GoTo ErrHandler
-    'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet...
-    Dim Buffer As New clsByteQueue
-    Call Buffer.CopyBuffer(incomingData)
-    
-    'Remove packet ID
-    Call Buffer.ReadByte
+
+
+
     
     Dim Count As Integer
     Dim i As Long
     
-    Count = Buffer.ReadInteger()
+    Count = incomingData.ReadInteger()
     
     ReDim ArmadurasHerrero(Count) As tItemsConstruibles
     
     For i = 1 To Count
         With ArmadurasHerrero(i)
-            .Name = Buffer.ReadASCIIString()    'Get the object's name
-            .GrhIndex = Buffer.ReadInteger()
-            .LinH = Buffer.ReadInteger()        'The iron needed
-            .LinP = Buffer.ReadInteger()        'The silver needed
-            .LinO = Buffer.ReadInteger()        'The gold needed
-            .OBJIndex = Buffer.ReadInteger()
+            .Name = incomingData.ReadString()    'Get the object's name
+            .GrhIndex = incomingData.ReadInteger()
+            .LinH = incomingData.ReadInteger()        'The iron needed
+            .LinP = incomingData.ReadInteger()        'The silver needed
+            .LinO = incomingData.ReadInteger()        'The gold needed
+            .OBJIndex = incomingData.ReadInteger()
         End With
     Next i
-    
-    'If we got here then packet is complete, copy data back to original queue
-    Call incomingData.CopyBuffer(Buffer)
-    
+
 ErrHandler:
     Dim error As Long
     error = Err.Number
 On Error GoTo 0
     
-    'Destroy auxiliar buffer
-    Set Buffer = Nothing
-
-    If error <> 0 Then _
+    If error <> 0 Then
         Err.Raise error
+    End If
+    
 End Sub
 
 ''
@@ -3429,34 +3287,31 @@ Private Sub HandleCarpenterObjects()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    If incomingData.Length < 3 Then
+    If incomingData.Remaining < 2 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
     
 On Error GoTo ErrHandler
-    'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet...
-    Dim Buffer As New clsByteQueue
-    Call Buffer.CopyBuffer(incomingData)
-    
-    'Remove packet ID
-    Call Buffer.ReadByte
+
+
+
     
     Dim Count As Integer
     Dim i As Long
     
-    Count = Buffer.ReadInteger()
+    Count = incomingData.ReadInteger()
     
     ReDim ObjCarpintero(Count) As tItemsConstruibles
     ReDim CarpinteroMejorar(0) As tItemsConstruibles
     
     For i = 1 To Count
         With ObjCarpintero(i)
-            .Name = Buffer.ReadASCIIString()        'Get the object's name
-            .GrhIndex = Buffer.ReadInteger()
-            .Madera = Buffer.ReadInteger()          'The wood needed
-            .MaderaElfica = Buffer.ReadInteger()    'The elfic wood needed
-            .OBJIndex = Buffer.ReadInteger()
+            .Name = incomingData.ReadString()        'Get the object's name
+            .GrhIndex = incomingData.ReadInteger()
+            .Madera = incomingData.ReadInteger()          'The wood needed
+            .MaderaElfica = incomingData.ReadInteger()    'The elfic wood needed
+            .OBJIndex = incomingData.ReadInteger()
         End With
     Next i
     
@@ -3471,17 +3326,10 @@ On Error GoTo ErrHandler
         Call .RenderList(1)
     End With
     
-    
-    'If we got here then packet is complete, copy data back to original queue
-    Call incomingData.CopyBuffer(Buffer)
-    
 ErrHandler:
     Dim error As Long
     error = Err.Number
 On Error GoTo 0
-    
-    'Destroy auxiliar buffer
-    Set Buffer = Nothing
 
     If error <> 0 Then _
         Err.Raise error
@@ -3496,8 +3344,8 @@ Private Sub HandleRestOK()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    'Remove packet ID
-    Call incomingData.ReadByte
+
+
     
     UserDescansar = Not UserDescansar
 End Sub
@@ -3511,36 +3359,27 @@ Private Sub HandleErrorMessage()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    If incomingData.Length < 3 Then
+    If incomingData.Remaining < 2 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
     
 On Error GoTo ErrHandler
-    'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet...
-    Dim Buffer As New clsByteQueue
-    Call Buffer.CopyBuffer(incomingData)
+
+
+
     
-    'Remove packet ID
-    Call Buffer.ReadByte
-    
-    Call MsgBox(Buffer.ReadASCIIString())
+    Call MsgBox(incomingData.ReadString())
     
     If frmConnect.Visible Then
         frmMain.Socket1.Disconnect
         frmMain.Socket1.Cleanup
     End If
-    
-    'If we got here then packet is complete, copy data back to original queue
-    Call incomingData.CopyBuffer(Buffer)
-    
+
 ErrHandler:
     Dim error As Long
     error = Err.Number
 On Error GoTo 0
-    
-    'Destroy auxiliar buffer
-    Set Buffer = Nothing
 
     If error <> 0 Then _
         Err.Raise error
@@ -3555,8 +3394,8 @@ Private Sub HandleBlind()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    'Remove packet ID
-    Call incomingData.ReadByte
+
+
     
     UserCiego = True
 End Sub
@@ -3570,8 +3409,8 @@ Private Sub HandleDumb()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    'Remove packet ID
-    Call incomingData.ReadByte
+
+
     
     UserEstupido = True
 End Sub
@@ -3585,34 +3424,25 @@ Private Sub HandleShowSignal()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    If incomingData.Length < 5 Then
+    If incomingData.Remaining < 4 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
     
 On Error GoTo ErrHandler
-    'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet...
-    Dim Buffer As New clsByteQueue
-    Call Buffer.CopyBuffer(incomingData)
-    
-    'Remove packet ID
-    Call Buffer.ReadByte
+
+
+
     
     Dim tmp As String
-    tmp = Buffer.ReadASCIIString()
+    tmp = incomingData.ReadString()
     
-    Call InitCartel(tmp, Buffer.ReadInteger())
-    
-    'If we got here then packet is complete, copy data back to original queue
-    Call incomingData.CopyBuffer(Buffer)
-    
+    Call InitCartel(tmp, incomingData.ReadInteger())
+
 ErrHandler:
     Dim error As Long
     error = Err.Number
 On Error GoTo 0
-    
-    'Destroy auxiliar buffer
-    Set Buffer = Nothing
 
     If error <> 0 Then _
         Err.Raise error
@@ -3627,45 +3457,36 @@ Private Sub HandleChangeNPCInventorySlot()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    If incomingData.Length < 21 Then
+    If incomingData.Remaining < 10 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
     
 On Error GoTo ErrHandler
-    'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet...
-    Dim Buffer As New clsByteQueue
-    Call Buffer.CopyBuffer(incomingData)
-    
-    'Remove packet ID
-    Call Buffer.ReadByte
+
+
+
     
     Dim slot As Byte
-    slot = Buffer.ReadByte()
+    slot = incomingData.ReadByte()
     
     With NPCInventory(slot)
-        .Name = Buffer.ReadASCIIString()
-        .Amount = Buffer.ReadInteger()
-        .Valor = Buffer.ReadSingle()
-        .GrhIndex = Buffer.ReadInteger()
-        .OBJIndex = Buffer.ReadInteger()
-        .OBJType = Buffer.ReadByte()
-        .MaxHit = Buffer.ReadInteger()
-        .MinHit = Buffer.ReadInteger()
-        .MaxDef = Buffer.ReadInteger()
-        .MinDef = Buffer.ReadInteger
+        .Name = incomingData.ReadString()
+        .Amount = incomingData.ReadInteger()
+        .Valor = incomingData.ReadSingle()
+        .GrhIndex = incomingData.ReadInteger()
+        .OBJIndex = incomingData.ReadInteger()
+        .OBJType = incomingData.ReadByte()
+        .MaxHit = incomingData.ReadInteger()
+        .MinHit = incomingData.ReadInteger()
+        .MaxDef = incomingData.ReadInteger()
+        .MinDef = incomingData.ReadInteger
     End With
-        
-    'If we got here then packet is complete, copy data back to original queue
-    Call incomingData.CopyBuffer(Buffer)
-    
+ 
 ErrHandler:
     Dim error As Long
     error = Err.Number
 On Error GoTo 0
-    
-    'Destroy auxiliar buffer
-    Set Buffer = Nothing
 
     If error <> 0 Then _
         Err.Raise error
@@ -3680,37 +3501,39 @@ Private Sub HandleUpdateHungerAndThirst()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    If incomingData.Length < 5 Then
+    If incomingData.Remaining < 4 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
     
-    'Remove packet ID
-    Call incomingData.ReadByte
+
+
     
     UserMaxAGU = incomingData.ReadByte()
     UserMinAGU = incomingData.ReadByte()
     UserMaxHAM = incomingData.ReadByte()
     UserMinHAM = incomingData.ReadByte()
-    frmMain.lblHambre = UserMinHAM & "/" & UserMaxHAM
-    frmMain.lblSed = UserMinAGU & "/" & UserMaxAGU
+    
+    'todo
+    'frmMain.lblHambre = UserMinHAM & "/" & UserMaxHAM
+    'frmMain.lblSed = UserMinAGU & "/" & UserMaxAGU
 
     Dim bWidth As Byte
     
     bWidth = (((UserMinHAM / 100) / (UserMaxHAM / 100)) * 75)
     
-    frmMain.shpHambre.Width = 75 - bWidth
-    frmMain.shpHambre.Left = 584 + (75 - frmMain.shpHambre.Width)
+    'frmMain.shpHambre.Width = 75 - bWidth
+    'frmMain.shpHambre.Left = 584 + (75 - frmMain.shpHambre.Width)
     
-    frmMain.shpHambre.Visible = (bWidth <> 75)
+    'frmMain.shpHambre.Visible = (bWidth <> 75)
     '*********************************
     
     bWidth = (((UserMinAGU / 100) / (UserMaxAGU / 100)) * 75)
     
-    frmMain.shpSed.Width = 75 - bWidth
-    frmMain.shpSed.Left = 584 + (75 - frmMain.shpSed.Width)
+    'frmMain.shpSed.Width = 75 - bWidth
+    'frmMain.shpSed.Left = 584 + (75 - frmMain.shpSed.Width)
     
-    frmMain.shpSed.Visible = (bWidth <> 75)
+    'frmMain.shpSed.Visible = (bWidth <> 75)
     
 End Sub
 
@@ -3723,13 +3546,13 @@ Private Sub HandleFame()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    If incomingData.Length < 1 Then
+    If incomingData.Remaining < 1 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
     
-    'Remove packet ID
-    Call incomingData.ReadByte
+
+
     
     LlegoFama = True
 End Sub
@@ -3743,13 +3566,13 @@ Private Sub HandleMiniStats()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    If incomingData.Length < 20 Then
+    If incomingData.Remaining < 9 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
     
-    'Remove packet ID
-    Call incomingData.ReadByte
+
+
     
     With UserEstadisticas
         .NeutralesMatados = incomingData.ReadLong()
@@ -3771,13 +3594,13 @@ Private Sub HandleLevelUp()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    If incomingData.Length < 3 Then
+    If incomingData.Remaining < 2 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
     
-    'Remove packet ID
-    Call incomingData.ReadByte
+
+
     
     SkillPoints = SkillPoints + incomingData.ReadInteger()
     
@@ -3793,29 +3616,26 @@ Private Sub HandleAddForumMessage()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    If incomingData.Length < 8 Then
+    If incomingData.Remaining < 7 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
     
 On Error GoTo ErrHandler
-    'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet...
-    Dim Buffer As New clsByteQueue
-    Call Buffer.CopyBuffer(incomingData)
-    
-    'Remove packet ID
-    Call Buffer.ReadByte
+
+
+
     
     Dim ForumType As eForumMsgType
     Dim Title As String
     Dim Message As String
     Dim Author As String
     
-    ForumType = Buffer.ReadByte
+    ForumType = incomingData.ReadByte
     
-    Title = Buffer.ReadASCIIString()
-    Author = Buffer.ReadASCIIString()
-    Message = Buffer.ReadASCIIString()
+    Title = incomingData.ReadString()
+    Author = incomingData.ReadString()
+    Message = incomingData.ReadString()
     
     If Not frmForo.ForoLimpio Then
         clsForos.ClearForums
@@ -3823,17 +3643,11 @@ On Error GoTo ErrHandler
     End If
 
     Call clsForos.AddPost(ForumAlignment(ForumType), Title, Author, Message, EsAnuncio(ForumType))
-    
-    'If we got here then packet is complete, copy data back to original queue
-    Call incomingData.CopyBuffer(Buffer)
-    
+
 ErrHandler:
     Dim error As Long
     error = Err.Number
 On Error GoTo 0
-    
-    'Destroy auxiliar buffer
-    Set Buffer = Nothing
 
     If error <> 0 Then _
         Err.Raise error
@@ -3848,8 +3662,8 @@ Private Sub HandleShowForumForm()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    'Remove packet ID
-    Call incomingData.ReadByte
+
+
     
     frmForo.Privilegios = incomingData.ReadByte
     frmForo.CanPostSticky = incomingData.ReadByte
@@ -3868,13 +3682,13 @@ Private Sub HandleSetInvisible()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    If incomingData.Length < 4 Then
+    If incomingData.Remaining < 3 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
     
-    'Remove packet ID
-    Call incomingData.ReadByte
+
+
     
     Dim CharIndex As Integer
     
@@ -3892,13 +3706,13 @@ Private Sub HandleDiceRoll()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    If incomingData.Length < 6 Then
+    If incomingData.Remaining < 5 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
     
-    'Remove packet ID
-    Call incomingData.ReadByte
+
+
     
     UserAtributos(eAtributos.Fuerza) = incomingData.ReadByte()
     UserAtributos(eAtributos.Agilidad) = incomingData.ReadByte()
@@ -3926,8 +3740,8 @@ Private Sub HandleMeditateToggle()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    'Remove packet ID
-    Call incomingData.ReadByte
+
+
     
     UserMeditar = Not UserMeditar
 End Sub
@@ -3941,8 +3755,8 @@ Private Sub HandleBlindNoMore()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    'Remove packet ID
-    Call incomingData.ReadByte
+
+
     
     UserCiego = False
 End Sub
@@ -3956,8 +3770,8 @@ Private Sub HandleDumbNoMore()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    'Remove packet ID
-    Call incomingData.ReadByte
+
+
     
     UserEstupido = False
 End Sub
@@ -3971,13 +3785,13 @@ Private Sub HandleSendSkills()
 'Last Modification: 11/19/09
 '11/19/09: Pato - Now the server send the percentage of progress of the skills.
 '***************************************************
-    If incomingData.Length < 2 + NUMSKILLS Then
+    If incomingData.Remaining < 1 + NUMSKILLS Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
     
-    'Remove packet ID
-    Call incomingData.ReadByte
+
+
     
     UserClase = incomingData.ReadByte
     Dim i As Long
@@ -3997,39 +3811,30 @@ Private Sub HandleTrainerCreatureList()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    If incomingData.Length < 3 Then
+    If incomingData.Remaining < 2 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
     
 On Error GoTo ErrHandler
-    'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet...
-    Dim Buffer As New clsByteQueue
-    Call Buffer.CopyBuffer(incomingData)
-    
-    'Remove packet ID
-    Call Buffer.ReadByte
+
+
+
     
     Dim creatures() As String
     Dim i As Long
     
-    creatures = Split(Buffer.ReadASCIIString(), SEPARATOR)
+    creatures = Split(incomingData.ReadString(), SEPARATOR)
     
     For i = 0 To UBound(creatures())
         Call frmEntrenador.lstCriaturas.AddItem(creatures(i))
     Next i
     frmEntrenador.Show , frmMain
-    
-    'If we got here then packet is complete, copy data back to original queue
-    Call incomingData.CopyBuffer(Buffer)
-    
+
 ErrHandler:
     Dim error As Long
     error = Err.Number
 On Error GoTo 0
-    
-    'Destroy auxiliar buffer
-    Set Buffer = Nothing
 
     If error <> 0 Then _
         Err.Raise error
@@ -4044,8 +3849,8 @@ Private Sub HandleParalizeOK()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    'Remove packet ID
-    Call incomingData.ReadByte
+
+
     
     UserParalizado = Not UserParalizado
 End Sub
@@ -4059,32 +3864,23 @@ Private Sub HandleShowUserRequest()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    If incomingData.Length < 3 Then
+    If incomingData.Remaining < 2 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
     
 On Error GoTo ErrHandler
-    'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet...
-    Dim Buffer As New clsByteQueue
-    Call Buffer.CopyBuffer(incomingData)
+
+
+
     
-    'Remove packet ID
-    Call Buffer.ReadByte
-    
-    Call frmUserRequest.recievePeticion(Buffer.ReadASCIIString())
+    Call frmUserRequest.recievePeticion(incomingData.ReadString())
     Call frmUserRequest.Show(vbModeless, frmMain)
-    
-    'If we got here then packet is complete, copy data back to original queue
-    Call incomingData.CopyBuffer(Buffer)
-    
+
 ErrHandler:
     Dim error As Long
     error = Err.Number
 On Error GoTo 0
-    
-    'Destroy auxiliar buffer
-    Set Buffer = Nothing
 
     If error <> 0 Then _
         Err.Raise error
@@ -4099,8 +3895,8 @@ Private Sub HandleTradeOK()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    'Remove packet ID
-    Call incomingData.ReadByte
+
+
     
     If frmComerciar.Visible Then
         Dim i As Long
@@ -4110,7 +3906,7 @@ Private Sub HandleTradeOK()
             ' Agrego o quito un item en su totalidad
             If Inventario.OBJIndex(i) <> InvComUsu.OBJIndex(i) Then
                 With Inventario
-                    Call InvComUsu.SetItem(i, .OBJIndex(i), _
+                    'Call InvComUsu.SetItem(i, .OBJIndex(i), _
                     .Amount(i), .Equipped(i), .GrhIndex(i), _
                     .OBJType(i), .MaxHit(i), .MinHit(i), .MaxDef(i), .MinDef(i), _
                     .Valor(i), .ItemName(i))
@@ -4126,14 +3922,14 @@ Private Sub HandleTradeOK()
             ' Compraron la totalidad de un item, o vendieron un item que el npc no tenia
             If NPCInventory(i).OBJIndex <> InvComNpc.OBJIndex(i) Then
                 With NPCInventory(i)
-                    Call InvComNpc.SetItem(i, .OBJIndex, _
+                    'Call InvComNpc.SetItem(i, .OBJIndex, _
                     .Amount, 0, .GrhIndex, _
                     .OBJType, .MaxHit, .MinHit, .MaxDef, .MinDef, _
                     .Valor, .Name)
                 End With
             ' Compraron o vendieron cierta cantidad (no su totalidad)
             ElseIf NPCInventory(i).Amount <> InvComNpc.Amount(i) Then
-                Call InvComNpc.ChangeSlotItemAmount(i, NPCInventory(i).Amount)
+                'Call InvComNpc.ChangeSlotItemAmount(i, NPCInventory(i).Amount)
             End If
         Next i
     
@@ -4149,8 +3945,8 @@ Private Sub HandleBankOK()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    'Remove packet ID
-    Call incomingData.ReadByte
+
+
     
     Dim i As Long
     
@@ -4158,7 +3954,7 @@ Private Sub HandleBankOK()
         
         For i = 1 To Inventario.MaxObjs
             With Inventario
-                Call InvBanco(1).SetItem(i, .OBJIndex(i), .Amount(i), _
+                'Call InvBanco(1).SetItem(i, .OBJIndex(i), .Amount(i), _
                     .Equipped(i), .GrhIndex(i), .OBJType(i), .MaxHit(i), _
                     .MinHit(i), .MaxDef(i), .MinDef(i), .Valor(i), .ItemName(i))
             End With
@@ -4187,47 +3983,38 @@ Private Sub HandleChangeUserTradeSlot()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    If incomingData.Length < 22 Then
+    If incomingData.Remaining < 21 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
     
 On Error GoTo ErrHandler
-    'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet...
-    Dim Buffer As New clsByteQueue
-    Call Buffer.CopyBuffer(incomingData)
-    
+
     Dim OfferSlot As Byte
     
-    'Remove packet ID
-    Call Buffer.ReadByte
+
+
     
-    OfferSlot = Buffer.ReadByte
+    OfferSlot = incomingData.ReadByte
     
-    With Buffer
+    With incomingData
         If OfferSlot = GOLD_OFFER_SLOT Then
             Call InvOroComUsu(2).SetItem(1, .ReadInteger(), .ReadLong(), 0, _
                                             .ReadInteger(), .ReadByte(), .ReadInteger(), _
-                                            .ReadInteger(), .ReadInteger(), .ReadInteger(), .ReadLong(), .ReadASCIIString())
+                                            .ReadInteger(), .ReadInteger(), .ReadInteger(), .ReadLong(), .ReadString())
         Else
             Call InvOfferComUsu(1).SetItem(OfferSlot, .ReadInteger(), .ReadLong(), 0, _
                                             .ReadInteger(), .ReadByte(), .ReadInteger(), _
-                                            .ReadInteger(), .ReadInteger(), .ReadInteger(), .ReadLong(), .ReadASCIIString())
+                                            .ReadInteger(), .ReadInteger(), .ReadInteger(), .ReadLong(), .ReadString())
         End If
     End With
     
     Call frmComerciarUsu.PrintCommerceMsg(TradingUserName & " ha modificado su oferta.", FontTypeNames.FONTTYPE_VENENO)
-    
-    'If we got here then packet is complete, copy data back to original queue
-    Call incomingData.CopyBuffer(Buffer)
-    
+
 ErrHandler:
     Dim error As Long
     error = Err.Number
 On Error GoTo 0
-    
-    'Destroy auxiliar buffer
-    Set Buffer = Nothing
 
     If error <> 0 Then _
         Err.Raise error
@@ -4242,13 +4029,13 @@ Private Sub HandleSendNight()
 'Last Modification: 01/08/07
 '
 '***************************************************
-    If incomingData.Length < 2 Then
+    If incomingData.Remaining < 1 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
     
-    'Remove packet ID
-    Call incomingData.ReadByte
+
+
     
     Dim tBool As Boolean 'CHECK, este handle no hace nada con lo que recibe.. porque, ehmm.. no hay noche?.. o si?
     tBool = incomingData.ReadBoolean()
@@ -4263,39 +4050,30 @@ Private Sub HandleSpawnList()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    If incomingData.Length < 3 Then
+    If incomingData.Remaining < 2 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
     
 On Error GoTo ErrHandler
-    'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet...
-    Dim Buffer As New clsByteQueue
-    Call Buffer.CopyBuffer(incomingData)
-    
-    'Remove packet ID
-    Call Buffer.ReadByte
+
+
+
     
     Dim creatureList() As String
     Dim i As Long
     
-    creatureList = Split(Buffer.ReadASCIIString(), SEPARATOR)
+    creatureList = Split(incomingData.ReadString(), SEPARATOR)
     
     For i = 0 To UBound(creatureList())
         Call frmSpawnList.lstCriaturas.AddItem(creatureList(i))
     Next i
     frmSpawnList.Show , frmMain
-    
-    'If we got here then packet is complete, copy data back to original queue
-    Call incomingData.CopyBuffer(Buffer)
-    
+
 ErrHandler:
     Dim error As Long
     error = Err.Number
 On Error GoTo 0
-    
-    'Destroy auxiliar buffer
-    Set Buffer = Nothing
 
     If error <> 0 Then _
         Err.Raise error
@@ -4310,40 +4088,31 @@ Private Sub HandleShowSOSForm()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    If incomingData.Length < 3 Then
+    If incomingData.Remaining < 2 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
     
 On Error GoTo ErrHandler
-    'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet...
-    Dim Buffer As New clsByteQueue
-    Call Buffer.CopyBuffer(incomingData)
-    
-    'Remove packet ID
-    Call Buffer.ReadByte
+
+
+
     
     Dim sosList() As String
     Dim i As Long
     
-    sosList = Split(Buffer.ReadASCIIString(), SEPARATOR)
+    sosList = Split(incomingData.ReadString(), SEPARATOR)
     
     For i = 0 To UBound(sosList())
         Call frmMSG.List1.AddItem(sosList(i))
     Next i
     
     frmMSG.Show , frmMain
-    
-    'If we got here then packet is complete, copy data back to original queue
-    Call incomingData.CopyBuffer(Buffer)
-    
+
 ErrHandler:
     Dim error As Long
     error = Err.Number
 On Error GoTo 0
-    
-    'Destroy auxiliar buffer
-    Set Buffer = Nothing
 
     If error <> 0 Then _
         Err.Raise error
@@ -4363,32 +4132,23 @@ Private Sub HandleShowMOTDEditionForm()
 'Last Modification: 05/17/06
 '
 '*************************************Su**************
-    If incomingData.Length < 3 Then
+    If incomingData.Remaining < 2 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
     
 On Error GoTo ErrHandler
-    'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet...
-    Dim Buffer As New clsByteQueue
-    Call Buffer.CopyBuffer(incomingData)
+
+
+
     
-    'Remove packet ID
-    Call Buffer.ReadByte
-    
-    frmCambiaMotd.txtMotd.Text = Buffer.ReadASCIIString()
+    frmCambiaMotd.txtMotd.Text = incomingData.ReadString()
     frmCambiaMotd.Show , frmMain
-    
-    'If we got here then packet is complete, copy data back to original queue
-    Call incomingData.CopyBuffer(Buffer)
-    
+
 ErrHandler:
     Dim error As Long
     error = Err.Number
 On Error GoTo 0
-    
-    'Destroy auxiliar buffer
-    Set Buffer = Nothing
 
     If error <> 0 Then _
         Err.Raise error
@@ -4403,8 +4163,8 @@ Private Sub HandleShowGMPanelForm()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    'Remove packet ID
-    Call incomingData.ReadByte
+
+
     
     frmPanelGm.Show vbModeless, frmMain
 End Sub
@@ -4418,23 +4178,20 @@ Private Sub HandleUserNameList()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    If incomingData.Length < 3 Then
+    If incomingData.Remaining < 2 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
     
 On Error GoTo ErrHandler
-    'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet...
-    Dim Buffer As New clsByteQueue
-    Call Buffer.CopyBuffer(incomingData)
-    
-    'Remove packet ID
-    Call Buffer.ReadByte
+
+
+
     
     Dim userList() As String
     Dim i As Long
     
-    userList = Split(Buffer.ReadASCIIString(), SEPARATOR)
+    userList = Split(incomingData.ReadString(), SEPARATOR)
     
     If frmPanelGm.Visible Then
         frmPanelGm.cboListaUsus.Clear
@@ -4443,17 +4200,11 @@ On Error GoTo ErrHandler
         Next i
         If frmPanelGm.cboListaUsus.ListCount > 0 Then frmPanelGm.cboListaUsus.ListIndex = 0
     End If
-    
-    'If we got here then packet is complete, copy data back to original queue
-    Call incomingData.CopyBuffer(Buffer)
-    
+ 
 ErrHandler:
     Dim error As Long
     error = Err.Number
 On Error GoTo 0
-    
-    'Destroy auxiliar buffer
-    Set Buffer = Nothing
 
     If error <> 0 Then _
         Err.Raise error
@@ -4468,9 +4219,10 @@ Private Sub HandlePong()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    Call incomingData.ReadByte
+
     
-    Call AddtoRichTextBox(frmMain.RecTxt, "El ping es " & (GetTickCount - pingTime) & " ms.", 255, 0, 0, True, False, True)
+    'todo
+    Call AppendLineCC(frmMain.RecTxt, "El ping es " & (GetTickCount - pingTime) & " ms.", 255, 0, 0, True, False, True)
     
     pingTime = 0
 End Sub
@@ -4484,26 +4236,23 @@ Private Sub HandleUpdateTagAndStatus()
 'Last Modification: 05/17/06
 '
 '***************************************************
-    If incomingData.Length < 6 Then
+    If incomingData.Remaining < 5 Then
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
     
 On Error GoTo ErrHandler
-    'This packet contains strings, make a copy of the data to prevent losses if it's not complete yet...
-    Dim Buffer As New clsByteQueue
-    Call Buffer.CopyBuffer(incomingData)
-    
-    'Remove packet ID
-    Call Buffer.ReadByte
+
+
+
     
     Dim CharIndex As Integer
     Dim NickColor As Byte
     Dim UserTag As String
     
-    CharIndex = Buffer.ReadInteger()
-    NickColor = Buffer.ReadByte()
-    UserTag = Buffer.ReadASCIIString()
+    CharIndex = incomingData.ReadInteger()
+    NickColor = incomingData.ReadByte()
+    UserTag = incomingData.ReadString()
     
     'Update char status adn tag!
     With charlist(CharIndex)
@@ -4512,17 +4261,11 @@ On Error GoTo ErrHandler
         .Nombre = UserTag
         .NombreOffset = 0 '(Text_GetWidth(cfonts(1), .Nombre) \ 2) - cfonts(1).RowPitch
     End With
-    
-    'If we got here then packet is complete, copy data back to original queue
-    Call incomingData.CopyBuffer(Buffer)
-    
+
 ErrHandler:
     Dim error As Long
     error = Err.Number
 On Error GoTo 0
-    
-    'Destroy auxiliar buffer
-    Set Buffer = Nothing
 
     If error <> 0 Then _
         Err.Raise error
@@ -4530,23 +4273,23 @@ End Sub
 
 
 ''
-' Writes the "LoginExistingChar" message to the outgoing data buffer.
+' Writes the "LoginExistingChar" message to the outgoing data incomingData.
 '
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteLoginExistingChar()
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "LoginExistingChar" message to the outgoing data buffer
+'Writes the "LoginExistingChar" message to the outgoing data incomingData
 '***************************************************
     
     With outgoingData
         Call .WriteByte(ClientPacketID.LoginExistingChar)
         
-        Call .WriteASCIIString(UserName)
+        Call .WriteString(UserName)
         
-        Call .WriteASCIIString(UserPassword)
+        Call .WriteString(UserPassword)
 
         Call .WriteByte(App.Major)
         Call .WriteByte(App.Minor)
@@ -4556,38 +4299,38 @@ Public Sub WriteLoginExistingChar()
 End Sub
 
 ''
-' Writes the "ThrowDices" message to the outgoing data buffer.
+' Writes the "ThrowDices" message to the outgoing data incomingData.
 '
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteThrowDices()
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "ThrowDices" message to the outgoing data buffer
+'Writes the "ThrowDices" message to the outgoing data incomingData
 '***************************************************
     Call outgoingData.WriteByte(ClientPacketID.ThrowDices)
 End Sub
 
 ''
-' Writes the "LoginNewChar" message to the outgoing data buffer.
+' Writes the "LoginNewChar" message to the outgoing data incomingData.
 '
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteLoginNewChar()
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "LoginNewChar" message to the outgoing data buffer
+'Writes the "LoginNewChar" message to the outgoing data incomingData
 '***************************************************
     Dim i As Long
     
     With outgoingData
         Call .WriteByte(ClientPacketID.LoginNewChar)
         
-        Call .WriteASCIIString(UserName)
+        Call .WriteString(UserName)
         
-        Call .WriteASCIIString(UserPassword)
+        Call .WriteString(UserPassword)
         
         Call .WriteByte(App.Major)
         Call .WriteByte(App.Minor)
@@ -4596,7 +4339,7 @@ Public Sub WriteLoginNewChar()
         Call .WriteByte(UserSexo)
         Call .WriteInteger(UserHead)
         
-        Call .WriteASCIIString(UserEmail)
+        Call .WriteString(UserEmail)
         
         Call .WriteByte(UserHogar)
         
@@ -4608,76 +4351,76 @@ Public Sub WriteLoginNewChar()
 End Sub
 
 ''
-' Writes the "Talk" message to the outgoing data buffer.
+' Writes the "Talk" message to the outgoing data incomingData.
 '
 ' @param    chat The chat text to be sent.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteTalk(ByVal chat As String)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "Talk" message to the outgoing data buffer
+'Writes the "Talk" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.Talk)
         
-        Call .WriteASCIIString(chat)
+        Call .WriteString(chat)
     End With
 End Sub
 
 ''
-' Writes the "Yell" message to the outgoing data buffer.
+' Writes the "Yell" message to the outgoing data incomingData.
 '
 ' @param    chat The chat text to be sent.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteYell(ByVal chat As String)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "Yell" message to the outgoing data buffer
+'Writes the "Yell" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.Yell)
         
-        Call .WriteASCIIString(chat)
+        Call .WriteString(chat)
     End With
 End Sub
 
 ''
-' Writes the "Whisper" message to the outgoing data buffer.
+' Writes the "Whisper" message to the outgoing data incomingData.
 '
 ' @param    charIndex The index of the char to whom to whisper.
 ' @param    chat The chat text to be sent to the user.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteWhisper(ByVal CharIndex As Integer, ByVal chat As String)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "Whisper" message to the outgoing data buffer
+'Writes the "Whisper" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.Whisper)
         
         Call .WriteInteger(CharIndex)
         
-        Call .WriteASCIIString(chat)
+        Call .WriteString(chat)
     End With
 End Sub
 
 ''
-' Writes the "Walk" message to the outgoing data buffer.
+' Writes the "Walk" message to the outgoing data incomingData.
 '
 ' @param    heading The direction in wich the user is moving.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteWalk(ByVal Heading As E_Heading)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "Walk" message to the outgoing data buffer
+'Writes the "Walk" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.Walk)
@@ -4687,199 +4430,199 @@ Public Sub WriteWalk(ByVal Heading As E_Heading)
 End Sub
 
 ''
-' Writes the "RequestPositionUpdate" message to the outgoing data buffer.
+' Writes the "RequestPositionUpdate" message to the outgoing data incomingData.
 '
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteRequestPositionUpdate()
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "RequestPositionUpdate" message to the outgoing data buffer
+'Writes the "RequestPositionUpdate" message to the outgoing data incomingData
 '***************************************************
     Call outgoingData.WriteByte(ClientPacketID.RequestPositionUpdate)
 End Sub
 
 ''
-' Writes the "Attack" message to the outgoing data buffer.
+' Writes the "Attack" message to the outgoing data incomingData.
 '
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteAttack()
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "Attack" message to the outgoing data buffer
+'Writes the "Attack" message to the outgoing data incomingData
 '***************************************************
     Call outgoingData.WriteByte(ClientPacketID.Attack)
 End Sub
 
 ''
-' Writes the "PickUp" message to the outgoing data buffer.
+' Writes the "PickUp" message to the outgoing data incomingData.
 '
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WritePickUp()
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "PickUp" message to the outgoing data buffer
+'Writes the "PickUp" message to the outgoing data incomingData
 '***************************************************
     Call outgoingData.WriteByte(ClientPacketID.PickUp)
 End Sub
 
 ''
-' Writes the "RequestAtributes" message to the outgoing data buffer.
+' Writes the "RequestAtributes" message to the outgoing data incomingData.
 '
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteRequestAtributes()
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "RequestAtributes" message to the outgoing data buffer
+'Writes the "RequestAtributes" message to the outgoing data incomingData
 '***************************************************
     Call outgoingData.WriteByte(ClientPacketID.RequestAtributes)
 End Sub
 
 ''
-' Writes the "RequestFame" message to the outgoing data buffer.
+' Writes the "RequestFame" message to the outgoing data incomingData.
 '
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteRequestFame()
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "RequestFame" message to the outgoing data buffer
+'Writes the "RequestFame" message to the outgoing data incomingData
 '***************************************************
     Call outgoingData.WriteByte(ClientPacketID.RequestFame)
 End Sub
 
 ''
-' Writes the "RequestSkills" message to the outgoing data buffer.
+' Writes the "RequestSkills" message to the outgoing data incomingData.
 '
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteRequestSkills()
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "RequestSkills" message to the outgoing data buffer
+'Writes the "RequestSkills" message to the outgoing data incomingData
 '***************************************************
     Call outgoingData.WriteByte(ClientPacketID.RequestSkills)
 End Sub
 
 ''
-' Writes the "RequestMiniStats" message to the outgoing data buffer.
+' Writes the "RequestMiniStats" message to the outgoing data incomingData.
 '
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteRequestMiniStats()
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "RequestMiniStats" message to the outgoing data buffer
+'Writes the "RequestMiniStats" message to the outgoing data incomingData
 '***************************************************
     Call outgoingData.WriteByte(ClientPacketID.RequestMiniStats)
 End Sub
 
 ''
-' Writes the "CommerceEnd" message to the outgoing data buffer.
+' Writes the "CommerceEnd" message to the outgoing data incomingData.
 '
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteCommerceEnd()
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "CommerceEnd" message to the outgoing data buffer
+'Writes the "CommerceEnd" message to the outgoing data incomingData
 '***************************************************
     Call outgoingData.WriteByte(ClientPacketID.CommerceEnd)
 End Sub
 
 ''
-' Writes the "UserCommerceEnd" message to the outgoing data buffer.
+' Writes the "UserCommerceEnd" message to the outgoing data incomingData.
 '
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteUserCommerceEnd()
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "UserCommerceEnd" message to the outgoing data buffer
+'Writes the "UserCommerceEnd" message to the outgoing data incomingData
 '***************************************************
     Call outgoingData.WriteByte(ClientPacketID.UserCommerceEnd)
 End Sub
 
 ''
-' Writes the "UserCommerceConfirm" message to the outgoing data buffer.
+' Writes the "UserCommerceConfirm" message to the outgoing data incomingData.
 '
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteUserCommerceConfirm()
 '***************************************************
 'Author: ZaMa
 'Last Modification: 14/12/2009
-'Writes the "UserCommerceConfirm" message to the outgoing data buffer
+'Writes the "UserCommerceConfirm" message to the outgoing data incomingData
 '***************************************************
     Call outgoingData.WriteByte(ClientPacketID.UserCommerceConfirm)
 End Sub
 
 ''
-' Writes the "BankEnd" message to the outgoing data buffer.
+' Writes the "BankEnd" message to the outgoing data incomingData.
 '
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteBankEnd()
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "BankEnd" message to the outgoing data buffer
+'Writes the "BankEnd" message to the outgoing data incomingData
 '***************************************************
     Call outgoingData.WriteByte(ClientPacketID.BankEnd)
 End Sub
 
 ''
-' Writes the "UserCommerceOk" message to the outgoing data buffer.
+' Writes the "UserCommerceOk" message to the outgoing data incomingData.
 '
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteUserCommerceOk()
 '***************************************************
 'Author: Fredy Horacio Treboux (liquid)
 'Last Modification: 01/10/07
-'Writes the "UserCommerceOk" message to the outgoing data buffer
+'Writes the "UserCommerceOk" message to the outgoing data incomingData
 '***************************************************
     Call outgoingData.WriteByte(ClientPacketID.UserCommerceOk)
 End Sub
 
 ''
-' Writes the "UserCommerceReject" message to the outgoing data buffer.
+' Writes the "UserCommerceReject" message to the outgoing data incomingData.
 '
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteUserCommerceReject()
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "UserCommerceReject" message to the outgoing data buffer
+'Writes the "UserCommerceReject" message to the outgoing data incomingData
 '***************************************************
     Call outgoingData.WriteByte(ClientPacketID.UserCommerceReject)
 End Sub
 
 ''
-' Writes the "Drop" message to the outgoing data buffer.
+' Writes the "Drop" message to the outgoing data incomingData.
 '
 ' @param    slot Inventory slot where the item to drop is.
 ' @param    amount Number of items to drop.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteDrop(ByVal slot As Byte, ByVal Amount As Integer)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "Drop" message to the outgoing data buffer
+'Writes the "Drop" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.Drop)
@@ -4890,16 +4633,16 @@ Public Sub WriteDrop(ByVal slot As Byte, ByVal Amount As Integer)
 End Sub
 
 ''
-' Writes the "CastSpell" message to the outgoing data buffer.
+' Writes the "CastSpell" message to the outgoing data incomingData.
 '
 ' @param    slot Spell List slot where the spell to cast is.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteCastSpell(ByVal slot As Byte)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "CastSpell" message to the outgoing data buffer
+'Writes the "CastSpell" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.CastSpell)
@@ -4909,17 +4652,17 @@ Public Sub WriteCastSpell(ByVal slot As Byte)
 End Sub
 
 ''
-' Writes the "LeftClick" message to the outgoing data buffer.
+' Writes the "LeftClick" message to the outgoing data incomingData.
 '
 ' @param    x Tile coord in the x-axis in which the user clicked.
 ' @param    y Tile coord in the y-axis in which the user clicked.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteLeftClick(ByVal X As Byte, ByVal Y As Byte)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "LeftClick" message to the outgoing data buffer
+'Writes the "LeftClick" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.LeftClick)
@@ -4930,17 +4673,17 @@ Public Sub WriteLeftClick(ByVal X As Byte, ByVal Y As Byte)
 End Sub
 
 ''
-' Writes the "DoubleClick" message to the outgoing data buffer.
+' Writes the "DoubleClick" message to the outgoing data incomingData.
 '
 ' @param    x Tile coord in the x-axis in which the user clicked.
 ' @param    y Tile coord in the y-axis in which the user clicked.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteDoubleClick(ByVal X As Byte, ByVal Y As Byte)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "DoubleClick" message to the outgoing data buffer
+'Writes the "DoubleClick" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.DoubleClick)
@@ -4951,16 +4694,16 @@ Public Sub WriteDoubleClick(ByVal X As Byte, ByVal Y As Byte)
 End Sub
 
 ''
-' Writes the "Work" message to the outgoing data buffer.
+' Writes the "Work" message to the outgoing data incomingData.
 '
 ' @param    skill The skill which the user attempts to use.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteWork(ByVal Skill As eSkill)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "Work" message to the outgoing data buffer
+'Writes the "Work" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.Work)
@@ -4970,30 +4713,30 @@ Public Sub WriteWork(ByVal Skill As eSkill)
 End Sub
 
 ''
-' Writes the "UseSpellMacro" message to the outgoing data buffer.
+' Writes the "UseSpellMacro" message to the outgoing data incomingData.
 '
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteUseSpellMacro()
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "UseSpellMacro" message to the outgoing data buffer
+'Writes the "UseSpellMacro" message to the outgoing data incomingData
 '***************************************************
     Call outgoingData.WriteByte(ClientPacketID.UseSpellMacro)
 End Sub
 
 ''
-' Writes the "UseItem" message to the outgoing data buffer.
+' Writes the "UseItem" message to the outgoing data incomingData.
 '
 ' @param    slot Invetory slot where the item to use is.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteUseItem(ByVal slot As Byte)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "UseItem" message to the outgoing data buffer
+'Writes the "UseItem" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.UseItem)
@@ -5003,16 +4746,16 @@ Public Sub WriteUseItem(ByVal slot As Byte)
 End Sub
 
 ''
-' Writes the "CraftBlacksmith" message to the outgoing data buffer.
+' Writes the "CraftBlacksmith" message to the outgoing data incomingData.
 '
 ' @param    item Index of the item to craft in the list sent by the server.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteCraftBlacksmith(ByVal Item As Integer)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "CraftBlacksmith" message to the outgoing data buffer
+'Writes the "CraftBlacksmith" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.CraftBlacksmith)
@@ -5022,16 +4765,16 @@ Public Sub WriteCraftBlacksmith(ByVal Item As Integer)
 End Sub
 
 ''
-' Writes the "CraftCarpenter" message to the outgoing data buffer.
+' Writes the "CraftCarpenter" message to the outgoing data incomingData.
 '
 ' @param    item Index of the item to craft in the list sent by the server.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteCraftCarpenter(ByVal Item As Integer)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "CraftCarpenter" message to the outgoing data buffer
+'Writes the "CraftCarpenter" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.CraftCarpenter)
@@ -5044,18 +4787,18 @@ End Sub
 
 
 ''
-' Writes the "WorkLeftClick" message to the outgoing data buffer.
+' Writes the "WorkLeftClick" message to the outgoing data incomingData.
 '
 ' @param    x Tile coord in the x-axis in which the user clicked.
 ' @param    y Tile coord in the y-axis in which the user clicked.
 ' @param    skill The skill which the user attempts to use.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteWorkLeftClick(ByVal X As Byte, ByVal Y As Byte, ByVal Skill As eSkill)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "WorkLeftClick" message to the outgoing data buffer
+'Writes the "WorkLeftClick" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.WorkLeftClick)
@@ -5069,16 +4812,16 @@ End Sub
 
 
 ''
-' Writes the "SpellInfo" message to the outgoing data buffer.
+' Writes the "SpellInfo" message to the outgoing data incomingData.
 '
 ' @param    slot Spell List slot where the spell which's info is requested is.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteSpellInfo(ByVal slot As Byte)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "SpellInfo" message to the outgoing data buffer
+'Writes the "SpellInfo" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.SpellInfo)
@@ -5088,16 +4831,16 @@ Public Sub WriteSpellInfo(ByVal slot As Byte)
 End Sub
 
 ''
-' Writes the "EquipItem" message to the outgoing data buffer.
+' Writes the "EquipItem" message to the outgoing data incomingData.
 '
 ' @param    slot Invetory slot where the item to equip is.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteEquipItem(ByVal slot As Byte)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "EquipItem" message to the outgoing data buffer
+'Writes the "EquipItem" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.EquipItem)
@@ -5107,16 +4850,16 @@ Public Sub WriteEquipItem(ByVal slot As Byte)
 End Sub
 
 ''
-' Writes the "ChangeHeading" message to the outgoing data buffer.
+' Writes the "ChangeHeading" message to the outgoing data incomingData.
 '
 ' @param    heading The direction in wich the user is moving.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteChangeHeading(ByVal Heading As E_Heading)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "ChangeHeading" message to the outgoing data buffer
+'Writes the "ChangeHeading" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.ChangeHeading)
@@ -5126,16 +4869,16 @@ Public Sub WriteChangeHeading(ByVal Heading As E_Heading)
 End Sub
 
 ''
-' Writes the "ModifySkills" message to the outgoing data buffer.
+' Writes the "ModifySkills" message to the outgoing data incomingData.
 '
 ' @param    skillEdt a-based array containing for each skill the number of points to add to it.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteModifySkills(ByRef skillEdt() As Byte)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "ModifySkills" message to the outgoing data buffer
+'Writes the "ModifySkills" message to the outgoing data incomingData
 '***************************************************
     Dim i As Long
     
@@ -5149,16 +4892,16 @@ Public Sub WriteModifySkills(ByRef skillEdt() As Byte)
 End Sub
 
 ''
-' Writes the "Train" message to the outgoing data buffer.
+' Writes the "Train" message to the outgoing data incomingData.
 '
 ' @param    creature Position within the list provided by the server of the creature to train against.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteTrain(ByVal creature As Byte)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "Train" message to the outgoing data buffer
+'Writes the "Train" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.Train)
@@ -5168,17 +4911,17 @@ Public Sub WriteTrain(ByVal creature As Byte)
 End Sub
 
 ''
-' Writes the "CommerceBuy" message to the outgoing data buffer.
+' Writes the "CommerceBuy" message to the outgoing data incomingData.
 '
 ' @param    slot Position within the NPC's inventory in which the desired item is.
 ' @param    amount Number of items to buy.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteCommerceBuy(ByVal slot As Byte, ByVal Amount As Integer)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "CommerceBuy" message to the outgoing data buffer
+'Writes the "CommerceBuy" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.CommerceBuy)
@@ -5189,17 +4932,17 @@ Public Sub WriteCommerceBuy(ByVal slot As Byte, ByVal Amount As Integer)
 End Sub
 
 ''
-' Writes the "BankExtractItem" message to the outgoing data buffer.
+' Writes the "BankExtractItem" message to the outgoing data incomingData.
 '
 ' @param    slot Position within the bank in which the desired item is.
 ' @param    amount Number of items to extract.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteBankExtractItem(ByVal slot As Byte, ByVal Amount As Integer)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "BankExtractItem" message to the outgoing data buffer
+'Writes the "BankExtractItem" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.BankExtractItem)
@@ -5210,17 +4953,17 @@ Public Sub WriteBankExtractItem(ByVal slot As Byte, ByVal Amount As Integer)
 End Sub
 
 ''
-' Writes the "CommerceSell" message to the outgoing data buffer.
+' Writes the "CommerceSell" message to the outgoing data incomingData.
 '
 ' @param    slot Position within user inventory in which the desired item is.
 ' @param    amount Number of items to sell.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteCommerceSell(ByVal slot As Byte, ByVal Amount As Integer)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "CommerceSell" message to the outgoing data buffer
+'Writes the "CommerceSell" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.CommerceSell)
@@ -5231,17 +4974,17 @@ Public Sub WriteCommerceSell(ByVal slot As Byte, ByVal Amount As Integer)
 End Sub
 
 ''
-' Writes the "BankDeposit" message to the outgoing data buffer.
+' Writes the "BankDeposit" message to the outgoing data incomingData.
 '
 ' @param    slot Position within the user inventory in which the desired item is.
 ' @param    amount Number of items to deposit.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteBankDeposit(ByVal slot As Byte, ByVal Amount As Integer)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "BankDeposit" message to the outgoing data buffer
+'Writes the "BankDeposit" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.BankDeposit)
@@ -5252,39 +4995,39 @@ Public Sub WriteBankDeposit(ByVal slot As Byte, ByVal Amount As Integer)
 End Sub
 
 ''
-' Writes the "ForumPost" message to the outgoing data buffer.
+' Writes the "ForumPost" message to the outgoing data incomingData.
 '
 ' @param    title The message's title.
 ' @param    message The body of the message.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteForumPost(ByVal Title As String, ByVal Message As String, ByVal ForumMsgType As Byte)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "ForumPost" message to the outgoing data buffer
+'Writes the "ForumPost" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.ForumPost)
         
         Call .WriteByte(ForumMsgType)
-        Call .WriteASCIIString(Title)
-        Call .WriteASCIIString(Message)
+        Call .WriteString(Title)
+        Call .WriteString(Message)
     End With
 End Sub
 
 ''
-' Writes the "MoveSpell" message to the outgoing data buffer.
+' Writes the "MoveSpell" message to the outgoing data incomingData.
 '
 ' @param    upwards True if the spell will be moved up in the list, False if it will be moved downwards.
 ' @param    slot Spell List slot where the spell which's info is requested is.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteMoveSpell(ByVal upwards As Boolean, ByVal slot As Byte)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "MoveSpell" message to the outgoing data buffer
+'Writes the "MoveSpell" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.MoveSpell)
@@ -5295,17 +5038,17 @@ Public Sub WriteMoveSpell(ByVal upwards As Boolean, ByVal slot As Byte)
 End Sub
 
 ''
-' Writes the "MoveBank" message to the outgoing data buffer.
+' Writes the "MoveBank" message to the outgoing data incomingData.
 '
 ' @param    upwards True if the item will be moved up in the list, False if it will be moved downwards.
 ' @param    slot Bank List slot where the item which's info is requested is.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteMoveBank(ByVal upwards As Boolean, ByVal slot As Byte)
 '***************************************************
 'Author: Torres Patricio (Pato)
 'Last Modification: 06/14/09
-'Writes the "MoveBank" message to the outgoing data buffer
+'Writes the "MoveBank" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.MoveBank)
@@ -5316,17 +5059,17 @@ Public Sub WriteMoveBank(ByVal upwards As Boolean, ByVal slot As Byte)
 End Sub
 
 ''
-' Writes the "UserCommerceOffer" message to the outgoing data buffer.
+' Writes the "UserCommerceOffer" message to the outgoing data incomingData.
 '
 ' @param    slot Position within user inventory in which the desired item is.
 ' @param    amount Number of items to offer.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteUserCommerceOffer(ByVal slot As Byte, ByVal Amount As Long, ByVal OfferSlot As Byte)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "UserCommerceOffer" message to the outgoing data buffer
+'Writes the "UserCommerceOffer" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.UserCommerceOffer)
@@ -5341,324 +5084,324 @@ Public Sub WriteCommerceChat(ByVal chat As String)
 '***************************************************
 'Author: ZaMa
 'Last Modification: 03/12/2009
-'Writes the "CommerceChat" message to the outgoing data buffer
+'Writes the "CommerceChat" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.CommerceChat)
         
-        Call .WriteASCIIString(chat)
+        Call .WriteString(chat)
     End With
 End Sub
 
 ''
-' Writes the "Online" message to the outgoing data buffer.
+' Writes the "Online" message to the outgoing data incomingData.
 '
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteOnline()
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "Online" message to the outgoing data buffer
+'Writes the "Online" message to the outgoing data incomingData
 '***************************************************
     Call outgoingData.WriteByte(ClientPacketID.Online)
 End Sub
 
 ''
-' Writes the "Quit" message to the outgoing data buffer.
+' Writes the "Quit" message to the outgoing data incomingData.
 '
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteQuit()
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 08/16/08
-'Writes the "Quit" message to the outgoing data buffer
+'Writes the "Quit" message to the outgoing data incomingData
 '***************************************************
     Call outgoingData.WriteByte(ClientPacketID.Quit)
 End Sub
 
 ''
-' Writes the "RequestAccountState" message to the outgoing data buffer.
+' Writes the "RequestAccountState" message to the outgoing data incomingData.
 '
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteRequestAccountState()
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "RequestAccountState" message to the outgoing data buffer
+'Writes the "RequestAccountState" message to the outgoing data incomingData
 '***************************************************
     Call outgoingData.WriteByte(ClientPacketID.RequestAccountState)
 End Sub
 
 ''
-' Writes the "PetStand" message to the outgoing data buffer.
+' Writes the "PetStand" message to the outgoing data incomingData.
 '
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WritePetStand()
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "PetStand" message to the outgoing data buffer
+'Writes the "PetStand" message to the outgoing data incomingData
 '***************************************************
     Call outgoingData.WriteByte(ClientPacketID.PetStand)
 End Sub
 
 ''
-' Writes the "PetFollow" message to the outgoing data buffer.
+' Writes the "PetFollow" message to the outgoing data incomingData.
 '
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WritePetFollow()
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "PetFollow" message to the outgoing data buffer
+'Writes the "PetFollow" message to the outgoing data incomingData
 '***************************************************
     Call outgoingData.WriteByte(ClientPacketID.PetFollow)
 End Sub
 
 ''
-' Writes the "ReleasePet" message to the outgoing data buffer.
+' Writes the "ReleasePet" message to the outgoing data incomingData.
 '
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteReleasePet()
 '***************************************************
 'Author: ZaMa
 'Last Modification: 18/11/2009
-'Writes the "ReleasePet" message to the outgoing data buffer
+'Writes the "ReleasePet" message to the outgoing data incomingData
 '***************************************************
     Call outgoingData.WriteByte(ClientPacketID.ReleasePet)
 End Sub
 
 
 ''
-' Writes the "TrainList" message to the outgoing data buffer.
+' Writes the "TrainList" message to the outgoing data incomingData.
 '
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteTrainList()
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "TrainList" message to the outgoing data buffer
+'Writes the "TrainList" message to the outgoing data incomingData
 '***************************************************
     Call outgoingData.WriteByte(ClientPacketID.TrainList)
 End Sub
 
 ''
-' Writes the "Rest" message to the outgoing data buffer.
+' Writes the "Rest" message to the outgoing data incomingData.
 '
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteRest()
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "Rest" message to the outgoing data buffer
+'Writes the "Rest" message to the outgoing data incomingData
 '***************************************************
     Call outgoingData.WriteByte(ClientPacketID.Rest)
 End Sub
 
 ''
-' Writes the "Meditate" message to the outgoing data buffer.
+' Writes the "Meditate" message to the outgoing data incomingData.
 '
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteMeditate()
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "Meditate" message to the outgoing data buffer
+'Writes the "Meditate" message to the outgoing data incomingData
 '***************************************************
     Call outgoingData.WriteByte(ClientPacketID.Meditate)
 End Sub
 
 ''
-' Writes the "Resucitate" message to the outgoing data buffer.
+' Writes the "Resucitate" message to the outgoing data incomingData.
 '
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteResucitate()
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "Resucitate" message to the outgoing data buffer
+'Writes the "Resucitate" message to the outgoing data incomingData
 '***************************************************
     Call outgoingData.WriteByte(ClientPacketID.Resucitate)
 End Sub
 
 ''
-' Writes the "Consulta" message to the outgoing data buffer.
+' Writes the "Consulta" message to the outgoing data incomingData.
 '
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteConsulta()
 '***************************************************
 'Author: ZaMa
 'Last Modification: 01/05/2010
-'Writes the "Consulta" message to the outgoing data buffer
+'Writes the "Consulta" message to the outgoing data incomingData
 '***************************************************
     Call outgoingData.WriteByte(ClientPacketID.Consulta)
 
 End Sub
 
 ''
-' Writes the "Heal" message to the outgoing data buffer.
+' Writes the "Heal" message to the outgoing data incomingData.
 '
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteHeal()
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "Heal" message to the outgoing data buffer
+'Writes the "Heal" message to the outgoing data incomingData
 '***************************************************
     Call outgoingData.WriteByte(ClientPacketID.Heal)
 End Sub
 
 ''
-' Writes the "Help" message to the outgoing data buffer.
+' Writes the "Help" message to the outgoing data incomingData.
 '
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteHelp()
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "Help" message to the outgoing data buffer
+'Writes the "Help" message to the outgoing data incomingData
 '***************************************************
     Call outgoingData.WriteByte(ClientPacketID.Help)
 End Sub
 
 ''
-' Writes the "RequestStats" message to the outgoing data buffer.
+' Writes the "RequestStats" message to the outgoing data incomingData.
 '
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteRequestStats()
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "RequestStats" message to the outgoing data buffer
+'Writes the "RequestStats" message to the outgoing data incomingData
 '***************************************************
     Call outgoingData.WriteByte(ClientPacketID.RequestStats)
 End Sub
 
 ''
-' Writes the "CommerceStart" message to the outgoing data buffer.
+' Writes the "CommerceStart" message to the outgoing data incomingData.
 '
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteCommerceStart()
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "CommerceStart" message to the outgoing data buffer
+'Writes the "CommerceStart" message to the outgoing data incomingData
 '***************************************************
     Call outgoingData.WriteByte(ClientPacketID.CommerceStart)
 End Sub
 
 ''
-' Writes the "BankStart" message to the outgoing data buffer.
+' Writes the "BankStart" message to the outgoing data incomingData.
 '
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteBankStart()
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "BankStart" message to the outgoing data buffer
+'Writes the "BankStart" message to the outgoing data incomingData
 '***************************************************
     Call outgoingData.WriteByte(ClientPacketID.BankStart)
 End Sub
 
 ''
-' Writes the "Enlist" message to the outgoing data buffer.
+' Writes the "Enlist" message to the outgoing data incomingData.
 '
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteEnlist()
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "Enlist" message to the outgoing data buffer
+'Writes the "Enlist" message to the outgoing data incomingData
 '***************************************************
     Call outgoingData.WriteByte(ClientPacketID.Enlist)
 End Sub
 
 ''
-' Writes the "Information" message to the outgoing data buffer.
+' Writes the "Information" message to the outgoing data incomingData.
 '
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteInformation()
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "Information" message to the outgoing data buffer
+'Writes the "Information" message to the outgoing data incomingData
 '***************************************************
     Call outgoingData.WriteByte(ClientPacketID.Information)
 End Sub
 
 ''
-' Writes the "Reward" message to the outgoing data buffer.
+' Writes the "Reward" message to the outgoing data incomingData.
 '
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteReward()
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "Reward" message to the outgoing data buffer
+'Writes the "Reward" message to the outgoing data incomingData
 '***************************************************
     Call outgoingData.WriteByte(ClientPacketID.Reward)
 End Sub
 
 ''
-' Writes the "UpTime" message to the outgoing data buffer.
+' Writes the "UpTime" message to the outgoing data incomingData.
 '
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteUpTime()
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "UpTime" message to the outgoing data buffer
+'Writes the "UpTime" message to the outgoing data incomingData
 '***************************************************
     Call outgoingData.WriteByte(ClientPacketID.UpTime)
 End Sub
 
 
 ''
-' Writes the "Inquiry" message to the outgoing data buffer.
+' Writes the "Inquiry" message to the outgoing data incomingData.
 '
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteInquiry()
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "Inquiry" message to the outgoing data buffer
+'Writes the "Inquiry" message to the outgoing data incomingData
 '***************************************************
     Call outgoingData.WriteByte(ClientPacketID.Inquiry)
 End Sub
 
 
 ''
-' Writes the "CentinelReport" message to the outgoing data buffer.
+' Writes the "CentinelReport" message to the outgoing data incomingData.
 '
 ' @param    number The number to report to the centinel.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteCentinelReport(ByVal Number As Integer)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "CentinelReport" message to the outgoing data buffer
+'Writes the "CentinelReport" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.CentinelReport)
@@ -5668,148 +5411,148 @@ Public Sub WriteCentinelReport(ByVal Number As Integer)
 End Sub
 
 ''
-' Writes the "CouncilMessage" message to the outgoing data buffer.
+' Writes the "CouncilMessage" message to the outgoing data incomingData.
 '
 ' @param    message The message to send to the other council members.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteCouncilMessage(ByVal Message As String)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "CouncilMessage" message to the outgoing data buffer
+'Writes the "CouncilMessage" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.CouncilMessage)
         
-        Call .WriteASCIIString(Message)
+        Call .WriteString(Message)
     End With
 End Sub
 
 ''
-' Writes the "RoleMasterRequest" message to the outgoing data buffer.
+' Writes the "RoleMasterRequest" message to the outgoing data incomingData.
 '
 ' @param    message The message to send to the role masters.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteRoleMasterRequest(ByVal Message As String)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "RoleMasterRequest" message to the outgoing data buffer
+'Writes the "RoleMasterRequest" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.RoleMasterRequest)
         
-        Call .WriteASCIIString(Message)
+        Call .WriteString(Message)
     End With
 End Sub
 
 ''
-' Writes the "GMRequest" message to the outgoing data buffer.
+' Writes the "GMRequest" message to the outgoing data incomingData.
 '
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteGMRequest()
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "GMRequest" message to the outgoing data buffer
+'Writes the "GMRequest" message to the outgoing data incomingData
 '***************************************************
     Call outgoingData.WriteByte(ClientPacketID.GMRequest)
 End Sub
 
 ''
-' Writes the "BugReport" message to the outgoing data buffer.
+' Writes the "BugReport" message to the outgoing data incomingData.
 '
 ' @param    message The message explaining the reported bug.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteBugReport(ByVal Message As String)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "BugReport" message to the outgoing data buffer
+'Writes the "BugReport" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.bugReport)
         
-        Call .WriteASCIIString(Message)
+        Call .WriteString(Message)
     End With
 End Sub
 
 ''
-' Writes the "ChangeDescription" message to the outgoing data buffer.
+' Writes the "ChangeDescription" message to the outgoing data incomingData.
 '
 ' @param    desc The new description of the user's character.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteChangeDescription(ByVal Desc As String)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "ChangeDescription" message to the outgoing data buffer
+'Writes the "ChangeDescription" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.ChangeDescription)
         
-        Call .WriteASCIIString(Desc)
+        Call .WriteString(Desc)
     End With
 End Sub
 
 
 ''
-' Writes the "Punishments" message to the outgoing data buffer.
+' Writes the "Punishments" message to the outgoing data incomingData.
 '
 ' @param    username The user whose's  punishments are requested.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WritePunishments(ByVal UserName As String)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "Punishments" message to the outgoing data buffer
+'Writes the "Punishments" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.Punishments)
         
-        Call .WriteASCIIString(UserName)
+        Call .WriteString(UserName)
     End With
 End Sub
 
 ''
-' Writes the "ChangePassword" message to the outgoing data buffer.
+' Writes the "ChangePassword" message to the outgoing data incomingData.
 '
 ' @param    oldPass Previous password.
 ' @param    newPass New password.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteChangePassword(ByRef oldPass As String, ByRef newPass As String)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 10/10/07
 'Last Modified By: Rapsodius
-'Writes the "ChangePassword" message to the outgoing data buffer
+'Writes the "ChangePassword" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.ChangePassword)
         
-        Call .WriteASCIIString(oldPass)
-        Call .WriteASCIIString(newPass)
+        Call .WriteString(oldPass)
+        Call .WriteString(newPass)
     End With
 End Sub
 
 ''
-' Writes the "Gamble" message to the outgoing data buffer.
+' Writes the "Gamble" message to the outgoing data incomingData.
 '
 ' @param    amount The amount to gamble.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteGamble(ByVal Amount As Integer)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "Gamble" message to the outgoing data buffer
+'Writes the "Gamble" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.Gamble)
@@ -5819,16 +5562,16 @@ Public Sub WriteGamble(ByVal Amount As Integer)
 End Sub
 
 ''
-' Writes the "InquiryVote" message to the outgoing data buffer.
+' Writes the "InquiryVote" message to the outgoing data incomingData.
 '
 ' @param    opt The chosen option to vote for.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteInquiryVote(ByVal opt As Byte)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "InquiryVote" message to the outgoing data buffer
+'Writes the "InquiryVote" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.InquiryVote)
@@ -5838,30 +5581,30 @@ Public Sub WriteInquiryVote(ByVal opt As Byte)
 End Sub
 
 ''
-' Writes the "LeaveFaction" message to the outgoing data buffer.
+' Writes the "LeaveFaction" message to the outgoing data incomingData.
 '
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteLeaveFaction()
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "LeaveFaction" message to the outgoing data buffer
+'Writes the "LeaveFaction" message to the outgoing data incomingData
 '***************************************************
     Call outgoingData.WriteByte(ClientPacketID.LeaveFaction)
 End Sub
 
 ''
-' Writes the "BankExtractGold" message to the outgoing data buffer.
+' Writes the "BankExtractGold" message to the outgoing data incomingData.
 '
 ' @param    amount The amount of money to extract from the bank.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteBankExtractGold(ByVal Amount As Long)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "BankExtractGold" message to the outgoing data buffer
+'Writes the "BankExtractGold" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.BankExtractGold)
@@ -5871,16 +5614,16 @@ Public Sub WriteBankExtractGold(ByVal Amount As Long)
 End Sub
 
 ''
-' Writes the "BankDepositGold" message to the outgoing data buffer.
+' Writes the "BankDepositGold" message to the outgoing data incomingData.
 '
 ' @param    amount The amount of money to deposit in the bank.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteBankDepositGold(ByVal Amount As Long)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "BankDepositGold" message to the outgoing data buffer
+'Writes the "BankDepositGold" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.BankDepositGold)
@@ -5890,27 +5633,27 @@ Public Sub WriteBankDepositGold(ByVal Amount As Long)
 End Sub
 
 ''
-' Writes the "Denounce" message to the outgoing data buffer.
+' Writes the "Denounce" message to the outgoing data incomingData.
 '
 ' @param    message The message to send with the denounce.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteDenounce(ByVal Message As String)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "Denounce" message to the outgoing data buffer
+'Writes the "Denounce" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.Denounce)
         
-        Call .WriteASCIIString(Message)
+        Call .WriteString(Message)
     End With
 End Sub
 
 
 ''
-' Writes the "InitCrafting" message to the outgoing data buffer.
+' Writes the "InitCrafting" message to the outgoing data incomingData.
 '
 ' @param    Cantidad The final aumont of item to craft.
 ' @param    NroPorCiclo The amount of items to craft per cicle.
@@ -5919,7 +5662,7 @@ Public Sub WriteInitCrafting(ByVal cantidad As Long, ByVal NroPorCiclo As Intege
 '***************************************************
 'Author: ZaMa
 'Last Modification: 29/01/2010
-'Writes the "InitCrafting" message to the outgoing data buffer
+'Writes the "InitCrafting" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.InitCrafting)
@@ -5930,13 +5673,13 @@ Public Sub WriteInitCrafting(ByVal cantidad As Long, ByVal NroPorCiclo As Intege
 End Sub
 
 ''
-' Writes the "Home" message to the outgoing data buffer.
+' Writes the "Home" message to the outgoing data incomingData.
 '
 Public Sub WriteHome()
 '***************************************************
 'Author: Budi
 'Last Modification: 01/06/10
-'Writes the "Home" message to the outgoing data buffer
+'Writes the "Home" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.Home)
@@ -5946,155 +5689,155 @@ End Sub
 
 
 ''
-' Writes the "GMMessage" message to the outgoing data buffer.
+' Writes the "GMMessage" message to the outgoing data incomingData.
 '
 ' @param    message The message to be sent to the other GMs online.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteGMMessage(ByVal Message As String)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "GMMessage" message to the outgoing data buffer
+'Writes the "GMMessage" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.GMCommands)
         Call .WriteByte(eGMCommands.GMMessage)
-        Call .WriteASCIIString(Message)
+        Call .WriteString(Message)
     End With
 End Sub
 
 ''
-' Writes the "ShowName" message to the outgoing data buffer.
+' Writes the "ShowName" message to the outgoing data incomingData.
 '
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteShowName()
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "ShowName" message to the outgoing data buffer
+'Writes the "ShowName" message to the outgoing data incomingData
 '***************************************************
     Call outgoingData.WriteByte(ClientPacketID.GMCommands)
     Call outgoingData.WriteByte(eGMCommands.showName)
 End Sub
 
 ''
-' Writes the "OnlineRoyalArmy" message to the outgoing data buffer.
+' Writes the "OnlineRoyalArmy" message to the outgoing data incomingData.
 '
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteOnlineRoyalArmy()
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "OnlineRoyalArmy" message to the outgoing data buffer
+'Writes the "OnlineRoyalArmy" message to the outgoing data incomingData
 '***************************************************
     Call outgoingData.WriteByte(ClientPacketID.GMCommands)
     Call outgoingData.WriteByte(eGMCommands.OnlineRoyalArmy)
 End Sub
 
 ''
-' Writes the "OnlineChaosLegion" message to the outgoing data buffer.
+' Writes the "OnlineChaosLegion" message to the outgoing data incomingData.
 '
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteOnlineChaosLegion()
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "OnlineChaosLegion" message to the outgoing data buffer
+'Writes the "OnlineChaosLegion" message to the outgoing data incomingData
 '***************************************************
     Call outgoingData.WriteByte(ClientPacketID.GMCommands)
     Call outgoingData.WriteByte(eGMCommands.OnlineChaosLegion)
 End Sub
 
 ''
-' Writes the "GoNearby" message to the outgoing data buffer.
+' Writes the "GoNearby" message to the outgoing data incomingData.
 '
 ' @param    username The suer to approach.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteGoNearby(ByVal UserName As String)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "GoNearby" message to the outgoing data buffer
+'Writes the "GoNearby" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call outgoingData.WriteByte(ClientPacketID.GMCommands)
         Call .WriteByte(eGMCommands.GoNearby)
         
-        Call .WriteASCIIString(UserName)
+        Call .WriteString(UserName)
     End With
 End Sub
 
 ''
-' Writes the "Comment" message to the outgoing data buffer.
+' Writes the "Comment" message to the outgoing data incomingData.
 '
 ' @param    message The message to leave in the log as a comment.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteComment(ByVal Message As String)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "Comment" message to the outgoing data buffer
+'Writes the "Comment" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.GMCommands)
         Call .WriteByte(eGMCommands.comment)
         
-        Call .WriteASCIIString(Message)
+        Call .WriteString(Message)
     End With
 End Sub
 
 ''
-' Writes the "ServerTime" message to the outgoing data buffer.
+' Writes the "ServerTime" message to the outgoing data incomingData.
 '
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteServerTime()
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "ServerTime" message to the outgoing data buffer
+'Writes the "ServerTime" message to the outgoing data incomingData
 '***************************************************
     Call outgoingData.WriteByte(ClientPacketID.GMCommands)
     Call outgoingData.WriteByte(eGMCommands.serverTime)
 End Sub
 
 ''
-' Writes the "Where" message to the outgoing data buffer.
+' Writes the "Where" message to the outgoing data incomingData.
 '
 ' @param    username The user whose position is requested.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteWhere(ByVal UserName As String)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "Where" message to the outgoing data buffer
+'Writes the "Where" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.GMCommands)
         Call .WriteByte(eGMCommands.Where)
         
-        Call .WriteASCIIString(UserName)
+        Call .WriteString(UserName)
     End With
 End Sub
 
 ''
-' Writes the "CreaturesInMap" message to the outgoing data buffer.
+' Writes the "CreaturesInMap" message to the outgoing data incomingData.
 '
 ' @param    map The map in which to check for the existing creatures.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteCreaturesInMap(ByVal Map As Integer)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "CreaturesInMap" message to the outgoing data buffer
+'Writes the "CreaturesInMap" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.GMCommands)
@@ -6105,40 +5848,40 @@ Public Sub WriteCreaturesInMap(ByVal Map As Integer)
 End Sub
 
 ''
-' Writes the "WarpMeToTarget" message to the outgoing data buffer.
+' Writes the "WarpMeToTarget" message to the outgoing data incomingData.
 '
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteWarpMeToTarget()
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "WarpMeToTarget" message to the outgoing data buffer
+'Writes the "WarpMeToTarget" message to the outgoing data incomingData
 '***************************************************
     Call outgoingData.WriteByte(ClientPacketID.GMCommands)
     Call outgoingData.WriteByte(eGMCommands.WarpMeToTarget)
 End Sub
 
 ''
-' Writes the "WarpChar" message to the outgoing data buffer.
+' Writes the "WarpChar" message to the outgoing data incomingData.
 '
 ' @param    username The user to be warped. "YO" represent's the user's char.
 ' @param    map The map to which to warp the character.
 ' @param    x The x position in the map to which to waro the character.
 ' @param    y The y position in the map to which to waro the character.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteWarpChar(ByVal UserName As String, ByVal Map As Integer, ByVal X As Byte, ByVal Y As Byte)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "WarpChar" message to the outgoing data buffer
+'Writes the "WarpChar" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.GMCommands)
         Call .WriteByte(eGMCommands.WarpChar)
         
-        Call .WriteASCIIString(UserName)
+        Call .WriteString(UserName)
         
         Call .WriteInteger(Map)
         
@@ -6148,410 +5891,410 @@ Public Sub WriteWarpChar(ByVal UserName As String, ByVal Map As Integer, ByVal X
 End Sub
 
 ''
-' Writes the "Silence" message to the outgoing data buffer.
+' Writes the "Silence" message to the outgoing data incomingData.
 '
 ' @param    username The user to silence.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteSilence(ByVal UserName As String)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "Silence" message to the outgoing data buffer
+'Writes the "Silence" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.GMCommands)
         Call .WriteByte(eGMCommands.Silence)
         
-        Call .WriteASCIIString(UserName)
+        Call .WriteString(UserName)
     End With
 End Sub
 
 ''
-' Writes the "SOSShowList" message to the outgoing data buffer.
+' Writes the "SOSShowList" message to the outgoing data incomingData.
 '
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteSOSShowList()
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "SOSShowList" message to the outgoing data buffer
+'Writes the "SOSShowList" message to the outgoing data incomingData
 '***************************************************
     Call outgoingData.WriteByte(ClientPacketID.GMCommands)
     Call outgoingData.WriteByte(eGMCommands.SOSShowList)
 End Sub
 
 ''
-' Writes the "SOSRemove" message to the outgoing data buffer.
+' Writes the "SOSRemove" message to the outgoing data incomingData.
 '
 ' @param    username The user whose SOS call has been already attended.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteSOSRemove(ByVal UserName As String)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "SOSRemove" message to the outgoing data buffer
+'Writes the "SOSRemove" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.GMCommands)
         Call .WriteByte(eGMCommands.SOSRemove)
         
-        Call .WriteASCIIString(UserName)
+        Call .WriteString(UserName)
     End With
 End Sub
 
 ''
-' Writes the "GoToChar" message to the outgoing data buffer.
+' Writes the "GoToChar" message to the outgoing data incomingData.
 '
 ' @param    username The user to be approached.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteGoToChar(ByVal UserName As String)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "GoToChar" message to the outgoing data buffer
+'Writes the "GoToChar" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.GMCommands)
         Call .WriteByte(eGMCommands.GoToChar)
         
-        Call .WriteASCIIString(UserName)
+        Call .WriteString(UserName)
     End With
 End Sub
 
 ''
-' Writes the "invisible" message to the outgoing data buffer.
+' Writes the "invisible" message to the outgoing data incomingData.
 '
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteInvisible()
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "invisible" message to the outgoing data buffer
+'Writes the "invisible" message to the outgoing data incomingData
 '***************************************************
     Call outgoingData.WriteByte(ClientPacketID.GMCommands)
     Call outgoingData.WriteByte(eGMCommands.invisible)
 End Sub
 
 ''
-' Writes the "GMPanel" message to the outgoing data buffer.
+' Writes the "GMPanel" message to the outgoing data incomingData.
 '
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteGMPanel()
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "GMPanel" message to the outgoing data buffer
+'Writes the "GMPanel" message to the outgoing data incomingData
 '***************************************************
     Call outgoingData.WriteByte(ClientPacketID.GMCommands)
     Call outgoingData.WriteByte(eGMCommands.GMPanel)
 End Sub
 
 ''
-' Writes the "RequestUserList" message to the outgoing data buffer.
+' Writes the "RequestUserList" message to the outgoing data incomingData.
 '
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteRequestUserList()
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "RequestUserList" message to the outgoing data buffer
+'Writes the "RequestUserList" message to the outgoing data incomingData
 '***************************************************
     Call outgoingData.WriteByte(ClientPacketID.GMCommands)
     Call outgoingData.WriteByte(eGMCommands.RequestUserList)
 End Sub
 
 ''
-' Writes the "Working" message to the outgoing data buffer.
+' Writes the "Working" message to the outgoing data incomingData.
 '
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteWorking()
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "Working" message to the outgoing data buffer
+'Writes the "Working" message to the outgoing data incomingData
 '***************************************************
     Call outgoingData.WriteByte(ClientPacketID.GMCommands)
     Call outgoingData.WriteByte(eGMCommands.Working)
 End Sub
 
 ''
-' Writes the "Hiding" message to the outgoing data buffer.
+' Writes the "Hiding" message to the outgoing data incomingData.
 '
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteHiding()
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "Hiding" message to the outgoing data buffer
+'Writes the "Hiding" message to the outgoing data incomingData
 '***************************************************
     Call outgoingData.WriteByte(ClientPacketID.GMCommands)
     Call outgoingData.WriteByte(eGMCommands.Hiding)
 End Sub
 
 ''
-' Writes the "Jail" message to the outgoing data buffer.
+' Writes the "Jail" message to the outgoing data incomingData.
 '
 ' @param    username The user to be sent to jail.
 ' @param    reason The reason for which to send him to jail.
 ' @param    time The time (in minutes) the user will have to spend there.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteJail(ByVal UserName As String, ByVal reason As String, ByVal time As Byte)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "Jail" message to the outgoing data buffer
+'Writes the "Jail" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.GMCommands)
         Call .WriteByte(eGMCommands.Jail)
         
-        Call .WriteASCIIString(UserName)
-        Call .WriteASCIIString(reason)
+        Call .WriteString(UserName)
+        Call .WriteString(reason)
         
         Call .WriteByte(time)
     End With
 End Sub
 
 ''
-' Writes the "KillNPC" message to the outgoing data buffer.
+' Writes the "KillNPC" message to the outgoing data incomingData.
 '
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteKillNPC()
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "KillNPC" message to the outgoing data buffer
+'Writes the "KillNPC" message to the outgoing data incomingData
 '***************************************************
     Call outgoingData.WriteByte(ClientPacketID.GMCommands)
     Call outgoingData.WriteByte(eGMCommands.KillNPC)
 End Sub
 
 ''
-' Writes the "WarnUser" message to the outgoing data buffer.
+' Writes the "WarnUser" message to the outgoing data incomingData.
 '
 ' @param    username The user to be warned.
 ' @param    reason Reason for the warning.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteWarnUser(ByVal UserName As String, ByVal reason As String)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "WarnUser" message to the outgoing data buffer
+'Writes the "WarnUser" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.GMCommands)
         Call .WriteByte(eGMCommands.WarnUser)
         
-        Call .WriteASCIIString(UserName)
-        Call .WriteASCIIString(reason)
+        Call .WriteString(UserName)
+        Call .WriteString(reason)
     End With
 End Sub
 
 ''
-' Writes the "EditChar" message to the outgoing data buffer.
+' Writes the "EditChar" message to the outgoing data incomingData.
 '
 ' @param    UserName    The user to be edited.
 ' @param    editOption  Indicates what to edit in the char.
 ' @param    arg1        Additional argument 1. Contents depend on editoption.
 ' @param    arg2        Additional argument 2. Contents depend on editoption.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteEditChar(ByVal UserName As String, ByVal EditOption As eEditOptions, ByVal arg1 As String, ByVal arg2 As String)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "EditChar" message to the outgoing data buffer
+'Writes the "EditChar" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.GMCommands)
         Call .WriteByte(eGMCommands.EditChar)
         
-        Call .WriteASCIIString(UserName)
+        Call .WriteString(UserName)
         
         Call .WriteByte(EditOption)
         
-        Call .WriteASCIIString(arg1)
-        Call .WriteASCIIString(arg2)
+        Call .WriteString(arg1)
+        Call .WriteString(arg2)
     End With
 End Sub
 
 ''
-' Writes the "RequestCharInfo" message to the outgoing data buffer.
+' Writes the "RequestCharInfo" message to the outgoing data incomingData.
 '
 ' @param    username The user whose information is requested.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteRequestCharInfo(ByVal UserName As String)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "RequestCharInfo" message to the outgoing data buffer
+'Writes the "RequestCharInfo" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.GMCommands)
         Call .WriteByte(eGMCommands.RequestCharInfo)
         
-        Call .WriteASCIIString(UserName)
+        Call .WriteString(UserName)
     End With
 End Sub
 
 ''
-' Writes the "RequestCharStats" message to the outgoing data buffer.
+' Writes the "RequestCharStats" message to the outgoing data incomingData.
 '
 ' @param    username The user whose stats are requested.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteRequestCharStats(ByVal UserName As String)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "RequestCharStats" message to the outgoing data buffer
+'Writes the "RequestCharStats" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.GMCommands)
         Call .WriteByte(eGMCommands.RequestCharStats)
         
-        Call .WriteASCIIString(UserName)
+        Call .WriteString(UserName)
     End With
 End Sub
 
 ''
-' Writes the "RequestCharGold" message to the outgoing data buffer.
+' Writes the "RequestCharGold" message to the outgoing data incomingData.
 '
 ' @param    username The user whose gold is requested.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteRequestCharGold(ByVal UserName As String)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "RequestCharGold" message to the outgoing data buffer
+'Writes the "RequestCharGold" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.GMCommands)
         Call .WriteByte(eGMCommands.RequestCharGold)
         
-        Call .WriteASCIIString(UserName)
+        Call .WriteString(UserName)
     End With
 End Sub
     
 ''
-' Writes the "RequestCharInventory" message to the outgoing data buffer.
+' Writes the "RequestCharInventory" message to the outgoing data incomingData.
 '
 ' @param    username The user whose inventory is requested.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteRequestCharInventory(ByVal UserName As String)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "RequestCharInventory" message to the outgoing data buffer
+'Writes the "RequestCharInventory" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.GMCommands)
         Call .WriteByte(eGMCommands.RequestCharInventory)
         
-        Call .WriteASCIIString(UserName)
+        Call .WriteString(UserName)
     End With
 End Sub
 
 ''
-' Writes the "RequestCharBank" message to the outgoing data buffer.
+' Writes the "RequestCharBank" message to the outgoing data incomingData.
 '
 ' @param    username The user whose banking information is requested.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteRequestCharBank(ByVal UserName As String)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "RequestCharBank" message to the outgoing data buffer
+'Writes the "RequestCharBank" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.GMCommands)
         Call .WriteByte(eGMCommands.RequestCharBank)
         
-        Call .WriteASCIIString(UserName)
+        Call .WriteString(UserName)
     End With
 End Sub
 
 ''
-' Writes the "RequestCharSkills" message to the outgoing data buffer.
+' Writes the "RequestCharSkills" message to the outgoing data incomingData.
 '
 ' @param    username The user whose skills are requested.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteRequestCharSkills(ByVal UserName As String)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "RequestCharSkills" message to the outgoing data buffer
+'Writes the "RequestCharSkills" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.GMCommands)
         Call .WriteByte(eGMCommands.RequestCharSkills)
         
-        Call .WriteASCIIString(UserName)
+        Call .WriteString(UserName)
     End With
 End Sub
 
 ''
-' Writes the "ReviveChar" message to the outgoing data buffer.
+' Writes the "ReviveChar" message to the outgoing data incomingData.
 '
 ' @param    username The user to eb revived.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteReviveChar(ByVal UserName As String)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "ReviveChar" message to the outgoing data buffer
+'Writes the "ReviveChar" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.GMCommands)
         Call .WriteByte(eGMCommands.ReviveChar)
         
-        Call .WriteASCIIString(UserName)
+        Call .WriteString(UserName)
     End With
 End Sub
 
 ''
-' Writes the "OnlineGM" message to the outgoing data buffer.
+' Writes the "OnlineGM" message to the outgoing data incomingData.
 '
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteOnlineGM()
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "OnlineGM" message to the outgoing data buffer
+'Writes the "OnlineGM" message to the outgoing data incomingData
 '***************************************************
     Call outgoingData.WriteByte(ClientPacketID.GMCommands)
     Call outgoingData.WriteByte(eGMCommands.OnlineGM)
 End Sub
 
 ''
-' Writes the "OnlineMap" message to the outgoing data buffer.
+' Writes the "OnlineMap" message to the outgoing data incomingData.
 '
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteOnlineMap(ByVal Map As Integer)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 26/03/2009
-'Writes the "OnlineMap" message to the outgoing data buffer
+'Writes the "OnlineMap" message to the outgoing data incomingData
 '26/03/2009: Now you don't need to be in the map to use the comand, so you send the map to server
 '***************************************************
     With outgoingData
@@ -6563,149 +6306,149 @@ Public Sub WriteOnlineMap(ByVal Map As Integer)
 End Sub
 
 ''
-' Writes the "Kick" message to the outgoing data buffer.
+' Writes the "Kick" message to the outgoing data incomingData.
 '
 ' @param    username The user to be kicked.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteKick(ByVal UserName As String)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "Kick" message to the outgoing data buffer
+'Writes the "Kick" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.GMCommands)
         Call .WriteByte(eGMCommands.Kick)
         
-        Call .WriteASCIIString(UserName)
+        Call .WriteString(UserName)
     End With
 End Sub
 
 ''
-' Writes the "Execute" message to the outgoing data buffer.
+' Writes the "Execute" message to the outgoing data incomingData.
 '
 ' @param    username The user to be executed.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteExecute(ByVal UserName As String)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "Execute" message to the outgoing data buffer
+'Writes the "Execute" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.GMCommands)
         Call .WriteByte(eGMCommands.Execute)
         
-        Call .WriteASCIIString(UserName)
+        Call .WriteString(UserName)
     End With
 End Sub
 
 ''
-' Writes the "BanChar" message to the outgoing data buffer.
+' Writes the "BanChar" message to the outgoing data incomingData.
 '
 ' @param    username The user to be banned.
 ' @param    reason The reson for which the user is to be banned.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteBanChar(ByVal UserName As String, ByVal reason As String)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "BanChar" message to the outgoing data buffer
+'Writes the "BanChar" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.GMCommands)
         Call .WriteByte(eGMCommands.BanChar)
         
-        Call .WriteASCIIString(UserName)
+        Call .WriteString(UserName)
         
-        Call .WriteASCIIString(reason)
+        Call .WriteString(reason)
     End With
 End Sub
 
 ''
-' Writes the "UnbanChar" message to the outgoing data buffer.
+' Writes the "UnbanChar" message to the outgoing data incomingData.
 '
 ' @param    username The user to be unbanned.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteUnbanChar(ByVal UserName As String)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "UnbanChar" message to the outgoing data buffer
+'Writes the "UnbanChar" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.GMCommands)
         Call .WriteByte(eGMCommands.UnbanChar)
         
-        Call .WriteASCIIString(UserName)
+        Call .WriteString(UserName)
     End With
 End Sub
 
 ''
-' Writes the "NPCFollow" message to the outgoing data buffer.
+' Writes the "NPCFollow" message to the outgoing data incomingData.
 '
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteNPCFollow()
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "NPCFollow" message to the outgoing data buffer
+'Writes the "NPCFollow" message to the outgoing data incomingData
 '***************************************************
     Call outgoingData.WriteByte(ClientPacketID.GMCommands)
     Call outgoingData.WriteByte(eGMCommands.NPCFollow)
 End Sub
 
 ''
-' Writes the "SummonChar" message to the outgoing data buffer.
+' Writes the "SummonChar" message to the outgoing data incomingData.
 '
 ' @param    username The user to be summoned.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteSummonChar(ByVal UserName As String)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "SummonChar" message to the outgoing data buffer
+'Writes the "SummonChar" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.GMCommands)
         Call .WriteByte(eGMCommands.SummonChar)
         
-        Call .WriteASCIIString(UserName)
+        Call .WriteString(UserName)
     End With
 End Sub
 
 ''
-' Writes the "SpawnListRequest" message to the outgoing data buffer.
+' Writes the "SpawnListRequest" message to the outgoing data incomingData.
 '
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteSpawnListRequest()
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "SpawnListRequest" message to the outgoing data buffer
+'Writes the "SpawnListRequest" message to the outgoing data incomingData
 '***************************************************
     Call outgoingData.WriteByte(ClientPacketID.GMCommands)
     Call outgoingData.WriteByte(eGMCommands.SpawnListRequest)
 End Sub
 
 ''
-' Writes the "SpawnCreature" message to the outgoing data buffer.
+' Writes the "SpawnCreature" message to the outgoing data incomingData.
 '
 ' @param    creatureIndex The index of the creature in the spawn list to be spawned.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteSpawnCreature(ByVal creatureIndex As Integer)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "SpawnCreature" message to the outgoing data buffer
+'Writes the "SpawnCreature" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.GMCommands)
@@ -6716,86 +6459,86 @@ Public Sub WriteSpawnCreature(ByVal creatureIndex As Integer)
 End Sub
 
 ''
-' Writes the "ResetNPCInventory" message to the outgoing data buffer.
+' Writes the "ResetNPCInventory" message to the outgoing data incomingData.
 '
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteResetNPCInventory()
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "ResetNPCInventory" message to the outgoing data buffer
+'Writes the "ResetNPCInventory" message to the outgoing data incomingData
 '***************************************************
     Call outgoingData.WriteByte(ClientPacketID.GMCommands)
     Call outgoingData.WriteByte(eGMCommands.ResetNPCInventory)
 End Sub
 
 ''
-' Writes the "CleanWorld" message to the outgoing data buffer.
+' Writes the "CleanWorld" message to the outgoing data incomingData.
 '
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteCleanWorld()
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "CleanWorld" message to the outgoing data buffer
+'Writes the "CleanWorld" message to the outgoing data incomingData
 '***************************************************
     Call outgoingData.WriteByte(ClientPacketID.GMCommands)
     Call outgoingData.WriteByte(eGMCommands.CleanWorld)
 End Sub
 
 ''
-' Writes the "ServerMessage" message to the outgoing data buffer.
+' Writes the "ServerMessage" message to the outgoing data incomingData.
 '
 ' @param    message The message to be sent to players.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteServerMessage(ByVal Message As String)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "ServerMessage" message to the outgoing data buffer
+'Writes the "ServerMessage" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.GMCommands)
         Call .WriteByte(eGMCommands.ServerMessage)
         
-        Call .WriteASCIIString(Message)
+        Call .WriteString(Message)
     End With
 End Sub
 
 ''
-' Writes the "NickToIP" message to the outgoing data buffer.
+' Writes the "NickToIP" message to the outgoing data incomingData.
 '
 ' @param    username The user whose IP is requested.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteNickToIP(ByVal UserName As String)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "NickToIP" message to the outgoing data buffer
+'Writes the "NickToIP" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.GMCommands)
         Call .WriteByte(eGMCommands.NickToIP)
         
-        Call .WriteASCIIString(UserName)
+        Call .WriteString(UserName)
     End With
 End Sub
 
 ''
-' Writes the "IPToNick" message to the outgoing data buffer.
+' Writes the "IPToNick" message to the outgoing data incomingData.
 '
 ' @param    IP The IP for which to search for players. Must be an array of 4 elements with the 4 components of the IP.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteIPToNick(ByRef Ip() As Byte)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "IPToNick" message to the outgoing data buffer
+'Writes the "IPToNick" message to the outgoing data incomingData
 '***************************************************
     If UBound(Ip()) - LBound(Ip()) + 1 <> 4 Then Exit Sub   'Invalid IP
     
@@ -6812,18 +6555,18 @@ Public Sub WriteIPToNick(ByRef Ip() As Byte)
 End Sub
 
 ''
-' Writes the "TeleportCreate" message to the outgoing data buffer.
+' Writes the "TeleportCreate" message to the outgoing data incomingData.
 '
 ' @param    map the map to which the teleport will lead.
 ' @param    x The position in the x axis to which the teleport will lead.
 ' @param    y The position in the y axis to which the teleport will lead.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteTeleportCreate(ByVal Map As Integer, ByVal X As Byte, ByVal Y As Byte, Optional ByVal Radio As Byte = 0)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "TeleportCreate" message to the outgoing data buffer
+'Writes the "TeleportCreate" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
             Call .WriteByte(ClientPacketID.GMCommands)
@@ -6839,67 +6582,67 @@ Public Sub WriteTeleportCreate(ByVal Map As Integer, ByVal X As Byte, ByVal Y As
 End Sub
 
 ''
-' Writes the "TeleportDestroy" message to the outgoing data buffer.
+' Writes the "TeleportDestroy" message to the outgoing data incomingData.
 '
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteTeleportDestroy()
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "TeleportDestroy" message to the outgoing data buffer
+'Writes the "TeleportDestroy" message to the outgoing data incomingData
 '***************************************************
     Call outgoingData.WriteByte(ClientPacketID.GMCommands)
     Call outgoingData.WriteByte(eGMCommands.TeleportDestroy)
 End Sub
 
 ''
-' Writes the "RainToggle" message to the outgoing data buffer.
+' Writes the "RainToggle" message to the outgoing data incomingData.
 '
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteRainToggle()
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "RainToggle" message to the outgoing data buffer
+'Writes the "RainToggle" message to the outgoing data incomingData
 '***************************************************
     Call outgoingData.WriteByte(ClientPacketID.GMCommands)
     Call outgoingData.WriteByte(eGMCommands.RainToggle)
 End Sub
 
 ''
-' Writes the "SetCharDescription" message to the outgoing data buffer.
+' Writes the "SetCharDescription" message to the outgoing data incomingData.
 '
 ' @param    desc The description to set to players.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteSetCharDescription(ByVal Desc As String)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "SetCharDescription" message to the outgoing data buffer
+'Writes the "SetCharDescription" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.GMCommands)
         Call .WriteByte(eGMCommands.SetCharDescription)
         
-        Call .WriteASCIIString(Desc)
+        Call .WriteString(Desc)
     End With
 End Sub
 
 ''
-' Writes the "ForceMIDIToMap" message to the outgoing data buffer.
+' Writes the "ForceMIDIToMap" message to the outgoing data incomingData.
 '
 ' @param    midiID The ID of the midi file to play.
 ' @param    map The map in which to play the given midi.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteForceMIDIToMap(ByVal midiID As Byte, ByVal Map As Integer)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "ForceMIDIToMap" message to the outgoing data buffer
+'Writes the "ForceMIDIToMap" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.GMCommands)
@@ -6912,19 +6655,19 @@ Public Sub WriteForceMIDIToMap(ByVal midiID As Byte, ByVal Map As Integer)
 End Sub
 
 ''
-' Writes the "ForceWAVEToMap" message to the outgoing data buffer.
+' Writes the "ForceWAVEToMap" message to the outgoing data incomingData.
 '
 ' @param    waveID  The ID of the wave file to play.
 ' @param    Map     The map into which to play the given wave.
 ' @param    x       The position in the x axis in which to play the given wave.
 ' @param    y       The position in the y axis in which to play the given wave.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteForceWAVEToMap(ByVal waveID As Byte, ByVal Map As Integer, ByVal X As Byte, ByVal Y As Byte)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "ForceWAVEToMap" message to the outgoing data buffer
+'Writes the "ForceWAVEToMap" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.GMCommands)
@@ -6940,261 +6683,261 @@ Public Sub WriteForceWAVEToMap(ByVal waveID As Byte, ByVal Map As Integer, ByVal
 End Sub
 
 ''
-' Writes the "RoyalArmyMessage" message to the outgoing data buffer.
+' Writes the "RoyalArmyMessage" message to the outgoing data incomingData.
 '
 ' @param    message The message to send to the royal army members.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteRoyalArmyMessage(ByVal Message As String)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "RoyalArmyMessage" message to the outgoing data buffer
+'Writes the "RoyalArmyMessage" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.GMCommands)
         Call .WriteByte(eGMCommands.RoyalArmyMessage)
         
-        Call .WriteASCIIString(Message)
+        Call .WriteString(Message)
     End With
 End Sub
 
 ''
-' Writes the "ChaosLegionMessage" message to the outgoing data buffer.
+' Writes the "ChaosLegionMessage" message to the outgoing data incomingData.
 '
 ' @param    message The message to send to the chaos legion member.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteChaosLegionMessage(ByVal Message As String)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "ChaosLegionMessage" message to the outgoing data buffer
+'Writes the "ChaosLegionMessage" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.GMCommands)
         Call .WriteByte(eGMCommands.ChaosLegionMessage)
         
-        Call .WriteASCIIString(Message)
+        Call .WriteString(Message)
     End With
 End Sub
 
 ''
-' Writes the "CitizenMessage" message to the outgoing data buffer.
+' Writes the "CitizenMessage" message to the outgoing data incomingData.
 '
 ' @param    message The message to send to citizens.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteCitizenMessage(ByVal Message As String)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "CitizenMessage" message to the outgoing data buffer
+'Writes the "CitizenMessage" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.GMCommands)
         Call .WriteByte(eGMCommands.CitizenMessage)
         
-        Call .WriteASCIIString(Message)
+        Call .WriteString(Message)
     End With
 End Sub
 
 ''
-' Writes the "CriminalMessage" message to the outgoing data buffer.
+' Writes the "CriminalMessage" message to the outgoing data incomingData.
 '
 ' @param    message The message to send to criminals.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteCriminalMessage(ByVal Message As String)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "CriminalMessage" message to the outgoing data buffer
+'Writes the "CriminalMessage" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.GMCommands)
         Call .WriteByte(eGMCommands.CriminalMessage)
         
-        Call .WriteASCIIString(Message)
+        Call .WriteString(Message)
     End With
 End Sub
 
 ''
-' Writes the "TalkAsNPC" message to the outgoing data buffer.
+' Writes the "TalkAsNPC" message to the outgoing data incomingData.
 '
 ' @param    message The message to send to the royal army members.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteTalkAsNPC(ByVal Message As String)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "TalkAsNPC" message to the outgoing data buffer
+'Writes the "TalkAsNPC" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.GMCommands)
         Call .WriteByte(eGMCommands.TalkAsNPC)
         
-        Call .WriteASCIIString(Message)
+        Call .WriteString(Message)
     End With
 End Sub
 
 ''
-' Writes the "DestroyAllItemsInArea" message to the outgoing data buffer.
+' Writes the "DestroyAllItemsInArea" message to the outgoing data incomingData.
 '
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteDestroyAllItemsInArea()
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "DestroyAllItemsInArea" message to the outgoing data buffer
+'Writes the "DestroyAllItemsInArea" message to the outgoing data incomingData
 '***************************************************
     Call outgoingData.WriteByte(ClientPacketID.GMCommands)
     Call outgoingData.WriteByte(eGMCommands.DestroyAllItemsInArea)
 End Sub
 
 ''
-' Writes the "AcceptRoyalCouncilMember" message to the outgoing data buffer.
+' Writes the "AcceptRoyalCouncilMember" message to the outgoing data incomingData.
 '
 ' @param    username The name of the user to be accepted into the royal army council.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteAcceptRoyalCouncilMember(ByVal UserName As String)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "AcceptRoyalCouncilMember" message to the outgoing data buffer
+'Writes the "AcceptRoyalCouncilMember" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.GMCommands)
         Call .WriteByte(eGMCommands.AcceptRoyalCouncilMember)
         
-        Call .WriteASCIIString(UserName)
+        Call .WriteString(UserName)
     End With
 End Sub
 
 ''
-' Writes the "AcceptChaosCouncilMember" message to the outgoing data buffer.
+' Writes the "AcceptChaosCouncilMember" message to the outgoing data incomingData.
 '
 ' @param    username The name of the user to be accepted as a chaos council member.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteAcceptChaosCouncilMember(ByVal UserName As String)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "AcceptChaosCouncilMember" message to the outgoing data buffer
+'Writes the "AcceptChaosCouncilMember" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.GMCommands)
         Call .WriteByte(eGMCommands.AcceptChaosCouncilMember)
         
-        Call .WriteASCIIString(UserName)
+        Call .WriteString(UserName)
     End With
 End Sub
 
 ''
-' Writes the "ItemsInTheFloor" message to the outgoing data buffer.
+' Writes the "ItemsInTheFloor" message to the outgoing data incomingData.
 '
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteItemsInTheFloor()
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "ItemsInTheFloor" message to the outgoing data buffer
+'Writes the "ItemsInTheFloor" message to the outgoing data incomingData
 '***************************************************
     Call outgoingData.WriteByte(ClientPacketID.GMCommands)
     Call outgoingData.WriteByte(eGMCommands.ItemsInTheFloor)
 End Sub
 
 ''
-' Writes the "MakeDumb" message to the outgoing data buffer.
+' Writes the "MakeDumb" message to the outgoing data incomingData.
 '
 ' @param    username The name of the user to be made dumb.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteMakeDumb(ByVal UserName As String)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "MakeDumb" message to the outgoing data buffer
+'Writes the "MakeDumb" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.GMCommands)
         Call .WriteByte(eGMCommands.MakeDumb)
         
-        Call .WriteASCIIString(UserName)
+        Call .WriteString(UserName)
     End With
 End Sub
 
 ''
-' Writes the "MakeDumbNoMore" message to the outgoing data buffer.
+' Writes the "MakeDumbNoMore" message to the outgoing data incomingData.
 '
 ' @param    username The name of the user who will no longer be dumb.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteMakeDumbNoMore(ByVal UserName As String)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "MakeDumbNoMore" message to the outgoing data buffer
+'Writes the "MakeDumbNoMore" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.GMCommands)
         Call .WriteByte(eGMCommands.MakeDumbNoMore)
         
-        Call .WriteASCIIString(UserName)
+        Call .WriteString(UserName)
     End With
 End Sub
 
 ''
-' Writes the "DumpIPTables" message to the outgoing data buffer.
+' Writes the "DumpIPTables" message to the outgoing data incomingData.
 '
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteDumpIPTables()
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "DumpIPTables" message to the outgoing data buffer
+'Writes the "DumpIPTables" message to the outgoing data incomingData
 '***************************************************
     Call outgoingData.WriteByte(ClientPacketID.GMCommands)
     Call outgoingData.WriteByte(eGMCommands.DumpIPTables)
 End Sub
 
 ''
-' Writes the "CouncilKick" message to the outgoing data buffer.
+' Writes the "CouncilKick" message to the outgoing data incomingData.
 '
 ' @param    username The name of the user to be kicked from the council.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteCouncilKick(ByVal UserName As String)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "CouncilKick" message to the outgoing data buffer
+'Writes the "CouncilKick" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.GMCommands)
         Call .WriteByte(eGMCommands.CouncilKick)
         
-        Call .WriteASCIIString(UserName)
+        Call .WriteString(UserName)
     End With
 End Sub
 
 ''
-' Writes the "SetTrigger" message to the outgoing data buffer.
+' Writes the "SetTrigger" message to the outgoing data incomingData.
 '
 ' @param    trigger The type of trigger to be set to the tile.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteSetTrigger(ByVal Trigger As eTrigger)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "SetTrigger" message to the outgoing data buffer
+'Writes the "SetTrigger" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.GMCommands)
@@ -7205,45 +6948,45 @@ Public Sub WriteSetTrigger(ByVal Trigger As eTrigger)
 End Sub
 
 ''
-' Writes the "AskTrigger" message to the outgoing data buffer.
+' Writes the "AskTrigger" message to the outgoing data incomingData.
 '
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteAskTrigger()
 '***************************************************
 'Author: Nicolas Matias Gonzalez (NIGO)
 'Last Modification: 04/13/07
-'Writes the "AskTrigger" message to the outgoing data buffer
+'Writes the "AskTrigger" message to the outgoing data incomingData
 '***************************************************
     Call outgoingData.WriteByte(ClientPacketID.GMCommands)
     Call outgoingData.WriteByte(eGMCommands.AskTrigger)
 End Sub
 
 ''
-' Writes the "BannedIPList" message to the outgoing data buffer.
+' Writes the "BannedIPList" message to the outgoing data incomingData.
 '
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteBannedIPList()
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "BannedIPList" message to the outgoing data buffer
+'Writes the "BannedIPList" message to the outgoing data incomingData
 '***************************************************
     Call outgoingData.WriteByte(ClientPacketID.GMCommands)
     Call outgoingData.WriteByte(eGMCommands.BannedIPList)
 End Sub
 
 ''
-' Writes the "BannedIPReload" message to the outgoing data buffer.
+' Writes the "BannedIPReload" message to the outgoing data incomingData.
 '
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteBannedIPReload()
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "BannedIPReload" message to the outgoing data buffer
+'Writes the "BannedIPReload" message to the outgoing data incomingData
 '***************************************************
     Call outgoingData.WriteByte(ClientPacketID.GMCommands)
     Call outgoingData.WriteByte(eGMCommands.BannedIPReload)
@@ -7252,20 +6995,20 @@ End Sub
 
 
 ''
-' Writes the "BanIP" message to the outgoing data buffer.
+' Writes the "BanIP" message to the outgoing data incomingData.
 '
 ' @param    byIp    If set to true, we are banning by IP, otherwise the ip of a given character.
 ' @param    IP      The IP for which to search for players. Must be an array of 4 elements with the 4 components of the IP.
 ' @param    nick    The nick of the player whose ip will be banned.
 ' @param    reason  The reason for the ban.
 '
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteBanIP(ByVal byIp As Boolean, ByRef Ip() As Byte, ByVal Nick As String, ByVal reason As String)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "BanIP" message to the outgoing data buffer
+'Writes the "BanIP" message to the outgoing data incomingData
 '***************************************************
     If byIp And UBound(Ip()) - LBound(Ip()) + 1 <> 4 Then Exit Sub   'Invalid IP
     
@@ -7282,24 +7025,24 @@ Public Sub WriteBanIP(ByVal byIp As Boolean, ByRef Ip() As Byte, ByVal Nick As S
                 Call .WriteByte(Ip(i))
             Next i
         Else
-            Call .WriteASCIIString(Nick)
+            Call .WriteString(Nick)
         End If
         
-        Call .WriteASCIIString(reason)
+        Call .WriteString(reason)
     End With
 End Sub
 
 ''
-' Writes the "UnbanIP" message to the outgoing data buffer.
+' Writes the "UnbanIP" message to the outgoing data incomingData.
 '
 ' @param    IP The IP for which to search for players. Must be an array of 4 elements with the 4 components of the IP.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteUnbanIP(ByRef Ip() As Byte)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "UnbanIP" message to the outgoing data buffer
+'Writes the "UnbanIP" message to the outgoing data incomingData
 '***************************************************
     If UBound(Ip()) - LBound(Ip()) + 1 <> 4 Then Exit Sub   'Invalid IP
     
@@ -7316,16 +7059,16 @@ Public Sub WriteUnbanIP(ByRef Ip() As Byte)
 End Sub
 
 ''
-' Writes the "CreateItem" message to the outgoing data buffer.
+' Writes the "CreateItem" message to the outgoing data incomingData.
 '
 ' @param    itemIndex The index of the item to be created.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteCreateItem(ByVal ItemIndex As Integer, ByVal CantidadItem As Integer)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "CreateItem" message to the outgoing data buffer
+'Writes the "CreateItem" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.GMCommands)
@@ -7336,71 +7079,71 @@ Public Sub WriteCreateItem(ByVal ItemIndex As Integer, ByVal CantidadItem As Int
 End Sub
 
 ''
-' Writes the "DestroyItems" message to the outgoing data buffer.
+' Writes the "DestroyItems" message to the outgoing data incomingData.
 '
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteDestroyItems()
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "DestroyItems" message to the outgoing data buffer
+'Writes the "DestroyItems" message to the outgoing data incomingData
 '***************************************************
     Call outgoingData.WriteByte(ClientPacketID.GMCommands)
     Call outgoingData.WriteByte(eGMCommands.DestroyItems)
 End Sub
 
 ''
-' Writes the "ChaosLegionKick" message to the outgoing data buffer.
+' Writes the "ChaosLegionKick" message to the outgoing data incomingData.
 '
 ' @param    username The name of the user to be kicked from the Chaos Legion.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteChaosLegionKick(ByVal UserName As String)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "ChaosLegionKick" message to the outgoing data buffer
+'Writes the "ChaosLegionKick" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.GMCommands)
         Call .WriteByte(eGMCommands.ChaosLegionKick)
         
-        Call .WriteASCIIString(UserName)
+        Call .WriteString(UserName)
     End With
 End Sub
 
 ''
-' Writes the "RoyalArmyKick" message to the outgoing data buffer.
+' Writes the "RoyalArmyKick" message to the outgoing data incomingData.
 '
 ' @param    username The name of the user to be kicked from the Royal Army.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteRoyalArmyKick(ByVal UserName As String)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "RoyalArmyKick" message to the outgoing data buffer
+'Writes the "RoyalArmyKick" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.GMCommands)
         Call .WriteByte(eGMCommands.RoyalArmyKick)
         
-        Call .WriteASCIIString(UserName)
+        Call .WriteString(UserName)
     End With
 End Sub
 
 ''
-' Writes the "ForceMIDIAll" message to the outgoing data buffer.
+' Writes the "ForceMIDIAll" message to the outgoing data incomingData.
 '
 ' @param    midiID The id of the midi file to play.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteForceMIDIAll(ByVal midiID As Byte)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "ForceMIDIAll" message to the outgoing data buffer
+'Writes the "ForceMIDIAll" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.GMCommands)
@@ -7411,16 +7154,16 @@ Public Sub WriteForceMIDIAll(ByVal midiID As Byte)
 End Sub
 
 ''
-' Writes the "ForceWAVEAll" message to the outgoing data buffer.
+' Writes the "ForceWAVEAll" message to the outgoing data incomingData.
 '
 ' @param    waveID The id of the wave file to play.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteForceWAVEAll(ByVal waveID As Byte)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "ForceWAVEAll" message to the outgoing data buffer
+'Writes the "ForceWAVEAll" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.GMCommands)
@@ -7431,159 +7174,159 @@ Public Sub WriteForceWAVEAll(ByVal waveID As Byte)
 End Sub
 
 ''
-' Writes the "RemovePunishment" message to the outgoing data buffer.
+' Writes the "RemovePunishment" message to the outgoing data incomingData.
 '
 ' @param    username The user whose punishments will be altered.
 ' @param    punishment The id of the punishment to be removed.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteRemovePunishment(ByVal UserName As String, ByVal punishment As Byte, ByVal NewText As String)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "RemovePunishment" message to the outgoing data buffer
+'Writes the "RemovePunishment" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.GMCommands)
         Call .WriteByte(eGMCommands.RemovePunishment)
         
-        Call .WriteASCIIString(UserName)
+        Call .WriteString(UserName)
         Call .WriteByte(punishment)
-        Call .WriteASCIIString(NewText)
+        Call .WriteString(NewText)
     End With
 End Sub
 
 ''
-' Writes the "TileBlockedToggle" message to the outgoing data buffer.
+' Writes the "TileBlockedToggle" message to the outgoing data incomingData.
 '
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteTileBlockedToggle()
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "TileBlockedToggle" message to the outgoing data buffer
+'Writes the "TileBlockedToggle" message to the outgoing data incomingData
 '***************************************************
     Call outgoingData.WriteByte(ClientPacketID.GMCommands)
     Call outgoingData.WriteByte(eGMCommands.TileBlockedToggle)
 End Sub
 
 ''
-' Writes the "KillNPCNoRespawn" message to the outgoing data buffer.
+' Writes the "KillNPCNoRespawn" message to the outgoing data incomingData.
 '
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteKillNPCNoRespawn()
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "KillNPCNoRespawn" message to the outgoing data buffer
+'Writes the "KillNPCNoRespawn" message to the outgoing data incomingData
 '***************************************************
     Call outgoingData.WriteByte(ClientPacketID.GMCommands)
     Call outgoingData.WriteByte(eGMCommands.KillNPCNoRespawn)
 End Sub
 
 ''
-' Writes the "KillAllNearbyNPCs" message to the outgoing data buffer.
+' Writes the "KillAllNearbyNPCs" message to the outgoing data incomingData.
 '
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteKillAllNearbyNPCs()
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "KillAllNearbyNPCs" message to the outgoing data buffer
+'Writes the "KillAllNearbyNPCs" message to the outgoing data incomingData
 '***************************************************
     Call outgoingData.WriteByte(ClientPacketID.GMCommands)
     Call outgoingData.WriteByte(eGMCommands.KillAllNearbyNPCs)
 End Sub
 
 ''
-' Writes the "LastIP" message to the outgoing data buffer.
+' Writes the "LastIP" message to the outgoing data incomingData.
 '
 ' @param    username The user whose last IPs are requested.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteLastIP(ByVal UserName As String)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "LastIP" message to the outgoing data buffer
+'Writes the "LastIP" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.GMCommands)
         Call .WriteByte(eGMCommands.LastIP)
         
-        Call .WriteASCIIString(UserName)
+        Call .WriteString(UserName)
     End With
 End Sub
 
 ''
-' Writes the "ChangeMOTD" message to the outgoing data buffer.
+' Writes the "ChangeMOTD" message to the outgoing data incomingData.
 '
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteChangeMOTD()
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "ChangeMOTD" message to the outgoing data buffer
+'Writes the "ChangeMOTD" message to the outgoing data incomingData
 '***************************************************
     Call outgoingData.WriteByte(ClientPacketID.GMCommands)
     Call outgoingData.WriteByte(eGMCommands.ChangeMOTD)
 End Sub
 
 ''
-' Writes the "SetMOTD" message to the outgoing data buffer.
+' Writes the "SetMOTD" message to the outgoing data incomingData.
 '
 ' @param    message The message to be set as the new MOTD.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteSetMOTD(ByVal Message As String)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "SetMOTD" message to the outgoing data buffer
+'Writes the "SetMOTD" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.GMCommands)
         Call .WriteByte(eGMCommands.SetMOTD)
         
-        Call .WriteASCIIString(Message)
+        Call .WriteString(Message)
     End With
 End Sub
 
 ''
-' Writes the "SystemMessage" message to the outgoing data buffer.
+' Writes the "SystemMessage" message to the outgoing data incomingData.
 '
 ' @param    message The message to be sent to all players.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteSystemMessage(ByVal Message As String)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "SystemMessage" message to the outgoing data buffer
+'Writes the "SystemMessage" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.GMCommands)
         Call .WriteByte(eGMCommands.SystemMessage)
         
-        Call .WriteASCIIString(Message)
+        Call .WriteString(Message)
     End With
 End Sub
 
 ''
-' Writes the "CreateNPC" message to the outgoing data buffer.
+' Writes the "CreateNPC" message to the outgoing data incomingData.
 '
 ' @param    npcIndex The index of the NPC to be created.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteCreateNPC(ByVal NPCIndex As Integer)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "CreateNPC" message to the outgoing data buffer
+'Writes the "CreateNPC" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.GMCommands)
@@ -7594,16 +7337,16 @@ Public Sub WriteCreateNPC(ByVal NPCIndex As Integer)
 End Sub
 
 ''
-' Writes the "CreateNPCWithRespawn" message to the outgoing data buffer.
+' Writes the "CreateNPCWithRespawn" message to the outgoing data incomingData.
 '
 ' @param    npcIndex The index of the NPC to be created.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteCreateNPCWithRespawn(ByVal NPCIndex As Integer)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "CreateNPCWithRespawn" message to the outgoing data buffer
+'Writes the "CreateNPCWithRespawn" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.GMCommands)
@@ -7614,181 +7357,181 @@ Public Sub WriteCreateNPCWithRespawn(ByVal NPCIndex As Integer)
 End Sub
 
 ''
-' Writes the "NavigateToggle" message to the outgoing data buffer.
+' Writes the "NavigateToggle" message to the outgoing data incomingData.
 '
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteNavigateToggle()
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "NavigateToggle" message to the outgoing data buffer
+'Writes the "NavigateToggle" message to the outgoing data incomingData
 '***************************************************
     Call outgoingData.WriteByte(ClientPacketID.GMCommands)
     Call outgoingData.WriteByte(eGMCommands.NavigateToggle)
 End Sub
 
 ''
-' Writes the "ServerOpenToUsersToggle" message to the outgoing data buffer.
+' Writes the "ServerOpenToUsersToggle" message to the outgoing data incomingData.
 '
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteServerOpenToUsersToggle()
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "ServerOpenToUsersToggle" message to the outgoing data buffer
+'Writes the "ServerOpenToUsersToggle" message to the outgoing data incomingData
 '***************************************************
     Call outgoingData.WriteByte(ClientPacketID.GMCommands)
     Call outgoingData.WriteByte(eGMCommands.ServerOpenToUsersToggle)
 End Sub
 
 ''
-' Writes the "TurnOffServer" message to the outgoing data buffer.
+' Writes the "TurnOffServer" message to the outgoing data incomingData.
 '
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteTurnOffServer()
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "TurnOffServer" message to the outgoing data buffer
+'Writes the "TurnOffServer" message to the outgoing data incomingData
 '***************************************************
     Call outgoingData.WriteByte(ClientPacketID.GMCommands)
     Call outgoingData.WriteByte(eGMCommands.TurnOffServer)
 End Sub
 
 ''
-' Writes the "ResetFactions" message to the outgoing data buffer.
+' Writes the "ResetFactions" message to the outgoing data incomingData.
 '
 ' @param    username The name of the user who will be removed from any faction.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteResetFactions(ByVal UserName As String)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "ResetFactions" message to the outgoing data buffer
+'Writes the "ResetFactions" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.GMCommands)
         Call .WriteByte(eGMCommands.ResetFactions)
         
-        Call .WriteASCIIString(UserName)
+        Call .WriteString(UserName)
     End With
 End Sub
 
 ''
-' Writes the "RequestCharMail" message to the outgoing data buffer.
+' Writes the "RequestCharMail" message to the outgoing data incomingData.
 '
 ' @param    username The name of the user whose mail is requested.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteRequestCharMail(ByVal UserName As String)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "RequestCharMail" message to the outgoing data buffer
+'Writes the "RequestCharMail" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.GMCommands)
         Call .WriteByte(eGMCommands.RequestCharMail)
         
-        Call .WriteASCIIString(UserName)
+        Call .WriteString(UserName)
     End With
 End Sub
 
 ''
-' Writes the "AlterPassword" message to the outgoing data buffer.
+' Writes the "AlterPassword" message to the outgoing data incomingData.
 '
 ' @param    username The name of the user whose mail is requested.
 ' @param    copyFrom The name of the user from which to copy the password.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteAlterPassword(ByVal UserName As String, ByVal CopyFrom As String)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "AlterPassword" message to the outgoing data buffer
+'Writes the "AlterPassword" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.GMCommands)
         Call .WriteByte(eGMCommands.AlterPassword)
         
-        Call .WriteASCIIString(UserName)
-        Call .WriteASCIIString(CopyFrom)
+        Call .WriteString(UserName)
+        Call .WriteString(CopyFrom)
     End With
 End Sub
 
 ''
-' Writes the "AlterMail" message to the outgoing data buffer.
+' Writes the "AlterMail" message to the outgoing data incomingData.
 '
 ' @param    username The name of the user whose mail is requested.
 ' @param    newMail The new email of the player.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteAlterMail(ByVal UserName As String, ByVal newMail As String)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "AlterMail" message to the outgoing data buffer
+'Writes the "AlterMail" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.GMCommands)
         Call .WriteByte(eGMCommands.AlterMail)
         
-        Call .WriteASCIIString(UserName)
-        Call .WriteASCIIString(newMail)
+        Call .WriteString(UserName)
+        Call .WriteString(newMail)
     End With
 End Sub
 
 ''
-' Writes the "AlterName" message to the outgoing data buffer.
+' Writes the "AlterName" message to the outgoing data incomingData.
 '
 ' @param    username The name of the user whose mail is requested.
 ' @param    newName The new user name.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteAlterName(ByVal UserName As String, ByVal newName As String)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "AlterName" message to the outgoing data buffer
+'Writes the "AlterName" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.GMCommands)
         Call .WriteByte(eGMCommands.AlterName)
         
-        Call .WriteASCIIString(UserName)
-        Call .WriteASCIIString(newName)
+        Call .WriteString(UserName)
+        Call .WriteString(newName)
     End With
 End Sub
 
 ''
-' Writes the "ToggleCentinelActivated" message to the outgoing data buffer.
+' Writes the "ToggleCentinelActivated" message to the outgoing data incomingData.
 '
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteToggleCentinelActivated()
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "ToggleCentinelActivated" message to the outgoing data buffer
+'Writes the "ToggleCentinelActivated" message to the outgoing data incomingData
 '***************************************************
     Call outgoingData.WriteByte(ClientPacketID.GMCommands)
     Call outgoingData.WriteByte(eGMCommands.ToggleCentinelActivated)
 End Sub
 
 ''
-' Writes the "DoBackup" message to the outgoing data buffer.
+' Writes the "DoBackup" message to the outgoing data incomingData.
 '
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteDoBackup()
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "DoBackup" message to the outgoing data buffer
+'Writes the "DoBackup" message to the outgoing data incomingData
 '***************************************************
     Call outgoingData.WriteByte(ClientPacketID.GMCommands)
     Call outgoingData.WriteByte(eGMCommands.DoBackUp)
@@ -7796,31 +7539,31 @@ End Sub
 
 
 ''
-' Writes the "SaveMap" message to the outgoing data buffer.
+' Writes the "SaveMap" message to the outgoing data incomingData.
 '
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteSaveMap()
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "SaveMap" message to the outgoing data buffer
+'Writes the "SaveMap" message to the outgoing data incomingData
 '***************************************************
     Call outgoingData.WriteByte(ClientPacketID.GMCommands)
     Call outgoingData.WriteByte(eGMCommands.SaveMap)
 End Sub
 
 ''
-' Writes the "ChangeMapInfoPK" message to the outgoing data buffer.
+' Writes the "ChangeMapInfoPK" message to the outgoing data incomingData.
 '
 ' @param    isPK True if the map is PK, False otherwise.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteChangeMapInfoPK(ByVal isPK As Boolean)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "ChangeMapInfoPK" message to the outgoing data buffer
+'Writes the "ChangeMapInfoPK" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.GMCommands)
@@ -7831,16 +7574,16 @@ Public Sub WriteChangeMapInfoPK(ByVal isPK As Boolean)
 End Sub
 
 ''
-' Writes the "ChangeMapInfoBackup" message to the outgoing data buffer.
+' Writes the "ChangeMapInfoBackup" message to the outgoing data incomingData.
 '
 ' @param    backup True if the map is to be backuped, False otherwise.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteChangeMapInfoBackup(ByVal backup As Boolean)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "ChangeMapInfoBackup" message to the outgoing data buffer
+'Writes the "ChangeMapInfoBackup" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.GMCommands)
@@ -7851,36 +7594,36 @@ Public Sub WriteChangeMapInfoBackup(ByVal backup As Boolean)
 End Sub
 
 ''
-' Writes the "ChangeMapInfoRestricted" message to the outgoing data buffer.
+' Writes the "ChangeMapInfoRestricted" message to the outgoing data incomingData.
 '
 ' @param    restrict NEWBIES (only newbies), NO (everyone), ARMADA (just Armadas), CAOS (just caos) or FACCION (Armadas & caos only)
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteChangeMapInfoRestricted(ByVal restrict As String)
 '***************************************************
 'Author: Pablo (ToxicWaste)
 'Last Modification: 26/01/2007
-'Writes the "ChangeMapInfoRestricted" message to the outgoing data buffer
+'Writes the "ChangeMapInfoRestricted" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.GMCommands)
         Call .WriteByte(eGMCommands.ChangeMapInfoRestricted)
         
-        Call .WriteASCIIString(restrict)
+        Call .WriteString(restrict)
     End With
 End Sub
 
 ''
-' Writes the "ChangeMapInfoNoMagic" message to the outgoing data buffer.
+' Writes the "ChangeMapInfoNoMagic" message to the outgoing data incomingData.
 '
 ' @param    nomagic TRUE if no magic is to be allowed in the map.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteChangeMapInfoNoMagic(ByVal nomagic As Boolean)
 '***************************************************
 'Author: Pablo (ToxicWaste)
 'Last Modification: 26/01/2007
-'Writes the "ChangeMapInfoNoMagic" message to the outgoing data buffer
+'Writes the "ChangeMapInfoNoMagic" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.GMCommands)
@@ -7891,223 +7634,223 @@ Public Sub WriteChangeMapInfoNoMagic(ByVal nomagic As Boolean)
 End Sub
 
 ''
-' Writes the "ChangeMapInfoLand" message to the outgoing data buffer.
+' Writes the "ChangeMapInfoLand" message to the outgoing data incomingData.
 '
 ' @param    land options: "BOSQUE", "NIEVE", "DESIERTO", "CIUDAD", "CAMPO", "DUNGEON".
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteChangeMapInfoLand(ByVal land As String)
 '***************************************************
 'Author: Pablo (ToxicWaste)
 'Last Modification: 26/01/2007
-'Writes the "ChangeMapInfoLand" message to the outgoing data buffer
+'Writes the "ChangeMapInfoLand" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.GMCommands)
         Call .WriteByte(eGMCommands.ChangeMapInfoLand)
         
-        Call .WriteASCIIString(land)
+        Call .WriteString(land)
     End With
 End Sub
                         
 ''
-' Writes the "ChangeMapInfoZone" message to the outgoing data buffer.
+' Writes the "ChangeMapInfoZone" message to the outgoing data incomingData.
 '
 ' @param    zone options: "BOSQUE", "NIEVE", "DESIERTO", "CIUDAD", "CAMPO", "DUNGEON".
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteChangeMapInfoZone(ByVal zone As String)
 '***************************************************
 'Author: Pablo (ToxicWaste)
 'Last Modification: 26/01/2007
-'Writes the "ChangeMapInfoZone" message to the outgoing data buffer
+'Writes the "ChangeMapInfoZone" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.GMCommands)
         Call .WriteByte(eGMCommands.ChangeMapInfoZone)
         
-        Call .WriteASCIIString(zone)
+        Call .WriteString(zone)
     End With
 End Sub
 
 ''
-' Writes the "SaveChars" message to the outgoing data buffer.
+' Writes the "SaveChars" message to the outgoing data incomingData.
 '
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteSaveChars()
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "SaveChars" message to the outgoing data buffer
+'Writes the "SaveChars" message to the outgoing data incomingData
 '***************************************************
     Call outgoingData.WriteByte(ClientPacketID.GMCommands)
     Call outgoingData.WriteByte(eGMCommands.SaveChars)
 End Sub
 
 ''
-' Writes the "CleanSOS" message to the outgoing data buffer.
+' Writes the "CleanSOS" message to the outgoing data incomingData.
 '
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteCleanSOS()
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "CleanSOS" message to the outgoing data buffer
+'Writes the "CleanSOS" message to the outgoing data incomingData
 '***************************************************
     Call outgoingData.WriteByte(ClientPacketID.GMCommands)
     Call outgoingData.WriteByte(eGMCommands.CleanSOS)
 End Sub
 
 ''
-' Writes the "ShowServerForm" message to the outgoing data buffer.
+' Writes the "ShowServerForm" message to the outgoing data incomingData.
 '
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteShowServerForm()
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "ShowServerForm" message to the outgoing data buffer
+'Writes the "ShowServerForm" message to the outgoing data incomingData
 '***************************************************
     Call outgoingData.WriteByte(ClientPacketID.GMCommands)
     Call outgoingData.WriteByte(eGMCommands.ShowServerForm)
 End Sub
 
 ''
-' Writes the "Night" message to the outgoing data buffer.
+' Writes the "Night" message to the outgoing data incomingData.
 '
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteNight()
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "Night" message to the outgoing data buffer
+'Writes the "Night" message to the outgoing data incomingData
 '***************************************************
     Call outgoingData.WriteByte(ClientPacketID.GMCommands)
     Call outgoingData.WriteByte(eGMCommands.night)
 End Sub
 
 ''
-' Writes the "KickAllChars" message to the outgoing data buffer.
+' Writes the "KickAllChars" message to the outgoing data incomingData.
 '
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteKickAllChars()
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "KickAllChars" message to the outgoing data buffer
+'Writes the "KickAllChars" message to the outgoing data incomingData
 '***************************************************
     Call outgoingData.WriteByte(ClientPacketID.GMCommands)
     Call outgoingData.WriteByte(eGMCommands.KickAllChars)
 End Sub
 
 ''
-' Writes the "ReloadNPCs" message to the outgoing data buffer.
+' Writes the "ReloadNPCs" message to the outgoing data incomingData.
 '
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteReloadNPCs()
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "ReloadNPCs" message to the outgoing data buffer
+'Writes the "ReloadNPCs" message to the outgoing data incomingData
 '***************************************************
     Call outgoingData.WriteByte(ClientPacketID.GMCommands)
     Call outgoingData.WriteByte(eGMCommands.ReloadNPCs)
 End Sub
 
 ''
-' Writes the "ReloadServerIni" message to the outgoing data buffer.
+' Writes the "ReloadServerIni" message to the outgoing data incomingData.
 '
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteReloadServerIni()
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "ReloadServerIni" message to the outgoing data buffer
+'Writes the "ReloadServerIni" message to the outgoing data incomingData
 '***************************************************
     Call outgoingData.WriteByte(ClientPacketID.GMCommands)
     Call outgoingData.WriteByte(eGMCommands.ReloadServerIni)
 End Sub
 
 ''
-' Writes the "ReloadSpells" message to the outgoing data buffer.
+' Writes the "ReloadSpells" message to the outgoing data incomingData.
 '
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteReloadSpells()
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "ReloadSpells" message to the outgoing data buffer
+'Writes the "ReloadSpells" message to the outgoing data incomingData
 '***************************************************
     Call outgoingData.WriteByte(ClientPacketID.GMCommands)
     Call outgoingData.WriteByte(eGMCommands.ReloadSpells)
 End Sub
 
 ''
-' Writes the "ReloadObjects" message to the outgoing data buffer.
+' Writes the "ReloadObjects" message to the outgoing data incomingData.
 '
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteReloadObjects()
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "ReloadObjects" message to the outgoing data buffer
+'Writes the "ReloadObjects" message to the outgoing data incomingData
 '***************************************************
     Call outgoingData.WriteByte(ClientPacketID.GMCommands)
     Call outgoingData.WriteByte(eGMCommands.ReloadObjects)
 End Sub
 
 ''
-' Writes the "Restart" message to the outgoing data buffer.
+' Writes the "Restart" message to the outgoing data incomingData.
 '
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteRestart()
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "Restart" message to the outgoing data buffer
+'Writes the "Restart" message to the outgoing data incomingData
 '***************************************************
     Call outgoingData.WriteByte(ClientPacketID.GMCommands)
     Call outgoingData.WriteByte(eGMCommands.Restart)
 End Sub
 
 ''
-' Writes the "ResetAutoUpdate" message to the outgoing data buffer.
+' Writes the "ResetAutoUpdate" message to the outgoing data incomingData.
 '
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteResetAutoUpdate()
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "ResetAutoUpdate" message to the outgoing data buffer
+'Writes the "ResetAutoUpdate" message to the outgoing data incomingData
 '***************************************************
     Call outgoingData.WriteByte(ClientPacketID.GMCommands)
     Call outgoingData.WriteByte(eGMCommands.ResetAutoUpdate)
 End Sub
 
 ''
-' Writes the "ChatColor" message to the outgoing data buffer.
+' Writes the "ChatColor" message to the outgoing data incomingData.
 '
 ' @param    r The red component of the new chat color.
 ' @param    g The green component of the new chat color.
 ' @param    b The blue component of the new chat color.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteChatColor(ByVal r As Byte, ByVal g As Byte, ByVal b As Byte)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "ChatColor" message to the outgoing data buffer
+'Writes the "ChatColor" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.GMCommands)
@@ -8120,51 +7863,51 @@ Public Sub WriteChatColor(ByVal r As Byte, ByVal g As Byte, ByVal b As Byte)
 End Sub
 
 ''
-' Writes the "Ignored" message to the outgoing data buffer.
+' Writes the "Ignored" message to the outgoing data incomingData.
 '
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteIgnored()
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Writes the "Ignored" message to the outgoing data buffer
+'Writes the "Ignored" message to the outgoing data incomingData
 '***************************************************
     Call outgoingData.WriteByte(ClientPacketID.GMCommands)
     Call outgoingData.WriteByte(eGMCommands.Ignored)
 End Sub
 
 ''
-' Writes the "CheckSlot" message to the outgoing data buffer.
+' Writes the "CheckSlot" message to the outgoing data incomingData.
 '
 ' @param    UserName    The name of the char whose slot will be checked.
 ' @param    slot        The slot to be checked.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteCheckSlot(ByVal UserName As String, ByVal slot As Byte)
 '***************************************************
 'Author: Pablo (ToxicWaste)
 'Last Modification: 26/01/2007
-'Writes the "CheckSlot" message to the outgoing data buffer
+'Writes the "CheckSlot" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.GMCommands)
         Call .WriteByte(eGMCommands.CheckSlot)
-        Call .WriteASCIIString(UserName)
+        Call .WriteString(UserName)
         Call .WriteByte(slot)
     End With
 End Sub
 
 ''
-' Writes the "Ping" message to the outgoing data buffer.
+' Writes the "Ping" message to the outgoing data incomingData.
 '
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WritePing()
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 26/01/2007
-'Writes the "Ping" message to the outgoing data buffer
+'Writes the "Ping" message to the outgoing data incomingData
 '***************************************************
     'Prevent the timer from being cut
     If pingTime <> 0 Then Exit Sub
@@ -8179,68 +7922,68 @@ Public Sub WritePing()
 End Sub
 
 ''
-' Writes the "ShareNpc" message to the outgoing data buffer.
+' Writes the "ShareNpc" message to the outgoing data incomingData.
 '
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteShareNpc()
 '***************************************************
 'Author: ZaMa
 'Last Modification: 15/04/2010
-'Writes the "ShareNpc" message to the outgoing data buffer
+'Writes the "ShareNpc" message to the outgoing data incomingData
 '***************************************************
     Call outgoingData.WriteByte(ClientPacketID.ShareNpc)
 End Sub
 
 ''
-' Writes the "StopSharingNpc" message to the outgoing data buffer.
+' Writes the "StopSharingNpc" message to the outgoing data incomingData.
 '
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteStopSharingNpc()
 '***************************************************
 'Author: ZaMa
 'Last Modification: 15/04/2010
-'Writes the "StopSharingNpc" message to the outgoing data buffer
+'Writes the "StopSharingNpc" message to the outgoing data incomingData
 '***************************************************
     Call outgoingData.WriteByte(ClientPacketID.StopSharingNpc)
 End Sub
 
 ''
-' Writes the "SetIniVar" message to the outgoing data buffer.
+' Writes the "SetIniVar" message to the outgoing data incomingData.
 '
 ' @param    sLlave the name of the key which contains the value to edit
 ' @param    sClave the name of the value to edit
 ' @param    sValor the new value to set to sClave
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteSetIniVar(ByRef sLlave As String, ByRef sClave As String, ByRef sValor As String)
 '***************************************************
 'Author: Brian Chaia (BrianPr)
 'Last Modification: 21/06/2009
-'Writes the "SetIniVar" message to the outgoing data buffer
+'Writes the "SetIniVar" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.GMCommands)
         Call .WriteByte(eGMCommands.SetIniVar)
         
-        Call .WriteASCIIString(sLlave)
-        Call .WriteASCIIString(sClave)
-        Call .WriteASCIIString(sValor)
+        Call .WriteString(sLlave)
+        Call .WriteString(sClave)
+        Call .WriteString(sValor)
     End With
 End Sub
 
 ''
-' Writes the "WarpToMap" message to the outgoing data buffer.
+' Writes the "WarpToMap" message to the outgoing data incomingData.
 '
 ' @param    map The map to which to warp the character.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteWarpToMap(ByVal Map As Integer)
 '***************************************************
 'Author: Lorenzo Rivero (Rhynne)
 'Last Modification: 06/01/2017
-'Writes the "WarpToMap" message to the outgoing data buffer
+'Writes the "WarpToMap" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.GMCommands)
@@ -8251,57 +7994,57 @@ Public Sub WriteWarpToMap(ByVal Map As Integer)
 End Sub
 
 ''
-' Writes the "StaffMessage" message to the outgoing data buffer.
+' Writes the "StaffMessage" message to the outgoing data incomingData.
 '
 ' @param    message The message to be sent to players.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteStaffMessage(ByVal Message As String)
 '***************************************************
 'Author: Lorenzo Rivero (Rhynne)
 'Last Modification: 06/01/2017
-'Writes the "StaffMessage" message to the outgoing data buffer
+'Writes the "StaffMessage" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.GMCommands)
         Call .WriteByte(eGMCommands.StaffMessage)
         
-        Call .WriteASCIIString(Message)
+        Call .WriteString(Message)
     End With
 End Sub
 
 ''
-' Writes the "SearchObjs" message to the outgoing data buffer.
+' Writes the "SearchObjs" message to the outgoing data incomingData.
 '
 ' @param    obj The object to search.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteSearchObjs(ByVal Obj As String)
 '***************************************************
 'Author: Lorenzo Rivero (Rhynne)
 'Last Modification: 06/01/2017
-'Writes the "SearchObjs" message to the outgoing data buffer
+'Writes the "SearchObjs" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.GMCommands)
         Call .WriteByte(eGMCommands.SearchObjs)
         
-        Call .WriteASCIIString(Obj)
+        Call .WriteString(Obj)
 
     End With
 End Sub
 
 ''
-' Writes the "SearchObjs" message to the outgoing data buffer.
+' Writes the "SearchObjs" message to the outgoing data incomingData.
 '
 ' @param    count The countdown will sent for players.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteCountdown(ByVal Count As Byte)
 '***************************************************
 'Author: Lorenzo Rivero (Rhynne)
 'Last Modification: 07/01/2017
-'Writes the "Countdown" message to the outgoing data buffer
+'Writes the "Countdown" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.GMCommands)
@@ -8312,82 +8055,82 @@ Public Sub WriteCountdown(ByVal Count As Byte)
 End Sub
 
 ''
-' Writes the "WinTournament" message to the outgoing data buffer.
+' Writes the "WinTournament" message to the outgoing data incomingData.
 '
 ' @param    user The object to search.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteWinTournament(ByVal user As String)
 '***************************************************
 'Author: Lorenzo Rivero (Rhynne)
 'Last Modification: 08/01/2017
-'Writes the "WinTournament" message to the outgoing data buffer
+'Writes the "WinTournament" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.GMCommands)
         Call .WriteByte(eGMCommands.WinTournament)
         
-        Call .WriteASCIIString(user)
+        Call .WriteString(user)
     End With
 End Sub
 
 ''
-' Writes the "LoseTournament" message to the outgoing data buffer.
+' Writes the "LoseTournament" message to the outgoing data incomingData.
 '
 ' @param    user The object to search.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteLoseTournament(ByVal user As String)
 '***************************************************
 'Author: Lorenzo Rivero (Rhynne)
 'Last Modification: 08/01/2017
-'Writes the "LoseTournament" message to the outgoing data buffer
+'Writes the "LoseTournament" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.GMCommands)
         Call .WriteByte(eGMCommands.LoseTournament)
         
-        Call .WriteASCIIString(user)
+        Call .WriteString(user)
     End With
 End Sub
 
 ''
-' Writes the "WinQuest" message to the outgoing data buffer.
+' Writes the "WinQuest" message to the outgoing data incomingData.
 '
 ' @param    user The object to search.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteWinQuest(ByVal user As String)
 '***************************************************
 'Author: Lorenzo Rivero (Rhynne)
 'Last Modification: 08/01/2017
-'Writes the "WinQuest" message to the outgoing data buffer
+'Writes the "WinQuest" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.GMCommands)
         Call .WriteByte(eGMCommands.WinQuest)
         
-        Call .WriteASCIIString(user)
+        Call .WriteString(user)
     End With
 End Sub
 
 ''
-' Writes the "LoseQuest" message to the outgoing data buffer.
+' Writes the "LoseQuest" message to the outgoing data incomingData.
 '
 ' @param    user The object to search.
-' @remarks  The data is not actually sent until the buffer is properly flushed.
+' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
 Public Sub WriteLoseQuest(ByVal user As String)
 '***************************************************
 'Author: Lorenzo Rivero (Rhynne)
 'Last Modification: 08/01/2017
-'Writes the "LoseQuest" message to the outgoing data buffer
+'Writes the "LoseQuest" message to the outgoing data incomingData
 '***************************************************
     With outgoingData
         Call .WriteByte(ClientPacketID.GMCommands)
         Call .WriteByte(eGMCommands.LoseQuest)
         
-        Call .WriteASCIIString(user)
+        Call .WriteString(user)
 
     End With
 End Sub
@@ -8395,9 +8138,11 @@ End Sub
 Private Sub HandleSubeClase()
     With incomingData
         
-        .ReadByte 'remove id
         
-        frmMain.lblClase.Visible = .ReadBoolean
+        'todo
+        .ReadBoolean
+        
+        'frmMain.lblClase.Visible = .ReadBoolean
     
     End With
 End Sub
@@ -8427,8 +8172,6 @@ Private Sub HandleShowFormClase()
 
     With incomingData
             
-            Call .ReadByte 'remove id
-            
             UserClase = .ReadByte()
             
             Select Case UserClase
@@ -8446,22 +8189,17 @@ Private Sub HandleShowFormClase()
 End Sub
 
 Private Sub HandleShowFaccionForm()
-    With incomingData
-        
-        Call .ReadByte
-        
         FrmElegirCamino.Show
-    
-    End With
 End Sub
 
 Private Sub HandleEligeFaccion()
     
     With incomingData
-    
-        Call .ReadByte
+
+        'todo
+        .ReadBoolean
         
-        frmMain.lblFaccion.Visible = .ReadBoolean
+        'frmMain.lblFaccion.Visible = .ReadBoolean
     End With
 End Sub
 
@@ -8469,16 +8207,15 @@ Private Sub HandleEligeRecompensa()
     
     With incomingData
     
-        Call .ReadByte
+        'todo
+        .ReadBoolean
         
-        frmMain.lblRecompensa.Visible = .ReadBoolean
+        'frmMain.lblRecompensa.Visible = .ReadBoolean
     End With
 End Sub
 
 Private Sub HandleShowRecompensaForm()
     With incomingData
-        
-        Call .ReadByte
         
         Dim Clase As Byte
         Dim Recom As Integer
@@ -8520,23 +8257,27 @@ Public Sub WriteEligioFaccion(ByVal Faccion As eFaccion)
 End Sub
 
 ''
-' Flushes the outgoing data buffer of the user.
+' Flushes the outgoing data incomingData of the user.
 '
-' @param    UserIndex User whose outgoing data buffer will be flushed.
+' @param    UserIndex User whose outgoing data incomingData will be flushed.
 
 Public Sub FlushBuffer()
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
-'Sends all data existing in the buffer
+'Sends all data existing in the incomingData
 '***************************************************
     Dim sndData As String
     
     With outgoingData
-        If .Length = 0 Then _
+        If .Position = 0 Then _
             Exit Sub
         
-        sndData = .ReadASCIIStringFixed(.Length)
+        .Flip
+        
+        sndData = .ReadString(.Limit)
+        
+        .Clear
         
         Call SendData(sndData)
     End With
@@ -8552,7 +8293,8 @@ Private Sub SendData(ByRef sdData As String)
     'No enviamos nada si no estamos conectados
     If Not frmMain.Socket1.IsWritable Then
         'Put data back in the bytequeue
-        Call outgoingData.WriteASCIIStringFixed(sdData)
+        
+        Call outgoingData.WriteString(sdData, Len(sdData))
         
         Exit Sub
     End If

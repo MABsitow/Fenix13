@@ -34,7 +34,7 @@ Option Explicit
 '
 ' API
 '
-Private Declare Sub RtlMoveMemory Lib "kernel32" (Destination As Any, Source As Any, ByVal Length As Long)
+Private Declare Sub RtlMoveMemory Lib "kernel32" (destination As Any, source As Any, ByVal length As Long)
 
 '
 ' 2D vertex structure
@@ -95,6 +95,7 @@ Private m_Data() As TYPE_VERTEX
 ' Current states
 '
 Private m_State As TYPE_VIDEO_STATE
+
 
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
@@ -187,17 +188,16 @@ Public Sub Flush()
         ' Apply states (TODO)
         '
         Call Video.SetState(m_State)
-
-        '
+        
         ' Apply texture state
         '
-        Call Video.SetTexture(m_View, 0, m_Texture)
+        Call Video.SetTexture(0, 0, m_Texture)
                 
         '
         ' Apply index buffer state
         '
         Call Video.SetIndexBuffer(m_Indices, 0, (m_Position / 4) * 6)
-            
+        
         '
         ' Apply vertex buffer state
         '
@@ -318,8 +318,4 @@ Public Sub SetState(State As TYPE_VIDEO_STATE)
     End If
     
 End Sub
-
-
-
-
 
