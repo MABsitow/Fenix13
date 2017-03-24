@@ -34,7 +34,7 @@ Option Explicit
 '
 ' API
 '
-Private Declare Sub RtlMoveMemory Lib "kernel32" (destination As Any, source As Any, ByVal length As Long)
+Private Declare Sub RtlMoveMemory Lib "kernel32" (Destination As Any, Source As Any, ByVal Length As Long)
 
 '
 ' 2D vertex structure
@@ -69,7 +69,7 @@ Private m_Program As Long
 '
 ' Current layout being use for the batch
 '
-Private m_Layout  As TYPE_VIDEO_LAYOUT
+Private m_Layout  As CoVideoLayout
 
 '
 ' IBuffer handle of the batch (statically compiled)
@@ -79,7 +79,7 @@ Private m_Indices As Long
 '
 ' VBuffer handle of the batch (dynamically compiled)
 '
-Private m_Vertices As TYPE_VIDEO_TRANSIENT_VERTEX_BUFFER
+Private m_Vertices As CoVideoTransientVertexBuffer
 
 '
 ' Current position of the batch (in vertices coordinates)
@@ -94,7 +94,7 @@ Private m_Data() As TYPE_VERTEX
 '
 ' Current states
 '
-Private m_State As TYPE_VIDEO_STATE
+Private m_State As Currency
 
 
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
@@ -180,34 +180,35 @@ Public Sub Flush()
         '
         ' Allocate a new transient vertex buffer and copy the data
         '
-        m_Vertices = Video.CreateTransientVertexBuffer(m_Position, m_Layout)
+        'Call CoVideoAllocTransientVertexBuffer(m_Vertices, m_Position, m_Layout)
         
-        Call RtlMoveMemory(ByVal m_Vertices.mPointer, ByVal VarPtr(m_Data(0)), LenB(m_Data(0)) * m_Position)
+        'Call RtlMoveMemory(ByVal m_Vertices.Pointer, ByVal VarPtr(m_Data(0)), LenB(m_Data(0)) * m_Position)
+        
+        Call CoVideoAllocTransientVertexBufferAndCopy(m_Vertices, m_Position, m_Layout, m_Data)
         
         '
         ' Apply states (TODO)
         '
-        Call Video.SetState(m_State)
+        Call CoVideoSetState(m_State)
         
         ' Apply texture state
         '
-        Call Video.SetTexture(0, 0, m_Texture)
-                
+        Call CoVideoSetTexture(0, 0, m_Texture)
+        
         '
         ' Apply index buffer state
         '
-        Call Video.SetIndexBuffer(m_Indices, 0, (m_Position / 4) * 6)
+        Call CoVideoSetIndexBuffer(m_Indices, 0, (m_Position / 4) * 6)
         
         '
         ' Apply vertex buffer state
         '
-        Call Video.SetTransientVertexBuffer(m_Vertices, 0, m_Position)
-          
+        Call CoVideoSetTransientVertexBuffer(m_Vertices, 0, m_Position)
+        
         '
         ' Submit all primitives to the target view
         '
-        Call Video.Submit(m_View, m_Program)
-    
+        Call CoVideoSubmit(m_View, m_Program)
         '
         ' Reset the position of the batch
         '
@@ -224,11 +225,11 @@ Public Sub Initialise(ByVal Capacity As Long)
     '
     ' Create the vertex's format
     '
-    Call Video.VertexDeclBegin(m_Layout)
-    Call Video.VertexDeclAdd(m_Layout, ATTRIBUTE_POSITION, 2, ATTRIBUTE_TYPE_FLOAT)
-    Call Video.VertexDeclAdd(m_Layout, ATTRIBUTE_COLOR0, 4, ATTRIBUTE_TYPE_UINT8, True)
-    Call Video.VertexDeclAdd(m_Layout, ATTRIBUTE_TEXCOORD0, 2, ATTRIBUTE_TYPE_FLOAT)
-    Call Video.VertexDeclEnd(m_Layout)
+    Call CoVideoVertexLayoutBegin(m_Layout)
+    Call CoVideoVertexLayoutAdd(m_Layout, ATTRIBUTE_POSITION, 2, ATTRIBUTE_FORMAT_FLOAT)
+    Call CoVideoVertexLayoutAdd(m_Layout, ATTRIBUTE_COLOR0, 4, ATTRIBUTE_FORMAT_UINT8, True)
+    Call CoVideoVertexLayoutAdd(m_Layout, ATTRIBUTE_TEXCOORD0, 2, ATTRIBUTE_FORMAT_FLOAT)
+    Call CoVideoVertexLayoutEnd(m_Layout)
     
     '
     ' Pre create the data array
@@ -238,22 +239,22 @@ Public Sub Initialise(ByVal Capacity As Long)
     '
     ' Pre calculate all indices for the batch and create the buffer
     '
-    ReDim wData(0 To Capacity * 6 - 1) As Integer
+    ReDim wdata(0 To Capacity * 6 - 1) As Integer
     
     Dim i As Integer, j As Integer
    
-    For i = 0 To UBound(wData) Step 6
-        wData(i) = j
-        wData(i + 1) = j + 1
-        wData(i + 2) = j + 2
-        wData(i + 3) = j + 2
-        wData(i + 4) = j + 3
-        wData(i + 5) = j
+    For i = 0 To UBound(wdata) Step 6
+        wdata(i) = j
+        wdata(i + 1) = j + 1
+        wdata(i + 2) = j + 2
+        wdata(i + 3) = j + 2
+        wdata(i + 4) = j + 3
+        wdata(i + 5) = j
        
         j = j + 4
     Next
 
-    m_Indices = Video.CreateIndexBufferFromMemory(Video.Copy16I(wData))
+    m_Indices = CoVideoCreateIndexBuffer(Co2.CoVideoCopySafeArray(wdata))
     
 End Sub
 
@@ -304,10 +305,9 @@ End Sub
 
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-Public Sub SetState(State As TYPE_VIDEO_STATE)
-    
-    If (m_State.mMask(0) <> State.mMask(0) Or _
-        m_State.mMask(1) <> State.mMask(1)) Then
+Public Sub SetState(State As Currency)
+
+    If (m_State <> State) Then
         
         '
         ' Flush the current batch before changing states

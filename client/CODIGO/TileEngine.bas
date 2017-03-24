@@ -33,30 +33,31 @@ Attribute VB_Name = "Mod_TileEngine"
 
 Option Explicit
 
-Private Program As Long
+Public SurfaceDB As clsSurfaceDB
+Private SpriteBatch As clsBatch
 
-Public Type Texture
-        Ptr As Long
-        Width As Integer
-        Height As Integer
+Public DirectX As DirectX8
+Public DirectD3D8 As D3DX8
+Public DirectD3D As Direct3D8
+Public DirectDevice As Direct3DDevice8
+
+Public Type TLVERTEX
+    X As Single
+    Y As Single
+    Z As Single
+    
+    Color As Long
+
+    Tu As Single
+    Tv As Single
 End Type
 
-Public Type Rect
-        x1 As Long
-        x2 As Long
-        y1 As Long
-        y2 As Long
-End Type
+Private MainUITex As Direct3DTexture8
+Private LoginTex  As Direct3DTexture8
 
-Private SpriteBatch As clsBGFXSpriteBatch
-
-Private MainUITex As Texture
-
-'Private Viewport As D3DVIEWPORT8
-Private UIProjection As TYPE_MATH_MATRIX
-Private MProjection As TYPE_MATH_MATRIX
-Private UIView As TYPE_MATH_MATRIX
-Private MView As TYPE_MATH_MATRIX
+Private Viewport As D3DVIEWPORT8
+Private Projection As D3DMATRIX
+Private View As D3DMATRIX
 'Private Camera As D3DVECTOR
 
 'Map sizes in tiles
@@ -198,7 +199,7 @@ End Type
 'Info de un objeto
 Public Type Obj
     OBJIndex As Integer
-    Amount As Integer
+    amount As Integer
 End Type
 
 'Tipo de las celdas del mapa
@@ -248,9 +249,9 @@ Public UserCharIndex As Integer
 
 Public EngineRun As Boolean
 
-'Public FPS As Long
-'Public FramesPerSecCounter As Long
-'Private fpsLastCheck As Long
+Public FPS As Long
+Public FramesPerSecCounter As Long
+Private fpsLastCheck As Long
 
 'Tamaño del la vista en Tiles
 Private WindowTileWidth As Integer
@@ -291,10 +292,6 @@ Private MainView        As Long 'ID
 Private MainViewWidth   As Integer
 Private MainViewHeight  As Integer
 
-'Private Const Layer2    As Long = 1
-Private Const Layer3    As Long = 1
-Private Const Layer4    As Long = 2
-
 Private MouseTileX As Byte
 Private MouseTileY As Byte
 
@@ -319,7 +316,7 @@ Public bTecho       As Boolean 'hay techo?
 Public charlist(1 To 10000) As Char
 
 ' Used by GetTextExtentPoint32
-Private Type Size
+Private Type size
     cx As Long
     cy As Long
 End Type
@@ -1100,7 +1097,7 @@ Function InMapBounds(ByVal X As Integer, ByVal Y As Integer) As Boolean
     InMapBounds = True
 End Function
 
-Private Sub DDrawGrhtoSurface(ByRef Grh As Grh, ByVal X As Integer, ByVal Y As Integer, ByVal Z As Integer, ByVal Center As Byte, ByVal Animate As Byte, Color() As Long)
+Private Sub DDrawGrhtoSurface(ByRef Grh As Grh, ByVal X As Integer, ByVal Y As Integer, ByVal Center As Byte, ByVal Animate As Byte, Color() As Long)
     Dim CurrentGrhIndex As Integer
 'On Error GoTo error
     
@@ -1137,7 +1134,7 @@ Private Sub DDrawGrhtoSurface(ByRef Grh As Grh, ByVal X As Integer, ByVal Y As I
         End If
         
         'Draw
-        Device_Textured_Render X, Y, .pixelWidth, .pixelHeight, .sX, .sY, SurfaceDB.Surface(.FileNum), Color
+        Device_Textured_Render X, Y, .pixelWidth, .pixelHeight, .sX, .sY, .FileNum, Color
         
     End With
 Exit Sub
@@ -1168,7 +1165,7 @@ Sub DDrawTransGrhIndextoSurface(ByVal GrhIndex As Integer, ByVal X As Integer, B
         End If
         
         'Draw
-        Device_Textured_Render X, Y, .pixelWidth, .pixelHeight, .sX, .sY, SurfaceDB.Surface(.FileNum), Color
+        Device_Textured_Render X, Y, .pixelWidth, .pixelHeight, .sX, .sY, .FileNum, Color
     End With
 End Sub
 
@@ -1214,7 +1211,7 @@ Sub DDrawTransGrhtoSurface(ByRef Grh As Grh, ByVal X As Integer, ByVal Y As Inte
         End If
 
         'Draw
-        Device_Textured_Render X, Y, .pixelWidth, .pixelHeight, .sX, .sY, SurfaceDB.Surface(.FileNum), Color
+        Device_Textured_Render X, Y, .pixelWidth, .pixelHeight, .sX, .sY, .FileNum, Color
     End With
 Exit Sub
 
@@ -1298,9 +1295,7 @@ Sub RenderScreen(ByVal PixelOffsetX As Integer, ByVal PixelOffsetY As Integer)
     End If
     
     If ScreenMaxX < XMaxMapSize Then ScreenMaxX = ScreenMaxX + 1
-    
-    
-    
+
     screenX = screenX - 1
     screenY = screenY - 1
     
@@ -1316,7 +1311,7 @@ Sub RenderScreen(ByVal PixelOffsetX As Integer, ByVal PixelOffsetY As Integer)
             Call DDrawGrhtoSurface(MapData(X, Y).Graphic(1), _
                 PixelOffsetXTemp, _
                 PixelOffsetYTemp, _
-                0, 0, 1, AmbientColor)
+                0, 1, AmbientColor)
             '******************************************
             
             'Layer 2 **********************************
@@ -1452,7 +1447,6 @@ Function HayUserAbajo(ByVal X As Integer, ByVal Y As Integer, ByVal GrhIndex As 
     End If
 End Function
 
-
 Public Function InitTileEngine(ByVal setDisplayFormhWnd As Long, ByVal setMainViewTop As Integer, ByVal setMainViewLeft As Integer, ByVal setTilePixelHeight As Integer, ByVal setTilePixelWidth As Integer, ByVal setWindowTileHeight As Integer, ByVal setWindowTileWidth As Integer, ByVal setTileBufferSize As Integer, ByVal pixelsToScrollPerFrameX As Integer, pixelsToScrollPerFrameY As Integer, ByVal engineSpeed As Single) As Boolean
 '***************************************************
 'Author: Aaron Perkins
@@ -1482,8 +1476,8 @@ Public Function InitTileEngine(ByVal setDisplayFormhWnd As Long, ByVal setMainVi
     engineBaseSpeed = engineSpeed
     
     'Set FPS value to 60 for startup
-    'FPS = 60
-    'FramesPerSecCounter = 60
+    FPS = 60
+    FramesPerSecCounter = 60
     
     MinXBorder = XMinMapSize + (WindowTileWidth \ 2)
     MaxXBorder = XMaxMapSize - (WindowTileWidth \ 2)
@@ -1504,7 +1498,7 @@ Public Function InitTileEngine(ByVal setDisplayFormhWnd As Long, ByVal setMainVi
     ScrollPixelsPerFrameX = pixelsToScrollPerFrameX
     ScrollPixelsPerFrameY = pixelsToScrollPerFrameY
     
-    Call BGFX_Init(prgRun)
+    Call DirectX_Init
 
     Call LoadGrhData
     Call CargarCuerpos
@@ -1514,7 +1508,6 @@ Public Function InitTileEngine(ByVal setDisplayFormhWnd As Long, ByVal setMainVi
     
     Call Engine_Init_FontSettings
     Call Engine_Init_FontTextures
-    Call InitComponentsImage
     
     AmbientColor(0) = -1
     AmbientColor(1) = -1
@@ -1524,6 +1517,69 @@ Public Function InitTileEngine(ByVal setDisplayFormhWnd As Long, ByVal setMainVi
     InitTileEngine = True
 End Function
 
+Public Sub DirectX_Init()
+
+    Dim DispMode As D3DDISPLAYMODE
+    Dim PresentationParameters As D3DPRESENT_PARAMETERS
+    
+    Set DirectX = New DirectX8
+    Set DirectD3D = DirectX.Direct3DCreate
+    Set DirectD3D8 = New D3DX8
+    
+    DirectD3D.GetAdapterDisplayMode D3DADAPTER_DEFAULT, DispMode
+    
+    With PresentationParameters
+    
+        .Windowed = True
+        .SwapEffect = D3DSWAPEFFECT_DISCARD
+        
+        .BackBufferFormat = DispMode.Format
+        .BackBufferWidth = frmMain.MainViewPic.ScaleWidth
+        .BackBufferHeight = frmMain.MainViewPic.ScaleHeight
+        
+    End With
+
+    Set DirectDevice = DirectD3D.CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, frmMain.MainViewPic.hWnd, D3DCREATE_HARDWARE_VERTEXPROCESSING, PresentationParameters)
+    
+    Call D3DXMatrixOrthoOffCenterLH(Projection, 0, frmMain.MainViewPic.ScaleWidth, frmMain.MainViewPic.ScaleHeight, 0, -1#, 1#)
+    Call D3DXMatrixIdentity(View)
+    
+    Call DirectDevice.SetTransform(D3DTS_PROJECTION, Projection)
+    Call DirectDevice.SetTransform(D3DTS_VIEW, View)
+    
+    Engine_Init_RenderStates
+    
+    Set SurfaceDB = New clsSurfaceDB
+    Set SpriteBatch = New clsBatch
+    
+    Call SurfaceDB.Init(DirectD3D8, DirectDevice, 90)
+    Call SpriteBatch.Initialise(1000)
+    
+    If DirectDevice Is Nothing Then
+        MsgBox "No se puede inicializar DirectX. Por favor asegúrese de tener la última versión correctamente instalada."
+        Exit Sub
+    End If
+    
+End Sub
+Private Sub Engine_Init_RenderStates()
+
+    DirectDevice.SetVertexShader D3DFVF_XYZ Or D3DFVF_DIFFUSE Or D3DFVF_TEX1
+        
+    'Set the render states
+    With DirectDevice
+    
+        .SetRenderState D3DRS_LIGHTING, False
+        .SetRenderState D3DRS_SRCBLEND, D3DBLEND_SRCALPHA
+        .SetRenderState D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA
+        .SetRenderState D3DRS_ALPHABLENDENABLE, True
+        .SetRenderState D3DRS_FILLMODE, D3DFILL_SOLID
+        .SetRenderState D3DRS_CULLMODE, D3DCULL_NONE
+        .SetTextureStageState 0, D3DTSS_ALPHAOP, D3DTOP_MODULATE
+    
+    End With
+    
+End Sub
+
 Public Sub DeinitTileEngine()
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
@@ -1532,23 +1588,18 @@ Public Sub DeinitTileEngine()
 '***************************************************
 'Set no texture in the device to avoid memory leaks
 
-        'If Not DirectDevice Is Nothing Then
-        '        DirectDevice.SetTexture 0, Nothing
-        'End If
-        
-        'Set FontVB = Nothing
-        'Set WindowVB = Nothing
+        If Not DirectDevice Is Nothing Then
+                DirectDevice.SetTexture 0, Nothing
+        End If
         
         '// Destroy Textures
-        'Set SurfaceDB = Nothing
+        Set SurfaceDB = Nothing
         
-        'Set DirectX = Nothing
-        'Set DirectD3D = Nothing
-        'Set DirectDevice = Nothing
+        Set DirectX = Nothing
+        Set DirectD3D = Nothing
+        Set DirectDevice = Nothing
         
-        Call SurfaceDB.Delete
-        
-        Call Video.Destroy
+        Set SpriteBatch = Nothing
         
         'Clear arrays
         Erase GrhData
@@ -1563,15 +1614,14 @@ Public Sub DeinitTileEngine()
         
 End Sub
 
-Sub ShowNextFrame(ByVal DisplayFormTop As Integer, ByVal DisplayFormLeft As Integer, ByVal MouseViewX As Integer, ByVal MouseViewY As Integer)
+
+Public Sub ShowNextFrame(ByVal DisplayFormTop As Integer, ByVal DisplayFormLeft As Integer, ByVal MouseViewX As Integer, ByVal MouseViewY As Integer)
 '***************************************************
 'Author: Arron Perkins
 'Last Modification: 08/14/07
 'Last modified by: Juan Martín Sotuyo Dodero (Maraxus)
 'Updates the game's model and renders everything.
 '***************************************************
-    Dim wCommon As TYPE_VIDEO_STATE
-
     Static OffsetCounterX As Single
     Static OffsetCounterY As Single
     
@@ -1601,26 +1651,10 @@ Sub ShowNextFrame(ByVal DisplayFormTop As Integer, ByVal DisplayFormLeft As Inte
         'Update mouse position within view area
         Call ConvertCPtoTP(MouseViewX, MouseViewY, MouseTileX, MouseTileY)
         
-        wCommon = Video.AsState(STATE_ALPHA_WRITE, STATE_RGB_WRITE)
-                
-        SpriteBatch.Begin
-
-        Call SpriteBatch.SetState(wCommon)
+        'DirectDevice.Clear 0, ByVal 0, D3DCLEAR_TARGET, 0, 1#, 0
+        DirectDevice.BeginScene
         
-        Call SpriteBatch.SetView(MainView)
-        '
-        ' Draw the UI
-        '
-        Call RenderUserInterface
-        
-        Call RenderComponents(SpriteBatch)
-        
-        Call Inventario.LoopDrawInv(SpriteBatch)
-        
-        '
-        ' Draw the world
-        '
-        Call SpriteBatch.SetView(1)
+        Call SpriteBatch.Begin
         
         '****** Update screen ******
         If UserCiego Then
@@ -1635,18 +1669,19 @@ Sub ShowNextFrame(ByVal DisplayFormTop As Integer, ByVal DisplayFormLeft As Inte
 
        ' Call DialogosClanes.Draw
         
-        SpriteBatch.Finish
+        Call SpriteBatch.Finish
         
-        Call Video.Frame
+        DirectDevice.EndScene
+        DirectDevice.Present ByVal 0, ByVal 0, 0, ByVal 0
         
         'FPS update
-        'If fpsLastCheck + 1000 < GetTickCount() Then
-        '    FPS = FramesPerSecCounter
-        '    FramesPerSecCounter = 1
-        '    fpsLastCheck = GetTickCount()
-        'Else
-        '    FramesPerSecCounter = FramesPerSecCounter + 1
-        'End If
+        If fpsLastCheck + 1000 < GetTickCount() Then
+            FPS = FramesPerSecCounter
+            FramesPerSecCounter = 1
+            fpsLastCheck = GetTickCount()
+        Else
+            FramesPerSecCounter = FramesPerSecCounter + 1
+        End If
         
         'Get timing info
         timerElapsedTime = GetElapsedTime()
@@ -1862,83 +1897,23 @@ Private Sub CleanViewPort()
 'Fills the viewport with black.
 '***************************************************
     'todo: check if inventory still rendering after this
-    'DirectDevice.Clear 0, ByVal 0, D3DCLEAR_TARGET Or D3DCLEAR_ZBUFFER, 0, 1#, 0
-End Sub
-
-Private Sub BGFX_Init(ByRef isRunning As Boolean)
-    isRunning = Video.Create(frmMain.hWnd, RENDERER_DIRECT3D11)
-
-    MainView = 0
-    
-    
-    Call Video.Reset(frmMain.ScaleWidth, frmMain.ScaleHeight)
-    
-    'Main UI
-    Call Video.SetViewClear(MainView, CLEAR_COLOR, &HFF)
-    
-    Call Video.SetViewRect(MainView, 0, 0, frmMain.ScaleWidth, frmMain.ScaleHeight)
-    
-    Call Mathematic.MxToOrtho2D(UIProjection, 0, frmMain.ScaleWidth, frmMain.ScaleHeight, 0)
-    
-    Call Mathematic.MxToIdentity(UIView)
-    
-    Call Video.SetViewTransform(MainView, UIView, UIProjection)
-    Call Video.SetTransform(UIView)
-    
-    Call Video.SetViewSequencialMode(MainView, True)
-    
-    'World View
-    Call Video.SetViewClear(1, CLEAR_COLOR, &HFF)
-    
-    Call Video.SetViewRect(1, MainViewLeft, MainViewTop, MainViewWidth, MainViewHeight)
-    
-    Call Mathematic.MxToOrtho2D(MProjection, 0, MainViewWidth, MainViewHeight, 0)
-    
-    Call Mathematic.MxToIdentity(MView)
-    
-    Call Video.SetViewTransform(1, MView, MProjection)
-    'Call Video.SetTransform(MView)
-    
-    Call Video.SetViewSequencialMode(1, True)
-    
-    Set SpriteBatch = New clsBGFXSpriteBatch
-    
-    Call SpriteBatch.Initialise(1000)
-    
-    Program = Video.CreateProgram( _
-       Video.CreateShaderFromMemory(Video.Copy8I(ReadFile("INIT/Shader/D3D11/vs_simple.bin"))), _
-       Video.CreateShaderFromMemory(Video.Copy8I(ReadFile("INIT/Shader/D3D11/fs_simple.bin"))))
-       
-    Call SpriteBatch.SetProgram(Program)
-       
-    
-    Dim Image As TYPE_VIDEO_IMAGE
-    
-    Image = Video.CreateImageFromFilename(DirGraficos & "main.png")
-    
-    MainUITex.Ptr = Image.mHandle
-    MainUITex.Width = Image.mX
-    MainUITex.Height = Image.mY
-    
-    
-    Call SurfaceDB.Initialize(DirGraficos, 90)
-    
+    DirectDevice.Clear 0, ByVal 0, D3DCLEAR_TARGET Or D3DCLEAR_ZBUFFER, 0, 1#, 0
 End Sub
 
 Public Sub Device_Textured_Render(ByVal X As Integer, ByVal Y As Integer, _
                                   ByVal Width As Integer, ByVal Height As Integer, _
                                   ByVal sX As Integer, ByVal sY As Integer, _
-                                  tex As Texture, _
+                                  tex As Long, _
                                   ByRef Color() As Long)
-
+        
+        Dim Texture As Direct3DTexture8
         Dim TexWidth As Long, TexHeight As Long
+        
+        Set Texture = SurfaceDB.GetTexture(tex, TexWidth, TexHeight)
 
-        TexWidth = tex.Width
-        TexHeight = tex.Height
-                
         With SpriteBatch
                 '// Seteamos la textura
-                Call .SetTexture(tex.Ptr)
+                Call .SetTexture(Texture)
                 
                 If TexWidth <> 0 And TexHeight <> 0 Then
                     Call .Draw(X, Y, Width, Height, Color, sX / TexWidth, sY / TexHeight, (sX + Width) / TexWidth, (sY + Height) / TexHeight)
@@ -1949,12 +1924,6 @@ Public Sub Device_Textured_Render(ByVal X As Integer, ByVal Y As Integer, _
 
 End Sub
 
-Public Sub RenderUserInterface()
-    SpriteBatch.SetTexture MainUITex.Ptr
-    
-    SpriteBatch.Draw 0, 0, MainUITex.Width, MainUITex.Height, AmbientColor
-    
-End Sub
 Public Sub SetCamera(ByVal X As Single, ByVal Y As Single)
     
     'Camera.X = X
@@ -1970,4 +1939,92 @@ Public Sub SetCamera(ByVal X As Single, ByVal Y As Single)
     
     'Call D3DXMATH_MATRIX.D3DXMatrixLookAtLH(View, Camera, At, Up)
     'Call DirectDevice.SetTransform(D3DTS_VIEW, View)
+End Sub
+
+Public Sub CheckKeys()
+'*****************************************************************
+'Checks keys and respond
+'*****************************************************************
+    Static LastMovement As Long
+    
+    'No input allowed while Argentum is not the active window
+    If Not Application.IsAppActive() Then Exit Sub
+    
+    'No walking when in commerce or banking.
+    If Comerciando Then Exit Sub
+    
+    'No walking while writting in the forum.
+    If MirandoForo Then Exit Sub
+    
+    'If game is paused, abort movement.
+    If pausa Then Exit Sub
+    
+    'TODO: Debería informarle por consola?
+    If Traveling Then Exit Sub
+
+    'Control movement interval (this enforces the 1 step loss when meditating / resting client-side)
+    If GetTickCount - LastMovement > 56 Then
+        LastMovement = GetTickCount
+    Else
+        Exit Sub
+    End If
+    
+    'Don't allow any these keys during movement..
+    If UserMoving = 0 Then
+        If Not UserEstupido Then
+            'Move Up
+            If GetKeyState(CustomKeys.BindedKey(eKeyType.mKeyUp)) < 0 Then
+                If frmMain.TrainingMacro.Enabled Then frmMain.DesactivarMacroHechizos
+                Call MoveTo(NORTH)
+                'todo
+                frmMain.Coord.Caption = UserMap & " X: " & UserPos.X & " Y: " & UserPos.Y
+                Exit Sub
+            End If
+            
+            'Move Right
+            If GetKeyState(CustomKeys.BindedKey(eKeyType.mKeyRight)) < 0 Then
+                If frmMain.TrainingMacro.Enabled Then frmMain.DesactivarMacroHechizos
+                Call MoveTo(EAST)
+                frmMain.Coord.Caption = "(" & UserMap & "," & UserPos.X & "," & UserPos.Y & ")"
+                frmMain.Coord.Caption = UserMap & " X: " & UserPos.X & " Y: " & UserPos.Y
+                Exit Sub
+            End If
+        
+            'Move down
+            If GetKeyState(CustomKeys.BindedKey(eKeyType.mKeyDown)) < 0 Then
+                If frmMain.TrainingMacro.Enabled Then frmMain.DesactivarMacroHechizos
+                Call MoveTo(SOUTH)
+                frmMain.Coord.Caption = UserMap & " X: " & UserPos.X & " Y: " & UserPos.Y
+                Exit Sub
+            End If
+        
+            'Move left
+            If GetKeyState(CustomKeys.BindedKey(eKeyType.mKeyLeft)) < 0 Then
+                If frmMain.TrainingMacro.Enabled Then frmMain.DesactivarMacroHechizos
+                Call MoveTo(WEST)
+                frmMain.Coord.Caption = UserMap & " X: " & UserPos.X & " Y: " & UserPos.Y
+                Exit Sub
+            End If
+            
+            ' We haven't moved - Update 3D sounds!
+            'call 'audio.MoveListener(UserPos.X, UserPos.Y)
+        Else
+            Dim kp As Boolean
+            kp = (GetKeyState(CustomKeys.BindedKey(eKeyType.mKeyUp)) < 0) Or _
+                GetKeyState(CustomKeys.BindedKey(eKeyType.mKeyRight)) < 0 Or _
+                GetKeyState(CustomKeys.BindedKey(eKeyType.mKeyDown)) < 0 Or _
+                GetKeyState(CustomKeys.BindedKey(eKeyType.mKeyLeft)) < 0
+            
+            If kp Then
+                Call RandomMove
+            Else
+                ' We haven't moved - Update 3D sounds!
+                'call 'audio.MoveListener(UserPos.X, UserPos.Y)
+            End If
+            
+            If frmMain.TrainingMacro.Enabled Then frmMain.DesactivarMacroHechizos
+            frmMain.Coord.Caption = "(" & UserPos.X & "," & UserPos.Y & ")"
+            frmMain.Coord.Caption = "X: " & UserPos.X & " Y: " & UserPos.Y
+        End If
+    End If
 End Sub

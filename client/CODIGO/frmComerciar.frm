@@ -378,8 +378,8 @@ Private Sub imgComprar_Click()
     If UserGLD >= CalculateSellPrice(NPCInventory(InvComNpc.SelectedItem).Valor, Val(cantidad.Text)) Then
         Call WriteCommerceBuy(InvComNpc.SelectedItem, Val(cantidad.Text))
     Else
-        'todo
-        Call AppendLineCC(frmMain.RecTxt, "No tienes suficiente oro.", 2, 51, 223, 1, 1)
+        
+        Call AddtoRichTextBox(frmMain.RecTxt, "No tienes suficiente oro.", 2, 51, 223, 1, 1)
         Exit Sub
     End If
     
@@ -414,7 +414,7 @@ Private Sub picInvNpc_Click()
     Label1(0).Caption = NPCInventory(ItemSlot).Name
     Label1(1).Caption = "Precio: " & CalculateSellPrice(NPCInventory(ItemSlot).Valor, Val(cantidad.Text)) 'No mostramos numeros reales
     
-    If NPCInventory(ItemSlot).Amount <> 0 Then
+    If NPCInventory(ItemSlot).amount <> 0 Then
     
         Select Case NPCInventory(ItemSlot).OBJType
             Case eObjType.otWeapon
@@ -455,7 +455,7 @@ Private Sub picInvUser_Click()
     Label1(0).Caption = Inventario.ItemName(ItemSlot)
     Label1(1).Caption = "Precio: " & CalculateBuyPrice(Inventario.Valor(ItemSlot), Val(cantidad.Text)) 'No mostramos numeros reales
     
-    If Inventario.Amount(ItemSlot) <> 0 Then
+    If Inventario.amount(ItemSlot) <> 0 Then
     
         Select Case Inventario.OBJType(ItemSlot)
             Case eObjType.otWeapon

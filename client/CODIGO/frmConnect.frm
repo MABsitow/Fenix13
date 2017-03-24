@@ -179,9 +179,9 @@ Private Sub imgConectarse_Click()
     If CheckUserData(False) = True Then
         EstadoLogin = Normal
         
-    frmMain.Socket1.HostName = CurServerIP
-    frmMain.Socket1.RemotePort = CurServerPort
-    frmMain.Socket1.Connect
+        frmMain.Socket1.HostName = CurServerIP
+        frmMain.Socket1.RemotePort = CurServerPort
+        frmMain.Socket1.Connect
 
     End If
     
@@ -204,8 +204,4 @@ End Sub
 
 Private Sub txtPasswd_KeyPress(KeyAscii As Integer)
     If KeyAscii = vbKeyReturn Then imgConectarse_Click
-End Sub
-
-Private Sub Render_Click()
-    imgConectarse_Click
 End Sub

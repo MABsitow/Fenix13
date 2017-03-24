@@ -11561,12 +11561,12 @@ On Error GoTo ErrHandler
         Dim N As Integer
         Dim i As Integer
         
-        Obj = buffer.ReadASCIIString()
+        Obj = UCase$(buffer.ReadASCIIString())
         
         If Len(Obj) > 1 Then
             If (.flags.Privilegios And (PlayerType.Admin Or PlayerType.Dios)) Then
                 For i = 1 To UBound(ObjData)
-                    If InStr(1, ObjData(i).Name, Obj) Then
+                    If InStr(1, UCase$(ObjData(i).Name), Obj) Then
                          Call WriteConsoleMsg(UserIndex, i & " - " & ObjData(i).Name, FontTypeNames.FONTTYPE_INFO)
                     N = N + 1
                     End If
