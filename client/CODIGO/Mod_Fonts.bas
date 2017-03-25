@@ -1,8 +1,17 @@
 Attribute VB_Name = "Mod_Fonts"
  Option Explicit
 
-Private Declare Sub CopyMemory Lib "kernel32" Alias "RtlMoveMemory" (ByRef destination As Any, ByRef source As Any, ByVal length As Long)
+Private Declare Sub CopyMemory Lib "kernel32" Alias "RtlMoveMemory" (ByRef Destination As Any, ByRef Source As Any, ByVal Length As Long)
 
+Private Type D3DXIMAGE_INFO_A
+    Width As Long
+    Height As Long
+    Depth As Long
+    MipLevels As Long
+    Format As CONST_D3DFORMAT
+    ResourceType As CONST_D3DRESOURCETYPE
+    ImageFileFormat As Long
+End Type
 
 Private Type POINTAPI
     X As Long
@@ -21,6 +30,7 @@ Private Type CharVA
     Ty2 As Single
 End Type
 
+
 Private Type VFH
     BitmapWidth As Long         'Size of the bitmap itself
     BitmapHeight As Long
@@ -33,7 +43,7 @@ End Type
 
 Private Type CustomFont
     HeaderInfo As VFH           'Holds the header information
-    Texture As Long             'Holds the texture of the text
+    Texture As Direct3DTexture8 'Holds the texture of the text
     RowPitch As Integer         'Number of characters per row
     RowFactor As Single         'Percentage of the texture width each character takes
     ColFactor As Single         'Percentage of the texture height each character takes
@@ -43,13 +53,13 @@ End Type
 
 Public cfonts(1 To 2) As CustomFont ' _Default2 As CustomFont
 
-Public Sub Text_Draw(ByRef Batch As clsBGFXSpriteBatch, ByVal Left As Long, ByVal Top As Long, ByVal Text As String, Color() As Long, Optional ByVal Center As Boolean = False, Optional ByVal fontNum As Byte = 1)
+Public Sub Text_Draw(ByRef Batch As clsBatch, ByVal Left As Long, ByVal Top As Long, ByVal Text As String, Color() As Long, Optional ByVal Center As Boolean = False, Optional ByVal fontNum As Byte = 1)
 
     Engine_Render_Text Batch, cfonts(fontNum), Text, Left, Top, Color
 
 End Sub
 
-Private Sub Engine_Render_Text(ByRef Batch As clsBGFXSpriteBatch, ByRef UseFont As CustomFont, ByVal Text As String, ByVal X As Long, ByVal Y As Long, Color() As Long)
+Private Sub Engine_Render_Text(ByRef Batch As clsBatch, ByRef UseFont As CustomFont, ByVal Text As String, ByVal X As Long, ByVal Y As Long, Color() As Long)
 '*****************************************************************
 'Render text with a custom font
 '*****************************************************************
@@ -58,18 +68,18 @@ Private Sub Engine_Render_Text(ByRef Batch As clsBGFXSpriteBatch, ByRef UseFont 
     Dim Count As Integer
     Dim ascii() As Byte
     Dim i As Long
-    Dim j As Long
-    Dim ResetColor As Byte
-    Dim yOffset As Single
+    Dim J As Long
+
+    Dim YOffset As Single
+    
+    'Check if we have the device
+    If DirectDevice.TestCooperativeLevel <> D3D_OK Then Exit Sub
 
     'Check for valid text to render
     If LenB(Text) = 0 Then Exit Sub
     
-    'tempstr = Split(Text, Chr(32))
-    
     'Get the text into arrays (split by vbCrLf)
     tempstr = Split(Text, vbCrLf)
-    
 
     'Set the texture
     Batch.SetTexture UseFont.Texture
@@ -77,32 +87,31 @@ Private Sub Engine_Render_Text(ByRef Batch As clsBGFXSpriteBatch, ByRef UseFont 
     'Loop through each line if there are line breaks (vbCrLf)
     For i = 0 To UBound(tempstr)
         If Len(tempstr(i)) > 0 Then
-            yOffset = i * UseFont.CharHeight
+            YOffset = i * UseFont.CharHeight
             Count = 0
         
             'Convert the characters to the ascii value
             ascii() = StrConv(tempstr(i), vbFromUnicode)
         
             'Loop through the characters
-            For j = 1 To Len(tempstr(i))
+            For J = 1 To Len(tempstr(i))
 
-                'Copy from the cached vertex array to the temp vertex data
-                CopyMemory TempVA, UseFont.HeaderInfo.CharVA(ascii(j - 1)), 24 'this number represents the size of "CharVA" struct
+                CopyMemory TempVA, UseFont.HeaderInfo.CharVA(ascii(J - 1)), 24 'this number represents the size of "CharVA" struct
                 
                 TempVA.X = X + Count
-                TempVA.Y = Y + yOffset
+                TempVA.Y = Y + YOffset
             
                 Batch.Draw TempVA.X, TempVA.Y, TempVA.W, TempVA.H, Color, _
-                    TempVA.Tx1, TempVA.Ty1, TempVA.Tx2, TempVA.Ty2
-                
+                            TempVA.Tx1, TempVA.Ty1, TempVA.Tx2, TempVA.Ty2
+
                 'Shift over the the position to render the next character
-                Count = Count + UseFont.HeaderInfo.CharWidth(ascii(j - 1))
+                Count = Count + UseFont.HeaderInfo.CharWidth(ascii(J - 1))
                 
-            Next j
+            Next J
             
         End If
     Next i
-    
+
 End Sub
 
 Public Function Text_GetWidth(ByRef UseFont As CustomFont, ByVal Text As String) As Integer
@@ -130,19 +139,20 @@ Sub Engine_Init_FontTextures()
 'Init the custom font textures
 'More info: http://www.vbgore.com/GameClient.TileEngine.Engine_Init_FontTextures
 '*****************************************************************
-    Dim Image As TYPE_VIDEO_IMAGE
+    Dim TexInfo As D3DXIMAGE_INFO_A
+
+    'Check if we have the device
+    If DirectDevice.TestCooperativeLevel <> D3D_OK Then Exit Sub
 
     '*** Default font ***
     
-    Image = Video.CreateImageFromFilename(DirGraficos & "Font.png")
-    
     'Set the texture
-    cfonts(1).Texture = Image.mHandle
+    Set cfonts(1).Texture = DirectD3D8.CreateTextureFromFileEx(DirectDevice, DirGraficos & "Font.png", D3DX_DEFAULT, D3DX_DEFAULT, 0, 0, D3DFMT_UNKNOWN, D3DPOOL_MANAGED, D3DX_FILTER_POINT, D3DX_FILTER_NONE, 0, TexInfo, ByVal 0)
     
     'Store the size of the texture
-    cfonts(1).TextureSize.X = Image.mX
-    cfonts(1).TextureSize.Y = Image.mY
-
+    cfonts(1).TextureSize.X = TexInfo.Width
+    cfonts(1).TextureSize.Y = TexInfo.Height
+    
 End Sub
 
 Sub Engine_Init_FontSettings()

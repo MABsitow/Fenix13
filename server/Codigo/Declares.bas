@@ -719,11 +719,8 @@ Public Type ObjData
     GrhIndex As Integer ' Indice del grafico que representa el obj
     GrhSecundario As Integer
     
-    Jerarquia As Byte 'todo
+    Jerarquia As Byte
     
-    'Solo contenedores
-    MaxItems As Integer
-    Conte As Inventario
     Apuñala As Byte
     
     HechizoIndex As Integer

@@ -42,6 +42,41 @@ Public bLluvia() As Byte ' Array para determinar si
 
 Private lFrameTimer As Long
 
+Private Type TYPE_LONG_BYTES
+        H As Integer
+        L As Integer
+End Type
+
+Private Type TYPE_LONG
+        Value As Long
+End Type
+
+'http://stackoverflow.com/questions/6861733/vb6-integer-to-two-bytes-c-short-to-send-over-serial
+Public Function IntegersToLong(ByVal H As Integer, ByVal L As Integer) As Long
+    Dim TempTL As TYPE_LONG
+    Dim TempBL As TYPE_LONG_BYTES
+    
+    TempBL.H = H
+    TempBL.L = L
+    
+    LSet TempTL = TempBL
+    
+    IntegersToLong = TempTL.Value
+End Function
+
+Public Sub LongToIntegers(ByVal Value As Long, ByRef H As Integer, ByRef L As Integer)
+    Dim TempTL As TYPE_LONG
+    Dim TempBL As TYPE_LONG_BYTES
+    
+    TempTL.Value = Value
+    
+    LSet TempBL = TempTL
+    
+    H = TempBL.H
+    L = TempBL.L
+    
+End Sub
+
 Public Function DirGraficos() As String
     DirGraficos = App.path & "\" & Config_Inicio.DirGraficos & "\"
 End Function
@@ -125,25 +160,25 @@ On Error Resume Next
     Dim i As Long
     
     For i = 0 To 46 '49 y 50 reservados para ciudadano y criminal
-        ColoresPJ(i) = RGB(CInt(GetVar(archivoC, CStr(i), "R")), CInt(GetVar(archivoC, CStr(i), "G")), CInt(GetVar(archivoC, CStr(i), "B")))
+        ColoresPJ(i) = D3DColorXRGB(CInt(GetVar(archivoC, CStr(i), "R")), CInt(GetVar(archivoC, CStr(i), "G")), CInt(GetVar(archivoC, CStr(i), "B")))
     Next i
     
     ' Crimi
-    ColoresPJ(50) = RGB(CInt(GetVar(archivoC, "CR", "R")), _
+    ColoresPJ(50) = D3DColorXRGB(CInt(GetVar(archivoC, "CR", "R")), _
     CInt(GetVar(archivoC, "CR", "G")), _
     CInt(GetVar(archivoC, "CR", "B")))
     
     ' Ciuda
-    ColoresPJ(49) = RGB(CInt(GetVar(archivoC, "CI", "R")), _
+    ColoresPJ(49) = D3DColorXRGB(CInt(GetVar(archivoC, "CI", "R")), _
     CInt(GetVar(archivoC, "CI", "G")), _
     CInt(GetVar(archivoC, "CI", "B")))
     
     ' Neutral
-    ColoresPJ(48) = RGB(CInt(GetVar(archivoC, "NE", "R")), _
+    ColoresPJ(48) = D3DColorXRGB(CInt(GetVar(archivoC, "NE", "R")), _
     CInt(GetVar(archivoC, "NE", "G")), _
     CInt(GetVar(archivoC, "NE", "B")))
     
-    ColoresPJ(47) = RGB(CInt(GetVar(archivoC, "NW", "R")), _
+    ColoresPJ(47) = D3DColorXRGB(CInt(GetVar(archivoC, "NW", "R")), _
     CInt(GetVar(archivoC, "NW", "G")), _
     CInt(GetVar(archivoC, "NW", "B")))
     
@@ -169,7 +204,7 @@ On Error Resume Next
     Next loopC
 End Sub
 
-Sub AddtoRichTextBox(ByRef RichTextBox As RichTextBox, ByVal Text As String, Optional ByVal Red As Integer = -1, Optional ByVal Green As Integer, Optional ByVal Blue As Integer, Optional ByVal Bold As Boolean = False, Optional ByVal Italic As Boolean = False, Optional ByVal bCrLf As Boolean = True)
+Sub AddtoRichTextBox(ByRef RichTextBox As RichTextBox, ByVal Text As String, Optional ByVal Red As Integer = -1, Optional ByVal green As Integer, Optional ByVal blue As Integer, Optional ByVal bold As Boolean = False, Optional ByVal italic As Boolean = False, Optional ByVal bCrLf As Boolean = True)
 '******************************************
 'Adds text to a Richtext box at the bottom.
 'Automatically scrolls to new text.
@@ -188,10 +223,10 @@ Sub AddtoRichTextBox(ByRef RichTextBox As RichTextBox, ByVal Text As String, Opt
         
         .SelStart = Len(.Text)
         .SelLength = 0
-        .SelBold = Bold
-        .SelItalic = Italic
+        .SelBold = bold
+        .SelItalic = italic
         
-        If Not Red = -1 Then .SelColor = RGB(Red, Green, Blue)
+        If Not Red = -1 Then .SelColor = RGB(Red, green, blue)
         
         If bCrLf And Len(.Text) > 0 Then Text = vbCrLf & Text
         .SelText = Text
@@ -334,13 +369,13 @@ Sub SetConnected()
     Call SaveGameini
     
     'Unload the connect form
-    Unload frmCrearPersonaje
     Unload frmConnect
+    Unload frmCrearPersonaje
     
-    'todo
-    'frmMain.lblName.Caption = UserName
-    'Load main form
+    frmMain.lblName = UserName
+    
     frmMain.Visible = True
+    
         
     FPSFLAG = True
 End Sub
@@ -404,113 +439,25 @@ Sub RandomMove()
     Call MoveTo(RandomNumber(NORTH, WEST))
 End Sub
 
-Private Sub CheckKeys()
-'*****************************************************************
-'Checks keys and respond
-'*****************************************************************
-    Static LastMovement As Long
-    
-    'No input allowed while Argentum is not the active window
-    If Not Application.IsAppActive() Then Exit Sub
-    
-    'No walking when in commerce or banking.
-    If Comerciando Then Exit Sub
-    
-    'No walking while writting in the forum.
-    If MirandoForo Then Exit Sub
-    
-    'If game is paused, abort movement.
-    If pausa Then Exit Sub
-    
-    'TODO: Debería informarle por consola?
-    If Traveling Then Exit Sub
-
-    'Control movement interval (this enforces the 1 step loss when meditating / resting client-side)
-    If GetTickCount - LastMovement > 56 Then
-        LastMovement = GetTickCount
-    Else
-        Exit Sub
-    End If
-    
-    'Don't allow any these keys during movement..
-    If UserMoving = 0 Then
-        If Not UserEstupido Then
-            'Move Up
-            If GetKeyState(CustomKeys.BindedKey(eKeyType.mKeyUp)) < 0 Then
-                If frmMain.TrainingMacro.Enabled Then frmMain.DesactivarMacroHechizos
-                Call MoveTo(NORTH)
-                'todo
-                'frmMain.Coord.Caption = UserMap & " X: " & UserPos.X & " Y: " & UserPos.Y
-                Exit Sub
-            End If
-            
-            'Move Right
-            If GetKeyState(CustomKeys.BindedKey(eKeyType.mKeyRight)) < 0 Then
-                If frmMain.TrainingMacro.Enabled Then frmMain.DesactivarMacroHechizos
-                Call MoveTo(EAST)
-                'frmMain.Coord.Caption = "(" & UserMap & "," & UserPos.x & "," & UserPos.y & ")"
-                'frmMain.Coord.Caption = UserMap & " X: " & UserPos.X & " Y: " & UserPos.Y
-                Exit Sub
-            End If
-        
-            'Move down
-            If GetKeyState(CustomKeys.BindedKey(eKeyType.mKeyDown)) < 0 Then
-                If frmMain.TrainingMacro.Enabled Then frmMain.DesactivarMacroHechizos
-                Call MoveTo(SOUTH)
-                'frmMain.Coord.Caption = UserMap & " X: " & UserPos.X & " Y: " & UserPos.Y
-                Exit Sub
-            End If
-        
-            'Move left
-            If GetKeyState(CustomKeys.BindedKey(eKeyType.mKeyLeft)) < 0 Then
-                If frmMain.TrainingMacro.Enabled Then frmMain.DesactivarMacroHechizos
-                Call MoveTo(WEST)
-                'frmMain.Coord.Caption = UserMap & " X: " & UserPos.X & " Y: " & UserPos.Y
-                Exit Sub
-            End If
-            
-            ' We haven't moved - Update 3D sounds!
-            'call 'audio.MoveListener(UserPos.X, UserPos.Y)
-        Else
-            Dim kp As Boolean
-            kp = (GetKeyState(CustomKeys.BindedKey(eKeyType.mKeyUp)) < 0) Or _
-                GetKeyState(CustomKeys.BindedKey(eKeyType.mKeyRight)) < 0 Or _
-                GetKeyState(CustomKeys.BindedKey(eKeyType.mKeyDown)) < 0 Or _
-                GetKeyState(CustomKeys.BindedKey(eKeyType.mKeyLeft)) < 0
-            
-            If kp Then
-                Call RandomMove
-            Else
-                ' We haven't moved - Update 3D sounds!
-                'call 'audio.MoveListener(UserPos.X, UserPos.Y)
-            End If
-            
-            If frmMain.TrainingMacro.Enabled Then frmMain.DesactivarMacroHechizos
-            'frmMain.Coord.Caption = "(" & UserPos.x & "," & UserPos.y & ")"
-            'frmMain.Coord.Caption = "X: " & UserPos.X & " Y: " & UserPos.Y
-        End If
-    End If
-End Sub
-
 'CSEH: ErrLog
 Sub SwitchMap(ByVal Map As Integer)
     Dim Y As Long
     Dim X As Long
-    Dim Handle As Integer
+    Dim handle As Integer
     Dim Reader As New CsBuffer
-    Dim Data() As Byte
+    Dim data() As Byte
     Dim ByFlags As Byte
         
-    Handle = FreeFile()
+    handle = FreeFile()
     
-    Open DirMapas & "Mapa" & Map & ".mcl" For Binary As Handle
-        Seek Handle, 1
-        ReDim Data(0 To LOF(Handle) - 1) As Byte
+    Open DirMapas & "Mapa" & Map & ".mcl" For Binary As handle
+        Seek handle, 1
+        ReDim data(0 To LOF(handle) - 1) As Byte
         
-        Get Handle, , Data
-    Close Handle
+        Get handle, , data
+    Close handle
     
-    Call Reader.Wrap(Data)
+    Call Reader.Wrap(data)
     
     'map :poop: Header
     MapInfo.MapVersion = Reader.ReadInteger
@@ -751,13 +698,7 @@ Sub Main()
     
     ' Initialize FONTTYPES
     Call Protocol.InitFonts
-    
-    With frmConnect
-        '.txtNombre = Config_Inicio.Name
-        '.txtNombre.SelStart = 0
-        '.txtNombre.SelLength = Len(.txtNombre)
-    End With
-    
+
     Call EstablecerRecompensas
     Call AddtoRichTextBox(frmCargando.Status, "Hecho", 255, 0, 0, True, False, False)
     
@@ -794,7 +735,7 @@ UserMap = 1
     'audio.SoundEffectsActivated = Not ClientSetup.bNoSoundEffects
     
     'Inicializamos el inventario gráfico
-    Call Inventario.Initialize(800, 223, 160, 160, MAX_INVENTORY_SLOTS)
+    Call Inventario.Initialize(frmMain.picInv, MAX_INVENTORY_SLOTS)
     
     'call 'audio.MusicMP3Play(App.path & "\MP3\" & MP3_Inicio & ".mp3")
     
@@ -809,6 +750,7 @@ UserMap = 1
         
     frmMain.Socket1.Startup
 
+    frmConnect.MousePointer = vbDefault
     frmConnect.Visible = True
     
     'Inicialización de variables globales
@@ -846,28 +788,28 @@ UserMap = 1
     
     ' Load the form for screenshots
     Call Load(frmScreenshots)
-        
+    
     Do While prgRun
+        
         'Sólo dibujamos si la ventana no está minimizada
         If frmMain.WindowState <> 1 And frmMain.Visible Then
+            
             Call ShowNextFrame(frmMain.Top, frmMain.Left, frmMain.MouseX, frmMain.MouseY)
             
             'Play ambient sounds
             Call RenderSounds
             
             Call CheckKeys
-        End If
-        'FPS Counter - mostramos las FPS
-        'If GetTickCount - lFrameTimer >= 1000 Then
-        '    If FPSFLAG Then frmMain.lblFPS.Caption = Mod_TileEngine.FPS
             
-        '    lFrameTimer = GetTickCount
-        'End If
+        End If
         
-       ' If GetTickCount - Count = 1000 Then
-        '        Call SendData(SendTarget.toMap, UserIndex, PrepareMessageCountdown(Count))
-        '        GetTickCount = Count
-        '    End If
+        'FPS Counter - mostramos las FPS
+        If GetTickCount - lFrameTimer >= 1000 Then
+            If FPSFLAG Then frmMain.lblFPS.Caption = Mod_TileEngine.FPS
+            
+            lFrameTimer = GetTickCount
+        End If
+        
         ' If there is anything to be sent, we send it
         Call FlushBuffer
         
@@ -951,8 +893,8 @@ End Function
 Public Sub ShowSendTxt()
     If Not frmCantidad.Visible Then
         'todo
-        'frmMain.SendTxt.Visible = True
-        'frmMain.SendTxt.SetFocus
+        frmMain.SendTxt.Visible = True
+        frmMain.SendTxt.SetFocus
     End If
 End Sub
 
@@ -1139,8 +1081,8 @@ Public Sub CleanDialogs()
 'Removes all text from the console and dialogs
 '**************************************************************
     'Clean console and dialogs
-    'todo
-    'frmMain.RecTxt.Text = vbNullString
+    
+    frmMain.RecTxt.Text = vbNullString
     
   '  Call DialogosClanes.RemoveDialogs
     

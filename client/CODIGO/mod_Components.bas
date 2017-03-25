@@ -13,7 +13,8 @@ Public Enum eComponentEvent
         KeyPress = 4
         MouseScrollUp = 5
         MouseScrollDown = 6
-        MouseUp
+        MouseUp = 7
+        MouseDblClick = 8
 End Enum
 
 Public Enum eComponentType
@@ -29,7 +30,7 @@ Private Type TYPE_CONSOLE_LINE
         Color(3) As Long
 End Type
 
-Private Type tComponent 'todo: rehacer?
+Private Type tComponent 'todo: rehacer en clases?
         X           As Integer
         Y           As Integer
         W           As Integer
@@ -58,7 +59,7 @@ Private Type tComponent 'todo: rehacer?
         LastRender  As Byte
 End Type
 
-Private BackgroundImage As TYPE_VIDEO_IMAGE
+Private BackgroundImage As Long
 
 Private Focused         As Integer
 Private LastComponent   As Integer
@@ -66,12 +67,27 @@ Private LastComponent   As Integer
 Public Components()     As tComponent
 
 Private Declare Function CallWindowProc Lib "user32" Alias "CallWindowProcA" (ByVal lpPrevWndFunc As Long, ByVal hWnd As Long, ByVal msg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
-
+Private Declare Sub CopyMemory Lib "kernel32" Alias "RtlMoveMemory" (ByVal lpvDest As Long, ByVal lpvSource As Long, ByVal cbCopy As Long)
+Private Declare Function VarPtrArray Lib "msvbvm60.dll" Alias "VarPtr" (Ptr() As Any) As Long
 
 Public Sub InitComponentsImage()
+    Dim Image As CoIoImage
     
-    BackgroundImage = Video.CreateImageFromFilename(DirGraficos & "4.png")
+    Call Co3.CoIoImageLoadFromFile(Image, DirGraficos & "4.png")
+    
+    'Call CoVideoCreateTexture2d(Image.X, Image.Y, NO, 0, TEXTURE_FORMAT_RGBA8, TEXTURE_FLAG_NONE, CoVideoCopy(ByVal Image.Data, Image.X * Image.Y * Image.Channel))
+    Call CreateNormalTexture(BackgroundImage, Image)
+    
+    Call CoIoImageFree(Image)
+    
     Focused = -1
+    
+End Sub
+
+Public Sub ClearComponents()
+    Erase Components
+    Focused = -1
+    LastComponent = 0
     
 End Sub
 
@@ -102,7 +118,7 @@ Public Function AddTextArea(ByVal X As Integer, ByVal Y As Integer, _
     LastComponent = LastComponent + 1
     
     ReDim Preserve Components(1 To LastComponent) As tComponent
-    
+        
     With Components(LastComponent)
     
         .X = X: .W = W
@@ -123,7 +139,7 @@ Public Function AddLabel(Text As String, ByVal X As Integer, ByVal Y As Integer,
     LastComponent = LastComponent + 1
     
     ReDim Preserve Components(1 To LastComponent) As tComponent
-    
+        
     With Components(LastComponent)
         
         .X = X
@@ -147,6 +163,7 @@ Public Function AddShape(ByVal X As Integer, ByVal Y As Integer, _
     LastComponent = LastComponent + 1
     
     ReDim Preserve Components(1 To LastComponent) As tComponent
+    
     
     With Components(LastComponent)
         
@@ -189,12 +206,35 @@ Public Function AddTextBox(ByVal X As Integer, ByVal Y As Integer, _
         
         .IsFocusable = True
         .ShowOnFocus = ShowOnFocus
-        
     End With
     
     AddTextBox = LastComponent
     
 End Function
+
+Public Sub TabComponent()
+    
+    Dim i As Long
+    
+    If LastComponent <> 0 Then
+        
+        If Focused <> -1 Then
+            i = Focused
+        End If
+        
+        i = i + 1
+        Do Until Components(i).IsFocusable = True
+        
+            If LastComponent = i Then
+                i = 0
+            End If
+            
+            i = i + 1
+        Loop
+        
+        Focused = i
+    End If
+End Sub
 
 Public Sub AppendLine(ByVal ID As Integer, Text As String, TextColor() As Long)
     
@@ -203,13 +243,16 @@ Public Sub AppendLine(ByVal ID As Integer, Text As String, TextColor() As Long)
     With Components(ID)
         
         If .LastLine >= MAX_CONSOLE_LINES Then
-            Erase .Lines
             .LastLine = 0
         End If
         
         .LastLine = .LastLine + 1
         
-        ReDim Preserve .Lines(1 To .LastLine) As TYPE_CONSOLE_LINE
+        If .LastLine - 1 = 0 Then
+            ReDim .Lines(1 To .LastLine) As TYPE_CONSOLE_LINE
+        Else
+            ReDim Preserve .Lines(1 To .LastLine) As TYPE_CONSOLE_LINE
+        End If
         
         .Lines(.LastLine).Text = Text
         .Lines(.LastLine).Color(0) = TextColor(0)
@@ -234,28 +277,32 @@ Public Sub AppendLine(ByVal ID As Integer, Text As String, TextColor() As Long)
 End Sub
 
 Public Sub AppendLineCC(ByVal ID As Integer, Text As String, _
-                        Optional ByVal Red As Integer = 1, Optional ByVal Green As Integer = 1, Optional ByVal Blue As Integer = 1, _
-                        Optional ByVal Bold As Boolean = False, Optional ByVal Italic As Boolean = False, _
+                        Optional ByVal Red As Integer = 1, Optional ByVal green As Integer = 1, Optional ByVal blue As Integer = 1, _
+                        Optional ByVal bold As Boolean = False, Optional ByVal italic As Boolean = False, _
                         Optional ByVal NewLine As Boolean = True)
                         
     Dim Color(3) As Long
     
-    Color(0) = RGB(Red, Green, Blue)
+    Color(0) = RGB(Red, green, blue)
     Color(1) = Color(0)
     Color(2) = Color(0)
     Color(3) = Color(0)
     
     Call AppendLine(ID, Text, Color)
 End Sub
-Public Sub ClearTextArea(ByVal ID As Integer)
+Public Sub ClearTextArea(ByVal ID As Integer, Optional ByVal Forced As Boolean = False)
 
     If Not Components(ID).Component = eComponentType.TextArea Then Exit Sub
     
     With Components(ID)
         
-        If .LastLine >= MAX_CONSOLE_LINES Then
-            Erase .Lines
+        If (.LastLine >= MAX_CONSOLE_LINES Or Forced) Then
             .LastLine = 0
+            .FirstRender = 0
+            .LastRender = 0
+            
+            ReDim .Lines(1) As TYPE_CONSOLE_LINE
+            
         End If
     End With
 End Sub
@@ -357,24 +404,24 @@ Public Sub RenderComponents(Batch As clsBGFXSpriteBatch)
                     Call Text_Draw(Batch, .X, .Y, .Text, .Color)
                 
                 Case eComponentType.Shape
-                    Call Batch.SetTexture(BackgroundImage.mHandle)
+                    Call Batch.SetTexture(BackgroundImage)
                     Call Batch.Draw(.X, .Y, .W, .H, .Color)
                     
                 Case eComponentType.TextBox
                     If .ShowOnFocus Then
                         If Focused = i Then
-                            Call Batch.SetTexture(BackgroundImage.mHandle)
+                            Call Batch.SetTexture(BackgroundImage)
                             Call Batch.Draw(.X, .Y, .W, .H, .Color)
                             Call UpdateTextBoxBuffer(Batch, i)
                         End If
                     Else
-                        Call Batch.SetTexture(BackgroundImage.mHandle)
+                        Call Batch.SetTexture(BackgroundImage)
                         Call Batch.Draw(.X, .Y, .W, .H, .Color)
                         Call UpdateTextBoxBuffer(Batch, i)
                     End If
                 
                 Case eComponentType.TextArea
-                    Call Batch.SetTexture(BackgroundImage.mHandle)
+                    Call Batch.SetTexture(BackgroundImage)
                     Call Batch.Draw(.X, .Y, .W, .H, .Color())
                     Call UpdateTextArea(Batch, i)
             End Select
@@ -386,15 +433,24 @@ End Sub
 
 Private Sub UpdateTextBoxBuffer(Batch As clsBGFXSpriteBatch, ByVal ID As Integer)
     
-    If UserWriting Then
+    'If UserWriting Then
         With Components(ID)
             
             If Not StrComp(.TextBuffer, vbNullString) = 0 Then
-                Text_Draw Batch, .X + 3, .Y + 3, .TextBuffer, .ForeColor
+                If Focused = ID Then
+                    Text_Draw Batch, .X + 3, .Y + 3, .TextBuffer + "|", .ForeColor
+                Else
+                    Text_Draw Batch, .X + 3, .Y + 3, .TextBuffer, .ForeColor
+                End If
+            Else
+                If Focused = ID Then
+                    Text_Draw Batch, .X + 3, .Y + 3, "|", .ForeColor
+                End If
+                
             End If
             
         End With
-    End If
+    'End If
     
 End Sub
 
@@ -432,16 +488,13 @@ Private Sub UpdateTextArea(Batch As clsBGFXSpriteBatch, ByVal ID As Integer)
     
     With Components(ID)
     
-        If UBound(.Lines) > 0 Then
-            Dim i As Long
-            Dim yOffset As Integer
+        Dim i As Long
+        Dim yOffset As Integer
             
-            For i = .FirstRender To .LastRender
-                Text_Draw Batch, .X + 3, .Y + 2 + yOffset, .Lines(i).Text, .Lines(i).Color
-                yOffset = yOffset + 12
-            Next
-            
-        End If
+        For i = .FirstRender To .LastRender
+            Text_Draw Batch, .X + 3, .Y + 2 + yOffset, .Lines(i).Text, .Lines(i).Color
+            yOffset = yOffset + 12
+        Next
         
     End With
 End Sub
@@ -457,6 +510,14 @@ With Components(ID)
 End With
 
 End Sub
+
+Public Function GetTextBoxText(ByVal ID As Integer) As String
+    
+    If Components(ID).Component <> eComponentType.TextBox Then Exit Function
+    
+    GetTextBoxText = Components(ID).TextBuffer
+    
+End Function
 
 '@Rezniaq
 Public Function Collision(ByVal X As Integer, ByVal Y As Integer) As Integer
@@ -524,6 +585,132 @@ End Function
 '*********************************************************************************************************************************
 '*********************************************************************************************************************************
 '*****************************************************EVENTS HANDLERS*************************************************************
+
+Public Sub txtName_EventHandler(ByVal hWnd As Long, _
+                                ByVal msg As Long, _
+                                ByVal param3 As Long, _
+                                ByVal param4 As Long)
+    
+    Dim i As Long
+    Dim tempstr As String
+    'Todo: Hay un problema con que sea estático: cuando se cambia de instancia, aunque se borra el el componente, esto sigue dando vueltas
+    Static Buffer As String
+    
+    Select Case msg
+        
+        Case eComponentEvent.MouseUp
+            Call SetFocus(hWnd)
+            
+        Case eComponentEvent.KeyPress
+            If Not (param3 = vbKeyBack) And Not (param3 >= vbKeySpace And param3 <= 250) Then param3 = 0
+        
+            Buffer = Buffer + ChrW$(param3)
+            'Make sure only valid chars are inserted (with Shift + Insert they can paste illegal chars)
+        
+            For i = 1 To Len(Buffer)
+                param3 = Asc(mid$(Buffer, i, 1))
+
+                If param3 >= vbKeySpace And param3 <= 250 Then
+                    tempstr = tempstr & ChrW$(param3)
+                End If
+
+                If param3 = vbKeyBack And Len(tempstr) > 0 Then
+                    tempstr = Left$(tempstr, Len(tempstr) - 1)
+                End If
+            Next i
+
+            If tempstr <> Buffer Then
+                'We only set it if it's different, otherwise the event will be raised
+                'constantly and the client will crush
+                Buffer = tempstr
+            End If
+
+            Components(hWnd).TextBuffer = Buffer
+    End Select
+End Sub
+
+Public Sub txtPassword_EventHandler(ByVal hWnd As Long, _
+                                ByVal msg As Long, _
+                                ByVal param3 As Long, _
+                                ByVal param4 As Long)
+
+    Dim i As Long
+    Dim tempstr As String
+    Static Buffer As String
+    
+    Select Case msg
+        
+        Case eComponentEvent.MouseUp
+            Call SetFocus(hWnd)
+            
+        Case eComponentEvent.KeyPress
+            If Not (param3 = vbKeyBack) And Not (param3 >= vbKeySpace And param3 <= 250) Then param3 = 0
+        
+            Buffer = Buffer + ChrW$(param3)
+            'Make sure only valid chars are inserted (with Shift + Insert they can paste illegal chars)
+        
+            For i = 1 To Len(Buffer)
+                param3 = Asc(mid$(Buffer, i, 1))
+
+                If param3 >= vbKeySpace And param3 <= 250 Then
+                    tempstr = tempstr & ChrW$(param3)
+                End If
+
+                If param3 = vbKeyBack And Len(tempstr) > 0 Then
+                    tempstr = Left$(tempstr, Len(tempstr) - 1)
+                End If
+            Next i
+
+            If tempstr <> Buffer Then
+                'We only set it if it's different, otherwise the event will be raised
+                'constantly and the client will crush
+                Buffer = tempstr
+            End If
+
+            Components(hWnd).TextBuffer = Buffer
+    End Select
+    
+End Sub
+
+Public Sub btnLogin_EventHandler(ByVal hWnd As Long, _
+                                ByVal msg As Long, _
+                                ByVal param3 As Long, _
+                                ByVal param4 As Long)
+    
+    Select Case msg
+    
+        Case eComponentEvent.MouseUp
+            If frmMain.Socket1.Connected Then
+                frmMain.Socket1.Disconnect
+                frmMain.Socket1.Cleanup
+                DoEvents
+            End If
+            
+            'update user info
+            UserName = GetTextBoxText(frmMain.txtName)
+            
+            Dim aux As String
+            aux = GetTextBoxText(frmMain.txtPassword)
+        
+            UserPassword = aux
+        
+            If CheckUserData(False) = True Then
+                EstadoLogin = Normal
+                
+                frmMain.Socket1.HostName = CurServerIP
+                frmMain.Socket1.RemotePort = CurServerPort
+                frmMain.Socket1.Connect
+        
+            End If
+    End Select
+End Sub
+
+Public Sub btnNewCharacter_EventHandler(ByVal hWnd As Long, _
+                                ByVal msg As Long, _
+                                ByVal param3 As Long, _
+                                ByVal param4 As Long)
+
+End Sub
 
 Public Sub SendTxt_EventHandler(ByVal hWnd As Long, _
                                 ByVal msg As Long, _
@@ -601,13 +788,24 @@ Public Sub PicInv_EventHandler(ByVal hWnd As Long, _
                                 ByVal param3 As Long, _
                                 ByVal param4 As Long)
     
-    Select Case msg
+    Dim X As Integer
+    Dim Y As Integer
     
-        Case eComponentEvent.MouseDown
-            Call Inventario.Inventory_MouseDown(Btn, Shf, X, Y)
-        Case eComponentEvent.MouseUp
-            Call Inventario.Inventory_MouseUp(Btn, Shf, X, Y)
-    End Select
+    If msg <> 0 Then
+        
+        Call LongToIntegers(param4, X, Y)
+        
+        Select Case msg
+        
+            Case eComponentEvent.MouseDown
+                'Call Inventario.Inventory_MouseDown(param3, X, Y)
+            Case eComponentEvent.MouseUp
+                Call Inventario.Inventory_MouseUp(param3, X, Y)
+            Case eComponentEvent.MouseDblClick
+                Call Inventario.Inventory_DblClick
+        End Select
+        
+    End If
 End Sub
 
 

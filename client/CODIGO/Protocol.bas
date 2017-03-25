@@ -44,10 +44,10 @@ Private Const SEPARATOR As String * 1 = vbNullChar
 
 Private Type tFont
     Red As Byte
-    Green As Byte
-    Blue As Byte
-    Bold As Boolean
-    Italic As Boolean
+    green As Byte
+    blue As Byte
+    bold As Boolean
+    italic As Boolean
 End Type
 
 Private Enum ServerPacketID
@@ -283,141 +283,141 @@ Public Sub InitFonts()
 '***************************************************
     With FontTypes(FontTypeNames.FONTTYPE_TALK)
         .Red = 255
-        .Green = 255
-        .Blue = 255
+        .green = 255
+        .blue = 255
     End With
     
     With FontTypes(FontTypeNames.FONTTYPE_FIGHT)
         .Red = 255
-        .Bold = 1
+        .bold = 1
     End With
     
     With FontTypes(FontTypeNames.FONTTYPE_WARNING)
         .Red = 32
-        .Green = 51
-        .Blue = 223
-        .Bold = 1
-        .Italic = 1
+        .green = 51
+        .blue = 223
+        .bold = 1
+        .italic = 1
     End With
     
     With FontTypes(FontTypeNames.FONTTYPE_INFO)
         .Red = 65
-        .Green = 190
-        .Blue = 156
+        .green = 190
+        .blue = 156
     End With
     
     With FontTypes(FontTypeNames.FONTTYPE_INFOBOLD)
         .Red = 65
-        .Green = 190
-        .Blue = 156
-        .Bold = 1
+        .green = 190
+        .blue = 156
+        .bold = 1
     End With
     
     With FontTypes(FontTypeNames.FONTTYPE_EJECUCION)
         .Red = 130
-        .Green = 130
-        .Blue = 130
-        .Bold = 1
+        .green = 130
+        .blue = 130
+        .bold = 1
     End With
     
     With FontTypes(FontTypeNames.FONTTYPE_PARTY)
         .Red = 255
-        .Green = 180
-        .Blue = 250
+        .green = 180
+        .blue = 250
     End With
     
-    FontTypes(FontTypeNames.FONTTYPE_VENENO).Green = 255
+    FontTypes(FontTypeNames.FONTTYPE_VENENO).green = 255
     
     With FontTypes(FontTypeNames.FONTTYPE_GUILD)
         .Red = 255
-        .Green = 255
-        .Blue = 255
-        .Bold = 1
+        .green = 255
+        .blue = 255
+        .bold = 1
     End With
     
-    FontTypes(FontTypeNames.FONTTYPE_SERVER).Green = 185
+    FontTypes(FontTypeNames.FONTTYPE_SERVER).green = 185
     
     With FontTypes(FontTypeNames.FONTTYPE_GUILDMSG)
         .Red = 228
-        .Green = 199
-        .Blue = 27
+        .green = 199
+        .blue = 27
     End With
     
     With FontTypes(FontTypeNames.FONTTYPE_CONSEJO)
         .Red = 130
-        .Green = 130
-        .Blue = 255
-        .Bold = 1
+        .green = 130
+        .blue = 255
+        .bold = 1
     End With
     
     With FontTypes(FontTypeNames.FONTTYPE_CONSEJOCAOS)
         .Red = 255
-        .Green = 60
-        .Bold = 1
+        .green = 60
+        .bold = 1
     End With
     
     With FontTypes(FontTypeNames.FONTTYPE_CONSEJOVesA)
-        .Green = 200
-        .Blue = 255
-        .Bold = 1
+        .green = 200
+        .blue = 255
+        .bold = 1
     End With
     
     With FontTypes(FontTypeNames.FONTTYPE_CONSEJOCAOSVesA)
         .Red = 255
-        .Green = 50
-        .Bold = 1
+        .green = 50
+        .bold = 1
     End With
     
     With FontTypes(FontTypeNames.FONTTYPE_CENTINELA)
-        .Green = 255
-        .Bold = 1
+        .green = 255
+        .bold = 1
     End With
     
     With FontTypes(FontTypeNames.FONTTYPE_GMMSG)
         .Red = 255
-        .Green = 255
-        .Blue = 255
-        .Italic = 1
+        .green = 255
+        .blue = 255
+        .italic = 1
     End With
     
     With FontTypes(FontTypeNames.FONTTYPE_GM)
         .Red = 255
-        .Green = 128
-        .Blue = 32
-        .Bold = 1
+        .green = 128
+        .blue = 32
+        .bold = 1
     End With
     
     With FontTypes(FontTypeNames.FONTTYPE_CITIZEN)
-        .Blue = 200
-        .Bold = 1
+        .blue = 200
+        .bold = 1
     End With
     
     With FontTypes(FontTypeNames.FONTTYPE_CONSE)
         .Red = 30
-        .Green = 150
-        .Blue = 30
-        .Bold = 1
+        .green = 150
+        .blue = 30
+        .bold = 1
     End With
     
     With FontTypes(FontTypeNames.FONTTYPE_DIOS)
         .Red = 250
-        .Green = 250
-        .Blue = 150
-        .Bold = 1
+        .green = 250
+        .blue = 150
+        .bold = 1
     End With
 
     With FontTypes(FontTypeNames.FONTTYPE_NEWBIE)
         .Red = 100
-        .Green = 200
-        .Blue = 100
-        .Bold = 1
+        .green = 200
+        .blue = 100
+        .bold = 1
     End With
     
     With FontTypes(FontTypeNames.FONTTYPE_NEUTRAL)
         .Red = 180
-        .Green = 180
-        .Blue = 180
-        .Bold = 1
+        .green = 180
+        .blue = 180
+        .bold = 1
     End With
 End Sub
 
@@ -764,55 +764,55 @@ With incomingData
 
     Select Case .ReadByte
         Case eMessages.DontSeeAnything
-            Call AppendLineCC(frmMain.RecTxt, MENSAJE_NO_VES_NADA_INTERESANTE, 65, 190, 156, False, False)
+            Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_NO_VES_NADA_INTERESANTE, 65, 190, 156, False, False)
         
         Case eMessages.NPCSwing
-            Call AppendLineCC(frmMain.RecTxt, MENSAJE_CRIATURA_FALLA_GOLPE, 255, 0, 0, True, False)
+            Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_CRIATURA_FALLA_GOLPE, 255, 0, 0, True, False)
         
         Case eMessages.NPCKillUser
-            Call AppendLineCC(frmMain.RecTxt, MENSAJE_CRIATURA_MATADO, 255, 0, 0, True, False)
+            Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_CRIATURA_MATADO, 255, 0, 0, True, False)
         
         Case eMessages.BlockedWithShieldUser
-            Call AppendLineCC(frmMain.RecTxt, MENSAJE_RECHAZO_ATAQUE_ESCUDO, 255, 0, 0, True, False)
+            Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_RECHAZO_ATAQUE_ESCUDO, 255, 0, 0, True, False)
         
         Case eMessages.BlockedWithShieldOther
-            Call AppendLineCC(frmMain.RecTxt, MENSAJE_USUARIO_RECHAZO_ATAQUE_ESCUDO, 255, 0, 0, True, False)
+            Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_USUARIO_RECHAZO_ATAQUE_ESCUDO, 255, 0, 0, True, False)
         
         Case eMessages.UserSwing
-            Call AppendLineCC(frmMain.RecTxt, MENSAJE_FALLADO_GOLPE, 255, 0, 0, True, False)
+            Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_FALLADO_GOLPE, 255, 0, 0, True, False)
         
         Case eMessages.NobilityLost
-            Call AppendLineCC(frmMain.RecTxt, MENSAJE_PIERDE_NOBLEZA, 255, 0, 0, False, False)
+            Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_PIERDE_NOBLEZA, 255, 0, 0, False, False)
         
         Case eMessages.CantUseWhileMeditating
-            Call AppendLineCC(frmMain.RecTxt, MENSAJE_USAR_MEDITANDO, 255, 0, 0, False, False)
+            Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_USAR_MEDITANDO, 255, 0, 0, False, False)
         
         Case eMessages.NPCHitUser
             Select Case incomingData.ReadByte()
                 Case bCabeza
-                    Call AppendLineCC(frmMain.RecTxt, MENSAJE_GOLPE_CABEZA & CStr(incomingData.ReadInteger()) & "!!", 255, 0, 0, True, False)
+                    Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_GOLPE_CABEZA & CStr(incomingData.ReadInteger()) & "!!", 255, 0, 0, True, False)
                 
                 Case bBrazoIzquierdo
-                    Call AppendLineCC(frmMain.RecTxt, MENSAJE_GOLPE_BRAZO_IZQ & CStr(incomingData.ReadInteger()) & "!!", 255, 0, 0, True, False)
+                    Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_GOLPE_BRAZO_IZQ & CStr(incomingData.ReadInteger()) & "!!", 255, 0, 0, True, False)
                 
                 Case bBrazoDerecho
-                    Call AppendLineCC(frmMain.RecTxt, MENSAJE_GOLPE_BRAZO_DER & CStr(incomingData.ReadInteger()) & "!!", 255, 0, 0, True, False)
+                    Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_GOLPE_BRAZO_DER & CStr(incomingData.ReadInteger()) & "!!", 255, 0, 0, True, False)
                 
                 Case bPiernaIzquierda
-                    Call AppendLineCC(frmMain.RecTxt, MENSAJE_GOLPE_PIERNA_IZQ & CStr(incomingData.ReadInteger()) & "!!", 255, 0, 0, True, False)
+                    Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_GOLPE_PIERNA_IZQ & CStr(incomingData.ReadInteger()) & "!!", 255, 0, 0, True, False)
                 
                 Case bPiernaDerecha
-                    Call AppendLineCC(frmMain.RecTxt, MENSAJE_GOLPE_PIERNA_DER & CStr(incomingData.ReadInteger()) & "!!", 255, 0, 0, True, False)
+                    Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_GOLPE_PIERNA_DER & CStr(incomingData.ReadInteger()) & "!!", 255, 0, 0, True, False)
                 
                 Case bTorso
-                    Call AppendLineCC(frmMain.RecTxt, MENSAJE_GOLPE_TORSO & CStr(incomingData.ReadInteger() & "!!"), 255, 0, 0, True, False)
+                    Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_GOLPE_TORSO & CStr(incomingData.ReadInteger() & "!!"), 255, 0, 0, True, False)
             End Select
         
         Case eMessages.UserHitNPC
-            Call AppendLineCC(frmMain.RecTxt, MENSAJE_GOLPE_CRIATURA_1 & CStr(incomingData.ReadLong()) & MENSAJE_2, 255, 0, 0, True, False)
+            Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_GOLPE_CRIATURA_1 & CStr(incomingData.ReadLong()) & MENSAJE_2, 255, 0, 0, True, False)
         
         Case eMessages.UserAttackedSwing
-            Call AppendLineCC(frmMain.RecTxt, MENSAJE_1 & charlist(incomingData.ReadInteger()).Nombre & MENSAJE_ATAQUE_FALLO, 255, 0, 0, True, False)
+            Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_1 & charlist(incomingData.ReadInteger()).Nombre & MENSAJE_ATAQUE_FALLO, 255, 0, 0, True, False)
         
         Case eMessages.UserHittedByUser
             Dim AttackerName As String
@@ -823,22 +823,22 @@ With incomingData
             
             Select Case BodyPart
                 Case bCabeza
-                    Call AppendLineCC(frmMain.RecTxt, MENSAJE_1 & AttackerName & MENSAJE_RECIVE_IMPACTO_CABEZA & Daño & MENSAJE_2, 255, 0, 0, True, False)
+                    Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_1 & AttackerName & MENSAJE_RECIVE_IMPACTO_CABEZA & Daño & MENSAJE_2, 255, 0, 0, True, False)
                 
                 Case bBrazoIzquierdo
-                    Call AppendLineCC(frmMain.RecTxt, MENSAJE_1 & AttackerName & MENSAJE_RECIVE_IMPACTO_BRAZO_IZQ & Daño & MENSAJE_2, 255, 0, 0, True, False, True)
+                    Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_1 & AttackerName & MENSAJE_RECIVE_IMPACTO_BRAZO_IZQ & Daño & MENSAJE_2, 255, 0, 0, True, False, True)
                 
                 Case bBrazoDerecho
-                    Call AppendLineCC(frmMain.RecTxt, MENSAJE_1 & AttackerName & MENSAJE_RECIVE_IMPACTO_BRAZO_DER & Daño & MENSAJE_2, 255, 0, 0, True, False, True)
+                    Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_1 & AttackerName & MENSAJE_RECIVE_IMPACTO_BRAZO_DER & Daño & MENSAJE_2, 255, 0, 0, True, False, True)
                 
                 Case bPiernaIzquierda
-                    Call AppendLineCC(frmMain.RecTxt, MENSAJE_1 & AttackerName & MENSAJE_RECIVE_IMPACTO_PIERNA_IZQ & Daño & MENSAJE_2, 255, 0, 0, True, False, True)
+                    Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_1 & AttackerName & MENSAJE_RECIVE_IMPACTO_PIERNA_IZQ & Daño & MENSAJE_2, 255, 0, 0, True, False, True)
                 
                 Case bPiernaDerecha
-                    Call AppendLineCC(frmMain.RecTxt, MENSAJE_1 & AttackerName & MENSAJE_RECIVE_IMPACTO_PIERNA_DER & Daño & MENSAJE_2, 255, 0, 0, True, False, True)
+                    Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_1 & AttackerName & MENSAJE_RECIVE_IMPACTO_PIERNA_DER & Daño & MENSAJE_2, 255, 0, 0, True, False, True)
                 
                 Case bTorso
-                    Call AppendLineCC(frmMain.RecTxt, MENSAJE_1 & AttackerName & MENSAJE_RECIVE_IMPACTO_TORSO & Daño & MENSAJE_2, 255, 0, 0, True, False, True)
+                    Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_1 & AttackerName & MENSAJE_RECIVE_IMPACTO_TORSO & Daño & MENSAJE_2, 255, 0, 0, True, False, True)
             End Select
         
         Case eMessages.UserHittedUser
@@ -851,22 +851,22 @@ With incomingData
             
             Select Case BodyPart
                 Case bCabeza
-                    Call AppendLineCC(frmMain.RecTxt, MENSAJE_PRODUCE_IMPACTO_1 & VictimName & MENSAJE_PRODUCE_IMPACTO_CABEZA & Daño & MENSAJE_2, 255, 0, 0, True, False, True)
+                    Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_PRODUCE_IMPACTO_1 & VictimName & MENSAJE_PRODUCE_IMPACTO_CABEZA & Daño & MENSAJE_2, 255, 0, 0, True, False, True)
                 
                 Case bBrazoIzquierdo
-                    Call AppendLineCC(frmMain.RecTxt, MENSAJE_PRODUCE_IMPACTO_1 & VictimName & MENSAJE_PRODUCE_IMPACTO_BRAZO_IZQ & Daño & MENSAJE_2, 255, 0, 0, True, False, True)
+                    Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_PRODUCE_IMPACTO_1 & VictimName & MENSAJE_PRODUCE_IMPACTO_BRAZO_IZQ & Daño & MENSAJE_2, 255, 0, 0, True, False, True)
                 
                 Case bBrazoDerecho
-                    Call AppendLineCC(frmMain.RecTxt, MENSAJE_PRODUCE_IMPACTO_1 & VictimName & MENSAJE_PRODUCE_IMPACTO_BRAZO_DER & Daño & MENSAJE_2, 255, 0, 0, True, False, True)
+                    Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_PRODUCE_IMPACTO_1 & VictimName & MENSAJE_PRODUCE_IMPACTO_BRAZO_DER & Daño & MENSAJE_2, 255, 0, 0, True, False, True)
                 
                 Case bPiernaIzquierda
-                    Call AppendLineCC(frmMain.RecTxt, MENSAJE_PRODUCE_IMPACTO_1 & VictimName & MENSAJE_PRODUCE_IMPACTO_PIERNA_IZQ & Daño & MENSAJE_2, 255, 0, 0, True, False, True)
+                    Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_PRODUCE_IMPACTO_1 & VictimName & MENSAJE_PRODUCE_IMPACTO_PIERNA_IZQ & Daño & MENSAJE_2, 255, 0, 0, True, False, True)
                 
                 Case bPiernaDerecha
-                    Call AppendLineCC(frmMain.RecTxt, MENSAJE_PRODUCE_IMPACTO_1 & VictimName & MENSAJE_PRODUCE_IMPACTO_PIERNA_DER & Daño & MENSAJE_2, 255, 0, 0, True, False, True)
+                    Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_PRODUCE_IMPACTO_1 & VictimName & MENSAJE_PRODUCE_IMPACTO_PIERNA_DER & Daño & MENSAJE_2, 255, 0, 0, True, False, True)
                 
                 Case bTorso
-                    Call AppendLineCC(frmMain.RecTxt, MENSAJE_PRODUCE_IMPACTO_1 & VictimName & MENSAJE_PRODUCE_IMPACTO_TORSO & Daño & MENSAJE_2, 255, 0, 0, True, False, True)
+                    Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_PRODUCE_IMPACTO_1 & VictimName & MENSAJE_PRODUCE_IMPACTO_TORSO & Daño & MENSAJE_2, 255, 0, 0, True, False, True)
             End Select
         
         Case eMessages.WorkRequestTarget
@@ -876,25 +876,25 @@ With incomingData
             
             Select Case UsingSkill
                 Case Magia
-                    Call AppendLineCC(frmMain.RecTxt, MENSAJE_TRABAJO_MAGIA, 100, 100, 120, 0, 0)
+                    Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_TRABAJO_MAGIA, 100, 100, 120, 0, 0)
                 
                 Case Pesca
-                    Call AppendLineCC(frmMain.RecTxt, MENSAJE_TRABAJO_PESCA, 100, 100, 120, 0, 0)
+                    Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_TRABAJO_PESCA, 100, 100, 120, 0, 0)
                 
                 Case Robar
-                    Call AppendLineCC(frmMain.RecTxt, MENSAJE_TRABAJO_ROBAR, 100, 100, 120, 0, 0)
+                    Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_TRABAJO_ROBAR, 100, 100, 120, 0, 0)
                 
                 Case Talar
-                    Call AppendLineCC(frmMain.RecTxt, MENSAJE_TRABAJO_TALAR, 100, 100, 120, 0, 0)
+                    Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_TRABAJO_TALAR, 100, 100, 120, 0, 0)
                 
                 Case Mineria
-                    Call AppendLineCC(frmMain.RecTxt, MENSAJE_TRABAJO_MINERIA, 100, 100, 120, 0, 0)
+                    Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_TRABAJO_MINERIA, 100, 100, 120, 0, 0)
                 
                 Case FundirMetal
-                    Call AppendLineCC(frmMain.RecTxt, MENSAJE_TRABAJO_FUNDIRMETAL, 100, 100, 120, 0, 0)
+                    Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_TRABAJO_FUNDIRMETAL, 100, 100, 120, 0, 0)
                 
                 Case Proyectiles
-                    Call AppendLineCC(frmMain.RecTxt, MENSAJE_TRABAJO_PROYECTILES, 100, 100, 120, 0, 0)
+                    Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_TRABAJO_PROYECTILES, 100, 100, 120, 0, 0)
             End Select
 
         Case eMessages.HaveKilledUser
@@ -1008,6 +1008,8 @@ Private Sub HandleLogged()
     'Set connected state
     Call SetConnected
     
+    Call Inventario.DrawInv
+    
     If bShowTutorial Then frmTutorial.Show
     
     'Show tip
@@ -1077,16 +1079,10 @@ Private Sub HandleDisconnect()
 
     'Close connection
     frmMain.Socket1.Disconnect
-    
-    'Hide main form
-    frmMain.Visible = False
-    
+        
     'Stop audio
     'call 'audio.StopWave
     frmMain.IsPlaying = PlayLoop.plNone
-    
-    'Show connection form
-    frmConnect.Visible = True
     
     'Reset global vars
     UserDescansar = False
@@ -1109,19 +1105,49 @@ Private Sub HandleDisconnect()
         charlist(i).invisible = False
     Next i
     
-    'Unload all forms except frmMain and frmConnect
+    frmMain.Second.Enabled = False
+    frmMain.macrotrabajo.Enabled = False
+    
+    'Unload all forms except frmMain
     Dim frm As Form
     
+    Connected = False
+    
     For Each frm In Forms
-        If frm.Name <> frmMain.Name And frm.Name <> frmConnect.Name Then
+        If frm.Name <> frmMain.Name And frm.Name <> frmConnect.Name And _
+            frm.Name <> frmCrearPersonaje.Name Then
+            
             Unload frm
         End If
     Next
     
-    For i = 1 To MAX_INVENTORY_SLOTS
-        'Call Inventario.SetItem(i, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "")
-    Next i
+    On Local Error GoTo 0
     
+    ' Return to connection screen
+    frmConnect.MousePointer = vbNormal
+    If Not frmCrearPersonaje.Visible Then frmConnect.Visible = True
+    frmMain.Visible = False
+    
+    Inventario.ClearAllSlots
+    
+    ' Reset stats
+    UserClase = 0
+    UserSexo = 0
+    UserRaza = 0
+    UserHogar = 0
+    UserEmail = vbNullString
+    SkillPoints = 0
+    Alocados = 0
+    
+    ' Reset skills
+    For i = 1 To NUMSKILLS
+        UserSkills(i) = 0
+    Next i
+
+    ' Reset attributes
+    For i = 1 To NUMATRIBUTOS
+        UserAtributos(i) = 0
+    Next i
     'call 'audio.PlayMIDI("2.mid")
 End Sub
 
@@ -1174,12 +1200,10 @@ Private Sub HandleCommerceInit()
 '***************************************************
     Dim i As Long
     
-
-
     
     ' Initialize commerce inventories
-    Call InvComUsu.Initialize(frmComerciar.picInvUser, Inventario.MaxObjs)
-    Call InvComNpc.Initialize(frmComerciar.picInvNpc, MAX_NPC_INVENTORY_SLOTS)
+    'Call InvComUsu.Initialize(frmComerciar.picInvUser, Inventario.MaxObjs)
+    'Call InvComNpc.Initialize(frmComerciar.picInvNpc, MAX_NPC_INVENTORY_SLOTS)
 
     'Fill user inventory
     For i = 1 To MAX_INVENTORY_SLOTS
@@ -1221,13 +1245,10 @@ Private Sub HandleBankInit()
 '***************************************************
     Dim i As Long
     Dim BankGold As Long
-    
 
-
-    
-        BankGold = incomingData.ReadLong
-    Call InvBanco(0).Initialize(frmBancoObj.PicBancoInv, MAX_BANCOINVENTORY_SLOTS)
-    Call InvBanco(1).Initialize(frmBancoObj.PicInv, Inventario.MaxObjs)
+    BankGold = incomingData.ReadLong
+    'Call InvBanco(0).Initialize(frmBancoObj.PicBancoInv, MAX_BANCOINVENTORY_SLOTS)
+    'Call InvBanco(1).Initialize(frmBancoObj.PicInv, Inventario.MaxObjs)
     
     For i = 1 To Inventario.MaxObjs
         With Inventario
@@ -1271,12 +1292,12 @@ Private Sub HandleUserCommerceInit()
     TradingUserName = incomingData.ReadString
     
     ' Initialize commerce inventories
-    Call InvComUsu.Initialize(frmComerciarUsu.picInvComercio, Inventario.MaxObjs)
-    Call InvOfferComUsu(0).Initialize(frmComerciarUsu.picInvOfertaProp, INV_OFFER_SLOTS)
-    Call InvOfferComUsu(1).Initialize(frmComerciarUsu.picInvOfertaOtro, INV_OFFER_SLOTS)
-    Call InvOroComUsu(0).Initialize(frmComerciarUsu.picInvOroProp, INV_GOLD_SLOTS, , TilePixelWidth * 2, TilePixelHeight, TilePixelWidth / 2)
-    Call InvOroComUsu(1).Initialize(frmComerciarUsu.picInvOroOfertaProp, INV_GOLD_SLOTS, , TilePixelWidth * 2, TilePixelHeight, TilePixelWidth / 2)
-    Call InvOroComUsu(2).Initialize(frmComerciarUsu.picInvOroOfertaOtro, INV_GOLD_SLOTS, , TilePixelWidth * 2, TilePixelHeight, TilePixelWidth / 2)
+    'Call InvComUsu.Initialize(frmComerciarUsu.picInvComercio, Inventario.MaxObjs)
+    'Call InvOfferComUsu(0).Initialize(frmComerciarUsu.picInvOfertaProp, INV_OFFER_SLOTS)
+    'Call InvOfferComUsu(1).Initialize(frmComerciarUsu.picInvOfertaOtro, INV_OFFER_SLOTS)
+    'Call InvOroComUsu(0).Initialize(frmComerciarUsu.picInvOroProp, INV_GOLD_SLOTS, , TilePixelWidth * 2, TilePixelHeight, TilePixelWidth / 2)
+    'Call InvOroComUsu(1).Initialize(frmComerciarUsu.picInvOroOfertaProp, INV_GOLD_SLOTS, , TilePixelWidth * 2, TilePixelHeight, TilePixelWidth / 2)
+    'Call InvOroComUsu(2).Initialize(frmComerciarUsu.picInvOroOfertaOtro, INV_GOLD_SLOTS, , TilePixelWidth * 2, TilePixelHeight, TilePixelWidth / 2)
 
     'Fill user inventory
     For i = 1 To MAX_INVENTORY_SLOTS
@@ -1394,8 +1415,7 @@ Private Sub HandleNPCSwing()
 '***************************************************
 
 
-    'todo
-    'Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_CRIATURA_FALLA_GOLPE, 255, 0, 0, True, False, True)
+    Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_CRIATURA_FALLA_GOLPE, 255, 0, 0, True, False, True)
 End Sub
 
 ''
@@ -1408,9 +1428,7 @@ Private Sub HandleNPCKillUser()
 '
 '***************************************************
 
-
-    'todo
-    'Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_CRIATURA_MATADO, 255, 0, 0, True, False, True)
+    Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_CRIATURA_MATADO, 255, 0, 0, True, False, True)
 End Sub
 
 ''
@@ -1424,8 +1442,7 @@ Private Sub HandleBlockedWithShieldUser()
 '***************************************************
 
 
-    'todo
-    'Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_RECHAZO_ATAQUE_ESCUDO, 255, 0, 0, True, False, True)
+    Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_RECHAZO_ATAQUE_ESCUDO, 255, 0, 0, True, False, True)
 End Sub
 
 ''
@@ -1438,9 +1455,7 @@ Private Sub HandleBlockedWithShieldOther()
 '
 '***************************************************
 
-
-    'todo
-    'Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_USUARIO_RECHAZO_ATAQUE_ESCUDO, 255, 0, 0, True, False, True)
+    Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_USUARIO_RECHAZO_ATAQUE_ESCUDO, 255, 0, 0, True, False, True)
 End Sub
 
 ''
@@ -1453,9 +1468,7 @@ Private Sub HandleUserSwing()
 '
 '***************************************************
 
-
-    'todo'
-    'Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_FALLADO_GOLPE, 255, 0, 0, True, False, True)
+    Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_FALLADO_GOLPE, 255, 0, 0, True, False, True)
 End Sub
 
 ''
@@ -1468,9 +1481,7 @@ Private Sub HandleCantUseWhileMeditating()
 '
 '***************************************************
 
-
-    'todo
-    'Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_USAR_MEDITANDO, 255, 0, 0, False, False, True)
+    Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_USAR_MEDITANDO, 255, 0, 0, False, False, True)
 End Sub
 
 ''
@@ -1494,17 +1505,16 @@ Private Sub HandleUpdateSta()
     'Get data and update form
     UserMinSTA = incomingData.ReadInteger()
     
-    'todo
-    'frmMain.lblEnergia = UserMinSTA & "/" & UserMaxSTA
+    frmMain.lblEnergia = UserMinSTA & "/" & UserMaxSTA
     
     Dim bWidth As Byte
     
     bWidth = (((UserMinSTA / 100) / (UserMaxSTA / 100)) * 75)
     
-    'frmMain.shpEnergia.Width = 75 - bWidth
-    'frmMain.shpEnergia.Left = 584 + (75 - frmMain.shpEnergia.Width)
+    frmMain.shpEnergia.Width = 75 - bWidth
+    frmMain.shpEnergia.Left = 584 + (75 - frmMain.shpEnergia.Width)
     
-    'frmMain.shpEnergia.Visible = (bWidth <> 75)
+    frmMain.shpEnergia.Visible = (bWidth <> 75)
     
 End Sub
 
@@ -1522,25 +1532,22 @@ Private Sub HandleUpdateMana()
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
-    
-
 
     
     'Get data and update form
     UserMinMAN = incomingData.ReadInteger()
     
-    'todo
-    'frmMain.lblMana = UserMinMAN & "/" & UserMaxMAN
+    frmMain.lblMana = UserMinMAN & "/" & UserMaxMAN
     
     Dim bWidth As Byte
     
     If UserMaxMAN > 0 Then _
         bWidth = (((UserMinMAN / 100) / (UserMaxMAN / 100)) * 75)
         
-    'frmMain.shpMana.Width = 75 - bWidth
-    'frmMain.shpMana.Left = 584 + (75 - frmMain.shpMana.Width)
+    frmMain.shpMana.Width = 75 - bWidth
+    frmMain.shpMana.Left = 584 + (75 - frmMain.shpMana.Width)
     
-    'frmMain.shpMana.Visible = (bWidth <> 75)
+    frmMain.shpMana.Visible = (bWidth <> 75)
 End Sub
 
 ''
@@ -1558,22 +1565,19 @@ Private Sub HandleUpdateHP()
         Exit Sub
     End If
     
-
-
-    
     'Get data and update form
     UserMinHP = incomingData.ReadInteger()
-    'todo
-    'frmMain.lblVida = UserMinHP & "/" & UserMaxHP
+    
+    frmMain.lblVida = UserMinHP & "/" & UserMaxHP
     
     Dim bWidth As Byte
     
     bWidth = (((UserMinHP / 100) / (UserMaxHP / 100)) * 75)
     
-    'frmMain.shpVida.Width = 75 - bWidth
-    'frmMain.shpVida.Left = 584 + (75 - frmMain.shpVida.Width)
+    frmMain.shpVida.Width = 75 - bWidth
+    frmMain.shpVida.Left = 584 + (75 - frmMain.shpVida.Width)
     
-    'frmMain.shpVida.Visible = (bWidth <> 75)
+    frmMain.shpVida.Visible = (bWidth <> 75)
     
     'Is the user alive??
     If UserMinHP = 0 Then
@@ -1600,22 +1604,19 @@ Private Sub HandleUpdateGold()
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
-    
 
-
-    
     'Get data and update form
     UserGLD = incomingData.ReadLong()
-    'todo
+
     If UserGLD >= CLng(UserLvl) * 10000 Then
         'Changes color
-        'frmMain.GldLbl.ForeColor = &HFF& 'Red
+        frmMain.GldLbl.ForeColor = &HFF& 'Red
     Else
         'Changes color
-        'frmMain.GldLbl.ForeColor = &HFFFF& 'Yellow
+        frmMain.GldLbl.ForeColor = &HFFFF& 'Yellow
     End If
     
-    'frmMain.GldLbl.Caption = UserGLD
+    frmMain.GldLbl.Caption = UserGLD
 End Sub
 
 ''
@@ -1632,9 +1633,6 @@ Private Sub HandleUpdateBankGold()
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
-    
-
-
     
     frmBancoObj.lblUserGld.Caption = incomingData.ReadLong
     
@@ -1661,9 +1659,8 @@ Private Sub HandleUpdateExp()
     'Get data and update form
     UserExp = incomingData.ReadLong()
     
-    'todo
-    'frmMain.lblExp.Caption = "Exp: " & UserExp & "/" & UserPasarNivel
-    'frmMain.lblPorcLvl.Caption = "[" & Round(CDbl(UserExp) * CDbl(100) / CDbl(UserPasarNivel), 2) & "%]"
+    frmMain.lblExp.Caption = "Exp: " & UserExp & "/" & UserPasarNivel
+    frmMain.lblPorcLvl.Caption = "[" & Round(CDbl(UserExp) * CDbl(100) / CDbl(UserPasarNivel), 2) & "%]"
 End Sub
 
 ''
@@ -1680,17 +1677,14 @@ Private Sub HandleUpdateStrenghtAndDexterity()
         Exit Sub
     End If
     
-
-
-    
     'Get data and update form
     UserFuerza = incomingData.ReadByte
     UserAgilidad = incomingData.ReadByte
     'todo
-    'frmMain.lblStrg.Caption = UserFuerza
-    'frmMain.lblDext.Caption = UserAgilidad
-    'frmMain.lblStrg.ForeColor = getStrenghtColor()
-    'frmMain.lblDext.ForeColor = getDexterityColor()
+    frmMain.lblStrg.Caption = UserFuerza
+    frmMain.lblDext.Caption = UserAgilidad
+    frmMain.lblStrg.ForeColor = getStrenghtColor()
+    frmMain.lblDext.ForeColor = getDexterityColor()
 End Sub
 
 ' Handles the UpdateStrenghtAndDexterity message.
@@ -1705,15 +1699,11 @@ Private Sub HandleUpdateStrenght()
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
-    
 
-
-    
     'Get data and update form
     UserFuerza = incomingData.ReadByte
-    'todo
-    'frmMain.lblStrg.Caption = UserFuerza
-    'frmMain.lblStrg.ForeColor = getStrenghtColor()
+    frmMain.lblStrg.Caption = UserFuerza
+    frmMain.lblStrg.ForeColor = getStrenghtColor()
 End Sub
 
 ' Handles the UpdateStrenghtAndDexterity message.
@@ -1729,15 +1719,11 @@ Private Sub HandleUpdateDexterity()
         Exit Sub
     End If
     
-
-
-    
     'Get data and update form
     UserAgilidad = incomingData.ReadByte
     
-    'todo
-    'frmMain.lblDext.Caption = UserAgilidad
-    'frmMain.lblDext.ForeColor = getDexterityColor()
+    frmMain.lblDext.Caption = UserAgilidad
+    frmMain.lblDext.ForeColor = getDexterityColor()
 End Sub
 
 ''
@@ -1752,10 +1738,7 @@ Private Sub HandleChangeMap()
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
-    
 
-
-    
     UserMap = incomingData.ReadInteger()
     
 'TODO: Once on-the-fly editor is implemented check for map version before loading....
@@ -1796,8 +1779,6 @@ Private Sub HandlePosUpdate()
     End If
     
 
-
-    
     'Remove char from old position
     If MapData(UserPos.X, UserPos.Y).CharIndex = UserCharIndex Then
         MapData(UserPos.X, UserPos.Y).CharIndex = 0
@@ -1819,8 +1800,7 @@ Private Sub HandlePosUpdate()
             MapData(UserPos.X, UserPos.Y).Trigger = 4, True, False)
                 
     'Update pos label
-    'todo
-    'frmMain.Coord.Caption = UserMap & " X: " & UserPos.X & " Y: " & UserPos.Y
+    frmMain.Coord.Caption = UserMap & " X: " & UserPos.X & " Y: " & UserPos.Y
 End Sub
 
 ''
@@ -1836,23 +1816,20 @@ Private Sub HandleNPCHitUser()
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
-    
 
-
-    'todo
     Select Case incomingData.ReadByte()
         Case bCabeza
-            Call AppendLineCC(frmMain.RecTxt, MENSAJE_GOLPE_CABEZA & CStr(incomingData.ReadInteger()) & "!!", 255, 0, 0, True, False, True)
+            Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_GOLPE_CABEZA & CStr(incomingData.ReadInteger()) & "!!", 255, 0, 0, True, False, True)
         Case bBrazoIzquierdo
-            Call AppendLineCC(frmMain.RecTxt, MENSAJE_GOLPE_BRAZO_IZQ & CStr(incomingData.ReadInteger()) & "!!", 255, 0, 0, True, False, True)
+            Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_GOLPE_BRAZO_IZQ & CStr(incomingData.ReadInteger()) & "!!", 255, 0, 0, True, False, True)
         Case bBrazoDerecho
-            Call AppendLineCC(frmMain.RecTxt, MENSAJE_GOLPE_BRAZO_DER & CStr(incomingData.ReadInteger()) & "!!", 255, 0, 0, True, False, True)
+            Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_GOLPE_BRAZO_DER & CStr(incomingData.ReadInteger()) & "!!", 255, 0, 0, True, False, True)
         Case bPiernaIzquierda
-            Call AppendLineCC(frmMain.RecTxt, MENSAJE_GOLPE_PIERNA_IZQ & CStr(incomingData.ReadInteger()) & "!!", 255, 0, 0, True, False, True)
+            Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_GOLPE_PIERNA_IZQ & CStr(incomingData.ReadInteger()) & "!!", 255, 0, 0, True, False, True)
         Case bPiernaDerecha
-            Call AppendLineCC(frmMain.RecTxt, MENSAJE_GOLPE_PIERNA_DER & CStr(incomingData.ReadInteger()) & "!!", 255, 0, 0, True, False, True)
+            Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_GOLPE_PIERNA_DER & CStr(incomingData.ReadInteger()) & "!!", 255, 0, 0, True, False, True)
         Case bTorso
-            Call AppendLineCC(frmMain.RecTxt, MENSAJE_GOLPE_TORSO & CStr(incomingData.ReadInteger() & "!!"), 255, 0, 0, True, False, True)
+            Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_GOLPE_TORSO & CStr(incomingData.ReadInteger() & "!!"), 255, 0, 0, True, False, True)
     End Select
 End Sub
 
@@ -1869,11 +1846,8 @@ Private Sub HandleUserHitNPC()
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
-    
 
-
-    'todo
-    Call AppendLineCC(frmMain.RecTxt, MENSAJE_GOLPE_CRIATURA_1 & CStr(incomingData.ReadLong()) & MENSAJE_2, 255, 0, 0, True, False, True)
+    Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_GOLPE_CRIATURA_1 & CStr(incomingData.ReadLong()) & MENSAJE_2, 255, 0, 0, True, False, True)
 End Sub
 
 ''
@@ -1890,10 +1864,7 @@ Private Sub HandleUserAttackedSwing()
         Exit Sub
     End If
     
-
-
-    'todo
-    Call AppendLineCC(frmMain.RecTxt, MENSAJE_1 & charlist(incomingData.ReadInteger()).Nombre & MENSAJE_ATAQUE_FALLO, 255, 0, 0, True, False, True)
+    Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_1 & charlist(incomingData.ReadInteger()).Nombre & MENSAJE_ATAQUE_FALLO, 255, 0, 0, True, False, True)
 End Sub
 
 ''
@@ -1910,27 +1881,23 @@ Private Sub HandleUserHittedByUser()
         Exit Sub
     End If
     
-
-
-    
-    'todo
     Dim attacker As String
     
     attacker = charlist(incomingData.ReadInteger()).Nombre
     
     Select Case incomingData.ReadByte
         Case bCabeza
-            Call AppendLineCC(frmMain.RecTxt, MENSAJE_1 & attacker & MENSAJE_RECIVE_IMPACTO_CABEZA & CStr(incomingData.ReadInteger() & MENSAJE_2), 255, 0, 0, True, False, True)
+            Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_1 & attacker & MENSAJE_RECIVE_IMPACTO_CABEZA & CStr(incomingData.ReadInteger() & MENSAJE_2), 255, 0, 0, True, False, True)
         Case bBrazoIzquierdo
-            Call AppendLineCC(frmMain.RecTxt, MENSAJE_1 & attacker & MENSAJE_RECIVE_IMPACTO_BRAZO_IZQ & CStr(incomingData.ReadInteger() & MENSAJE_2), 255, 0, 0, True, False, True)
+            Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_1 & attacker & MENSAJE_RECIVE_IMPACTO_BRAZO_IZQ & CStr(incomingData.ReadInteger() & MENSAJE_2), 255, 0, 0, True, False, True)
         Case bBrazoDerecho
-            Call AppendLineCC(frmMain.RecTxt, MENSAJE_1 & attacker & MENSAJE_RECIVE_IMPACTO_BRAZO_DER & CStr(incomingData.ReadInteger() & MENSAJE_2), 255, 0, 0, True, False, True)
+            Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_1 & attacker & MENSAJE_RECIVE_IMPACTO_BRAZO_DER & CStr(incomingData.ReadInteger() & MENSAJE_2), 255, 0, 0, True, False, True)
         Case bPiernaIzquierda
-            Call AppendLineCC(frmMain.RecTxt, MENSAJE_1 & attacker & MENSAJE_RECIVE_IMPACTO_PIERNA_IZQ & CStr(incomingData.ReadInteger() & MENSAJE_2), 255, 0, 0, True, False, True)
+            Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_1 & attacker & MENSAJE_RECIVE_IMPACTO_PIERNA_IZQ & CStr(incomingData.ReadInteger() & MENSAJE_2), 255, 0, 0, True, False, True)
         Case bPiernaDerecha
-            Call AppendLineCC(frmMain.RecTxt, MENSAJE_1 & attacker & MENSAJE_RECIVE_IMPACTO_PIERNA_DER & CStr(incomingData.ReadInteger() & MENSAJE_2), 255, 0, 0, True, False, True)
+            Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_1 & attacker & MENSAJE_RECIVE_IMPACTO_PIERNA_DER & CStr(incomingData.ReadInteger() & MENSAJE_2), 255, 0, 0, True, False, True)
         Case bTorso
-            Call AppendLineCC(frmMain.RecTxt, MENSAJE_1 & attacker & MENSAJE_RECIVE_IMPACTO_TORSO & CStr(incomingData.ReadInteger() & MENSAJE_2), 255, 0, 0, True, False, True)
+            Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_1 & attacker & MENSAJE_RECIVE_IMPACTO_TORSO & CStr(incomingData.ReadInteger() & MENSAJE_2), 255, 0, 0, True, False, True)
     End Select
 End Sub
 
@@ -1947,27 +1914,24 @@ Private Sub HandleUserHittedUser()
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
-    
 
-
-    'todo
     Dim Victim As String
     
     Victim = charlist(incomingData.ReadInteger()).Nombre
     
     Select Case incomingData.ReadByte
         Case bCabeza
-            Call AppendLineCC(frmMain.RecTxt, MENSAJE_PRODUCE_IMPACTO_1 & Victim & MENSAJE_PRODUCE_IMPACTO_CABEZA & CStr(incomingData.ReadInteger() & MENSAJE_2), 255, 0, 0, True, False, True)
+            Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_PRODUCE_IMPACTO_1 & Victim & MENSAJE_PRODUCE_IMPACTO_CABEZA & CStr(incomingData.ReadInteger() & MENSAJE_2), 255, 0, 0, True, False, True)
         Case bBrazoIzquierdo
-            Call AppendLineCC(frmMain.RecTxt, MENSAJE_PRODUCE_IMPACTO_1 & Victim & MENSAJE_PRODUCE_IMPACTO_BRAZO_IZQ & CStr(incomingData.ReadInteger() & MENSAJE_2), 255, 0, 0, True, False, True)
+            Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_PRODUCE_IMPACTO_1 & Victim & MENSAJE_PRODUCE_IMPACTO_BRAZO_IZQ & CStr(incomingData.ReadInteger() & MENSAJE_2), 255, 0, 0, True, False, True)
         Case bBrazoDerecho
-            Call AppendLineCC(frmMain.RecTxt, MENSAJE_PRODUCE_IMPACTO_1 & Victim & MENSAJE_PRODUCE_IMPACTO_BRAZO_DER & CStr(incomingData.ReadInteger() & MENSAJE_2), 255, 0, 0, True, False, True)
+            Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_PRODUCE_IMPACTO_1 & Victim & MENSAJE_PRODUCE_IMPACTO_BRAZO_DER & CStr(incomingData.ReadInteger() & MENSAJE_2), 255, 0, 0, True, False, True)
         Case bPiernaIzquierda
-            Call AppendLineCC(frmMain.RecTxt, MENSAJE_PRODUCE_IMPACTO_1 & Victim & MENSAJE_PRODUCE_IMPACTO_PIERNA_IZQ & CStr(incomingData.ReadInteger() & MENSAJE_2), 255, 0, 0, True, False, True)
+            Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_PRODUCE_IMPACTO_1 & Victim & MENSAJE_PRODUCE_IMPACTO_PIERNA_IZQ & CStr(incomingData.ReadInteger() & MENSAJE_2), 255, 0, 0, True, False, True)
         Case bPiernaDerecha
-            Call AppendLineCC(frmMain.RecTxt, MENSAJE_PRODUCE_IMPACTO_1 & Victim & MENSAJE_PRODUCE_IMPACTO_PIERNA_DER & CStr(incomingData.ReadInteger() & MENSAJE_2), 255, 0, 0, True, False, True)
+            Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_PRODUCE_IMPACTO_1 & Victim & MENSAJE_PRODUCE_IMPACTO_PIERNA_DER & CStr(incomingData.ReadInteger() & MENSAJE_2), 255, 0, 0, True, False, True)
         Case bTorso
-            Call AppendLineCC(frmMain.RecTxt, MENSAJE_PRODUCE_IMPACTO_1 & Victim & MENSAJE_PRODUCE_IMPACTO_TORSO & CStr(incomingData.ReadInteger() & MENSAJE_2), 255, 0, 0, True, False, True)
+            Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_PRODUCE_IMPACTO_1 & Victim & MENSAJE_PRODUCE_IMPACTO_TORSO & CStr(incomingData.ReadInteger() & MENSAJE_2), 255, 0, 0, True, False, True)
     End Select
 End Sub
 
@@ -2005,7 +1969,7 @@ On Error GoTo ErrHandler
     
     'Only add the chat if the character exists (a CharacterRemove may have been sent to the PC / NPC area before the incomingData was flushed)
     If charlist(CharIndex).Active Then _
-        Call Dialogos.CreateDialog(Trim$(chat), CharIndex, RGB(r, g, b))
+        Call Dialogos.CreateDialog(Trim$(chat), CharIndex, D3DColorXRGB(r, g, b))
     
 ErrHandler:
     Dim error As Long
@@ -2032,9 +1996,6 @@ Private Sub HandleConsoleMessage()
     
 On Error GoTo ErrHandler
 
-
-
-    
     Dim chat As String
     Dim FontIndex As Integer
     Dim str As String
@@ -2067,11 +2028,11 @@ On Error GoTo ErrHandler
                 b = Val(str)
             End If
             
-            'todo
-        Call AppendLineCC(frmMain.RecTxt, Left$(chat, InStr(1, chat, "~") - 1), r, g, b, Val(ReadField(5, chat, 126)) <> 0, Val(ReadField(6, chat, 126)) <> 0)
+
+        Call AddtoRichTextBox(frmMain.RecTxt, Left$(chat, InStr(1, chat, "~") - 1), r, g, b, Val(ReadField(5, chat, 126)) <> 0, Val(ReadField(6, chat, 126)) <> 0)
     Else
         With FontTypes(FontIndex)
-            Call AppendLineCC(frmMain.RecTxt, chat, .Red, .Green, .Blue, .Bold, .Italic)
+            Call AddtoRichTextBox(frmMain.RecTxt, chat, .Red, .green, .blue, .bold, .italic)
         End With
         
         ' Para no perder el foco cuando chatea por party
@@ -2079,7 +2040,9 @@ On Error GoTo ErrHandler
       '      If MirandoParty Then frmParty.SendTxt.SetFocus
      '   End If
     End If
-
+    
+    Exit Sub
+    
 ErrHandler:
     Dim error As Long
     error = Err.Number
@@ -2144,7 +2107,7 @@ On Error GoTo ErrHandler
         Call AddtoRichTextBox(frmComerciarUsu.CommerceConsole, Left$(chat, InStr(1, chat, "~") - 1), r, g, b, Val(ReadField(5, chat, 126)) <> 0, Val(ReadField(6, chat, 126)) <> 0)
     Else
         With FontTypes(FontIndex)
-            Call AddtoRichTextBox(frmComerciarUsu.CommerceConsole, chat, .Red, .Green, .Blue, .Bold, .Italic)
+            Call AddtoRichTextBox(frmComerciarUsu.CommerceConsole, chat, .Red, .green, .blue, .bold, .italic)
         End With
     End If
 
@@ -2233,8 +2196,7 @@ Private Sub HandleUserCharIndexInServer()
             MapData(UserPos.X, UserPos.Y).Trigger = 2 Or _
             MapData(UserPos.X, UserPos.Y).Trigger = 4, True, False)
 
-    'todo
-    'frmMain.Coord.Caption = UserMap & " X: " & UserPos.X & " Y: " & UserPos.Y
+    frmMain.Coord.Caption = UserMap & " X: " & UserPos.X & " Y: " & UserPos.Y
 End Sub
 
 ''
@@ -2771,22 +2733,21 @@ Private Sub HandleUpdateUserStats()
     UserPasarNivel = incomingData.ReadLong()
     UserExp = incomingData.ReadLong()
     
-    'todo
-    'frmMain.lblExp.Caption = "Exp: " & UserExp & "/" & UserPasarNivel
+    frmMain.lblExp.Caption = "Exp: " & UserExp & "/" & UserPasarNivel
     
     If UserPasarNivel > 0 Then
-       ' frmMain.lblPorcLvl.Caption = "[" & Round(CDbl(UserExp) * CDbl(100) / CDbl(UserPasarNivel), 2) & "%]"
+        frmMain.lblPorcLvl.Caption = "[" & Round(CDbl(UserExp) * CDbl(100) / CDbl(UserPasarNivel), 2) & "%]"
     Else
-       ' frmMain.lblPorcLvl.Caption = "[N/A]"
+        frmMain.lblPorcLvl.Caption = "[N/A]"
     End If
     
-   ' frmMain.GldLbl.Caption = UserGLD
-   ' frmMain.lblLvl.Caption = UserLvl
+    frmMain.GldLbl.Caption = UserGLD
+    frmMain.lblLvl.Caption = UserLvl
     
     'Stats
-   ' frmMain.lblMana = UserMinMAN & "/" & UserMaxMAN
-   ' frmMain.lblVida = UserMinHP & "/" & UserMaxHP
-   ' frmMain.lblEnergia = UserMinSTA & "/" & UserMaxSTA
+    frmMain.lblMana = UserMinMAN & "/" & UserMaxMAN
+    frmMain.lblVida = UserMinHP & "/" & UserMaxHP
+    frmMain.lblEnergia = UserMinSTA & "/" & UserMaxSTA
     
     Dim bWidth As Byte
     
@@ -2794,26 +2755,26 @@ Private Sub HandleUpdateUserStats()
     If UserMaxMAN > 0 Then _
         bWidth = (((UserMinMAN / 100) / (UserMaxMAN / 100)) * 75)
         
-    'frmMain.shpMana.Width = 75 - bWidth
-    'frmMain.shpMana.Left = 584 + (75 - frmMain.shpMana.Width)
+    frmMain.shpMana.Width = 75 - bWidth
+    frmMain.shpMana.Left = 584 + (75 - frmMain.shpMana.Width)
     
-    'frmMain.shpMana.Visible = (bWidth <> 75)
+    frmMain.shpMana.Visible = (bWidth <> 75)
     '***************************
     
     bWidth = (((UserMinHP / 100) / (UserMaxHP / 100)) * 75)
     
-   ' frmMain.shpVida.Width = 75 - bWidth
-   ' frmMain.shpVida.Left = 584 + (75 - frmMain.shpVida.Width)
+    frmMain.shpVida.Width = 75 - bWidth
+    frmMain.shpVida.Left = 584 + (75 - frmMain.shpVida.Width)
     
-   ' frmMain.shpVida.Visible = (bWidth <> 75)
+    frmMain.shpVida.Visible = (bWidth <> 75)
     '***************************
     
     bWidth = (((UserMinSTA / 100) / (UserMaxSTA / 100)) * 75)
     
-    'frmMain.shpEnergia.Width = 75 - bWidth
-   ' frmMain.shpEnergia.Left = 584 + (75 - frmMain.shpEnergia.Width)
+    frmMain.shpEnergia.Width = 75 - bWidth
+    frmMain.shpEnergia.Left = 584 + (75 - frmMain.shpEnergia.Width)
     
-    'frmMain.shpEnergia.Visible = (bWidth <> 75)
+    frmMain.shpEnergia.Visible = (bWidth <> 75)
     '***************************
     
     If UserMinHP = 0 Then
@@ -2826,10 +2787,10 @@ Private Sub HandleUpdateUserStats()
     
     If UserGLD >= CLng(UserLvl) * 10000 Then
         'Changes color
-       ' frmMain.GldLbl.ForeColor = &HFF& 'Red
+        frmMain.GldLbl.ForeColor = &HFF& 'Red
     Else
         'Changes color
-        'frmMain.GldLbl.ForeColor = &HFFFF& 'Yellow
+        frmMain.GldLbl.ForeColor = &HFFFF& 'Yellow
     End If
 End Sub
 
@@ -2846,29 +2807,26 @@ Private Sub HandleWorkRequestTarget()
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
-    
 
-
-    
     UsingSkill = incomingData.ReadByte()
 
     frmMain.MousePointer = 2
-    'todo
+
     Select Case UsingSkill
         Case Magia
-            Call AppendLineCC(frmMain.RecTxt, MENSAJE_TRABAJO_MAGIA, 100, 100, 120, 0, 0)
+            Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_TRABAJO_MAGIA, 100, 100, 120, 0, 0)
         Case Pesca
-            Call AppendLineCC(frmMain.RecTxt, MENSAJE_TRABAJO_PESCA, 100, 100, 120, 0, 0)
+            Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_TRABAJO_PESCA, 100, 100, 120, 0, 0)
         Case Robar
-            Call AppendLineCC(frmMain.RecTxt, MENSAJE_TRABAJO_ROBAR, 100, 100, 120, 0, 0)
+            Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_TRABAJO_ROBAR, 100, 100, 120, 0, 0)
         Case Talar
-            Call AppendLineCC(frmMain.RecTxt, MENSAJE_TRABAJO_TALAR, 100, 100, 120, 0, 0)
+            Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_TRABAJO_TALAR, 100, 100, 120, 0, 0)
         Case Mineria
-            Call AppendLineCC(frmMain.RecTxt, MENSAJE_TRABAJO_MINERIA, 100, 100, 120, 0, 0)
+            Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_TRABAJO_MINERIA, 100, 100, 120, 0, 0)
         Case FundirMetal
-            Call AppendLineCC(frmMain.RecTxt, MENSAJE_TRABAJO_FUNDIRMETAL, 100, 100, 120, 0, 0)
+            Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_TRABAJO_FUNDIRMETAL, 100, 100, 120, 0, 0)
         Case Proyectiles
-            Call AppendLineCC(frmMain.RecTxt, MENSAJE_TRABAJO_PROYECTILES, 100, 100, 120, 0, 0)
+            Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_TRABAJO_PROYECTILES, 100, 100, 120, 0, 0)
     End Select
 End Sub
 
@@ -2888,13 +2846,10 @@ Private Sub HandleChangeInventorySlot()
     
 On Error GoTo ErrHandler
 
-
-
-    
     Dim slot As Byte
     Dim OBJIndex As Integer
     Dim Name As String
-    Dim Amount As Integer
+    Dim amount As Integer
     Dim Equipped As Boolean
     Dim GrhIndex As Integer
     Dim OBJType As Byte
@@ -2907,7 +2862,7 @@ On Error GoTo ErrHandler
     slot = incomingData.ReadByte()
     OBJIndex = incomingData.ReadInteger()
     Name = incomingData.ReadString()
-    Amount = incomingData.ReadInteger()
+    amount = incomingData.ReadInteger()
     Equipped = incomingData.ReadBoolean()
     GrhIndex = incomingData.ReadInteger()
     OBJType = incomingData.ReadByte()
@@ -2917,40 +2872,40 @@ On Error GoTo ErrHandler
     MinDef = incomingData.ReadInteger
     Value = incomingData.ReadSingle()
     
-    'todo
+    
     If Equipped Then
         Select Case OBJType
             Case eObjType.otWeapon
-               ' frmMain.lblWeapon = MinHit & "/" & MaxHit
+                frmMain.lblWeapon = MinHit & "/" & MaxHit
                 UserWeaponEqpSlot = slot
             Case eObjType.otArmadura
-                'frmMain.lblArmor = MinDef & "/" & MaxDef
+                frmMain.lblArmor = MinDef & "/" & MaxDef
                 UserArmourEqpSlot = slot
             Case eObjType.otescudo
-               ' frmMain.lblShielder = MinDef & "/" & MaxDef
+                frmMain.lblShielder = MinDef & "/" & MaxDef
                 UserHelmEqpSlot = slot
             Case eObjType.otcasco
-                'frmMain.lblHelm = MinDef & "/" & MaxDef
+                frmMain.lblHelm = MinDef & "/" & MaxDef
                 UserShieldEqpSlot = slot
         End Select
     Else
         Select Case slot
             Case UserWeaponEqpSlot
-               ' frmMain.lblWeapon = "0/0"
+                frmMain.lblWeapon = "0/0"
                 UserWeaponEqpSlot = 0
             Case UserArmourEqpSlot
-               ' frmMain.lblArmor = "0/0"
+                frmMain.lblArmor = "0/0"
                 UserArmourEqpSlot = 0
             Case UserHelmEqpSlot
-                'frmMain.lblShielder = "0/0"
+                frmMain.lblShielder = "0/0"
                 UserHelmEqpSlot = 0
             Case UserShieldEqpSlot
-                'frmMain.lblHelm = "0/0"
+                frmMain.lblHelm = "0/0"
                 UserShieldEqpSlot = 0
         End Select
     End If
     
-    'Call Inventario.SetItem(slot, OBJIndex, Amount, Equipped, GrhIndex, OBJType, MaxHit, MinHit, MaxDef, MinDef, Value, Name)
+    Call Inventario.SetItem(slot, OBJIndex, amount, Equipped, GrhIndex, OBJType, MaxHit, MinHit, MaxDef, MinDef, Value, Name)
 
 ErrHandler:
     Dim error As Long
@@ -2972,8 +2927,6 @@ Private Sub HandleAddSlots()
 '
 '***************************************************
 
-
-    
     MaxInventorySlots = incomingData.ReadByte
 End Sub
 
@@ -2985,10 +2938,8 @@ Private Sub HandleStopWorking()
 '
 '***************************************************
 
-
-    
     With FontTypes(FontTypeNames.FONTTYPE_INFO)
-        Call ShowConsoleMsg("¡Has terminado de trabajar!", .Red, .Green, .Blue, .Bold, .Italic)
+        Call ShowConsoleMsg("¡Has terminado de trabajar!", .Red, .green, .blue, .bold, .italic)
     End With
     
     If frmMain.macrotrabajo.Enabled Then Call frmMain.DesactivarMacroTrabajo
@@ -3003,22 +2954,22 @@ Private Sub HandleCancelOfferItem()
 '
 '***************************************************
     Dim slot As Byte
-    Dim Amount As Long
+    Dim amount As Long
     
 
     
     slot = incomingData.ReadByte
     
     With InvOfferComUsu(0)
-        Amount = .Amount(slot)
+        amount = .amount(slot)
         
         ' No tiene sentido que se quiten 0 unidades
-        If Amount <> 0 Then
+        If amount <> 0 Then
             ' Actualizo el inventario general
-            Call frmComerciarUsu.UpdateInvCom(.OBJIndex(slot), Amount)
+            Call frmComerciarUsu.UpdateInvCom(.OBJIndex(slot), amount)
             
             ' Borro el item
-            'Call .SetItem(slot, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "")
+            Call .SetItem(slot, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "")
         End If
     End With
     
@@ -3048,15 +2999,13 @@ Private Sub HandleChangeBankSlot()
 On Error GoTo ErrHandler
 
 
-
-    
     Dim slot As Byte
     slot = incomingData.ReadByte()
     
     With UserBancoInventory(slot)
         .OBJIndex = incomingData.ReadInteger()
         .Name = incomingData.ReadString()
-        .Amount = incomingData.ReadInteger()
+        .amount = incomingData.ReadInteger()
         .GrhIndex = incomingData.ReadInteger()
         .OBJType = incomingData.ReadByte()
         .MaxHit = incomingData.ReadInteger()
@@ -3066,7 +3015,7 @@ On Error GoTo ErrHandler
         .Valor = incomingData.ReadLong()
         
         If Comerciando Then
-            'Call InvBanco(0).SetItem(slot, .OBJIndex, .Amount, _
+            Call InvBanco(0).SetItem(slot, .OBJIndex, .amount, _
                 .Equipped, .GrhIndex, .OBJType, .MaxHit, _
                 .MinHit, .MaxDef, .MinDef, .Valor, .Name)
         End If
@@ -3101,21 +3050,16 @@ Private Sub HandleChangeSpellSlot()
 On Error GoTo ErrHandler
 
 
-
-    
     Dim slot As Byte
     slot = incomingData.ReadByte()
     
     UserHechizos(slot) = incomingData.ReadInteger()
     
-    'todo
-    incomingData.ReadString
-    
-    'If slot <= frmMain.hlst.ListCount Then
-    '    frmMain.hlst.List(slot - 1) = incomingData.ReadString()
-    'Else
-    '    Call frmMain.hlst.AddItem(incomingData.ReadString())
-    'End If
+    If slot <= frmMain.hlst.ListCount Then
+        frmMain.hlst.List(slot - 1) = incomingData.ReadString()
+    Else
+        Call frmMain.hlst.AddItem(incomingData.ReadString())
+    End If
 
 ErrHandler:
     Dim error As Long
@@ -3142,10 +3086,7 @@ Private Sub HandleAtributes()
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
-    
 
-
-    
     Dim i As Long
     
     For i = 1 To NUMATRIBUTES
@@ -3209,10 +3150,10 @@ On Error GoTo ErrHandler
     
     With frmHerrero
         ' Inicializo los inventarios
-        Call InvLingosHerreria(1).Initialize(.picLingotes0, 3, , , , , , False)
-        Call InvLingosHerreria(2).Initialize(.picLingotes1, 3, , , , , , False)
-        Call InvLingosHerreria(3).Initialize(.picLingotes2, 3, , , , , , False)
-        Call InvLingosHerreria(4).Initialize(.picLingotes3, 3, , , , , , False)
+        'Call InvLingosHerreria(1).Initialize(.picLingotes0, 3, , , , , , False)
+        'Call InvLingosHerreria(2).Initialize(.picLingotes1, 3, , , , , , False)
+        'Call InvLingosHerreria(3).Initialize(.picLingotes2, 3, , , , , , False)
+        'Call InvLingosHerreria(4).Initialize(.picLingotes3, 3, , , , , , False)
         
         Call .HideExtraControls(Count)
         Call .RenderList(1, True)
@@ -3317,10 +3258,10 @@ On Error GoTo ErrHandler
     
     With frmCarp
         ' Inicializo los inventarios
-        Call InvMaderasCarpinteria(1).Initialize(.picMaderas0, 2, , , , , , False)
-        Call InvMaderasCarpinteria(2).Initialize(.picMaderas1, 2, , , , , , False)
-        Call InvMaderasCarpinteria(3).Initialize(.picMaderas2, 2, , , , , , False)
-        Call InvMaderasCarpinteria(4).Initialize(.picMaderas3, 2, , , , , , False)
+        'Call InvMaderasCarpinteria(1).Initialize(.picMaderas0, 2, , , , , , False)
+        'Call InvMaderasCarpinteria(2).Initialize(.picMaderas1, 2, , , , , , False)
+        'Call InvMaderasCarpinteria(3).Initialize(.picMaderas2, 2, , , , , , False)
+        'Call InvMaderasCarpinteria(4).Initialize(.picMaderas3, 2, , , , , , False)
         
         Call .HideExtraControls(Count)
         Call .RenderList(1)
@@ -3345,8 +3286,6 @@ Private Sub HandleRestOK()
 '
 '***************************************************
 
-
-    
     UserDescansar = Not UserDescansar
 End Sub
 
@@ -3366,14 +3305,13 @@ Private Sub HandleErrorMessage()
     
 On Error GoTo ErrHandler
 
-
-
-    
     Call MsgBox(incomingData.ReadString())
     
-    If frmConnect.Visible Then
+    If frmConnect.Visible And (Not frmCrearPersonaje.Visible) Then
         frmMain.Socket1.Disconnect
         frmMain.Socket1.Cleanup
+        
+        frmConnect.Visible = True
     End If
 
 ErrHandler:
@@ -3472,7 +3410,7 @@ On Error GoTo ErrHandler
     
     With NPCInventory(slot)
         .Name = incomingData.ReadString()
-        .Amount = incomingData.ReadInteger()
+        .amount = incomingData.ReadInteger()
         .Valor = incomingData.ReadSingle()
         .GrhIndex = incomingData.ReadInteger()
         .OBJIndex = incomingData.ReadInteger()
@@ -3514,26 +3452,25 @@ Private Sub HandleUpdateHungerAndThirst()
     UserMaxHAM = incomingData.ReadByte()
     UserMinHAM = incomingData.ReadByte()
     
-    'todo
-    'frmMain.lblHambre = UserMinHAM & "/" & UserMaxHAM
-    'frmMain.lblSed = UserMinAGU & "/" & UserMaxAGU
+    frmMain.lblHambre = UserMinHAM & "/" & UserMaxHAM
+    frmMain.lblSed = UserMinAGU & "/" & UserMaxAGU
 
     Dim bWidth As Byte
     
     bWidth = (((UserMinHAM / 100) / (UserMaxHAM / 100)) * 75)
     
-    'frmMain.shpHambre.Width = 75 - bWidth
-    'frmMain.shpHambre.Left = 584 + (75 - frmMain.shpHambre.Width)
+    frmMain.shpHambre.Width = 75 - bWidth
+    frmMain.shpHambre.Left = 584 + (75 - frmMain.shpHambre.Width)
     
-    'frmMain.shpHambre.Visible = (bWidth <> 75)
+    frmMain.shpHambre.Visible = (bWidth <> 75)
     '*********************************
     
     bWidth = (((UserMinAGU / 100) / (UserMaxAGU / 100)) * 75)
     
-    'frmMain.shpSed.Width = 75 - bWidth
-    'frmMain.shpSed.Left = 584 + (75 - frmMain.shpSed.Width)
+    frmMain.shpSed.Width = 75 - bWidth
+    frmMain.shpSed.Left = 584 + (75 - frmMain.shpSed.Width)
     
-    'frmMain.shpSed.Visible = (bWidth <> 75)
+    frmMain.shpSed.Visible = (bWidth <> 75)
     
 End Sub
 
@@ -3912,8 +3849,8 @@ Private Sub HandleTradeOK()
                     .Valor(i), .ItemName(i))
                 End With
             ' Vendio o compro cierta cantidad de un item que ya tenia
-            ElseIf Inventario.Amount(i) <> InvComUsu.Amount(i) Then
-                Call InvComUsu.ChangeSlotItemAmount(i, Inventario.Amount(i))
+            ElseIf Inventario.amount(i) <> InvComUsu.amount(i) Then
+                Call InvComUsu.ChangeSlotItemAmount(i, Inventario.amount(i))
             End If
         Next i
         
@@ -3928,7 +3865,7 @@ Private Sub HandleTradeOK()
                     .Valor, .Name)
                 End With
             ' Compraron o vendieron cierta cantidad (no su totalidad)
-            ElseIf NPCInventory(i).Amount <> InvComNpc.Amount(i) Then
+            ElseIf NPCInventory(i).amount <> InvComNpc.amount(i) Then
                 'Call InvComNpc.ChangeSlotItemAmount(i, NPCInventory(i).Amount)
             End If
         Next i
@@ -4220,9 +4157,8 @@ Private Sub HandlePong()
 '
 '***************************************************
 
-    
-    'todo
-    Call AppendLineCC(frmMain.RecTxt, "El ping es " & (GetTickCount - pingTime) & " ms.", 255, 0, 0, True, False, True)
+
+    Call AddtoRichTextBox(frmMain.RecTxt, "El ping es " & (GetTickCount - pingTime) & " ms.", 255, 0, 0, True, False, True)
     
     pingTime = 0
 End Sub
@@ -4618,7 +4554,7 @@ End Sub
 ' @param    amount Number of items to drop.
 ' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
-Public Sub WriteDrop(ByVal slot As Byte, ByVal Amount As Integer)
+Public Sub WriteDrop(ByVal slot As Byte, ByVal amount As Integer)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
@@ -4628,7 +4564,7 @@ Public Sub WriteDrop(ByVal slot As Byte, ByVal Amount As Integer)
         Call .WriteByte(ClientPacketID.Drop)
         
         Call .WriteByte(slot)
-        Call .WriteInteger(Amount)
+        Call .WriteInteger(amount)
     End With
 End Sub
 
@@ -4917,7 +4853,7 @@ End Sub
 ' @param    amount Number of items to buy.
 ' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
-Public Sub WriteCommerceBuy(ByVal slot As Byte, ByVal Amount As Integer)
+Public Sub WriteCommerceBuy(ByVal slot As Byte, ByVal amount As Integer)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
@@ -4927,7 +4863,7 @@ Public Sub WriteCommerceBuy(ByVal slot As Byte, ByVal Amount As Integer)
         Call .WriteByte(ClientPacketID.CommerceBuy)
         
         Call .WriteByte(slot)
-        Call .WriteInteger(Amount)
+        Call .WriteInteger(amount)
     End With
 End Sub
 
@@ -4938,7 +4874,7 @@ End Sub
 ' @param    amount Number of items to extract.
 ' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
-Public Sub WriteBankExtractItem(ByVal slot As Byte, ByVal Amount As Integer)
+Public Sub WriteBankExtractItem(ByVal slot As Byte, ByVal amount As Integer)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
@@ -4948,7 +4884,7 @@ Public Sub WriteBankExtractItem(ByVal slot As Byte, ByVal Amount As Integer)
         Call .WriteByte(ClientPacketID.BankExtractItem)
         
         Call .WriteByte(slot)
-        Call .WriteInteger(Amount)
+        Call .WriteInteger(amount)
     End With
 End Sub
 
@@ -4959,7 +4895,7 @@ End Sub
 ' @param    amount Number of items to sell.
 ' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
-Public Sub WriteCommerceSell(ByVal slot As Byte, ByVal Amount As Integer)
+Public Sub WriteCommerceSell(ByVal slot As Byte, ByVal amount As Integer)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
@@ -4969,7 +4905,7 @@ Public Sub WriteCommerceSell(ByVal slot As Byte, ByVal Amount As Integer)
         Call .WriteByte(ClientPacketID.CommerceSell)
         
         Call .WriteByte(slot)
-        Call .WriteInteger(Amount)
+        Call .WriteInteger(amount)
     End With
 End Sub
 
@@ -4980,7 +4916,7 @@ End Sub
 ' @param    amount Number of items to deposit.
 ' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
-Public Sub WriteBankDeposit(ByVal slot As Byte, ByVal Amount As Integer)
+Public Sub WriteBankDeposit(ByVal slot As Byte, ByVal amount As Integer)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
@@ -4990,7 +4926,7 @@ Public Sub WriteBankDeposit(ByVal slot As Byte, ByVal Amount As Integer)
         Call .WriteByte(ClientPacketID.BankDeposit)
         
         Call .WriteByte(slot)
-        Call .WriteInteger(Amount)
+        Call .WriteInteger(amount)
     End With
 End Sub
 
@@ -5065,7 +5001,7 @@ End Sub
 ' @param    amount Number of items to offer.
 ' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
-Public Sub WriteUserCommerceOffer(ByVal slot As Byte, ByVal Amount As Long, ByVal OfferSlot As Byte)
+Public Sub WriteUserCommerceOffer(ByVal slot As Byte, ByVal amount As Long, ByVal OfferSlot As Byte)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
@@ -5075,7 +5011,7 @@ Public Sub WriteUserCommerceOffer(ByVal slot As Byte, ByVal Amount As Long, ByVa
         Call .WriteByte(ClientPacketID.UserCommerceOffer)
         
         Call .WriteByte(slot)
-        Call .WriteLong(Amount)
+        Call .WriteLong(amount)
         Call .WriteByte(OfferSlot)
     End With
 End Sub
@@ -5548,7 +5484,7 @@ End Sub
 ' @param    amount The amount to gamble.
 ' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
-Public Sub WriteGamble(ByVal Amount As Integer)
+Public Sub WriteGamble(ByVal amount As Integer)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
@@ -5557,7 +5493,7 @@ Public Sub WriteGamble(ByVal Amount As Integer)
     With outgoingData
         Call .WriteByte(ClientPacketID.Gamble)
         
-        Call .WriteInteger(Amount)
+        Call .WriteInteger(amount)
     End With
 End Sub
 
@@ -5600,7 +5536,7 @@ End Sub
 ' @param    amount The amount of money to extract from the bank.
 ' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
-Public Sub WriteBankExtractGold(ByVal Amount As Long)
+Public Sub WriteBankExtractGold(ByVal amount As Long)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
@@ -5609,7 +5545,7 @@ Public Sub WriteBankExtractGold(ByVal Amount As Long)
     With outgoingData
         Call .WriteByte(ClientPacketID.BankExtractGold)
         
-        Call .WriteLong(Amount)
+        Call .WriteLong(amount)
     End With
 End Sub
 
@@ -5619,7 +5555,7 @@ End Sub
 ' @param    amount The amount of money to deposit in the bank.
 ' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
-Public Sub WriteBankDepositGold(ByVal Amount As Long)
+Public Sub WriteBankDepositGold(ByVal amount As Long)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
@@ -5628,7 +5564,7 @@ Public Sub WriteBankDepositGold(ByVal Amount As Long)
     With outgoingData
         Call .WriteByte(ClientPacketID.BankDepositGold)
         
-        Call .WriteLong(Amount)
+        Call .WriteLong(amount)
     End With
 End Sub
 
@@ -8139,10 +8075,9 @@ Private Sub HandleSubeClase()
     With incomingData
         
         
-        'todo
         .ReadBoolean
         
-        'frmMain.lblClase.Visible = .ReadBoolean
+        frmMain.lblClase.Visible = .ReadBoolean
     
     End With
 End Sub
@@ -8196,10 +8131,9 @@ Private Sub HandleEligeFaccion()
     
     With incomingData
 
-        'todo
         .ReadBoolean
         
-        'frmMain.lblFaccion.Visible = .ReadBoolean
+        frmMain.lblFaccion.Visible = .ReadBoolean
     End With
 End Sub
 
@@ -8207,10 +8141,9 @@ Private Sub HandleEligeRecompensa()
     
     With incomingData
     
-        'todo
         .ReadBoolean
         
-        'frmMain.lblRecompensa.Visible = .ReadBoolean
+        frmMain.lblRecompensa.Visible = .ReadBoolean
     End With
 End Sub
 

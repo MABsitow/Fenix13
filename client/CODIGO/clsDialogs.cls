@@ -221,7 +221,7 @@ Private Function FormatChat(ByRef chat As String) As String()
 '**************************************************************
     Dim word As String
     Dim curPos As Long
-    Dim length As Long
+    Dim Length As Long
     Dim acumLength As Long
     Dim lineLength As Long
     Dim wordLength As Long
@@ -231,13 +231,13 @@ Private Function FormatChat(ByRef chat As String) As String()
     'Initialize variables
     curLine = 0
     curPos = 1
-    length = Len(chat)
+    Length = Len(chat)
     acumLength = 0
     lineLength = -1
     ReDim chatLines(FieldCount(chat, 32)) As String
     
     'Start formating
-    Do While acumLength < length
+    Do While acumLength < Length
         word = ReadField(curPos, chat, 32)
         
         wordLength = Len(word)
@@ -271,8 +271,8 @@ Private Function FormatChat(ByRef chat As String) As String()
     Loop
     
     ' If it's only one line, center text
-    If curLine = 0 And length < MAX_LENGTH Then
-        chatLines(curLine) = String((MAX_LENGTH - length) \ 2 + 1, " ") & chatLines(curLine)
+    If curLine = 0 And Length < MAX_LENGTH Then
+        chatLines(curLine) = String((MAX_LENGTH - Length) \ 2 + 1, " ") & chatLines(curLine)
     End If
     
     'Resize array to fit
@@ -310,14 +310,14 @@ End Sub
 ''
 ' Displays all renderable dialogs on screen.
 
-Public Sub Render(Batch As clsBGFXSpriteBatch)
+Public Sub Render(ByRef Batch As clsBatch)
 '**************************************************************
 'Author: Juan Martín Sotuyo Dodero
 'Last Modification: 08/29/07 by Rapsodius
 'Changed the way it gets rid of older dialogs.
 '**************************************************************
     Dim i As Long
-    Dim j As Long
+    Dim J As Long
     Dim offset As Integer
     Dim removedDialogs As Long
     
@@ -333,10 +333,10 @@ Public Sub Render(Batch As clsBGFXSpriteBatch)
                 offset = -(usedFont.Size + 2) * UBound(.textLine())
                 
                 'Render it
-                For j = 0 To UBound(.textLine())
-                    Call Text_Draw(Batch, .X, .Y + offset, .textLine(j), .Color)
+                For J = 0 To UBound(.textLine())
+                    Call Text_Draw(Batch, .X, .Y + offset, .textLine(J), .Color)
                     offset = offset + usedFont.Size + 5
-                Next j
+                Next J
                 
                 'Won't render it unless it's updated in next frmae
                 .renderable = False
