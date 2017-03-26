@@ -35,7 +35,7 @@ Attribute VB_Exposed = False
 
 Option Explicit
 
-Private LastRender      As Long
+Private InventoryRect   As D3DRECT
 
 Private InventoryOffset As Long             'Number of lines we scrolled down from topmost
 Private InvSelectedItem As Long             'Currently selected item
@@ -72,39 +72,6 @@ Private Sub Class_Terminate()
 '
 '***************************************************
 End Sub
-
-Public Sub ScrollInventory(ByVal Up As Boolean)
-'***************************************************
-'Author: Juan Martín Sotuyo Dodero (Maraxus)
-'Last Modify Date: 14/01/2010
-'Scrolls the graphical inventory up / down
-'14/01/2010: ZaMa - Now redraws inventory only if needed
-'***************************************************
-
-    'Only move if there is something to show up /down
-    If CanScroll(Up) Then
-        InventoryOffset = InventoryOffset + IIf(Up, 1, -1)
-        
-        'Redraw the inventory if needed
-        DrawInventory
-    End If
-
-End Sub
-
-Public Function CanScroll(ByVal Up As Boolean)
-'***************************************************
-'Author: ZaMa
-'Last Modify Date: 14/01/2010
-'Determines wether inventory can be scrolled up / down
-'***************************************************
-    If Up Then
-        CanScroll = (InventoryOffset + (InventoryWindow.ScaleHeight \ ownTilePixelHeight)) * _
-                    (InventoryWindow.ScaleWidth \ ownTilePixelWidth) < UBound(Inventory)
-    Else
-        CanScroll = InventoryOffset > 0
-    End If
-    
-End Function
 
 Public Sub SelectGold()
 '***************************************************
@@ -299,12 +266,6 @@ Public Sub ToggleShowValue(ByVal bShow As Boolean)
 '***************************************************
     ShowValue = bShow
     
-    Dim slot As Integer
-    ' Update Inventory
-    For slot = 1 To Me.MaxObjs
-        DrawInventory
-    Next slot
-    
 End Sub
 
 Public Sub ClearAllSlots() ' 0.13.3
@@ -350,8 +311,6 @@ On Error GoTo Fallo:
     
     'If InventoryWindow.Visible = False Then InventoryWindow.Visible = True
     
-    'Render inventory slot (we don't need to render the whole inventory)
-    'Call DrawInventory
     
     Exit Sub
 Fallo:
@@ -373,7 +332,7 @@ Private Function ClickItem(ByVal X As Long, ByVal Y As Long) As Long
     temp_x = X \ ownTilePixelWidth
     temp_y = Y \ ownTilePixelHeight
     
-    TempItem = temp_x + (temp_y + InventoryOffset) * (InventoryWindow.ScaleWidth \ ownTilePixelWidth) + 1
+    TempItem = (temp_x + temp_y * InventoryWindow.ScaleHeight \ ownTilePixelHeight) + 1
     
     'Make sure it's within limits
     If TempItem <= UBound(Inventory) Then
@@ -392,7 +351,7 @@ Private Function ClickItem(ByVal X As Long, ByVal Y As Long) As Long
     
 End Function
 
-Private Sub DrawInventory()
+Public Sub DrawInventory()
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modify Date: 02/05/2013 - ^[GS]^
@@ -400,25 +359,20 @@ Private Sub DrawInventory()
 '***************************************************
 
     Dim loopC As Long
-    Dim SrcRect As RECT
-    Dim TempRect As RECT
-    Dim destRect As RECT
+    Dim SrcRect As Rect
     
-    With TempRect
-        .bottom = InventoryWindow.Height
-        .Right = InventoryWindow.Width
-    End With
+    Dim w As Long
+    Dim h As Long
+        
+    w = InventoryWindow.ScaleWidth / ownTilePixelWidth
+    h = InventoryWindow.ScaleHeight / ownTilePixelHeight
     
-    destRect = TempRect
-       
-    'Clear the inventory window
-    DirectDevice.Clear 0, ByVal 0, D3DCLEAR_TARGET, 0, 0#, 0
-    DirectDevice.BeginScene
-    
-    For loopC = InventoryOffset * (InventoryWindow.ScaleWidth \ ownTilePixelWidth) + 1 To UBound(Inventory)
-            
-            startdX = ((loopC - 1) Mod (InventoryWindow.ScaleWidth / ownTilePixelWidth)) * ownTilePixelWidth
-            startdY = ((loopC - 1) \ (InventoryWindow.ScaleHeight / ownTilePixelHeight)) * ownTilePixelHeight
+    Call DirectDevice.Clear(0, ByVal 0, D3DCLEAR_TARGET, 0, 1#, 0)
+    Call DirectDevice.BeginScene
+        
+    For loopC = 1 To UBound(Inventory)
+            startdX = ((loopC - 1) Mod w) * ownTilePixelHeight
+            startdY = ((loopC - 1) \ h) * ownTilePixelHeight
             
             If Inventory(loopC).GrhIndex Then
             
@@ -447,21 +401,9 @@ Private Sub DrawInventory()
                 'Render the item grh and the amount
                 Text_Draw startdX, startdY, Inventory(loopC).amount, White
             End If
-        Next loopC
-        
-    DirectDevice.EndScene
-    DirectDevice.Present destRect, ByVal 0, InventoryWindow.hWnd, ByVal 0
+    Next loopC
     
-End Sub
-
-Public Sub DrawInv()
-
-    If GetTickCount - LastRender > 56 Then
-        LastRender = GetTickCount
-        'DoEvents
-        'Call DrawInventory
-    End If
-    
+    Call DirectX_EndScene(InventoryRect, InventoryWindow.hWnd)
 End Sub
 
 Public Sub Initialize(ByRef InvPic As PictureBox, ByVal MaxObjs As Byte, _
@@ -478,7 +420,7 @@ Public Sub Initialize(ByRef InvPic As PictureBox, ByVal MaxObjs As Byte, _
     Set InventoryWindow = InvPic
     
     'Make sure auto-redraw is set to true
-    InventoryWindow.AutoRedraw = True
+    InventoryWindow.AutoRedraw = False
     
     'Set apropiate scale (pixel)
     InventoryWindow.ScaleMode = 3
@@ -495,20 +437,11 @@ Public Sub Initialize(ByRef InvPic As PictureBox, ByVal MaxObjs As Byte, _
     
     ImgContainer = bImgContainer
     ShowValue = bShowText
-    
-    'TODO : Fonts should be in a separate class / collection
-    Dim Font As New StdFont
-    Dim Ifnt As IFont
-    
-    Font.Name = "Verdana"
-    Font.bold = True
-    Font.italic = False
-    Font.size = FontSize
-    Font.Underline = False
-    Font.Strikethrough = False
-    
-    Set Ifnt = Font
-    '\TODO
+
+    With InventoryRect
+        .Y2 = InventoryWindow.ScaleHeight
+        .X2 = InventoryWindow.ScaleWidth
+    End With
     
     If ImgContainer Then _
         InvSelectedItem = ClickItem(1, 1)   'If there is anything there we select the top left item
@@ -537,7 +470,7 @@ Private Sub InventoryWindow_MouseMove(Button As Integer, Shift As Integer, X As 
     temp_x = X \ ownTilePixelWidth
     temp_y = Y \ ownTilePixelHeight
     
-    TempItem = temp_x + (temp_y + InventoryOffset) * (InventoryWindow.ScaleWidth \ ownTilePixelWidth) + 1
+    TempItem = (temp_x + temp_y * InventoryWindow.ScaleHeight \ ownTilePixelHeight) + 1
 
     If TempItem <= UBound(Inventory) Then
         InventoryWindow.ToolTipText = Inventory(TempItem).Name ' Que nos diga el nombre del objeto cuando pasamos el mouse sobre él

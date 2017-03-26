@@ -56,7 +56,6 @@ Public Const MAX_LIST_ITEMS As Byte = 4
 Public InvLingosHerreria(1 To MAX_LIST_ITEMS) As New clsGraphicalInventory
 Public InvMaderasCarpinteria(1 To MAX_LIST_ITEMS) As New clsGraphicalInventory
                 
-'Public SurfaceDB As New clsSurfaceManDyn   'No va new porque es una interfaz, el new se pone al decidir que clase de objeto es
 Public CustomKeys As New clsCustomKeys
 Public CustomMessages As New clsCustomMessages
 
@@ -623,7 +622,7 @@ Type Inventory
     Name As String
     GrhIndex As Integer
     '[Alejo]: tipo de datos ahora es Long
-    Amount As Long
+    amount As Long
     '[/Alejo]
     Equipped As Byte
     Valor As Single
@@ -638,7 +637,7 @@ Type NpCinV
     OBJIndex As Integer
     Name As String
     GrhIndex As Integer
-    Amount As Integer
+    amount As Integer
     Valor As Single
     OBJType As Integer
     MaxDef As Integer

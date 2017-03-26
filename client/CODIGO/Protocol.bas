@@ -432,7 +432,8 @@ Public Sub HandleIncomingData()
 '***************************************************
     
     Call incomingData.Mark
-        
+    
+
     Select Case incomingData.ReadByte
         Case ServerPacketID.Logged                  ' LOGGED
             Call HandleLogged
@@ -740,12 +741,12 @@ Public Sub HandleIncomingData()
             Exit Sub
 
     End Select
-    
+        
     'Done with this packet, move on to next one
     If incomingData.Remaining > 0 And Err.Number <> incomingData.NotEnoughDataErrCode Then
         Err.Clear
-        Call HandleIncomingData
         
+        Call HandleIncomingData
     Else
     
         Call incomingData.Reset
@@ -1000,15 +1001,13 @@ Private Sub HandleLogged()
 'Last Modification: 05/17/06
 '
 '***************************************************
-
+    
     ' Variable initialization
     EngineRun = True
     Nombres = True
-    
+        
     'Set connected state
     Call SetConnected
-    
-    Call Inventario.DrawInv
     
     If bShowTutorial Then frmTutorial.Show
     
@@ -2719,9 +2718,6 @@ Private Sub HandleUpdateUserStats()
         Exit Sub
     End If
     
-
-
-    
     UserMaxHP = incomingData.ReadInteger()
     UserMinHP = incomingData.ReadInteger()
     UserMaxMAN = incomingData.ReadInteger()
@@ -2740,7 +2736,7 @@ Private Sub HandleUpdateUserStats()
     Else
         frmMain.lblPorcLvl.Caption = "[N/A]"
     End If
-    
+        
     frmMain.GldLbl.Caption = UserGLD
     frmMain.lblLvl.Caption = UserLvl
     

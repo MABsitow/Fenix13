@@ -310,14 +310,14 @@ End Sub
 ''
 ' Displays all renderable dialogs on screen.
 
-Public Sub Render(ByRef Batch As clsBatch)
+Public Sub Render()
 '**************************************************************
 'Author: Juan Martín Sotuyo Dodero
 'Last Modification: 08/29/07 by Rapsodius
 'Changed the way it gets rid of older dialogs.
 '**************************************************************
     Dim i As Long
-    Dim J As Long
+    Dim j As Long
     Dim offset As Integer
     Dim removedDialogs As Long
     
@@ -330,13 +330,13 @@ Public Sub Render(ByRef Batch As clsBatch)
                 
                 removedDialogs = removedDialogs + 1
             ElseIf .renderable Then
-                offset = -(usedFont.Size + 2) * UBound(.textLine())
+                offset = -(usedFont.size + 2) * UBound(.textLine())
                 
                 'Render it
-                For J = 0 To UBound(.textLine())
-                    Call Text_Draw(Batch, .X, .Y + offset, .textLine(J), .Color)
-                    offset = offset + usedFont.Size + 5
-                Next J
+                For j = 0 To UBound(.textLine())
+                    Call Text_Draw(.X, .Y + offset, .textLine(j), .Color)
+                    offset = offset + usedFont.size + 5
+                Next j
                 
                 'Won't render it unless it's updated in next frmae
                 .renderable = False

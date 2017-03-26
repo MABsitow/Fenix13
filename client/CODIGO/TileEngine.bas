@@ -33,24 +33,76 @@ Attribute VB_Name = "Mod_TileEngine"
 
 Option Explicit
 
-Public SurfaceDB As clsSurfaceDB
+Public Enum eRenderState
+            eLogin = 0
+            eNewCharInfo
+            eNewCharDetails
+            eNewCharAttrib
+            eNewCharSkills
+End Enum
+
+Private RenderState As eRenderState
+Private FadeOff As Boolean
+
+Private Type D3DXIMAGE_INFO_A
+    Width As Long
+    Height As Long
+    Depth As Long
+    MipLevels As Long
+    Format As CONST_D3DFORMAT
+    ResourceType As CONST_D3DRESOURCETYPE
+    ImageFileFormat As Long
+End Type
+
+Private Type POINTAPI
+    X As Long
+    Y As Long
+End Type
+        
+Private Type CharVA
+    X As Integer
+    Y As Integer
+    w As Integer
+    h As Integer
+    
+    Tx1 As Single
+    Tx2 As Single
+    Ty1 As Single
+    Ty2 As Single
+End Type
+
+
+Private Type VFH
+    BitmapWidth As Long         'Size of the bitmap itself
+    BitmapHeight As Long
+    CellWidth As Long           'Size of the cells (area for each character)
+    CellHeight As Long
+    BaseCharOffset As Byte      'The character we start from
+    CharWidth(0 To 255) As Byte 'The actual factual width of each character
+    CharVA(0 To 255) As CharVA
+End Type
+
+Private Type CustomFont
+    HeaderInfo As VFH           'Holds the header information
+    Texture As Direct3DTexture8 'Holds the texture of the text
+    RowPitch As Integer         'Number of characters per row
+    RowFactor As Single         'Percentage of the texture width each character takes
+    ColFactor As Single         'Percentage of the texture height each character takes
+    CharHeight As Byte          'Height to use for the text - easiest to start with CellHeight value, and keep lowering until you get a good value
+    TextureSize As POINTAPI     'Size of the texture
+End Type
+
+Public cfonts(1 To 2) As CustomFont ' _Default2 As CustomFont
+
+Private LastInvRender As Long
+
+Private SurfaceDB As clsSurfaceDB
 Private SpriteBatch As clsBatch
 
 Public DirectX As DirectX8
 Public DirectD3D8 As D3DX8
 Public DirectD3D As Direct3D8
 Public DirectDevice As Direct3DDevice8
-
-Public Type TLVERTEX
-    X As Single
-    Y As Single
-    Z As Single
-    
-    Color As Long
-
-    Tu As Single
-    Tv As Single
-End Type
 
 Private MainUITex As Direct3DTexture8
 Private LoginTex  As Direct3DTexture8
@@ -59,6 +111,9 @@ Private Viewport As D3DVIEWPORT8
 Private Projection As D3DMATRIX
 Private View As D3DMATRIX
 'Private Camera As D3DVECTOR
+
+Private MainViewRect As D3DRECT
+Private ConnectRect As D3DRECT
 
 'Map sizes in tiles
 Public Const XMaxMapSize As Byte = 100
@@ -330,6 +385,7 @@ End Enum
 'Very percise counter 64bit system counter
 Private Declare Function QueryPerformanceFrequency Lib "kernel32" (lpFrequency As Currency) As Long
 Private Declare Function QueryPerformanceCounter Lib "kernel32" (lpPerformanceCount As Currency) As Long
+Private Declare Sub CopyMemory Lib "kernel32" Alias "RtlMoveMemory" (ByRef Destination As Any, ByRef Source As Any, ByVal Length As Long)
 
 Sub CargarCabezas()
     Dim N As Integer
@@ -868,14 +924,14 @@ Sub MoveScreen(ByVal nHeading As E_Heading)
 End Sub
 
 Private Function HayFogata(ByRef location As Position) As Boolean
-    Dim j As Long
+    Dim J As Long
     Dim k As Long
     
-    For j = UserPos.X - 8 To UserPos.X + 8
+    For J = UserPos.X - 8 To UserPos.X + 8
         For k = UserPos.Y - 6 To UserPos.Y + 6
-            If InMapBounds(j, k) Then
-                If MapData(j, k).ObjGrh.GrhIndex = GrhFogata Then
-                    location.X = j
+            If InMapBounds(J, k) Then
+                If MapData(J, k).ObjGrh.GrhIndex = GrhFogata Then
+                    location.X = J
                     location.Y = k
                     
                     HayFogata = True
@@ -883,7 +939,7 @@ Private Function HayFogata(ByRef location As Position) As Boolean
                 End If
             End If
         Next k
-    Next j
+    Next J
 End Function
 
 Function NextOpenChar() As Integer
@@ -1097,60 +1153,7 @@ Function InMapBounds(ByVal X As Integer, ByVal Y As Integer) As Boolean
     InMapBounds = True
 End Function
 
-Private Sub DDrawGrhtoSurface(ByRef Grh As Grh, ByVal X As Integer, ByVal Y As Integer, ByVal Center As Byte, ByVal Animate As Byte, Color() As Long)
-    Dim CurrentGrhIndex As Integer
-'On Error GoTo error
-    
-    If Animate Then
-        If Grh.Started = 1 Then
-            Grh.FrameCounter = Grh.FrameCounter + (timerElapsedTime * GrhData(Grh.GrhIndex).NumFrames / Grh.Speed)
-            If Grh.FrameCounter > GrhData(Grh.GrhIndex).NumFrames Then
-                Grh.FrameCounter = (Grh.FrameCounter Mod GrhData(Grh.GrhIndex).NumFrames) + 1
-                
-                If Grh.Loops <> INFINITE_LOOPS Then
-                    If Grh.Loops > 0 Then
-                        Grh.Loops = Grh.Loops - 1
-                    Else
-                        Grh.Started = 0
-                    End If
-                End If
-            End If
-        End If
-    End If
-    
-    'Figure out what frame to draw (always 1 if not animated)
-    CurrentGrhIndex = GrhData(Grh.GrhIndex).Frames(Grh.FrameCounter)
-    
-    With GrhData(CurrentGrhIndex)
-        'Center Grh over X,Y pos
-        If Center Then
-            If .TileWidth <> 1 Then
-                X = X - Int(.TileWidth * TilePixelWidth / 2) + TilePixelWidth \ 2
-            End If
-            
-            If .TileHeight <> 1 Then
-                Y = Y - Int(.TileHeight * TilePixelHeight) + TilePixelHeight
-            End If
-        End If
-        
-        'Draw
-        Device_Textured_Render X, Y, .pixelWidth, .pixelHeight, .sX, .sY, .FileNum, Color
-        
-    End With
-Exit Sub
-
-error:
-    If Err.Number = 9 And Grh.FrameCounter < 1 Then
-        Grh.FrameCounter = 1
-        Resume
-    Else
-        MsgBox "Ocurrió un error inesperado, por favor comuniquelo a los administradores del juego." & vbCrLf & "Descripción del error: " & _
-        vbCrLf & Err.Description, vbExclamation, "[ " & Err.Number & " ] Error"
-        End
-    End If
-End Sub
-
-Sub DDrawTransGrhIndextoSurface(ByVal GrhIndex As Integer, ByVal X As Integer, ByVal Y As Integer, ByVal Center As Byte, Color() As Long)
+Sub Draw_GrhIndex(ByVal GrhIndex As Integer, ByVal X As Integer, ByVal Y As Integer, ByVal Center As Byte, color() As Long)
 
     With GrhData(GrhIndex)
         'Center Grh over X,Y pos
@@ -1165,11 +1168,11 @@ Sub DDrawTransGrhIndextoSurface(ByVal GrhIndex As Integer, ByVal X As Integer, B
         End If
         
         'Draw
-        Device_Textured_Render X, Y, .pixelWidth, .pixelHeight, .sX, .sY, .FileNum, Color
+        Device_Textured_Render X, Y, .pixelWidth, .pixelHeight, .sX, .sY, .FileNum, color
     End With
 End Sub
 
-Sub DDrawTransGrhtoSurface(ByRef Grh As Grh, ByVal X As Integer, ByVal Y As Integer, ByVal Center As Byte, ByVal Animate As Byte, Color() As Long)
+Sub Draw_Grh(ByRef Grh As Grh, ByVal X As Integer, ByVal Y As Integer, ByVal Center As Byte, ByVal Animate As Byte, color() As Long)
 '*****************************************************************
 'Draws a GRH transparently to a X and Y position
 '*****************************************************************
@@ -1209,9 +1212,9 @@ Sub DDrawTransGrhtoSurface(ByRef Grh As Grh, ByVal X As Integer, ByVal Y As Inte
                 Y = Y - Int(.TileHeight * TilePixelHeight) + TilePixelHeight
             End If
         End If
-
+        
         'Draw
-        Device_Textured_Render X, Y, .pixelWidth, .pixelHeight, .sX, .sY, .FileNum, Color
+        Device_Textured_Render X, Y, .pixelWidth, .pixelHeight, .sX, .sY, .FileNum, color
     End With
 Exit Sub
 
@@ -1226,7 +1229,7 @@ error:
     End If
 End Sub
 
-Sub RenderScreen(ByVal PixelOffsetX As Integer, ByVal PixelOffsetY As Integer)
+Sub Render_Screen(ByVal PixelOffsetX As Integer, ByVal PixelOffsetY As Integer)
 '**************************************************************
 'Author: Aaron Perkins
 'Last Modify Date: 8/14/2007
@@ -1261,7 +1264,6 @@ Sub RenderScreen(ByVal PixelOffsetX As Integer, ByVal PixelOffsetY As Integer)
     minX = ScreenMinX - TileBufferSize
     maxX = ScreenMaxX + TileBufferSize
    
-    
     'Make sure mins and maxs are allways in map bounds
     If minY < XMinMapSize Then
         minYOffset = YMinMapSize - minY
@@ -1300,23 +1302,22 @@ Sub RenderScreen(ByVal PixelOffsetX As Integer, ByVal PixelOffsetY As Integer)
     screenY = screenY - 1
     
     PixelOffsetXTemp = screenX * TilePixelWidth + PixelOffsetX
-    
     'Draw floor layer
     For X = ScreenMinX To ScreenMaxX
         For Y = ScreenMinY To ScreenMaxY
-                    
+        
             PixelOffsetYTemp = screenY * TilePixelHeight + PixelOffsetY
             
             'Layer 1 **********************************
-            Call DDrawGrhtoSurface(MapData(X, Y).Graphic(1), _
+            Call Draw_Grh(MapData(X, Y).Graphic(1), _
                 PixelOffsetXTemp, _
                 PixelOffsetYTemp, _
                 0, 1, AmbientColor)
             '******************************************
-            
+
             'Layer 2 **********************************
             If MapData(X, Y).Graphic(2).GrhIndex <> 0 Then
-                Call DDrawTransGrhtoSurface(MapData(X, Y).Graphic(2), _
+                Call Draw_Grh(MapData(X, Y).Graphic(2), _
                         PixelOffsetXTemp, _
                         PixelOffsetYTemp, _
                         1, 1, AmbientColor)
@@ -1332,11 +1333,11 @@ Sub RenderScreen(ByVal PixelOffsetX As Integer, ByVal PixelOffsetY As Integer)
         PixelOffsetXTemp = screenX * TilePixelWidth + PixelOffsetX
     Next X
     
-   'Draw Transparent Layers
-   screenY = (minYOffset - TileBufferSize)
-   screenX = (minXOffset - TileBufferSize)
+    'Draw Transparent Layers
+    screenY = (minYOffset - TileBufferSize)
+    screenX = (minXOffset - TileBufferSize)
    
-   PixelOffsetXTemp = screenX * TilePixelWidth + PixelOffsetX
+    PixelOffsetXTemp = screenX * TilePixelWidth + PixelOffsetX
    
     For X = minX To maxX
         For Y = minY To maxY
@@ -1346,7 +1347,7 @@ Sub RenderScreen(ByVal PixelOffsetX As Integer, ByVal PixelOffsetY As Integer)
             With MapData(X, Y)
                 'Object Layer **********************************
                 If .ObjGrh.GrhIndex <> 0 Then
-                    Call DDrawTransGrhtoSurface(.ObjGrh, _
+                    Call Draw_Grh(.ObjGrh, _
                             PixelOffsetXTemp, PixelOffsetYTemp, 1, 1, AmbientColor)
                 End If
                 '***********************************************
@@ -1358,14 +1359,15 @@ Sub RenderScreen(ByVal PixelOffsetX As Integer, ByVal PixelOffsetY As Integer)
                 End If
                 '*************************************************
     
-    
+                
                 'Layer 3 *****************************************
                 If .Graphic(3).GrhIndex <> 0 Then
                     'Draw
-                    Call DDrawTransGrhtoSurface(.Graphic(3), _
+                    Call Draw_Grh(.Graphic(3), _
                             PixelOffsetXTemp, PixelOffsetYTemp, 1, 1, AmbientColor)
                 End If
                 '************************************************
+                
             End With
     
             screenY = screenY + 1
@@ -1374,7 +1376,7 @@ Sub RenderScreen(ByVal PixelOffsetX As Integer, ByVal PixelOffsetY As Integer)
         screenX = screenX + 1
         PixelOffsetXTemp = screenX * TilePixelWidth + PixelOffsetX
     Next X
-        
+    
     If Not bTecho Then
         'Draw blocked tiles and grid
         screenY = (minYOffset - TileBufferSize)
@@ -1390,7 +1392,7 @@ Sub RenderScreen(ByVal PixelOffsetX As Integer, ByVal PixelOffsetY As Integer)
                 'Layer 4 **********************************
                 If MapData(X, Y).Graphic(4).GrhIndex Then
                     'Draw
-                    Call DDrawTransGrhtoSurface(MapData(X, Y).Graphic(4), _
+                    Call Draw_Grh(MapData(X, Y).Graphic(4), _
                         PixelOffsetXTemp, _
                         PixelOffsetYTemp, _
                         1, 1, AmbientColor)
@@ -1405,7 +1407,7 @@ Sub RenderScreen(ByVal PixelOffsetX As Integer, ByVal PixelOffsetY As Integer)
         
         Next X
     End If
-    
+
 End Sub
 
 Public Function RenderSounds()
@@ -1513,7 +1515,9 @@ Public Function InitTileEngine(ByVal setDisplayFormhWnd As Long, ByVal setMainVi
     AmbientColor(1) = -1
     AmbientColor(2) = -1
     AmbientColor(3) = -1
-
+    
+    RenderState = eRenderState.eLogin
+    
     InitTileEngine = True
 End Function
 
@@ -1533,15 +1537,15 @@ Public Sub DirectX_Init()
         .Windowed = True
         .SwapEffect = D3DSWAPEFFECT_DISCARD
         
+        .BackBufferWidth = 1024
+        .BackBufferHeight = 768
         .BackBufferFormat = DispMode.Format
-        .BackBufferWidth = frmMain.MainViewPic.ScaleWidth
-        .BackBufferHeight = frmMain.MainViewPic.ScaleHeight
         
     End With
 
     Set DirectDevice = DirectD3D.CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, frmMain.MainViewPic.hWnd, D3DCREATE_HARDWARE_VERTEXPROCESSING, PresentationParameters)
     
-    Call D3DXMatrixOrthoOffCenterLH(Projection, 0, frmMain.MainViewPic.ScaleWidth, frmMain.MainViewPic.ScaleHeight, 0, -1#, 1#)
+    Call D3DXMatrixOrthoOffCenterLH(Projection, 0, 1024, 768, 0, -1#, 1#)
     Call D3DXMatrixIdentity(View)
     
     Call DirectDevice.SetTransform(D3DTS_PROJECTION, Projection)
@@ -1552,18 +1556,39 @@ Public Sub DirectX_Init()
     Set SurfaceDB = New clsSurfaceDB
     Set SpriteBatch = New clsBatch
     
-    Call SurfaceDB.Init(DirectD3D8, DirectDevice, 90)
+    Call SurfaceDB.Initialize(DirectD3D8, DirGraficos, 90)
     Call SpriteBatch.Initialise(1000)
+    
+    With MainViewRect
+        .X2 = frmMain.MainViewPic.ScaleWidth
+        .Y2 = frmMain.MainViewPic.ScaleHeight
+    End With
+    
+    With ConnectRect
+    
+        .X2 = frmConnect.Render.ScaleWidth
+        .Y2 = frmConnect.Render.ScaleHeight
+        
+    End With
     
     If DirectDevice Is Nothing Then
         MsgBox "No se puede inicializar DirectX. Por favor asegúrese de tener la última versión correctamente instalada."
         Exit Sub
     End If
-    
+        
 End Sub
+
+Public Sub DirectX_EndScene(ByRef Rect As D3DRECT, ByVal hWnd As Long)
+    
+    Call SpriteBatch.Flush
+    
+    Call DirectDevice.EndScene
+    Call DirectDevice.Present(Rect, ByVal 0, hWnd, ByVal 0)
+End Sub
+
 Private Sub Engine_Init_RenderStates()
 
-    DirectDevice.SetVertexShader D3DFVF_XYZ Or D3DFVF_DIFFUSE Or D3DFVF_TEX1
+    DirectDevice.SetVertexShader (D3DFVF_XYZ Or D3DFVF_DIFFUSE Or D3DFVF_TEX1)
         
     'Set the render states
     With DirectDevice
@@ -1575,7 +1600,7 @@ Private Sub Engine_Init_RenderStates()
         .SetRenderState D3DRS_FILLMODE, D3DFILL_SOLID
         .SetRenderState D3DRS_CULLMODE, D3DCULL_NONE
         .SetTextureStageState 0, D3DTSS_ALPHAOP, D3DTOP_MODULATE
-    
+        
     End With
     
 End Sub
@@ -1586,8 +1611,8 @@ Public Sub DeinitTileEngine()
 'Last Modification: 08/14/07
 'Destroys all DX objects
 '***************************************************
-'Set no texture in the device to avoid memory leaks
 
+        'Set no texture in the device to avoid memory leaks
         If Not DirectDevice Is Nothing Then
                 DirectDevice.SetTexture 0, Nothing
         End If
@@ -1614,8 +1639,64 @@ Public Sub DeinitTileEngine()
         
 End Sub
 
+Public Sub Render()
+    
+    If EngineRun Then
+        
+        Call SpriteBatch.Begin
+            
+        If frmConnect.Visible Then
+            Call Render_Connect
+        Else
+            'Sólo dibujamos si la ventana no está minimizada
+            If frmMain.WindowState <> 1 And frmMain.Visible Then
+                
+                Call ShowNextFrame(frmMain.MouseX, frmMain.MouseY)
+                
+                'Play ambient sounds
+                Call RenderSounds
+                    
+                Call CheckKeys
+                    
+            End If
+        End If
+        
+        Call SpriteBatch.Finish
+    End If
+End Sub
 
-Public Sub ShowNextFrame(ByVal DisplayFormTop As Integer, ByVal DisplayFormLeft As Integer, ByVal MouseViewX As Integer, ByVal MouseViewY As Integer)
+Private Sub Render_Connect()
+    
+    Dim color(3) As Long
+    Dim alpha As Byte
+    
+    alpha = 255
+    
+    color(0) = D3DColorARGB(alpha, 255, 255, 255)
+    color(1) = color(0)
+    color(2) = color(0)
+    color(3) = color(0)
+    
+    Call DirectDevice.Clear(0, ByVal 0, D3DCLEAR_TARGET, 0, 1#, 0)
+    Call DirectDevice.BeginScene
+    
+    Call Device_Textured_Render(0, 0, 1024, 768, 0, 0, 999999, color)
+    
+    Select Case RenderState
+    
+        Case eRenderState.eLogin
+            Call Device_Textured_Render(384, 306, 512, 512, 0, 0, 1000000, color)
+            
+        Case eRenderState.eNewCharInfo
+            Call Device_Textured_Render(384, 189, 512, 512, 0, 0, 1000001, color)
+            
+    End Select
+    
+    Call DirectX_EndScene(ConnectRect, frmConnect.Render.hWnd)
+End Sub
+
+'CSEH: ErrLog
+Private Sub ShowNextFrame(ByVal MouseViewX As Integer, ByVal MouseViewY As Integer)
 '***************************************************
 'Author: Arron Perkins
 'Last Modification: 08/14/07
@@ -1624,69 +1705,69 @@ Public Sub ShowNextFrame(ByVal DisplayFormTop As Integer, ByVal DisplayFormLeft 
 '***************************************************
     Static OffsetCounterX As Single
     Static OffsetCounterY As Single
-    
-    If EngineRun Then
-        If UserMoving Then
-            '****** Move screen Left and Right if needed ******
-            If AddtoUserPos.X <> 0 Then
-                OffsetCounterX = OffsetCounterX - ScrollPixelsPerFrameX * AddtoUserPos.X * timerTicksPerFrame
-                If Abs(OffsetCounterX) >= Abs(TilePixelWidth * AddtoUserPos.X) Then
-                    OffsetCounterX = 0
-                    AddtoUserPos.X = 0
-                    UserMoving = False
-                End If
-            End If
-            
-            '****** Move screen Up and Down if needed ******
-            If AddtoUserPos.Y <> 0 Then
-                OffsetCounterY = OffsetCounterY - ScrollPixelsPerFrameY * AddtoUserPos.Y * timerTicksPerFrame
-                If Abs(OffsetCounterY) >= Abs(TilePixelHeight * AddtoUserPos.Y) Then
-                    OffsetCounterY = 0
-                    AddtoUserPos.Y = 0
-                    UserMoving = False
-                End If
-            End If
-        End If
-        
-        'Update mouse position within view area
-        Call ConvertCPtoTP(MouseViewX, MouseViewY, MouseTileX, MouseTileY)
-        
-        'DirectDevice.Clear 0, ByVal 0, D3DCLEAR_TARGET, 0, 1#, 0
-        DirectDevice.BeginScene
-        
-        Call SpriteBatch.Begin
-        
-        '****** Update screen ******
-        If UserCiego Then
-            Call CleanViewPort
-        Else
-            Call RenderScreen(OffsetCounterX, OffsetCounterY)
-        End If
-        
-        Call Dialogos.Render(SpriteBatch)
-        
-        Call DibujarCartel
 
-       ' Call DialogosClanes.Draw
-        
-        Call SpriteBatch.Finish
-        
-        DirectDevice.EndScene
-        DirectDevice.Present ByVal 0, ByVal 0, 0, ByVal 0
-        
-        'FPS update
-        If fpsLastCheck + 1000 < GetTickCount() Then
-            FPS = FramesPerSecCounter
-            FramesPerSecCounter = 1
-            fpsLastCheck = GetTickCount()
-        Else
-            FramesPerSecCounter = FramesPerSecCounter + 1
+    If UserMoving Then
+        '****** Move screen Left and Right if needed ******
+        If AddtoUserPos.X <> 0 Then
+            OffsetCounterX = OffsetCounterX - ScrollPixelsPerFrameX * AddtoUserPos.X * timerTicksPerFrame
+            If Abs(OffsetCounterX) >= Abs(TilePixelWidth * AddtoUserPos.X) Then
+                OffsetCounterX = 0
+                AddtoUserPos.X = 0
+                UserMoving = False
+            End If
         End If
         
-        'Get timing info
-        timerElapsedTime = GetElapsedTime()
-        timerTicksPerFrame = timerElapsedTime * engineBaseSpeed
+        '****** Move screen Up and Down if needed ******
+        If AddtoUserPos.Y <> 0 Then
+            OffsetCounterY = OffsetCounterY - ScrollPixelsPerFrameY * AddtoUserPos.Y * timerTicksPerFrame
+            If Abs(OffsetCounterY) >= Abs(TilePixelHeight * AddtoUserPos.Y) Then
+                OffsetCounterY = 0
+                AddtoUserPos.Y = 0
+                UserMoving = False
+            End If
+        End If
     End If
+
+    'Update mouse position within view area
+    Call ConvertCPtoTP(MouseViewX, MouseViewY, MouseTileX, MouseTileY)
+     
+    'Call SpriteBatch.SetRender(frmMain.MainViewPic.hWnd)
+    Call DirectDevice.Clear(0, ByVal 0, D3DCLEAR_TARGET, 0, 1#, 0)
+    Call DirectDevice.BeginScene
+
+     '****** Update screen ******
+    If UserCiego Then
+        Call CleanViewPort
+    Else
+        Call Render_Screen(OffsetCounterX, OffsetCounterY)
+    End If
+    
+    Call Dialogos.Render
+    Call DibujarCartel
+    
+    ' Call DialogosClanes.Draw
+    Call DirectX_EndScene(MainViewRect, 0)
+    
+    If GetTickCount - LastInvRender > 56 Then
+     
+        'Call SpriteBatch.SetRender(frmMain.picInv.hWnd)
+        LastInvRender = GetTickCount
+     
+        Call Inventario.DrawInventory
+    End If
+     
+    'FPS update
+    If fpsLastCheck + 1000 < GetTickCount() Then
+        FPS = FramesPerSecCounter
+        FramesPerSecCounter = 1
+        fpsLastCheck = GetTickCount()
+    Else
+        FramesPerSecCounter = FramesPerSecCounter + 1
+    End If
+     
+    'Get timing info
+    timerElapsedTime = GetElapsedTime()
+    timerTicksPerFrame = timerElapsedTime * engineBaseSpeed
 End Sub
 
 Private Function GetElapsedTime() As Single
@@ -1723,7 +1804,7 @@ Private Sub CharRender(ByVal CharIndex As Long, ByVal PixelOffsetX As Integer, B
     Dim moved As Boolean
     Dim Pos As Integer
     Dim line As String
-    Dim Color(3) As Long
+    Dim color(3) As Long
     
 With charlist(CharIndex)
         If .Moving Then
@@ -1791,20 +1872,20 @@ With charlist(CharIndex)
         If .Head.Head(.Heading).GrhIndex Then
             If Not .invisible Then
                 'Draw Body
-                If .Body.Walk(.Heading).GrhIndex Then Call DDrawTransGrhtoSurface(.Body.Walk(.Heading), PixelOffsetX, PixelOffsetY, 1, 1, AmbientColor)
+                If .Body.Walk(.Heading).GrhIndex Then Call Draw_Grh(.Body.Walk(.Heading), PixelOffsetX, PixelOffsetY, 1, 1, AmbientColor)
             
                 'Draw Head
-                If .Head.Head(.Heading).GrhIndex Then Call DDrawTransGrhtoSurface(.Head.Head(.Heading), PixelOffsetX + .Body.HeadOffset.X, PixelOffsetY + .Body.HeadOffset.Y, 1, 0, AmbientColor)
+                If .Head.Head(.Heading).GrhIndex Then Call Draw_Grh(.Head.Head(.Heading), PixelOffsetX + .Body.HeadOffset.X, PixelOffsetY + .Body.HeadOffset.Y, 1, 0, AmbientColor)
                     
                 'Draw Helmet
-                If .Casco.Head(.Heading).GrhIndex Then Call DDrawTransGrhtoSurface(.Casco.Head(.Heading), PixelOffsetX + .Body.HeadOffset.X, PixelOffsetY + .Body.HeadOffset.Y, 1, 0, AmbientColor)
-                    ' Call DDrawTransGrhtoSurface(.Casco.Head(.Heading), PixelOffsetX + .Body.HeadOffset.X, PixelOffsetY + .Body.HeadOffset.Y + OFFSET_HEAD, 1, 0)
+                If .Casco.Head(.Heading).GrhIndex Then Call Draw_Grh(.Casco.Head(.Heading), PixelOffsetX + .Body.HeadOffset.X, PixelOffsetY + .Body.HeadOffset.Y, 1, 0, AmbientColor)
+                    ' Call Draw_Grh(.Casco.Head(.Heading), PixelOffsetX + .Body.HeadOffset.X, PixelOffsetY + .Body.HeadOffset.Y + OFFSET_HEAD, 1, 0)
                 
                 'Draw Weapon
-                If .Arma.WeaponWalk(.Heading).GrhIndex Then Call DDrawTransGrhtoSurface(.Arma.WeaponWalk(.Heading), PixelOffsetX, PixelOffsetY, 1, 1, AmbientColor)
+                If .Arma.WeaponWalk(.Heading).GrhIndex Then Call Draw_Grh(.Arma.WeaponWalk(.Heading), PixelOffsetX, PixelOffsetY, 1, 1, AmbientColor)
                     
                 'Draw Shield
-                If .Escudo.ShieldWalk(.Heading).GrhIndex Then Call DDrawTransGrhtoSurface(.Escudo.ShieldWalk(.Heading), PixelOffsetX, PixelOffsetY, 1, 1, AmbientColor)
+                If .Escudo.ShieldWalk(.Heading).GrhIndex Then Call Draw_Grh(.Escudo.ShieldWalk(.Heading), PixelOffsetX, PixelOffsetY, 1, 1, AmbientColor)
                 
                 If LenB(.Nombre) > 0 Then
                     If Nombres Then
@@ -1816,37 +1897,37 @@ With charlist(CharIndex)
                             Select Case .Criminal
                             
                                 Case 2 'ciuda
-                                    Color(0) = ColoresPJ(49)
-                                    Color(1) = ColoresPJ(49)
-                                    Color(2) = ColoresPJ(49)
-                                    Color(3) = ColoresPJ(49)
+                                    color(0) = ColoresPJ(49)
+                                    color(1) = ColoresPJ(49)
+                                    color(2) = ColoresPJ(49)
+                                    color(3) = ColoresPJ(49)
                                 Case 3
-                                    Color(0) = ColoresPJ(50)
-                                    Color(1) = ColoresPJ(50)
-                                    Color(2) = ColoresPJ(50)
-                                    Color(3) = ColoresPJ(50)
+                                    color(0) = ColoresPJ(50)
+                                    color(1) = ColoresPJ(50)
+                                    color(2) = ColoresPJ(50)
+                                    color(3) = ColoresPJ(50)
                                 Case 4
-                                    Color(0) = ColoresPJ(47)
-                                    Color(1) = ColoresPJ(47)
-                                    Color(2) = ColoresPJ(47)
-                                    Color(3) = ColoresPJ(47)
+                                    color(0) = ColoresPJ(47)
+                                    color(1) = ColoresPJ(47)
+                                    color(2) = ColoresPJ(47)
+                                    color(3) = ColoresPJ(47)
                                 Case 5
-                                    Color(0) = ColoresPJ(48)
-                                    Color(1) = ColoresPJ(48)
-                                    Color(2) = ColoresPJ(48)
-                                    Color(3) = ColoresPJ(48)
+                                    color(0) = ColoresPJ(48)
+                                    color(1) = ColoresPJ(48)
+                                    color(2) = ColoresPJ(48)
+                                    color(3) = ColoresPJ(48)
                             End Select
                         Else
-                            Color(0) = ColoresPJ(.priv)
-                            Color(1) = ColoresPJ(.priv)
-                            Color(2) = ColoresPJ(.priv)
-                            Color(3) = ColoresPJ(.priv)
+                            color(0) = ColoresPJ(.priv)
+                            color(1) = ColoresPJ(.priv)
+                            color(2) = ColoresPJ(.priv)
+                            color(3) = ColoresPJ(.priv)
                         End If
                             
                             'Nick
                             line = Left$(.Nombre, Pos - 2)
-                            Call Text_Draw(SpriteBatch, PixelOffsetX - .NombreOffset, PixelOffsetY + 30, line, Color)
-                            
+                            Call Text_Draw(PixelOffsetX - .NombreOffset, PixelOffsetY + 30, line, color)
+                                    
                             'Clan
                          '   line = mid$(.Nombre, Pos)
                            ' Call RenderTextCentered(PixelOffsetX + TilePixelWidth \ 2 + 5, PixelOffsetY + 45, line, color, frmMain.font)
@@ -1856,7 +1937,7 @@ With charlist(CharIndex)
         Else
             'Draw Body
             If .Body.Walk(.Heading).GrhIndex Then _
-                Call DDrawTransGrhtoSurface(.Body.Walk(.Heading), PixelOffsetX, PixelOffsetY, 1, 1, AmbientColor)
+                Call Draw_Grh(.Body.Walk(.Heading), PixelOffsetX, PixelOffsetY, 1, 1, AmbientColor)
         End If
         
         'Update dialogs
@@ -1904,24 +1985,23 @@ Public Sub Device_Textured_Render(ByVal X As Integer, ByVal Y As Integer, _
                                   ByVal Width As Integer, ByVal Height As Integer, _
                                   ByVal sX As Integer, ByVal sY As Integer, _
                                   tex As Long, _
-                                  ByRef Color() As Long)
-        
-        Dim Texture As Direct3DTexture8
-        Dim TexWidth As Long, TexHeight As Long
-        
-        Set Texture = SurfaceDB.GetTexture(tex, TexWidth, TexHeight)
+                                  ByRef color() As Long)
 
+        Dim Texture As Direct3DTexture8
+        Dim TexWidth As Integer, TexHeight As Integer
+        
+        Set Texture = SurfaceDB.Surface(tex, TexWidth, TexHeight)
+        
         With SpriteBatch
                 '// Seteamos la textura
                 Call .SetTexture(Texture)
                 
                 If TexWidth <> 0 And TexHeight <> 0 Then
-                    Call .Draw(X, Y, Width, Height, Color, sX / TexWidth, sY / TexHeight, (sX + Width) / TexWidth, (sY + Height) / TexHeight)
+                    Call .Draw(X, Y, Width, Height, color, sX / TexWidth, sY / TexHeight, (sX + Width) / TexWidth, (sY + Height) / TexHeight)
                 Else
-                    Call .Draw(X, Y, TexWidth, TexHeight, Color)
+                    Call .Draw(X, Y, TexWidth, TexHeight, color)
                 End If
         End With
-
 End Sub
 
 Public Sub SetCamera(ByVal X As Single, ByVal Y As Single)
@@ -2027,4 +2107,164 @@ Public Sub CheckKeys()
             frmMain.Coord.Caption = "X: " & UserPos.X & " Y: " & UserPos.Y
         End If
     End If
+End Sub
+
+
+Public Sub Text_Draw(ByVal Left As Long, ByVal Top As Long, ByVal Text As String, color() As Long, Optional ByVal Center As Boolean = False, Optional ByVal fontNum As Byte = 1)
+
+    Engine_Render_Text SpriteBatch, cfonts(fontNum), Text, Left, Top, color
+
+End Sub
+
+Private Sub Engine_Render_Text(ByRef Batch As clsBatch, ByRef UseFont As CustomFont, ByVal Text As String, ByVal X As Long, ByVal Y As Long, color() As Long)
+'*****************************************************************
+'Render text with a custom font
+'*****************************************************************
+    Dim TempVA As CharVA
+    Dim tempstr() As String
+    Dim Count As Integer
+    Dim ascii() As Byte
+    Dim i As Long
+    Dim J As Long
+
+    Dim YOffset As Single
+    
+    'Check if we have the device
+    If DirectDevice.TestCooperativeLevel <> D3D_OK Then Exit Sub
+
+    'Check for valid text to render
+    If LenB(Text) = 0 Then Exit Sub
+    
+    'Get the text into arrays (split by vbCrLf)
+    tempstr = Split(Text, vbCrLf)
+
+    'Set the texture
+    Batch.SetTexture UseFont.Texture
+    
+    'Loop through each line if there are line breaks (vbCrLf)
+    For i = 0 To UBound(tempstr)
+        If Len(tempstr(i)) > 0 Then
+            YOffset = i * UseFont.CharHeight
+            Count = 0
+        
+            'Convert the characters to the ascii value
+            ascii() = StrConv(tempstr(i), vbFromUnicode)
+        
+            'Loop through the characters
+            For J = 1 To Len(tempstr(i))
+
+                CopyMemory TempVA, UseFont.HeaderInfo.CharVA(ascii(J - 1)), 24 'this number represents the size of "CharVA" struct
+                
+                TempVA.X = X + Count
+                TempVA.Y = Y + YOffset
+            
+                Batch.Draw TempVA.X, TempVA.Y, TempVA.w, TempVA.h, color, _
+                            TempVA.Tx1, TempVA.Ty1, TempVA.Tx2, TempVA.Ty2
+
+                'Shift over the the position to render the next character
+                Count = Count + UseFont.HeaderInfo.CharWidth(ascii(J - 1))
+                
+            Next J
+            
+        End If
+    Next i
+
+End Sub
+
+Public Function Text_GetWidth(ByRef UseFont As CustomFont, ByVal Text As String) As Integer
+'***************************************************
+'Returns the width of text
+'More info: http://www.vbgore.com/GameClient.TileEngine.Engine_GetTextWidth
+'***************************************************
+Dim i As Integer
+
+    'Make sure we have text
+    If LenB(Text) = 0 Then Exit Function
+    
+    'Loop through the text
+    For i = 1 To Len(Text)
+        
+        'Add up the stored character widths
+        Text_GetWidth = Text_GetWidth + UseFont.HeaderInfo.CharWidth(Asc(mid$(Text, i, 1)))
+        
+    Next i
+
+End Function
+
+Sub Engine_Init_FontTextures()
+'*****************************************************************
+'Init the custom font textures
+'More info: http://www.vbgore.com/GameClient.TileEngine.Engine_Init_FontTextures
+'*****************************************************************
+    Dim TexInfo As D3DXIMAGE_INFO_A
+
+    'Check if we have the device
+    If DirectDevice.TestCooperativeLevel <> D3D_OK Then Exit Sub
+
+    '*** Default font ***
+    
+    'Set the texture
+    Set cfonts(1).Texture = DirectD3D8.CreateTextureFromFileEx(DirectDevice, DirGraficos & "Font.png", _
+                                                                D3DX_DEFAULT, D3DX_DEFAULT, 0, 0, _
+                                                                D3DFMT_UNKNOWN, D3DPOOL_MANAGED, _
+                                                                D3DX_FILTER_NONE, D3DX_FILTER_NONE, 0, TexInfo, ByVal 0)
+    
+    'Store the size of the texture
+    cfonts(1).TextureSize.X = TexInfo.Width
+    cfonts(1).TextureSize.Y = TexInfo.Height
+    
+End Sub
+
+Sub Engine_Init_FontSettings()
+    '*****************************************************************
+    'Init the custom font settings
+    'More info: http://www.vbgore.com/GameClient.TileEngine.Engine_Init_FontSettings
+    '*****************************************************************
+    Dim FileNum  As Byte
+    Dim LoopChar As Long
+    Dim Row      As Single
+    Dim u        As Single
+    Dim v        As Single
+
+    '*** Default font ***
+
+    'Load the header information
+    FileNum = FreeFile
+    Open IniPath & "Font.dat" For Binary As #FileNum
+    Get #FileNum, , cfonts(1).HeaderInfo
+    Close #FileNum
+    
+    'Calculate some common values
+    cfonts(1).CharHeight = cfonts(1).HeaderInfo.CellHeight - 4
+    cfonts(1).RowPitch = cfonts(1).HeaderInfo.BitmapWidth \ cfonts(1).HeaderInfo.CellWidth
+    cfonts(1).ColFactor = cfonts(1).HeaderInfo.CellWidth / cfonts(1).HeaderInfo.BitmapWidth
+    cfonts(1).RowFactor = cfonts(1).HeaderInfo.CellHeight / cfonts(1).HeaderInfo.BitmapHeight
+    
+    'Cache the verticies used to draw the character (only requires setting the color and adding to the X/Y values)
+    For LoopChar = 0 To 255
+        
+        'tU and tV value (basically tU = BitmapXPosition / BitmapWidth, and height for tV)
+        Row = (LoopChar - cfonts(1).HeaderInfo.BaseCharOffset) \ cfonts(1).RowPitch
+        u = ((LoopChar - cfonts(1).HeaderInfo.BaseCharOffset) - (Row * cfonts(1).RowPitch)) * cfonts(1).ColFactor
+        v = Row * cfonts(1).RowFactor
+
+        'Set the verticies
+        With cfonts(1).HeaderInfo.CharVA(LoopChar)
+            .X = 0
+            .Y = 0
+            .w = cfonts(1).HeaderInfo.CellWidth
+            .h = cfonts(1).HeaderInfo.CellHeight
+            .Tx1 = u
+            .Ty1 = v
+            .Tx2 = u + cfonts(1).ColFactor
+            .Ty2 = v + cfonts(1).RowFactor
+        End With
+        
+    Next LoopChar
+    
+End Sub
+
+Public Sub ChangeRenderState(ByRef State As eRenderState)
+    RenderState = State
+    FadeOff = True
 End Sub

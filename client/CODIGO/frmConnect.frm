@@ -21,63 +21,74 @@ Begin VB.Form frmConnect
    ScaleWidth      =   1024
    StartUpPosition =   2  'CenterScreen
    Visible         =   0   'False
-   Begin VB.TextBox txtPasswd 
-      Alignment       =   2  'Center
+   Begin VB.PictureBox Render 
+      Appearance      =   0  'Flat
+      BackColor       =   &H00000040&
       BorderStyle     =   0  'None
-      BeginProperty Font 
-         Name            =   "Tahoma"
-         Size            =   8.25
-         Charset         =   0
-         Weight          =   700
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      Height          =   375
-      IMEMode         =   3  'DISABLE
-      Left            =   4560
-      PasswordChar    =   "*"
+      ForeColor       =   &H80000008&
+      Height          =   11520
+      Left            =   0
+      ScaleHeight     =   768
+      ScaleMode       =   3  'Pixel
+      ScaleWidth      =   1024
       TabIndex        =   1
-      Top             =   3480
-      Width           =   3615
-   End
-   Begin VB.TextBox txtNombre 
-      Alignment       =   2  'Center
-      BorderStyle     =   0  'None
-      BeginProperty Font 
-         Name            =   "Tahoma"
-         Size            =   8.25
-         Charset         =   0
-         Weight          =   700
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      Height          =   375
-      Left            =   4560
-      TabIndex        =   0
-      Top             =   2880
-      Width           =   3615
-   End
-   Begin VB.Image imgCrearPj 
-      Height          =   375
-      Left            =   4560
-      Top             =   4080
-      Width           =   1455
-   End
-   Begin VB.Image imgConectarse 
-      Height          =   375
-      Left            =   6720
-      Top             =   4080
-      Width           =   1455
-   End
-   Begin VB.Image imgServArgentina 
-      Height          =   795
-      Left            =   360
-      MousePointer    =   99  'Custom
-      Top             =   9240
-      Visible         =   0   'False
-      Width           =   2595
+      TabStop         =   0   'False
+      Top             =   0
+      Width           =   15360
+      Begin VB.TextBox txtNombre 
+         Alignment       =   2  'Center
+         BackColor       =   &H00000000&
+         BorderStyle     =   0  'None
+         BeginProperty Font 
+            Name            =   "Tahoma"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         ForeColor       =   &H00FFFFFF&
+         Height          =   285
+         Left            =   6420
+         TabIndex        =   0
+         Top             =   5340
+         Width           =   2550
+      End
+      Begin VB.TextBox txtPasswd 
+         Alignment       =   2  'Center
+         BackColor       =   &H00000000&
+         BorderStyle     =   0  'None
+         BeginProperty Font 
+            Name            =   "Tahoma"
+            Size            =   8.25
+            Charset         =   0
+            Weight          =   700
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         ForeColor       =   &H00FFFFFF&
+         Height          =   285
+         IMEMode         =   3  'DISABLE
+         Left            =   6420
+         PasswordChar    =   "*"
+         TabIndex        =   2
+         Top             =   6105
+         Width           =   2550
+      End
+      Begin VB.Image imgConectarse 
+         Height          =   555
+         Left            =   6090
+         Top             =   6570
+         Width           =   1500
+      End
+      Begin VB.Image imgCrearPj 
+         Height          =   555
+         Left            =   7785
+         Top             =   6570
+         Width           =   1500
+      End
    End
 End
 Attribute VB_Name = "frmConnect"
@@ -134,7 +145,7 @@ End Sub
 
 Private Sub Form_Load()
     '[CODE 002]:MatuX
-    EngineRun = False
+    EngineRun = True
     '[END]
         
      '[CODE]:MatuX
@@ -144,21 +155,9 @@ Private Sub Form_Load()
     ' pasar a veces :)
      '  version.Caption = "v" & App.Major & "." & App.Minor & " Build: " & App.Revision
     '[END]'
-    
-    Me.Picture = LoadPicture(App.path & "\graficos\VentanaConectar.jpg")
-    
-    Call LoadButtons
-        
-End Sub
-
-Private Sub LoadButtons()
-    
-    Dim GrhPath As String
-    
-    GrhPath = DirGraficos
-                                    
 
 End Sub
+
 
 Private Sub imgConectarse_Click()
     

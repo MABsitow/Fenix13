@@ -43,7 +43,7 @@ Public bLluvia() As Byte ' Array para determinar si
 Private lFrameTimer As Long
 
 Private Type TYPE_LONG_BYTES
-        H As Integer
+        h As Integer
         L As Integer
 End Type
 
@@ -52,11 +52,11 @@ Private Type TYPE_LONG
 End Type
 
 'http://stackoverflow.com/questions/6861733/vb6-integer-to-two-bytes-c-short-to-send-over-serial
-Public Function IntegersToLong(ByVal H As Integer, ByVal L As Integer) As Long
+Public Function IntegersToLong(ByVal h As Integer, ByVal L As Integer) As Long
     Dim TempTL As TYPE_LONG
     Dim TempBL As TYPE_LONG_BYTES
     
-    TempBL.H = H
+    TempBL.h = h
     TempBL.L = L
     
     LSet TempTL = TempBL
@@ -64,7 +64,7 @@ Public Function IntegersToLong(ByVal H As Integer, ByVal L As Integer) As Long
     IntegersToLong = TempTL.Value
 End Function
 
-Public Sub LongToIntegers(ByVal Value As Long, ByRef H As Integer, ByRef L As Integer)
+Public Sub LongToIntegers(ByVal Value As Long, ByRef h As Integer, ByRef L As Integer)
     Dim TempTL As TYPE_LONG
     Dim TempBL As TYPE_LONG_BYTES
     
@@ -72,7 +72,7 @@ Public Sub LongToIntegers(ByVal Value As Long, ByRef H As Integer, ByRef L As In
     
     LSet TempBL = TempTL
     
-    H = TempBL.H
+    h = TempBL.h
     L = TempBL.L
     
 End Sub
@@ -375,7 +375,6 @@ Sub SetConnected()
     frmMain.lblName = UserName
     
     frmMain.Visible = True
-    
         
     FPSFLAG = True
 End Sub
@@ -706,7 +705,7 @@ Sub Main()
     
     prgRun = True
     
-    If Not InitTileEngine(frmMain.hWnd, 149, 13, 32, 32, 17, 23, 7, 8, 8, 0.018) Then
+    If Not InitTileEngine(frmMain.hWnd, 151, 12, 32, 32, 17, 23, 7, 8, 8, 0.018) Then
         Call CloseClient
     End If
     
@@ -790,19 +789,9 @@ UserMap = 1
     Call Load(frmScreenshots)
     
     Do While prgRun
-        
-        'Sólo dibujamos si la ventana no está minimizada
-        If frmMain.WindowState <> 1 And frmMain.Visible Then
-            
-            Call ShowNextFrame(frmMain.Top, frmMain.Left, frmMain.MouseX, frmMain.MouseY)
-            
-            'Play ambient sounds
-            Call RenderSounds
-            
-            Call CheckKeys
-            
-        End If
-        
+    
+        Call Render
+
         'FPS Counter - mostramos las FPS
         If GetTickCount - lFrameTimer >= 1000 Then
             If FPSFLAG Then frmMain.lblFPS.Caption = Mod_TileEngine.FPS
@@ -1110,7 +1099,7 @@ Public Sub CloseClient()
     'Destruimos los objetos públicos creados
     Set CustomMessages = Nothing
     Set CustomKeys = Nothing
-    'Set SurfaceDB = Nothing
+
     Set Dialogos = Nothing
   '  Set DialogosClanes = Nothing
     'Set Audio = Nothing
@@ -1231,7 +1220,7 @@ ErrHandler:
 
 End Sub
 
-Public Function ReadFile(FileName As String, Optional Size As Long = -1) As Byte()
+Public Function ReadFile(FileName As String, Optional size As Long = -1) As Byte()
 
     Dim wFile As Integer
 
@@ -1240,7 +1229,7 @@ Public Function ReadFile(FileName As String, Optional Size As Long = -1) As Byte
 
     If LOF(wFile) > 0 Then
         
-        Size = LOF(wFile)
+        size = LOF(wFile)
         ReDim ReadFile(0 To LOF(wFile) - 1)
         Get wFile, , ReadFile
 
