@@ -187,7 +187,6 @@ Begin VB.Form frmMain
       _Version        =   393217
       BackColor       =   0
       BorderStyle     =   0
-      Enabled         =   -1  'True
       ReadOnly        =   -1  'True
       ScrollBars      =   2
       DisableNoScroll =   -1  'True
@@ -1073,13 +1072,13 @@ Private Sub Form_KeyUp(KeyCode As Integer, Shift As Integer)
         If LenB(CustomKeys.ReadableName(KeyCode)) > 0 Then
             Select Case KeyCode
                 Case CustomKeys.BindedKey(eKeyType.mKeyToggleMusic)
-                    'audio.MusicActivated = Not 'audio.MusicActivated
+                    audio.MusicActivated = Not audio.MusicActivated
                     
                 Case CustomKeys.BindedKey(eKeyType.mKeyToggleSound)
-                    'audio.SoundActivated = Not 'audio.SoundActivated
+                    audio.SoundActivated = Not audio.SoundActivated
                     
                 Case CustomKeys.BindedKey(eKeyType.mKeyToggleFxs)
-                    'audio.SoundEffectsActivated = Not 'audio.SoundEffectsActivated
+                    audio.SoundEffectsActivated = Not audio.SoundEffectsActivated
                 
                 Case CustomKeys.BindedKey(eKeyType.mKeyGetObject)
                     Call AgarrarItem
@@ -1587,8 +1586,8 @@ Private Sub SendTxt_KeyUp(KeyCode As Integer, Shift As Integer)
         KeyCode = 0
         SendTxt.Visible = False
         
-        If picInv.Visible Then
-            picInv.SetFocus
+        If PicInv.Visible Then
+            PicInv.SetFocus
         Else
             hlst.SetFocus
         End If
@@ -1776,16 +1775,16 @@ Private Sub lblDropGold_Click()
 End Sub
 
 Private Sub Label4_Click()
-    'call 'audio.PlayWave(SND_CLICK)
+    Call audio.PlayWave(SND_CLICK)
 
     InvEqu.Picture = LoadPicture(App.path & "\Graficos\Centroinventario.jpg")
 
     ' Activo controles de inventario
-    picInv.Visible = True
+    PicInv.Visible = True
 
     ' Desactivo controles de hechizo
     hlst.Visible = False
-    cmdInfo.Visible = False
+    cmdINFO.Visible = False
     CmdLanzar.Visible = False
     
     cmdMoverHechi(0).Visible = False
@@ -1797,20 +1796,20 @@ Private Sub Label4_Click()
 End Sub
 
 Private Sub Label7_Click()
-    'call 'audio.PlayWave(SND_CLICK)
+    Call audio.PlayWave(SND_CLICK)
 
     InvEqu.Picture = LoadPicture(App.path & "\Graficos\Centrohechizos.jpg")
     
     ' Activo controles de hechizos
     hlst.Visible = True
-    cmdInfo.Visible = True
+    cmdINFO.Visible = True
     CmdLanzar.Visible = True
     
     cmdMoverHechi(0).Visible = True
     cmdMoverHechi(1).Visible = True
     
     ' Desactivo controles de inventario
-    picInv.Visible = False
+    PicInv.Visible = False
     
     GldLbl.Visible = False
     lblDropGold.Visible = False
@@ -1828,7 +1827,7 @@ Private Sub picInv_DblClick()
 End Sub
 
 Private Sub picInv_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
-    'call 'audio.PlayWave(SND_CLICK)
+    Call audio.PlayWave(SND_CLICK)
 End Sub
 
 Private Sub RecTxt_Change()
@@ -1843,8 +1842,8 @@ On Error Resume Next  'el .SetFocus causaba errores al salir y volver a entrar
         (Not frmMSG.Visible) And (Not MirandoForo) And _
         (Not frmEstadisticas.Visible) And (Not frmCantidad.Visible) Then
          
-        If picInv.Visible Then
-            picInv.SetFocus
+        If PicInv.Visible Then
+            PicInv.SetFocus
         ElseIf hlst.Visible Then
             hlst.SetFocus
         End If
@@ -1852,8 +1851,8 @@ On Error Resume Next  'el .SetFocus causaba errores al salir y volver a entrar
 End Sub
 
 Private Sub RecTxt_KeyDown(KeyCode As Integer, Shift As Integer)
-    If picInv.Visible Then
-        picInv.SetFocus
+    If PicInv.Visible Then
+        PicInv.SetFocus
     Else
         hlst.SetFocus
     End If
@@ -1909,8 +1908,8 @@ Private Sub SendCMSTXT_KeyUp(KeyCode As Integer, Shift As Integer)
         KeyCode = 0
         Me.SendCMSTXT.Visible = False
         
-        If picInv.Visible Then
-            picInv.SetFocus
+        If PicInv.Visible Then
+            PicInv.SetFocus
         Else
             hlst.SetFocus
         End If
@@ -1969,7 +1968,7 @@ Private Sub Socket1_Connect()
            Call Login
         
         Case E_MODO.Dados
-            'call 'audio.PlayMIDI("7.mid")
+            Call audio.PlayMIDI("7.mid")
             'frmCrearPersonaje.Show vbModal
             Call ChangeRenderState(eRenderState.eNewCharInfo)
     End Select

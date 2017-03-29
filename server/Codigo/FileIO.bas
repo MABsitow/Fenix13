@@ -245,7 +245,7 @@ On Error GoTo ErrHandler
     ReDim Hechizos(1 To NumeroHechizos) As tHechizo
     
     frmCargando.cargar.min = 0
-    frmCargando.cargar.MAX = NumeroHechizos
+    frmCargando.cargar.max = NumeroHechizos
     frmCargando.cargar.value = 0
     
     'Llena la lista
@@ -530,7 +530,7 @@ Sub LoadBalance()
     
     For i = 1 To NUMCLASES
         If Len(ListaClases(i)) > 0 Then
-            For j = 1 To UBound(Mods, i)
+            For j = 1 To 6
                 Mods(j, i) = Int(GetVar(DatPath & "Balance.dat", ListaClases(i), "Mod" & j)) / 100
             Next
         End If
@@ -629,7 +629,7 @@ Sub LoadOBJData()
     NumObjDatas = val(Leer.GetValue("INIT", "NumObjs"))
     
     frmCargando.cargar.min = 0
-    frmCargando.cargar.MAX = NumObjDatas
+    frmCargando.cargar.max = NumObjDatas
     frmCargando.cargar.value = 0
     
     
@@ -1129,7 +1129,7 @@ Sub CargarBackUp()
 110         Call InitAreas
         
 115         frmCargando.cargar.min = 0
-120         frmCargando.cargar.MAX = NumMaps
+120         frmCargando.cargar.max = NumMaps
 125         frmCargando.cargar.value = 0
         
 130         MapPath = GetVar(DatPath & "Map.dat", "INIT", "MapPath")
@@ -1184,7 +1184,7 @@ Sub LoadMapData()
 110         Call InitAreas
         
 115         frmCargando.cargar.min = 0
-120         frmCargando.cargar.MAX = NumMaps
+120         frmCargando.cargar.max = NumMaps
 125         frmCargando.cargar.value = 0
         
 130         MapPath = GetVar(DatPath & "Map.dat", "INIT", "MapPath")

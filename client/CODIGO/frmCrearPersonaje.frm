@@ -1603,7 +1603,7 @@ Private Sub imgCrear_Click()
 End Sub
 
 Private Sub imgDados_Click()
-    'call 'audio.PlayWave(SND_DICE)
+    Call Audio.PlayWave(SND_DICE)
             Call TirarDados
 End Sub
 
@@ -1708,7 +1708,7 @@ Private Sub imgGenero_MouseMove(Button As Integer, Shift As Integer, X As Single
 End Sub
 
 Private Sub imgVolver_Click()
-    'call 'audio.PlayMIDI("2.mid")
+    Call Audio.PlayMIDI("2.mid")
     
     bShowTutorial = False
     

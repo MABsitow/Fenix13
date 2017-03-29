@@ -1329,7 +1329,7 @@ With Npclist(NpcIndex)
         daño = DañoHechizo(UserIndex, SpellIndex)
     
         'CHECK: por que es una disminución del 5% de daño?
-        If Hechizos(SpellIndex).Baculo = ObjData(.Invent.WeaponEqpObjIndex).Baculo Then daño = daño * 0.95
+        If Hechizos(SpellIndex).Baculo = ObjData(UserList(UserIndex).Invent.WeaponEqpObjIndex).Baculo Then daño = daño * 0.95
     
         Call InfoHechizo(UserIndex)
         HechizoCasteado = True

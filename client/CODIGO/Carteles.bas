@@ -89,10 +89,10 @@ Dim X As Integer, Y As Integer
 X = XPosCartel + 20
 Y = YPosCartel + 60
 Call Draw_GrhIndex(textura, XPosCartel, YPosCartel, 1, AmbientColor)
-Dim j As Integer, desp As Integer
+Dim J As Integer, desp As Integer
 
-For j = 0 To UBound(LeyendaFormateada)
-    Text_Draw X, Y + desp, LeyendaFormateada(j), White
+For J = 0 To UBound(LeyendaFormateada)
+    Text_Draw X, Y + desp, LeyendaFormateada(J), White
     desp = desp + (frmMain.Font.size) + 5
 Next
 End Sub

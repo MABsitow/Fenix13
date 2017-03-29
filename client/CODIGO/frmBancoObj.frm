@@ -364,7 +364,7 @@ End Sub
 
 Private Sub Image1_Click(Index As Integer)
     
-    'call 'audio.PlayWave(SND_CLICK)
+    Call audio.PlayWave(SND_CLICK)
     
     If InvBanco(Index).SelectedItem = 0 Then Exit Sub
     

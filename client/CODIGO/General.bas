@@ -43,7 +43,7 @@ Public bLluvia() As Byte ' Array para determinar si
 Private lFrameTimer As Long
 
 Private Type TYPE_LONG_BYTES
-        h As Integer
+        H As Integer
         L As Integer
 End Type
 
@@ -52,11 +52,11 @@ Private Type TYPE_LONG
 End Type
 
 'http://stackoverflow.com/questions/6861733/vb6-integer-to-two-bytes-c-short-to-send-over-serial
-Public Function IntegersToLong(ByVal h As Integer, ByVal L As Integer) As Long
+Public Function IntegersToLong(ByVal H As Integer, ByVal L As Integer) As Long
     Dim TempTL As TYPE_LONG
     Dim TempBL As TYPE_LONG_BYTES
     
-    TempBL.h = h
+    TempBL.H = H
     TempBL.L = L
     
     LSet TempTL = TempBL
@@ -64,7 +64,7 @@ Public Function IntegersToLong(ByVal h As Integer, ByVal L As Integer) As Long
     IntegersToLong = TempTL.Value
 End Function
 
-Public Sub LongToIntegers(ByVal Value As Long, ByRef h As Integer, ByRef L As Integer)
+Public Sub LongToIntegers(ByVal Value As Long, ByRef H As Integer, ByRef L As Integer)
     Dim TempTL As TYPE_LONG
     Dim TempBL As TYPE_LONG_BYTES
     
@@ -72,7 +72,7 @@ Public Sub LongToIntegers(ByVal Value As Long, ByRef h As Integer, ByRef L As In
     
     LSet TempBL = TempTL
     
-    h = TempBL.h
+    H = TempBL.H
     L = TempBL.L
     
 End Sub
@@ -426,7 +426,7 @@ Sub MoveTo(ByVal Direccion As E_Heading)
     If frmMain.macrotrabajo.Enabled Then Call frmMain.DesactivarMacroTrabajo
     
     ' Update 3D sounds!
-    'call 'audio.MoveListener(UserPos.X, UserPos.Y)
+    Call Audio.MoveListener(UserPos.X, UserPos.Y)
 End Sub
 
 Sub RandomMove()
@@ -727,16 +727,16 @@ UserMap = 1
     Call AddtoRichTextBox(frmCargando.Status, "Iniciando DirectSound... ", 255, 255, 255, True, False, True)
     
     'Inicializamos el sonido
-    'call 'audio.Initialize(DirectX, frmMain.hwnd, App.path & "\" & Config_Inicio.DirSonidos & "\", App.path & "\" & Config_Inicio.DirMusica & "\")
+    Call Audio.Initialize(DirectX, frmMain.hWnd, App.path & "\" & Config_Inicio.DirSonidos & "\", App.path & "\" & Config_Inicio.DirMusica & "\")
     'Enable / Disable audio
-    'audio.MusicActivated = Not ClientSetup.bNoMusic
-    'audio.SoundActivated = Not ClientSetup.bNoSound
-    'audio.SoundEffectsActivated = Not ClientSetup.bNoSoundEffects
+    Audio.MusicActivated = Not ClientSetup.bNoMusic
+    Audio.SoundActivated = Not ClientSetup.bNoSound
+    Audio.SoundEffectsActivated = Not ClientSetup.bNoSoundEffects
     
     'Inicializamos el inventario gráfico
     Call Inventario.Initialize(frmMain.picInv, MAX_INVENTORY_SLOTS)
     
-    'call 'audio.MusicMP3Play(App.path & "\MP3\" & MP3_Inicio & ".mp3")
+    Call Audio.MusicMP3Play(App.path & "\MP3\" & MP3_Inicio & ".mp3")
     
     Call AddtoRichTextBox(frmCargando.Status, "Hecho", 255, 0, 0, True, False, False)
     
@@ -967,9 +967,9 @@ Private Sub SaveClientSetup()
     
     fHandle = FreeFile
     
-    'ClientSetup.bNoMusic = Not 'audio.MusicActivated
-    'ClientSetup.bNoSound = Not 'audio.SoundActivated
-    'ClientSetup.bNoSoundEffects = Not 'audio.SoundEffectsActivated
+    'ClientSetup.bNoMusic = Not audio.MusicActivated
+    'ClientSetup.bNoSound = Not audio.SoundActivated
+    'ClientSetup.bNoSoundEffects = Not audio.SoundEffectsActivated
    ' ClientSetup.bGuildNews = Not ClientSetup.bGuildNews
   '  ClientSetup.bGldMsgConsole = Not DialogosClanes.Activo
     'ClientSetup.bCantMsgs = DialogosClanes.CantidadDialogos
@@ -1533,3 +1533,4 @@ Recompensas(eClass.LADRON, 3, 2).Name = "Fundido de Sombra"
 Recompensas(eClass.LADRON, 3, 2).Descripcion = "Aumenta en 10% la probabilidad de robar objetos."
 
 End Sub
+

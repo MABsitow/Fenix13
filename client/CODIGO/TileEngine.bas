@@ -33,13 +33,14 @@ Attribute VB_Name = "Mod_TileEngine"
 
 Option Explicit
 
-Public Enum eRenderState
+Public Enum eRenderState 'Ojo con cambiar esto, tener en cuenta que esta hardcodeado en el mod_Components
             eLogin = 0
             eNewCharInfo
             eNewCharDetails
             eNewCharAttrib
             eNewCharSkills
 End Enum
+
 
 Private RenderState As eRenderState
 Private FadeOff As Boolean
@@ -62,8 +63,8 @@ End Type
 Private Type CharVA
     X As Integer
     Y As Integer
-    w As Integer
-    h As Integer
+    W As Integer
+    H As Integer
     
     Tx1 As Single
     Tx2 As Single
@@ -761,12 +762,12 @@ Public Sub DoFogataFx()
     If bFogata Then
         bFogata = HayFogata(location)
         If Not bFogata Then
-            'call 'audio.StopWave(FogataBufferIndex)
+            Call Audio.StopWave(FogataBufferIndex)
             FogataBufferIndex = 0
         End If
     Else
         bFogata = HayFogata(location)
-        'If bFogata And FogataBufferIndex = 0 Then FogataBufferIndex = 'audio.PlayWave("fuego.wav", location.X, location.Y, LoopStyle.Enabled)
+        'If bFogata And FogataBufferIndex = 0 Then FogataBufferIndex = audio.PlayWave("fuego.wav", location.X, location.Y, LoopStyle.Enabled)
     End If
 End Sub
 
@@ -783,15 +784,15 @@ Sub DoPasosFx(ByVal CharIndex As Integer)
                 .pie = Not .pie
                 
                 If .pie Then
-                    'call 'audio.PlayWave(SND_PASOS1, .Pos.X, .Pos.Y)
+                    Call Audio.PlayWave(SND_PASOS1, .Pos.X, .Pos.Y)
                 Else
-                    'call 'audio.PlayWave(SND_PASOS2, .Pos.X, .Pos.Y)
+                    Call Audio.PlayWave(SND_PASOS2, .Pos.X, .Pos.Y)
                 End If
             End If
         End With
     Else
 ' TODO : Actually we would have to check if the CharIndex char is in the water or not....
-        'call 'audio.PlayWave(SND_NAVEGANDO, charlist(CharIndex).Pos.X, charlist(CharIndex).Pos.Y)
+        Call Audio.PlayWave(SND_NAVEGANDO, charlist(CharIndex).Pos.X, charlist(CharIndex).Pos.Y)
     End If
 End Sub
 
@@ -846,38 +847,6 @@ Sub MoveCharbyPos(ByVal CharIndex As Integer, ByVal nX As Integer, ByVal nY As I
     If (nY < MinLimiteY) Or (nY > MaxLimiteY) Or (nX < MinLimiteX) Or (nX > MaxLimiteX) Then
         Call EraseChar(CharIndex)
     End If
-End Sub
-
-Sub MoveCamera(ByVal nHeading As E_Heading)
-
-    'Figure out which way to move
-    Select Case nHeading
-        Case E_Heading.NORTH
-            'Camera.Y = Camera.Y - 1
-        Case E_Heading.EAST
-            'Camera.X = Camera.X + 1
-        Case E_Heading.SOUTH
-            'Camera.Y = Camera.Y + 1
-        Case E_Heading.WEST
-            'Camera.X = Camera.X - 1
-    End Select
-    
-    
-    'Check to see if its out of bounds
-    'If Camera.X < MinXBorder Or Camera.X > MaxXBorder Or Camera.Y < MinYBorder Or Camera.Y > MaxYBorder Then
-    '    Exit Sub
-    'Else
-    
-    '    With At
-    '        .X = Camera.X
-    '        .Y = Camera.Y
-    '        .Z = 0
-    '    End With
-        
-    '    Call D3DXMATH_MATRIX.D3DXMatrixLookAtLH(View, Camera, At, Up)
-    '    Call DirectDevice.SetTransform(D3DTS_VIEW, View)
-        
-   ' End If
 End Sub
 
 Sub MoveScreen(ByVal nHeading As E_Heading)
@@ -1153,7 +1122,7 @@ Function InMapBounds(ByVal X As Integer, ByVal Y As Integer) As Boolean
     InMapBounds = True
 End Function
 
-Sub Draw_GrhIndex(ByVal GrhIndex As Integer, ByVal X As Integer, ByVal Y As Integer, ByVal Center As Byte, color() As Long)
+Sub Draw_GrhIndex(ByVal GrhIndex As Integer, ByVal X As Integer, ByVal Y As Integer, ByVal Center As Byte, Color() As Long)
 
     With GrhData(GrhIndex)
         'Center Grh over X,Y pos
@@ -1168,11 +1137,11 @@ Sub Draw_GrhIndex(ByVal GrhIndex As Integer, ByVal X As Integer, ByVal Y As Inte
         End If
         
         'Draw
-        Device_Textured_Render X, Y, .pixelWidth, .pixelHeight, .sX, .sY, .FileNum, color
+        Device_Textured_Render X, Y, .pixelWidth, .pixelHeight, .sX, .sY, .FileNum, Color
     End With
 End Sub
 
-Sub Draw_Grh(ByRef Grh As Grh, ByVal X As Integer, ByVal Y As Integer, ByVal Center As Byte, ByVal Animate As Byte, color() As Long)
+Sub Draw_Grh(ByRef Grh As Grh, ByVal X As Integer, ByVal Y As Integer, ByVal Center As Byte, ByVal Animate As Byte, Color() As Long)
 '*****************************************************************
 'Draws a GRH transparently to a X and Y position
 '*****************************************************************
@@ -1214,7 +1183,7 @@ Sub Draw_Grh(ByRef Grh As Grh, ByVal X As Integer, ByVal Y As Integer, ByVal Cen
         End If
         
         'Draw
-        Device_Textured_Render X, Y, .pixelWidth, .pixelHeight, .sX, .sY, .FileNum, color
+        Device_Textured_Render X, Y, .pixelWidth, .pixelHeight, .sX, .sY, .FileNum, Color
     End With
 Exit Sub
 
@@ -1407,7 +1376,6 @@ Sub Render_Screen(ByVal PixelOffsetX As Integer, ByVal PixelOffsetY As Integer)
         
         Next X
     End If
-
 End Sub
 
 Public Function RenderSounds()
@@ -1421,15 +1389,15 @@ Public Function RenderSounds()
             If bTecho Then
                 If frmMain.IsPlaying <> PlayLoop.plLluviain Then
                     'If RainBufferIndex Then _
-                        'call 'audio.StopWave(RainBufferIndex)
-                    'RainBufferIndex = 'audio.PlayWave("lluviain.wav", 0, 0, LoopStyle.Enabled)
+                        call audio.StopWave(RainBufferIndex)
+                    'RainBufferIndex = audio.PlayWave("lluviain.wav", 0, 0, LoopStyle.Enabled)
                     frmMain.IsPlaying = PlayLoop.plLluviain
                 End If
             Else
                 If frmMain.IsPlaying <> PlayLoop.plLluviaout Then
                     'If RainBufferIndex Then _
-                        'call 'audio.StopWave(RainBufferIndex)
-                    'RainBufferIndex = 'audio.PlayWave("lluviaout.wav", 0, 0, LoopStyle.Enabled)
+                        call audio.StopWave(RainBufferIndex)
+                    'RainBufferIndex = audio.PlayWave("lluviaout.wav", 0, 0, LoopStyle.Enabled)
                     frmMain.IsPlaying = PlayLoop.plLluviaout
                 End If
             End If
@@ -1501,16 +1469,13 @@ Public Function InitTileEngine(ByVal setDisplayFormhWnd As Long, ByVal setMainVi
     ScrollPixelsPerFrameY = pixelsToScrollPerFrameY
     
     Call DirectX_Init
-
+    
     Call LoadGrhData
     Call CargarCuerpos
     Call CargarCabezas
     Call CargarCascos
     Call CargarFxs
-    
-    Call Engine_Init_FontSettings
-    Call Engine_Init_FontTextures
-    
+        
     AmbientColor(0) = -1
     AmbientColor(1) = -1
     AmbientColor(2) = -1
@@ -1529,7 +1494,7 @@ Public Sub DirectX_Init()
     Set DirectX = New DirectX8
     Set DirectD3D = DirectX.Direct3DCreate
     Set DirectD3D8 = New D3DX8
-    
+        
     DirectD3D.GetAdapterDisplayMode D3DADAPTER_DEFAULT, DispMode
     
     With PresentationParameters
@@ -1557,7 +1522,14 @@ Public Sub DirectX_Init()
     Set SpriteBatch = New clsBatch
     
     Call SurfaceDB.Initialize(DirectD3D8, DirGraficos, 90)
-    Call SpriteBatch.Initialise(1000)
+    Call SpriteBatch.Initialise(2000)
+    
+    Call Engine_Init_FontSettings
+    Call Engine_Init_FontTextures
+    
+    Call InitComponents
+    
+    Call Input_Init
     
     With MainViewRect
         .X2 = frmMain.MainViewPic.ScaleWidth
@@ -1620,9 +1592,12 @@ Public Sub DeinitTileEngine()
         '// Destroy Textures
         Set SurfaceDB = Nothing
         
+        Call Input_Release
+        
         Set DirectX = Nothing
         Set DirectD3D = Nothing
         Set DirectDevice = Nothing
+        Set DirectD3D8 = Nothing
         
         Set SpriteBatch = Nothing
         
@@ -1640,9 +1615,10 @@ Public Sub DeinitTileEngine()
 End Sub
 
 Public Sub Render()
-    
     If EngineRun Then
         
+        Call DirectDevice.Clear(0, ByVal 0, D3DCLEAR_TARGET, 0, 1#, 0)
+
         Call SpriteBatch.Begin
             
         If frmConnect.Visible Then
@@ -1661,37 +1637,57 @@ Public Sub Render()
             End If
         End If
         
+        'FPS update
+        If fpsLastCheck + 1000 < GetTickCount() Then
+            FPS = FramesPerSecCounter
+            FramesPerSecCounter = 1
+            fpsLastCheck = GetTickCount()
+        Else
+            FramesPerSecCounter = FramesPerSecCounter + 1
+        End If
+
         Call SpriteBatch.Finish
     End If
 End Sub
 
 Private Sub Render_Connect()
     
-    Dim color(3) As Long
+    Dim Color(3) As Long
     Dim alpha As Byte
     
     alpha = 255
     
-    color(0) = D3DColorARGB(alpha, 255, 255, 255)
-    color(1) = color(0)
-    color(2) = color(0)
-    color(3) = color(0)
+    Color(0) = D3DColorARGB(alpha, 255, 255, 255)
+    Color(1) = Color(0)
+    Color(2) = Color(0)
+    Color(3) = Color(0)
     
-    Call DirectDevice.Clear(0, ByVal 0, D3DCLEAR_TARGET, 0, 1#, 0)
     Call DirectDevice.BeginScene
     
-    Call Device_Textured_Render(0, 0, 1024, 768, 0, 0, 999999, color)
+    Call Device_Textured_Render(0, 0, 1024, 768, 0, 0, 999999, Color)
     
     Select Case RenderState
     
         Case eRenderState.eLogin
-            Call Device_Textured_Render(384, 306, 512, 512, 0, 0, 1000000, color)
+            Call Device_Textured_Render(384, 306, 512, 512, 0, 0, 1000000, Color)
             
         Case eRenderState.eNewCharInfo
-            Call Device_Textured_Render(384, 189, 512, 512, 0, 0, 1000001, color)
-            
+            Call Device_Textured_Render(384, 189, 512, 512, 0, 0, 1000002, Color)
+        
+        Case eRenderState.eNewCharDetails
+            Call Device_Textured_Render(384, 189, 512, 512, 0, 0, 1000001, Color)
+        
+        Case eRenderState.eNewCharAttrib
+            Call Device_Textured_Render(384, 189, 512, 512, 0, 0, 1000003, Color)
+        
+        Case eRenderState.eNewCharSkills
+            Call Device_Textured_Render(384, 189, 512, 512, 0, 0, 1000004, Color)
     End Select
     
+    Call RenderComponents
+    
+    Call Text_Draw(5, 5, "X: " & frmConnect.MouseX & " Y: " & frmConnect.MouseY, White)
+    Call Text_Draw(5, 20, "FPS: " & FPS, White)
     Call DirectX_EndScene(ConnectRect, frmConnect.Render.hWnd)
 End Sub
 
@@ -1732,7 +1728,6 @@ Private Sub ShowNextFrame(ByVal MouseViewX As Integer, ByVal MouseViewY As Integ
     Call ConvertCPtoTP(MouseViewX, MouseViewY, MouseTileX, MouseTileY)
      
     'Call SpriteBatch.SetRender(frmMain.MainViewPic.hWnd)
-    Call DirectDevice.Clear(0, ByVal 0, D3DCLEAR_TARGET, 0, 1#, 0)
     Call DirectDevice.BeginScene
 
      '****** Update screen ******
@@ -1755,16 +1750,7 @@ Private Sub ShowNextFrame(ByVal MouseViewX As Integer, ByVal MouseViewY As Integ
      
         Call Inventario.DrawInventory
     End If
-     
-    'FPS update
-    If fpsLastCheck + 1000 < GetTickCount() Then
-        FPS = FramesPerSecCounter
-        FramesPerSecCounter = 1
-        fpsLastCheck = GetTickCount()
-    Else
-        FramesPerSecCounter = FramesPerSecCounter + 1
-    End If
-     
+          
     'Get timing info
     timerElapsedTime = GetElapsedTime()
     timerTicksPerFrame = timerElapsedTime * engineBaseSpeed
@@ -1801,10 +1787,10 @@ Private Sub CharRender(ByVal CharIndex As Long, ByVal PixelOffsetX As Integer, B
 'Last Modify Date: 12/03/04
 'Draw char's to screen without offcentering them
 '***************************************************
-    Dim moved As Boolean
+    Dim Moved As Boolean
     Dim Pos As Integer
     Dim line As String
-    Dim color(3) As Long
+    Dim Color(3) As Long
     
 With charlist(CharIndex)
         If .Moving Then
@@ -1820,7 +1806,7 @@ With charlist(CharIndex)
                 .Escudo.ShieldWalk(.Heading).Started = 1
                 
                 'Char moved
-                moved = True
+                Moved = True
                 
                 'Check if we already got there
                 If (Sgn(.scrollDirectionX) = 1 And .MoveOffsetX >= 0) Or (Sgn(.scrollDirectionX) = -1 And .MoveOffsetX <= 0) Then
@@ -1841,7 +1827,7 @@ With charlist(CharIndex)
                 .Escudo.ShieldWalk(.Heading).Started = 1
                 
                 'Char moved
-                moved = True
+                Moved = True
                 
                 'Check if we already got there
                 If (Sgn(.scrollDirectionY) = 1 And .MoveOffsetY >= 0) Or (Sgn(.scrollDirectionY) = -1 And .MoveOffsetY <= 0) Then
@@ -1852,7 +1838,7 @@ With charlist(CharIndex)
         End If
         
         'If done moving stop animation
-        If Not moved Then
+        If Not Moved Then
             'Stop animations
             .Body.Walk(.Heading).Started = 0
             .Body.Walk(.Heading).FrameCounter = 1
@@ -1897,36 +1883,36 @@ With charlist(CharIndex)
                             Select Case .Criminal
                             
                                 Case 2 'ciuda
-                                    color(0) = ColoresPJ(49)
-                                    color(1) = ColoresPJ(49)
-                                    color(2) = ColoresPJ(49)
-                                    color(3) = ColoresPJ(49)
+                                    Color(0) = ColoresPJ(49)
+                                    Color(1) = ColoresPJ(49)
+                                    Color(2) = ColoresPJ(49)
+                                    Color(3) = ColoresPJ(49)
                                 Case 3
-                                    color(0) = ColoresPJ(50)
-                                    color(1) = ColoresPJ(50)
-                                    color(2) = ColoresPJ(50)
-                                    color(3) = ColoresPJ(50)
+                                    Color(0) = ColoresPJ(50)
+                                    Color(1) = ColoresPJ(50)
+                                    Color(2) = ColoresPJ(50)
+                                    Color(3) = ColoresPJ(50)
                                 Case 4
-                                    color(0) = ColoresPJ(47)
-                                    color(1) = ColoresPJ(47)
-                                    color(2) = ColoresPJ(47)
-                                    color(3) = ColoresPJ(47)
+                                    Color(0) = ColoresPJ(47)
+                                    Color(1) = ColoresPJ(47)
+                                    Color(2) = ColoresPJ(47)
+                                    Color(3) = ColoresPJ(47)
                                 Case 5
-                                    color(0) = ColoresPJ(48)
-                                    color(1) = ColoresPJ(48)
-                                    color(2) = ColoresPJ(48)
-                                    color(3) = ColoresPJ(48)
+                                    Color(0) = ColoresPJ(48)
+                                    Color(1) = ColoresPJ(48)
+                                    Color(2) = ColoresPJ(48)
+                                    Color(3) = ColoresPJ(48)
                             End Select
                         Else
-                            color(0) = ColoresPJ(.priv)
-                            color(1) = ColoresPJ(.priv)
-                            color(2) = ColoresPJ(.priv)
-                            color(3) = ColoresPJ(.priv)
+                            Color(0) = ColoresPJ(.priv)
+                            Color(1) = ColoresPJ(.priv)
+                            Color(2) = ColoresPJ(.priv)
+                            Color(3) = ColoresPJ(.priv)
                         End If
                             
                             'Nick
                             line = Left$(.Nombre, Pos - 2)
-                            Call Text_Draw(PixelOffsetX - .NombreOffset, PixelOffsetY + 30, line, color)
+                            Call Text_Draw(PixelOffsetX - .NombreOffset, PixelOffsetY + 30, line, Color)
                                     
                             'Clan
                          '   line = mid$(.Nombre, Pos)
@@ -1985,7 +1971,7 @@ Public Sub Device_Textured_Render(ByVal X As Integer, ByVal Y As Integer, _
                                   ByVal Width As Integer, ByVal Height As Integer, _
                                   ByVal sX As Integer, ByVal sY As Integer, _
                                   tex As Long, _
-                                  ByRef color() As Long)
+                                  ByRef Color() As Long)
 
         Dim Texture As Direct3DTexture8
         Dim TexWidth As Integer, TexHeight As Integer
@@ -1997,9 +1983,9 @@ Public Sub Device_Textured_Render(ByVal X As Integer, ByVal Y As Integer, _
                 Call .SetTexture(Texture)
                 
                 If TexWidth <> 0 And TexHeight <> 0 Then
-                    Call .Draw(X, Y, Width, Height, color, sX / TexWidth, sY / TexHeight, (sX + Width) / TexWidth, (sY + Height) / TexHeight)
+                    Call .Draw(X, Y, Width, Height, Color, sX / TexWidth, sY / TexHeight, (sX + Width) / TexWidth, (sY + Height) / TexHeight)
                 Else
-                    Call .Draw(X, Y, TexWidth, TexHeight, color)
+                    Call .Draw(X, Y, TexWidth, TexHeight, Color)
                 End If
         End With
 End Sub
@@ -2087,7 +2073,7 @@ Public Sub CheckKeys()
             End If
             
             ' We haven't moved - Update 3D sounds!
-            'call 'audio.MoveListener(UserPos.X, UserPos.Y)
+            Call Audio.MoveListener(UserPos.X, UserPos.Y)
         Else
             Dim kp As Boolean
             kp = (GetKeyState(CustomKeys.BindedKey(eKeyType.mKeyUp)) < 0) Or _
@@ -2099,7 +2085,7 @@ Public Sub CheckKeys()
                 Call RandomMove
             Else
                 ' We haven't moved - Update 3D sounds!
-                'call 'audio.MoveListener(UserPos.X, UserPos.Y)
+                Call Audio.MoveListener(UserPos.X, UserPos.Y)
             End If
             
             If frmMain.TrainingMacro.Enabled Then frmMain.DesactivarMacroHechizos
@@ -2110,13 +2096,13 @@ Public Sub CheckKeys()
 End Sub
 
 
-Public Sub Text_Draw(ByVal Left As Long, ByVal Top As Long, ByVal Text As String, color() As Long, Optional ByVal Center As Boolean = False, Optional ByVal fontNum As Byte = 1)
+Public Sub Text_Draw(ByVal Left As Long, ByVal Top As Long, ByVal Text As String, Color() As Long, Optional ByVal Center As Boolean = False, Optional ByVal fontNum As Byte = 1)
 
-    Engine_Render_Text SpriteBatch, cfonts(fontNum), Text, Left, Top, color
+    Engine_Render_Text SpriteBatch, cfonts(fontNum), Text, Left, Top, Color
 
 End Sub
 
-Private Sub Engine_Render_Text(ByRef Batch As clsBatch, ByRef UseFont As CustomFont, ByVal Text As String, ByVal X As Long, ByVal Y As Long, color() As Long)
+Private Sub Engine_Render_Text(ByRef Batch As clsBatch, ByRef UseFont As CustomFont, ByVal Text As String, ByVal X As Long, ByVal Y As Long, Color() As Long)
 '*****************************************************************
 'Render text with a custom font
 '*****************************************************************
@@ -2127,7 +2113,7 @@ Private Sub Engine_Render_Text(ByRef Batch As clsBatch, ByRef UseFont As CustomF
     Dim i As Long
     Dim J As Long
 
-    Dim YOffset As Single
+    Dim yOffset As Single
     
     'Check if we have the device
     If DirectDevice.TestCooperativeLevel <> D3D_OK Then Exit Sub
@@ -2144,7 +2130,7 @@ Private Sub Engine_Render_Text(ByRef Batch As clsBatch, ByRef UseFont As CustomF
     'Loop through each line if there are line breaks (vbCrLf)
     For i = 0 To UBound(tempstr)
         If Len(tempstr(i)) > 0 Then
-            YOffset = i * UseFont.CharHeight
+            yOffset = i * UseFont.CharHeight
             Count = 0
         
             'Convert the characters to the ascii value
@@ -2156,9 +2142,9 @@ Private Sub Engine_Render_Text(ByRef Batch As clsBatch, ByRef UseFont As CustomF
                 CopyMemory TempVA, UseFont.HeaderInfo.CharVA(ascii(J - 1)), 24 'this number represents the size of "CharVA" struct
                 
                 TempVA.X = X + Count
-                TempVA.Y = Y + YOffset
+                TempVA.Y = Y + yOffset
             
-                Batch.Draw TempVA.X, TempVA.Y, TempVA.w, TempVA.h, color, _
+                Batch.Draw TempVA.X, TempVA.Y, TempVA.W, TempVA.H, Color, _
                             TempVA.Tx1, TempVA.Ty1, TempVA.Tx2, TempVA.Ty2
 
                 'Shift over the the position to render the next character
@@ -2252,8 +2238,8 @@ Sub Engine_Init_FontSettings()
         With cfonts(1).HeaderInfo.CharVA(LoopChar)
             .X = 0
             .Y = 0
-            .w = cfonts(1).HeaderInfo.CellWidth
-            .h = cfonts(1).HeaderInfo.CellHeight
+            .W = cfonts(1).HeaderInfo.CellWidth
+            .H = cfonts(1).HeaderInfo.CellHeight
             .Tx1 = u
             .Ty1 = v
             .Tx2 = u + cfonts(1).ColFactor
@@ -2264,7 +2250,45 @@ Sub Engine_Init_FontSettings()
     
 End Sub
 
+Public Sub Draw_Box(ByVal X As Integer, ByVal Y As Integer, ByVal W As Integer, ByVal H As Integer, BackgroundColor() As Long)
+    
+    Call SpriteBatch.SetTexture(Nothing)
+    Call SpriteBatch.Draw(X, Y, W, H, BackgroundColor)
+End Sub
+
 Public Sub ChangeRenderState(ByRef State As eRenderState)
     RenderState = State
+    
+    With frmConnect
+        
+        Select Case State
+        
+            Case eRenderState.eNewCharInfo
+                Call ShowComponents(.txtNick, .txtMail, .txtPass, .txtRepPass)
+                Call DisableComponents(.btnCrearPj, .btnLogin)
+                Call EnableComponents(.btnSiguiente, .btnAtras)
+                Call HideComponents(.txtNombre, .txtPassword, .lblAgilidad, .lblCarisma, .lblConstitucion, .lblFuerza, _
+                                    .lblInteligencia, .cmbHogar, .cmbRaza, .cmbSexo, .lstSkills)
+                                    
+            Case eRenderState.eNewCharDetails
+                Call ShowComponents(.cmbHogar, .cmbRaza, .cmbSexo)
+                Call HideComponents(.txtNick, .txtMail, .txtPass, .txtRepPass, .lblAgilidad, .lblCarisma, .lblConstitucion, _
+                                    .lblFuerza, .lblInteligencia)
+            
+            Case eRenderState.eNewCharAttrib
+                Call ShowComponents(.lblAgilidad, .lblCarisma, .lblConstitucion, .lblFuerza, .lblInteligencia)
+                Call HideComponents(.cmbHogar, .cmbRaza, .cmbSexo, .lstSkills)
+            
+            Case eRenderState.eNewCharSkills
+                Call ShowComponents(.lstSkills)
+                Call HideComponents(.lblAgilidad, .lblCarisma, .lblConstitucion, .lblFuerza, .lblInteligencia)
+        End Select
+        
+    End With
     FadeOff = True
+    
 End Sub
+
+Public Function GetRenderState() As eRenderState
+    GetRenderState = RenderState
+End Function

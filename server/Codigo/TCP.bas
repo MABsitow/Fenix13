@@ -891,7 +891,6 @@ With UserList(UserIndex)
     Call WriteChangeMap(UserIndex, .Pos.map, MapInfo(.Pos.map).MapVersion) 'Carga el mapa
     Call WritePlayMidi(UserIndex, val(ReadField(1, MapInfo(.Pos.map).Music, 45)))
     
-    
     If .flags.Privilegios <> PlayerType.User And .flags.Privilegios <> (PlayerType.User Or PlayerType.ChaosCouncil) And .flags.Privilegios <> (PlayerType.User Or PlayerType.RoyalCouncil) Then
         .flags.ChatColor = RGB(255, 128, 32)
     ElseIf .flags.Privilegios = (PlayerType.User Or PlayerType.RoyalCouncil) Then

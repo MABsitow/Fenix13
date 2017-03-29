@@ -94,7 +94,7 @@ Private Sub ButtonHolder_Click()
     If Disabled Then Exit Sub
     If Not SoundClick Then Exit Sub
     
-    'call 'audio.PlayWave(SND_CLICK)
+    Call audio.PlayWave(SND_CLICK)
 End Sub
 
 Private Sub ButtonHolder_MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single)

@@ -372,7 +372,7 @@ Private Sub imgComprar_Click()
     
     If Not IsNumeric(cantidad.Text) Or cantidad.Text = 0 Then Exit Sub
     
-    'call 'audio.PlayWave(SND_CLICK)
+    Call audio.PlayWave(SND_CLICK)
     
     LasActionBuy = True
     If UserGLD >= CalculateSellPrice(NPCInventory(InvComNpc.SelectedItem).Valor, Val(cantidad.Text)) Then
@@ -395,7 +395,7 @@ Private Sub imgVender_Click()
 
     If Not IsNumeric(cantidad.Text) Or cantidad.Text = 0 Then Exit Sub
     
-    'call 'audio.PlayWave(SND_CLICK)
+    Call audio.PlayWave(SND_CLICK)
     
     LasActionBuy = False
 

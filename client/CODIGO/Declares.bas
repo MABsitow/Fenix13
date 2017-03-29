@@ -40,7 +40,7 @@ Public WhisperTarget As String
 'Objetos públicos
 'Public DialogosClanes As New clsGuildDlg
 Public Dialogos As New clsDialogs
-'Public Audio As New clsAudio
+Public Audio As New clsAudio
 Public Inventario As New clsGraphicalInventory
 Public InvBanco(1) As New clsGraphicalInventory
 
