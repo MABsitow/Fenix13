@@ -267,7 +267,7 @@ With UserList(UserIndex)
     .flags.Escondido = 0
     
     
-    .Name = Name
+    .Name = Trim$(Name)
     .Clase = eClass.Ciudadano
     .raza = UserRaza
     .Genero = UserSexo
@@ -295,7 +295,8 @@ With UserList(UserIndex)
     End If
     '.Stats.SkillPts = 0
     
-    CopyMemory .Stats.UserSkills(1), Skills(1), 22
+    CopyMemory .Stats.UserSkills(1), Skills(1), NUMSKILLS
+    '* lenb(skills(1)) 'podría servir si a alguien se le ocurre usar skills integers
     
     .Char.heading = eHeading.SOUTH
     
@@ -407,6 +408,8 @@ End With
 
 'Valores Default de facciones al Activar nuevo usuario
 Call ResetFacciones(UserIndex)
+
+Password = MD5String(Password)
 
 Call WriteVar(CharPath & UCase$(Name) & ".chr", "INIT", "Password", Password) 'grabamos el password aqui afuera, para no mantenerlo cargado en memoria
 

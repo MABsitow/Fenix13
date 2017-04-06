@@ -24,7 +24,7 @@ Public Sub Input_Init()
 115     Call DIDevice.SetCommonDataFormat(DIFORMAT_MOUSE)
     
         'If in windowed mode, free the mouse from the screen
-120     Call DIDevice.SetCooperativeLevel(frmConnect.hWnd, DISCL_NONEXCLUSIVE Or DISCL_BACKGROUND)
+120     Call DIDevice.SetCooperativeLevel(frmConnect.hwnd, DISCL_NONEXCLUSIVE Or DISCL_BACKGROUND)
     
 125     diProp.lHow = DIPH_DEVICE
 130     diProp.lObj = 0
@@ -46,6 +46,9 @@ Input_Init_Err:
 End Sub
 
 Public Sub Input_Release()
+    
+    Call DIDevice.Unacquire
+    
     Set DIDevice = Nothing
     Set DI = Nothing
 End Sub

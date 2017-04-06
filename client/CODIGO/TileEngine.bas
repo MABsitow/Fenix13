@@ -41,9 +41,14 @@ Public Enum eRenderState 'Ojo con cambiar esto, tener en cuenta que esta hardcod
             eNewCharSkills
 End Enum
 
-
 Private RenderState As eRenderState
+Private BodyExample As Grh
 Private FadeOff As Boolean
+
+Private Type tHelpWindow
+            Active As Boolean
+            Text() As String 'lineeees
+End Type: Public HelpWindow As tHelpWindow
 
 Private Type D3DXIMAGE_INFO_A
     Width As Long
@@ -63,15 +68,14 @@ End Type
 Private Type CharVA
     X As Integer
     Y As Integer
-    W As Integer
-    H As Integer
+    w As Integer
+    h As Integer
     
     Tx1 As Single
     Tx2 As Single
     Ty1 As Single
     Ty2 As Single
 End Type
-
 
 Private Type VFH
     BitmapWidth As Long         'Size of the bitmap itself
@@ -180,14 +184,14 @@ Public Type GrhData
     TileHeight As Single
     
     NumFrames As Integer
-    Frames(1 To 25) As Integer
+    Frames(1 To 25) As Integer 'todo: remover to 25
     
     Speed As Single
 End Type
 
 'apunta a una estructura grhdata y mantiene la animacion
 Public Type Grh
-    GrhIndex As Integer
+    GrhIndex As Long
     FrameCounter As Single
     Speed As Single
     Started As Byte
@@ -281,7 +285,6 @@ Public Type MapInfo
 End Type
 
 Public Const DegreeToRadian As Single = 0.01745329251994 'Pi / 180
-
 
 Public AmbientColor(3) As Long
 
@@ -767,7 +770,7 @@ Public Sub DoFogataFx()
         End If
     Else
         bFogata = HayFogata(location)
-        'If bFogata And FogataBufferIndex = 0 Then FogataBufferIndex = audio.PlayWave("fuego.wav", location.X, location.Y, LoopStyle.Enabled)
+        If bFogata And FogataBufferIndex = 0 Then FogataBufferIndex = Audio.PlayWave("fuego.wav", location.X, location.Y, LoopStyle.Enabled)
     End If
 End Sub
 
@@ -944,7 +947,7 @@ On Error GoTo errorHandler
     handle = FreeFile()
     
     Open IniPath & "Graficos.ind" For Binary Access Read As handle
-    Seek #1, 1
+    Seek handle, 1
     
     'Get file version
     Get handle, , fileVersion
@@ -1376,6 +1379,7 @@ Sub Render_Screen(ByVal PixelOffsetX As Integer, ByVal PixelOffsetY As Integer)
         
         Next X
     End If
+        
 End Sub
 
 Public Function RenderSounds()
@@ -1388,16 +1392,16 @@ Public Function RenderSounds()
         If bRain Then
             If bTecho Then
                 If frmMain.IsPlaying <> PlayLoop.plLluviain Then
-                    'If RainBufferIndex Then _
-                        call audio.StopWave(RainBufferIndex)
-                    'RainBufferIndex = audio.PlayWave("lluviain.wav", 0, 0, LoopStyle.Enabled)
+                    If RainBufferIndex Then _
+                        Call Audio.StopWave(RainBufferIndex)
+                    RainBufferIndex = Audio.PlayWave("lluviain.wav", 0, 0, LoopStyle.Enabled)
                     frmMain.IsPlaying = PlayLoop.plLluviain
                 End If
             Else
                 If frmMain.IsPlaying <> PlayLoop.plLluviaout Then
-                    'If RainBufferIndex Then _
-                        call audio.StopWave(RainBufferIndex)
-                    'RainBufferIndex = audio.PlayWave("lluviaout.wav", 0, 0, LoopStyle.Enabled)
+                    If RainBufferIndex Then _
+                        Call Audio.StopWave(RainBufferIndex)
+                    RainBufferIndex = Audio.PlayWave("lluviaout.wav", 0, 0, LoopStyle.Enabled)
                     frmMain.IsPlaying = PlayLoop.plLluviaout
                 End If
             End If
@@ -1424,7 +1428,6 @@ Public Function InitTileEngine(ByVal setDisplayFormhWnd As Long, ByVal setMainVi
 'Last modified by: Juan Martín Sotuyo Dodero (Maraxus)
 'Creates all DX objects and configures the engine to start running.
 '***************************************************
-    IniPath = App.path & "\Init\"
     
     'Fill startup variables
     MainViewTop = setMainViewTop
@@ -1486,7 +1489,7 @@ Public Function InitTileEngine(ByVal setDisplayFormhWnd As Long, ByVal setMainVi
     InitTileEngine = True
 End Function
 
-Public Sub DirectX_Init()
+Private Sub DirectX_Init()
 
     Dim DispMode As D3DDISPLAYMODE
     Dim PresentationParameters As D3DPRESENT_PARAMETERS
@@ -1508,7 +1511,7 @@ Public Sub DirectX_Init()
         
     End With
 
-    Set DirectDevice = DirectD3D.CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, frmMain.MainViewPic.hWnd, D3DCREATE_HARDWARE_VERTEXPROCESSING, PresentationParameters)
+    Set DirectDevice = DirectD3D.CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, frmMain.MainViewPic.hwnd, D3DCREATE_HARDWARE_VERTEXPROCESSING, PresentationParameters)
     
     Call D3DXMatrixOrthoOffCenterLH(Projection, 0, 1024, 768, 0, -1#, 1#)
     Call D3DXMatrixIdentity(View)
@@ -1550,12 +1553,12 @@ Public Sub DirectX_Init()
         
 End Sub
 
-Public Sub DirectX_EndScene(ByRef Rect As D3DRECT, ByVal hWnd As Long)
+Public Sub DirectX_EndScene(ByRef Rect As D3DRECT, ByVal hwnd As Long)
     
     Call SpriteBatch.Flush
     
     Call DirectDevice.EndScene
-    Call DirectDevice.Present(Rect, ByVal 0, hWnd, ByVal 0)
+    Call DirectDevice.Present(Rect, ByVal 0, hwnd, ByVal 0)
 End Sub
 
 Private Sub Engine_Init_RenderStates()
@@ -1578,39 +1581,39 @@ Private Sub Engine_Init_RenderStates()
 End Sub
 
 Public Sub DeinitTileEngine()
-'***************************************************
-'Author: Juan Martín Sotuyo Dodero (Maraxus)
-'Last Modification: 08/14/07
-'Destroys all DX objects
-'***************************************************
+    '***************************************************
+    'Author: Juan Martín Sotuyo Dodero (Maraxus)
+    'Last Modification: 08/14/07
+    'Destroys all DX objects
+    '***************************************************
 
-        'Set no texture in the device to avoid memory leaks
-        If Not DirectDevice Is Nothing Then
-                DirectDevice.SetTexture 0, Nothing
-        End If
+    'Set no texture in the device to avoid memory leaks
+    If Not DirectDevice Is Nothing Then
+        DirectDevice.SetTexture 0, Nothing
+    End If
         
-        '// Destroy Textures
-        Set SurfaceDB = Nothing
+    '// Destroy Textures
+    Set SurfaceDB = Nothing
         
-        Call Input_Release
+    Call Input_Release
         
-        Set DirectX = Nothing
-        Set DirectD3D = Nothing
-        Set DirectDevice = Nothing
-        Set DirectD3D8 = Nothing
+    Set DirectX = Nothing
+    Set DirectD3D = Nothing
+    Set DirectDevice = Nothing
+    Set DirectD3D8 = Nothing
         
-        Set SpriteBatch = Nothing
+    Set SpriteBatch = Nothing
         
-        'Clear arrays
-        Erase GrhData
-        Erase BodyData
-        Erase HeadData
-        Erase FxData
-        Erase WeaponAnimData
-        Erase ShieldAnimData
-        Erase CascoAnimData
-        Erase MapData
-        Erase charlist
+    'Clear arrays
+    Erase GrhData
+    Erase BodyData
+    Erase HeadData
+    Erase FxData
+    Erase WeaponAnimData
+    Erase ShieldAnimData
+    Erase CascoAnimData
+    Erase MapData
+    Erase charlist
         
 End Sub
 
@@ -1647,6 +1650,11 @@ Public Sub Render()
         End If
 
         Call SpriteBatch.Finish
+        
+        'Get timing info
+        timerElapsedTime = GetElapsedTime()
+        timerTicksPerFrame = timerElapsedTime * engineBaseSpeed
+
     End If
 End Sub
 
@@ -1669,26 +1677,74 @@ Private Sub Render_Connect()
     Select Case RenderState
     
         Case eRenderState.eLogin
-            Call Device_Textured_Render(384, 306, 512, 512, 0, 0, 1000000, Color)
+            Call Device_Textured_Render(384, 306, 256, 205, 0, 0, 1000000, Color)
             
         Case eRenderState.eNewCharInfo
-            Call Device_Textured_Render(384, 189, 512, 512, 0, 0, 1000002, Color)
+            Call Device_Textured_Render(384, 189, 256, 512, 256, 0, 1000001, Color)
         
         Case eRenderState.eNewCharDetails
-            Call Device_Textured_Render(384, 189, 512, 512, 0, 0, 1000001, Color)
-        
+            Call Device_Textured_Render(384, 189, 256, 512, 0, 0, 1000001, Color)
+            Call Draw_Head_Selector
         Case eRenderState.eNewCharAttrib
-            Call Device_Textured_Render(384, 189, 512, 512, 0, 0, 1000003, Color)
+            Call Device_Textured_Render(384, 189, 256, 512, 0, 0, 1000002, Color)
         
         Case eRenderState.eNewCharSkills
-            Call Device_Textured_Render(384, 189, 512, 512, 0, 0, 1000004, Color)
+            Call Device_Textured_Render(384, 189, 256, 512, 256, 0, 1000002, Color)
     End Select
     
+    Call Render_Help_Window
     Call RenderComponents
     
     Call Text_Draw(5, 5, "X: " & frmConnect.MouseX & " Y: " & frmConnect.MouseY, White)
     Call Text_Draw(5, 20, "FPS: " & FPS, White)
-    Call DirectX_EndScene(ConnectRect, frmConnect.Render.hWnd)
+    Call DirectX_EndScene(ConnectRect, frmConnect.Render.hwnd)
+End Sub
+
+Private Sub Render_Help_Window()
+    
+    If HelpWindow.Active = False Then Exit Sub
+    
+    Call Device_Textured_Render(640, 306, 256, 205, 260, 0, 1000000, White)
+    
+    Dim i As Long
+    Dim yOffset As Integer
+    
+    With HelpWindow
+    
+        For i = 0 To UBound(.Text)
+    
+            Call Text_Draw(653, 320 + yOffset, .Text(i), White)
+            
+            yOffset = yOffset + 15
+        Next
+        
+    End With
+    
+End Sub
+
+Private Sub Draw_Head_Selector()
+    
+    Dim Raza As Integer, Sexo As Integer
+    Raza = GetSelectedIndex(frmConnect.cmbRaza)
+    Sexo = GetSelectedIndex(frmConnect.cmbSexo)
+    
+    Dim X As Integer
+    X = 451
+    
+    Dim i As Long
+    If Raza <> 0 And Sexo <> 0 Then
+            
+        For i = 0 To UBound(HeadSlider)
+            Draw_GrhIndex HeadData(HeadSlider(i)).Head(3).GrhIndex, X, 439, 0, White
+            
+            X = X + 27
+        Next
+    End If
+    
+    If BodyExample.GrhIndex <> 0 Then
+        Call Draw_GrhIndex(HeadData(UserHead).Head(3).GrhIndex, 499 + BodyData(UserBody).HeadOffset.X, 486 + BodyData(UserBody).HeadOffset.Y, 1, White)
+        Call Draw_Grh(BodyExample, 499, 486, 1, 1, White)
+    End If
 End Sub
 
 'CSEH: ErrLog
@@ -1727,7 +1783,6 @@ Private Sub ShowNextFrame(ByVal MouseViewX As Integer, ByVal MouseViewY As Integ
     'Update mouse position within view area
     Call ConvertCPtoTP(MouseViewX, MouseViewY, MouseTileX, MouseTileY)
      
-    'Call SpriteBatch.SetRender(frmMain.MainViewPic.hWnd)
     Call DirectDevice.BeginScene
 
      '****** Update screen ******
@@ -1745,15 +1800,11 @@ Private Sub ShowNextFrame(ByVal MouseViewX As Integer, ByVal MouseViewY As Integ
     
     If GetTickCount - LastInvRender > 56 Then
      
-        'Call SpriteBatch.SetRender(frmMain.picInv.hWnd)
         LastInvRender = GetTickCount
      
         Call Inventario.DrawInventory
     End If
           
-    'Get timing info
-    timerElapsedTime = GetElapsedTime()
-    timerTicksPerFrame = timerElapsedTime * engineBaseSpeed
 End Sub
 
 Private Function GetElapsedTime() As Single
@@ -1970,7 +2021,7 @@ End Sub
 Public Sub Device_Textured_Render(ByVal X As Integer, ByVal Y As Integer, _
                                   ByVal Width As Integer, ByVal Height As Integer, _
                                   ByVal sX As Integer, ByVal sY As Integer, _
-                                  tex As Long, _
+                                  ByVal tex As Long, _
                                   ByRef Color() As Long)
 
         Dim Texture As Direct3DTexture8
@@ -2095,7 +2146,6 @@ Public Sub CheckKeys()
     End If
 End Sub
 
-
 Public Sub Text_Draw(ByVal Left As Long, ByVal Top As Long, ByVal Text As String, Color() As Long, Optional ByVal Center As Boolean = False, Optional ByVal fontNum As Byte = 1)
 
     Engine_Render_Text SpriteBatch, cfonts(fontNum), Text, Left, Top, Color
@@ -2144,7 +2194,7 @@ Private Sub Engine_Render_Text(ByRef Batch As clsBatch, ByRef UseFont As CustomF
                 TempVA.X = X + Count
                 TempVA.Y = Y + yOffset
             
-                Batch.Draw TempVA.X, TempVA.Y, TempVA.W, TempVA.H, Color, _
+                Batch.Draw TempVA.X, TempVA.Y, TempVA.w, TempVA.h, Color, _
                             TempVA.Tx1, TempVA.Ty1, TempVA.Tx2, TempVA.Ty2
 
                 'Shift over the the position to render the next character
@@ -2238,8 +2288,8 @@ Sub Engine_Init_FontSettings()
         With cfonts(1).HeaderInfo.CharVA(LoopChar)
             .X = 0
             .Y = 0
-            .W = cfonts(1).HeaderInfo.CellWidth
-            .H = cfonts(1).HeaderInfo.CellHeight
+            .w = cfonts(1).HeaderInfo.CellWidth
+            .h = cfonts(1).HeaderInfo.CellHeight
             .Tx1 = u
             .Ty1 = v
             .Tx2 = u + cfonts(1).ColFactor
@@ -2250,10 +2300,10 @@ Sub Engine_Init_FontSettings()
     
 End Sub
 
-Public Sub Draw_Box(ByVal X As Integer, ByVal Y As Integer, ByVal W As Integer, ByVal H As Integer, BackgroundColor() As Long)
+Public Sub Draw_Box(ByVal X As Integer, ByVal Y As Integer, ByVal w As Integer, ByVal h As Integer, BackgroundColor() As Long)
     
     Call SpriteBatch.SetTexture(Nothing)
-    Call SpriteBatch.Draw(X, Y, W, H, BackgroundColor)
+    Call SpriteBatch.Draw(X, Y, w, h, BackgroundColor)
 End Sub
 
 Public Sub ChangeRenderState(ByRef State As eRenderState)
@@ -2265,23 +2315,38 @@ Public Sub ChangeRenderState(ByRef State As eRenderState)
         
             Case eRenderState.eNewCharInfo
                 Call ShowComponents(.txtNick, .txtMail, .txtPass, .txtRepPass)
-                Call DisableComponents(.btnCrearPj, .btnLogin)
+                Call DisableComponents(.btnCrearPj, .btnLogin, .btnHeadDer, .btnHeadIzq)
                 Call EnableComponents(.btnSiguiente, .btnAtras)
                 Call HideComponents(.txtNombre, .txtPassword, .lblAgilidad, .lblCarisma, .lblConstitucion, .lblFuerza, _
                                     .lblInteligencia, .cmbHogar, .cmbRaza, .cmbSexo, .lstSkills)
                                     
             Case eRenderState.eNewCharDetails
                 Call ShowComponents(.cmbHogar, .cmbRaza, .cmbSexo)
+                Call EnableComponents(.btnHeadDer, .btnHeadIzq)
                 Call HideComponents(.txtNick, .txtMail, .txtPass, .txtRepPass, .lblAgilidad, .lblCarisma, .lblConstitucion, _
                                     .lblFuerza, .lblInteligencia)
             
             Case eRenderState.eNewCharAttrib
+                Call DisableComponents(.btnHeadDer, .btnHeadIzq)
                 Call ShowComponents(.lblAgilidad, .lblCarisma, .lblConstitucion, .lblFuerza, .lblInteligencia)
                 Call HideComponents(.cmbHogar, .cmbRaza, .cmbSexo, .lstSkills)
             
             Case eRenderState.eNewCharSkills
                 Call ShowComponents(.lstSkills)
                 Call HideComponents(.lblAgilidad, .lblCarisma, .lblConstitucion, .lblFuerza, .lblInteligencia)
+                
+                With HelpWindow
+                    
+                    ReDim .Text(0 To 5) As String
+                    
+                    .Text(0) = "Utiliza la rueda para ver mas skills."
+                    .Text(1) = "Click: izquierdo suma, derecho resta."
+                    .Text(3) = "Mientras asignas, mantén:"
+                    .Text(4) = "    Ctrl: Para asignar 3 puntos."
+                    .Text(5) = "    Shift: Para asignarlos todos."
+                    
+                    .Active = True
+                End With
         End Select
         
     End With
@@ -2292,3 +2357,10 @@ End Sub
 Public Function GetRenderState() As eRenderState
     GetRenderState = RenderState
 End Function
+
+Public Sub SetBodyExample(ByVal UserBody As Integer)
+    
+    BodyExample = BodyData(UserBody).Walk(3)
+    BodyExample.Started = 1
+    BodyExample.Loops = INFINITE_LOOPS
+End Sub

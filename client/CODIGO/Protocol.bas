@@ -433,13 +433,7 @@ Public Sub HandleIncomingData()
     
     Call incomingData.Mark
     
-    Dim i As Integer
-
-
-    i = incomingData.ReadByte
-    Debug.Print i
-    
-    Select Case i
+    Select Case incomingData.ReadByte
         Case ServerPacketID.Logged                  ' LOGGED
             Call HandleLogged
         
@@ -1117,8 +1111,7 @@ Private Sub HandleDisconnect()
     Connected = False
     
     For Each frm In Forms
-        If frm.Name <> frmMain.Name And frm.Name <> frmConnect.Name And _
-            frm.Name <> frmCrearPersonaje.Name Then
+        If frm.Name <> frmMain.Name And frm.Name <> frmConnect.Name Then
             
             Unload frm
         End If
@@ -1128,7 +1121,7 @@ Private Sub HandleDisconnect()
     
     ' Return to connection screen
     frmConnect.MousePointer = vbNormal
-    If Not frmCrearPersonaje.Visible Then frmConnect.Visible = True
+    frmConnect.Visible = True
     frmMain.Visible = False
     
     Inventario.ClearAllSlots
@@ -3086,14 +3079,14 @@ Private Sub HandleAtributes()
     
     'Show them in character creation
     If EstadoLogin = E_MODO.Dados Then
-        With frmCrearPersonaje
-            If .Visible Then
-                For i = 1 To NUMATRIBUTES
-                    .lblAtributos(i).Caption = UserAtributos(i)
-                Next i
-                
-                .UpdateStats
-            End If
+        With frmConnect
+            If GetRenderState() = eRenderState.eLogin Then prgRun = False
+            
+            Call EditLabel(frmConnect.lblFuerza, CStr(UserAtributos(eAtributos.Fuerza)), White)
+            Call EditLabel(frmConnect.lblAgilidad, CStr(UserAtributos(eAtributos.Agilidad)), White)
+            Call EditLabel(frmConnect.lblConstitucion, CStr(UserAtributos(eAtributos.Constitucion)), White)
+            Call EditLabel(frmConnect.lblInteligencia, CStr(UserAtributos(eAtributos.Inteligencia)), White)
+            Call EditLabel(frmConnect.lblCarisma, CStr(UserAtributos(eAtributos.Carisma)), White)
         End With
     Else
         LlegaronAtrib = True
@@ -3295,7 +3288,7 @@ On Error GoTo ErrHandler
 
     Call MsgBox(incomingData.ReadString())
     
-    If frmConnect.Visible And (Not frmCrearPersonaje.Visible) Then
+    If frmConnect.Visible Then
         frmMain.Socket1.Disconnect
         frmMain.Socket1.Cleanup
         
@@ -3636,23 +3629,19 @@ Private Sub HandleDiceRoll()
         Exit Sub
     End If
     
-
-
-    
     UserAtributos(eAtributos.Fuerza) = incomingData.ReadByte()
     UserAtributos(eAtributos.Agilidad) = incomingData.ReadByte()
     UserAtributos(eAtributos.Inteligencia) = incomingData.ReadByte()
     UserAtributos(eAtributos.Carisma) = incomingData.ReadByte()
     UserAtributos(eAtributos.Constitucion) = incomingData.ReadByte()
     
-    With frmCrearPersonaje
-        .lblAtributos(eAtributos.Fuerza) = UserAtributos(eAtributos.Fuerza)
-        .lblAtributos(eAtributos.Agilidad) = UserAtributos(eAtributos.Agilidad)
-        .lblAtributos(eAtributos.Inteligencia) = UserAtributos(eAtributos.Inteligencia)
-        .lblAtributos(eAtributos.Carisma) = UserAtributos(eAtributos.Carisma)
-        .lblAtributos(eAtributos.Constitucion) = UserAtributos(eAtributos.Constitucion)
+    With frmConnect
+        Call EditLabel(.lblFuerza, CStr(UserAtributos(eAtributos.Fuerza)), White)
+        Call EditLabel(.lblAgilidad, CStr(UserAtributos(eAtributos.Agilidad)), White)
+        Call EditLabel(.lblInteligencia, CStr(UserAtributos(eAtributos.Inteligencia)), White)
+        Call EditLabel(.lblCarisma, CStr(UserAtributos(eAtributos.Carisma)), White)
+        Call EditLabel(.lblConstitucion, CStr(UserAtributos(eAtributos.Constitucion)), White)
         
-        .UpdateStats
     End With
 End Sub
 

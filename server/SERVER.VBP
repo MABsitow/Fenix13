@@ -59,6 +59,7 @@ Module=modClases; Codigo\modClases.bas
 Module=modSubClase; Codigo\modSubClase.bas
 Module=modAdmins; Codigo\modAdmins.bas
 Class=cCola; Codigo\cCola.cls
+Module=MD5; Codigo\MD5.bas
 IconForm="frmMain"
 Startup="Sub Main"
 HelpFile=""

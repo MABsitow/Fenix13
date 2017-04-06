@@ -3,8 +3,6 @@ Option Explicit
 
 Private Const MAX_COMBOLIST_LINES As Byte = 5
 Private Const MAX_CONSOLE_LINES As Byte = 100
-
-Public UserWriting As Boolean
  
 Public Enum eComponentEvent
         None = 0
@@ -16,9 +14,10 @@ Public Enum eComponentEvent
         MouseScrollDown = 6
         MouseUp = 7
         MouseDblClick = 8
+        ChildClicked = 9
 End Enum
 
-Enum eComponentType
+Public Enum eComponentType
         Label = 0
         TextBox = 1
         Shape = 2
@@ -26,6 +25,7 @@ Enum eComponentType
         Rect = 4
         ListBox = 5
         ComboBox = 6
+        FilleableListbox = 7
 End Enum
 
 Private Type TYPE_CONSOLE_LINE
@@ -33,7 +33,7 @@ Private Type TYPE_CONSOLE_LINE
         Color(3) As Long
 End Type
 
-Private Type tComponent 'todo: rehacer, es terrible
+Private Type tComponent 'todo: rehacer, es terrible, OOP where are u?
         X           As Integer
         Y           As Integer
         w           As Integer
@@ -71,6 +71,8 @@ Private Type tComponent 'todo: rehacer, es terrible
         
         PasswChr    As Byte
         
+        Values()    As Integer 'Fillable
+        Limit       As Integer
 End Type
 
 Private CharHeight      As Integer
@@ -78,6 +80,7 @@ Private Focused         As Integer
 Private LastComponent   As Integer
 
 Public Components()     As tComponent
+Public HeadSlider(0 To 4) As Integer
 
 Private Declare Function CallWindowProc Lib "user32" Alias "CallWindowProcA" (ByVal lpPrevWndFunc As Long, ByVal hwnd As Long, ByVal msg As Long, ByVal wParam As Long, ByVal lParam As Long) As Long
 Private Declare Sub CopyMemory Lib "kernel32" Alias "RtlMoveMemory" (ByVal lpvDest As Long, ByVal lpvSource As Long, ByVal cbCopy As Long)
@@ -96,7 +99,9 @@ Public Sub InitComponents()
 End Sub
 
 Public Sub ClearComponents()
+
     Erase Components
+    
     Focused = -1
     LastComponent = 0
     
@@ -136,6 +141,40 @@ Public Function AddListBox(ByVal X As Integer, ByVal Y As Integer, _
     AddListBox = LastComponent
     
 End Function
+
+Public Function AddFillableListBox(ByVal X As Integer, ByVal Y As Integer, _
+                           ByVal w As Integer, ByVal h As Integer, _
+                           ByRef BackgroundColor() As Long, ByVal Limit As Integer) As Integer
+    
+    LastComponent = LastComponent + 1
+
+    ReDim Preserve Components(1 To LastComponent) As tComponent
+
+    With Components(LastComponent)
+    
+        .X = X: .w = w
+        .Y = Y: .h = h
+        
+        .Component = eComponentType.FilleableListbox
+        
+        .Color(0) = BackgroundColor(0): .Color(1) = BackgroundColor(1)
+        .Color(2) = BackgroundColor(2): .Color(3) = BackgroundColor(3)
+
+        .Visible = True
+        
+        .Enable = True
+        
+        .SelIndex = -1
+        
+        .Limit = Limit
+    End With
+    
+    'Call SetEvents(LastComponent, Callback(AddressOf FillableListBox_EventHandler))
+    
+    AddFillableListBox = LastComponent
+    
+End Function
+
 
 Public Function AddComboBox(ByVal X As Integer, ByVal Y As Integer, _
                             ByVal w As Integer, _
@@ -307,34 +346,54 @@ End Function
 Public Sub TabComponent()
     
     Dim i As Long
-    Dim startId As Long
+    Dim startID As Long
     
     If LastComponent <> 0 Then
         
-        If Focused <> -1 Then
-            i = Focused
-            startId = Focused
+        Focused = FindNextFocusable
+        
+    End If
+End Sub
+
+Private Function FindNextFocusable() As Integer
+    
+    Dim i As Long
+    Dim startID As Long
+
+    If Focused <> -1 Then
+        i = Focused
+        startID = i
+    End If
+    
+    i = i + 1
+    startID = i
+    
+    Do While (Components(i).IsFocusable = False Or Components(i).Visible = False)
+        
+        If LastComponent = i Then
+            i = 0
         End If
         
         i = i + 1
         
-        Do Until ((Components(i).IsFocusable = True And Components(i).Visible) Or startId = Focused)
-        
-            If LastComponent = i Then
-                i = 0
-            End If
-            
-            i = i + 1
-        Loop
-        
-        Focused = i
+        If startID = i Then
+            GoTo s
+        End If
+    Loop
+s:
+    If Components(i).IsFocusable Then
+        FindNextFocusable = i
+    Else
+        FindNextFocusable = -1
     End If
-End Sub
+End Function
 
-'Listboxex and combos
+'Listbox and combos
 Public Sub InsertText(ByVal ID As Integer, Text As String, TextColor() As Long)
     
-    If Not (Components(ID).Component = eComponentType.ComboBox Or Components(ID).Component = eComponentType.ListBox) Then Exit Sub
+    If Not (Components(ID).Component = eComponentType.ComboBox Or _
+            Components(ID).Component = eComponentType.ListBox Or _
+            Components(ID).Component = eComponentType.FilleableListbox) Then Exit Sub
     
     Dim i As Integer
     
@@ -355,6 +414,10 @@ Public Sub InsertText(ByVal ID As Integer, Text As String, TextColor() As Long)
         .Lines(.LastLine).Color(1) = TextColor(1)
         .Lines(.LastLine).Color(2) = TextColor(2)
         .Lines(.LastLine).Color(3) = TextColor(3)
+        
+        If .Component = eComponentType.FilleableListbox Then
+            ReDim .Values(0 To .LastLine - 1) As Integer
+        End If
         
         Dim LastDrawableLine As Integer
         
@@ -451,6 +514,23 @@ Public Sub ClearTextArea(ByVal ID As Integer, Optional ByVal Forced As Boolean =
     End With
 End Sub
 
+Public Function GetComponentValues(ByVal ID As Integer) As Integer()
+    If Components(ID).Component <> eComponentType.FilleableListbox Then Exit Function
+    
+    GetComponentValues = Components(ID).Values
+End Function
+
+Public Function GetComponentValue(ByVal ID As Integer, ByVal Index As Integer) As Integer
+
+    If Components(ID).Component <> eComponentType.FilleableListbox Then Exit Function
+    
+    If Index <= UBound(Components(ID).Values) Then
+        GetComponentValue = Components(ID).Values(Index - 1)
+    End If
+    
+End Function
+
+
 Public Function GetComboText(ByVal ID As Integer) As String
     GetComboText = Components(ID).Text
 End Function
@@ -458,6 +538,10 @@ End Function
 Public Function GetSelectedValue(ByVal ID As Integer) As String
     If Components(ID).SelIndex <> 0 Then _
         GetSelectedValue = Components(ID).Lines(Components(ID).SelIndex).Text
+End Function
+
+Public Function GetSelectedIndex(ByVal ID As Integer) As Integer
+    GetSelectedIndex = Components(ID).SelIndex
 End Function
 
 Public Sub EditLabel(ByVal ID As Integer, Text As String, Color() As Long, Optional ByVal X As Integer = -1, Optional ByVal Y As Integer = -1)
@@ -586,6 +670,9 @@ Public Sub RenderComponents()
                     
                 Case eComponentType.ListBox
                     Call DrawListBox(i)
+                
+                Case eComponentType.FilleableListbox
+                    Call DrawFilleableListBox(i)
             End Select
             
         End With
@@ -613,6 +700,32 @@ Private Sub DrawListBox(ByVal ID As Integer)
             Else
                 Call Text_Draw(.X + 3, .Y + 1 + yOffset, .Lines(i).Text, .Lines(i).Color)
             End If
+            yOffset = yOffset + CharHeight
+        Next
+        
+    End With
+End Sub
+
+Private Sub DrawFilleableListBox(ByVal ID As Integer)
+    
+    With Components(ID)
+    
+        Dim i As Long
+        Dim yOffset As Integer
+        
+        Call Draw_Box(.X, .Y, .w, .h, .Color)
+        
+        If .FirstRender = 0 Then Exit Sub
+        
+        For i = .FirstRender To .LastRender
+            
+            Call Draw_Box(.X, .Y + 1 + yOffset, (.Values(i - 1) * (.w / .Limit)), CharHeight, Gray)
+            If .Values(i - 1) <> 0 Then
+                Call Text_Draw(.X + 3, .Y + 1 + yOffset, .Lines(i).Text & " (" & .Values(i - 1) & ")", .Lines(i).Color)
+            Else
+                Call Text_Draw(.X + 3, .Y + 1 + yOffset, .Lines(i).Text, .Lines(i).Color)
+            End If
+            
             yOffset = yOffset + CharHeight
         Next
         
@@ -651,7 +764,9 @@ Private Sub UpdateTextBoxBuffer(ByVal ID As Integer)
 End Sub
 
 Private Sub ScrollListUp(ByVal ID As Integer)
-    If Components(ID).Component <> eComponentType.ListBox Then Exit Sub
+    If Not (Components(ID).Component = eComponentType.ListBox Or _
+            Components(ID).Component = eComponentType.FilleableListbox) Then Exit Sub
+            
     If Components(ID).LastLine = 0 Then Exit Sub
     
     With Components(ID)
@@ -666,7 +781,9 @@ Private Sub ScrollListUp(ByVal ID As Integer)
 End Sub
 
 Private Sub ScrollListDown(ByVal ID As Integer)
-    If Components(ID).Component <> eComponentType.ListBox Then Exit Sub
+    If Not (Components(ID).Component = eComponentType.ListBox Or _
+            Components(ID).Component = eComponentType.FilleableListbox) Then Exit Sub
+            
     If Components(ID).LastLine = 0 Then Exit Sub
     
     With Components(ID)
@@ -851,10 +968,193 @@ Public Sub SetChild(ByVal FatherID As Integer, ByVal ChildID As Integer) 'no sib
     Components(ChildID).ChildOf = FatherID
 End Sub
 
+Private Function Validate(ByVal State As eRenderState) As Boolean
+                                    
+    Dim i As Long
+    Dim CharAscii As Byte
+    
+    With frmConnect
+    
+        Select Case State
+        
+            Case eRenderState.eNewCharInfo
+                
+                If StrComp(GetComponentText(.txtNick), vbNullString) = 0 Then
+                    MsgBox "Elige un nombre para tu personaje."
+                    Validate = False
+                    Exit Function
+                Else
+                    UserName = Trim$(GetComponentText(.txtNick))
+                End If
+                
+                If Len(UserName) > 30 Then
+                    MsgBox ("El nombre debe tener menos de 30 letras.")
+                    Validate = False
+                    Exit Function
+                End If
+                
+                If Not CheckMailString(GetComponentText(.txtMail)) Then
+                    MsgBox "Escribe un correo electrónico válido."
+                    Validate = False
+                    Exit Function
+                Else
+                    UserEmail = GetComponentText(.txtMail)
+                End If
+                
+                If (StrComp(GetComponentText(.txtPass), vbNullString) = 0) Or (StrComp(GetComponentText(.txtRepPass), vbNullString) = 0) Or _
+                (StrComp(GetComponentText(.txtPass), GetComponentText(.txtRepPass)) <> 0) Then
+                    MsgBox "Contraseña inválida."
+                    Validate = False
+                    Exit Function
+                Else
+                    UserPassword = GetComponentText(.txtPass)
+                End If
+                
+                For i = 1 To Len(UserPassword)
+                    CharAscii = Asc(mid$(UserPassword, i, 1))
+                    If Not LegalCharacter(CharAscii) Then
+                        MsgBox ("Password inválido. El caractér " & Chr$(CharAscii) & " no está permitido.")
+                        Validate = False
+                        Exit Function
+                    End If
+                Next i
+                
+            Case eRenderState.eNewCharDetails
+                
+                If GetSelectedIndex(.cmbHogar) = 0 Then
+                    MsgBox "Confirma tu lugar de origen."
+                    Validate = False
+                    Exit Function
+                Else
+                    UserHogar = GetSelectedIndex(.cmbHogar)
+                End If
+                
+                If GetSelectedIndex(.cmbRaza) = 0 Then
+                    MsgBox "Confirma tu raza."
+                    Validate = False
+                    Exit Function
+                End If
+                
+                If GetSelectedIndex(.cmbSexo) = 0 Then
+                    MsgBox "Confirma tu sexo."
+                    Validate = False
+                    Exit Function
+                End If
+                
+            Case eRenderState.eNewCharAttrib
+            
+                For i = 1 To NUMATRIBUTOS
+                    If UserAtributos(i) = 0 Then
+                        MsgBox "Los atributos del personaje son invalidos."
+                        Validate = False
+                        Exit Function
+                    End If
+                Next i
+        End Select
+    
+    End With
+    
+    Validate = True
+    
+End Function
+
+Private Sub DarCuerpoYCabeza()
+
+    Select Case UserSexo
+        Case eGenero.Hombre
+            Select Case UserRaza
+                Case eRaza.Humano
+                    UserHead = HUMANO_H_PRIMER_CABEZA
+                    UserBody = HUMANO_H_CUERPO_DESNUDO
+                    
+                Case eRaza.Elfo
+                    UserHead = ELFO_H_PRIMER_CABEZA
+                    UserBody = ELFO_H_CUERPO_DESNUDO
+                    
+                Case eRaza.ElfoOscuro
+                    UserHead = DROW_H_PRIMER_CABEZA
+                    UserBody = DROW_H_CUERPO_DESNUDO
+                    
+                Case eRaza.Enano
+                    UserHead = ENANO_H_PRIMER_CABEZA
+                    UserBody = ENANO_H_CUERPO_DESNUDO
+                    
+                Case eRaza.Gnomo
+                    UserHead = GNOMO_H_PRIMER_CABEZA
+                    UserBody = GNOMO_H_CUERPO_DESNUDO
+                    
+                Case Else
+                    UserHead = 0
+                    UserBody = 0
+            End Select
+            
+        Case eGenero.Mujer
+            Select Case UserRaza
+                Case eRaza.Humano
+                    UserHead = HUMANO_M_PRIMER_CABEZA
+                    UserBody = HUMANO_M_CUERPO_DESNUDO
+                    
+                Case eRaza.Elfo
+                    UserHead = ELFO_M_PRIMER_CABEZA
+                    UserBody = ELFO_M_CUERPO_DESNUDO
+                    
+                Case eRaza.ElfoOscuro
+                    UserHead = DROW_M_PRIMER_CABEZA
+                    UserBody = DROW_M_CUERPO_DESNUDO
+                    
+                Case eRaza.Enano
+                    UserHead = ENANO_M_PRIMER_CABEZA
+                    UserBody = ENANO_M_CUERPO_DESNUDO
+                    
+                Case eRaza.Gnomo
+                    UserHead = GNOMO_M_PRIMER_CABEZA
+                    UserBody = GNOMO_M_CUERPO_DESNUDO
+            End Select
+    End Select
+    
+    If UserSexo <> 0 And UserRaza <> 0 Then
+        Call SetBodyExample(UserBody)
+    End If
+     
+End Sub
+Private Sub UpdateHeadSelection()
+    
+    HeadSlider(0) = CheckCabeza(UserHead - 2)
+    HeadSlider(1) = CheckCabeza(UserHead - 1)
+    HeadSlider(2) = UserHead
+    HeadSlider(3) = CheckCabeza(UserHead + 1)
+    HeadSlider(4) = CheckCabeza(UserHead + 2)
+    
+End Sub
+
 '*********************************************************************************************************************************
 '*********************************************************************************************************************************
 '*********************************************************************************************************************************
 '*****************************************************EVENTS HANDLERS*************************************************************
+
+Public Sub btnHeadDer_EventHandler(ByVal hwnd As Long, _
+                                   ByVal msg As Long, _
+                                   ByVal param3 As Long, _
+                                   ByVal param4 As Long)
+
+    If msg = eComponentEvent.MouseUp Then
+        UserHead = CheckCabeza(UserHead - 1)
+        Call UpdateHeadSelection
+    End If
+    
+End Sub
+
+Public Sub btnHeadIzq_EventHandler(ByVal hwnd As Long, _
+                                   ByVal msg As Long, _
+                                   ByVal param3 As Long, _
+                                   ByVal param4 As Long)
+
+    If msg = eComponentEvent.MouseUp Then
+        UserHead = CheckCabeza(UserHead + 1)
+        Call UpdateHeadSelection
+    End If
+    
+End Sub
 
 'This Override the primitive method TextBox_EventHandler
 Public Sub txtRepPass_EventHandler(ByVal hwnd As Long, _
@@ -928,26 +1228,47 @@ Public Sub btnLogin_EventHandler(ByVal hwnd As Long, _
     End Select
 End Sub
 
-Public Sub btnNewCharacter_EventHandler(ByVal hwnd As Long, _
+Public Sub btnDados_EventHandler(ByVal hwnd As Long, _
                                 ByVal msg As Long, _
                                 ByVal param3 As Long, _
                                 ByVal param4 As Long)
 
-    EstadoLogin = E_MODO.Dados
-        
-    If frmMain.Socket1.Connected Then
-        frmMain.Socket1.Disconnect
-        frmMain.Socket1.Cleanup
-        DoEvents
+    If msg = eComponentEvent.MouseUp Then
+        Call WriteThrowDices
+        Call FlushBuffer
     End If
-            
-    frmMain.Socket1.HostName = CurServerIP
-    frmMain.Socket1.RemotePort = CurServerPort
-    frmMain.Socket1.Connect
-
 End Sub
 
-Public Sub ComboBox_EventHandler(ByVal hwnd As Long, _
+
+Public Sub btnNewCharacter_EventHandler(ByVal hwnd As Long, _
+                                ByVal msg As Long, _
+                                ByVal param3 As Long, _
+                                ByVal param4 As Long)
+    
+    If msg = eComponentEvent.MouseUp Then
+        
+        UserClase = eClass.Ciudadano
+        UserSexo = 0
+        UserRaza = 0
+        UserHogar = 0
+        UserEmail = ""
+        UserHead = 0
+    
+        EstadoLogin = E_MODO.Dados
+            
+        If frmMain.Socket1.Connected Then
+            frmMain.Socket1.Disconnect
+            frmMain.Socket1.Cleanup
+            DoEvents
+        End If
+                
+        frmMain.Socket1.HostName = CurServerIP
+        frmMain.Socket1.RemotePort = CurServerPort
+        frmMain.Socket1.Connect
+    End If
+End Sub
+
+Public Sub cmbRaza_EventHandler(ByVal hwnd As Long, _
                                  ByVal msg As Long, _
                                  ByVal param3 As Long, _
                                  ByVal param4 As Long)
@@ -959,9 +1280,75 @@ Public Sub ComboBox_EventHandler(ByVal hwnd As Long, _
             Case eComponentEvent.MouseDown
                 Components(hwnd).Expanded = Not Components(hwnd).Expanded
                 Components(Components(hwnd).ListID).Visible = Components(hwnd).Expanded
+            
+            Case eComponentEvent.ChildClicked
+                If Components(Components(hwnd).ListID).SelIndex <> 0 Then
+                    UserRaza = Components(Components(hwnd).ListID).SelIndex
+                    Call DarCuerpoYCabeza
+                    Call UpdateHeadSelection
+                    
+                    With HelpWindow
+                    
+                        ReDim .Text(0 To 5) As String
+                        
+                        .Text(0) = "Esta raza te otorga:"
+                        .Text(1) = "Fuerza: " & ModRaza(UserRaza).Fuerza
+                        .Text(2) = "Agilidad: " & ModRaza(UserRaza).Agilidad
+                        .Text(3) = "Constitución: " & ModRaza(UserRaza).Constitucion
+                        .Text(4) = "Inteligencia: " & ModRaza(UserRaza).Inteligencia
+                        .Text(5) = "Carisma: " & ModRaza(UserRaza).Carisma
+                    End With
+                    
+                    HelpWindow.Active = True
+                End If
                 
-            Case eComponentEvent.MouseScrollUp: If Components(hwnd).Expanded Then Call ScrollListUp(hwnd)
-            Case eComponentEvent.MouseScrollDown: If Components(hwnd).Expanded Then Call ScrollListDown(hwnd)
+        End Select
+    End If
+End Sub
+
+Public Sub cmbSexo_EventHandler(ByVal hwnd As Long, _
+                                 ByVal msg As Long, _
+                                 ByVal param3 As Long, _
+                                 ByVal param4 As Long)
+    
+    If msg <> 0 Then
+        
+        Select Case msg
+            
+            Case eComponentEvent.MouseDown
+                Components(hwnd).Expanded = Not Components(hwnd).Expanded
+                Components(Components(hwnd).ListID).Visible = Components(hwnd).Expanded
+            
+            Case eComponentEvent.ChildClicked
+                If Components(Components(hwnd).ListID).SelIndex <> 0 Then
+                    UserSexo = Components(Components(hwnd).ListID).SelIndex
+                    Call DarCuerpoYCabeza
+                    Call UpdateHeadSelection
+                End If
+
+        End Select
+    End If
+End Sub
+
+Private Sub ComboBox_EventHandler(ByVal hwnd As Long, _
+                                 ByVal msg As Long, _
+                                 ByVal param3 As Long, _
+                                 ByVal param4 As Long)
+    
+    If msg <> 0 Then
+        
+        Select Case msg
+            
+            Case eComponentEvent.MouseDown
+                Components(hwnd).Expanded = Not Components(hwnd).Expanded
+                Components(Components(hwnd).ListID).Visible = Components(hwnd).Expanded
+            
+            Case eComponentEvent.ChildClicked
+                If Components(Components(hwnd).ListID).SelIndex <> 0 Then
+                    Components(hwnd).SelIndex = Components(Components(hwnd).ListID).SelIndex
+                End If
+            'Case eComponentEvent.MouseScrollUp: If Components(hwnd).Expanded Then Call ScrollListUp(hwnd)
+            'Case eComponentEvent.MouseScrollDown: If Components(hwnd).Expanded Then Call ScrollListDown(hwnd)
             
             
         End Select
@@ -976,14 +1363,25 @@ Public Sub btnSiguiente_EventHandler(ByVal hwnd As Long, _
     Select Case msg
         
         Case eComponentEvent.MouseUp
+            Dim State As eRenderState
+            State = GetRenderState()
             
-            If GetRenderState() = eRenderState.eLogin Then Exit Sub
+            If State = eRenderState.eLogin Then Exit Sub
             
-            If GetRenderState = eRenderState.eNewCharSkills Then
-                Call frmConnect.LoginNewChar
-            Else
-                Call ChangeRenderState(GetRenderState() + 1)
-            End If
+            With frmConnect
+            
+                If State = eRenderState.eNewCharSkills Then
+                    Call frmConnect.LoginNewChar
+                Else
+                
+                    If Validate(State) Then
+                        HelpWindow.Active = False
+                        Call ChangeRenderState(State + 1)
+                    End If
+                End If
+            
+            End With
+            
     End Select
     
 End Sub
@@ -1003,9 +1401,109 @@ Public Sub btnAtras_EventHandler(ByVal hwnd As Long, _
                 Call frmConnect.CloseNewChar
             Else
                 Call ChangeRenderState(GetRenderState() - 1)
+                HelpWindow.Active = False
             End If
     End Select
     
+End Sub
+
+Public Sub lstSkill_EventHandler(ByVal hwnd As Long, _
+                                 ByVal msg As Long, _
+                                 ByVal param3 As Long, _
+                                 ByVal param4 As Long)
+
+    Dim X As Integer, Y As Integer
+    Dim Button As Integer, Shift As Integer
+    
+    Dim LastDrawableLine As Integer
+        
+        
+    Call LongToIntegers(param3, X, Y)
+    Call LongToIntegers(param4, Button, Shift)
+    
+    Dim skl As Integer
+    skl = frmConnect.SkillPts
+    
+    'todo: barra scroll
+    If msg <> 0 Then
+        
+        Y = Y - (Components(hwnd).Y - CharHeight / 2)
+        Y = (Y + 2) \ CharHeight
+        
+        With Components(hwnd)
+        
+            Select Case msg
+                
+                Case eComponentEvent.MouseDown
+                    LastDrawableLine = Fix(.h / CharHeight)
+                    
+                    If Y > 0 And Y <= LastDrawableLine Then
+                        .SelIndex = (.FirstRender - 1) + Y
+                        
+                        If Button = vbLeftButton Then
+                            
+                            If skl = 0 Then Exit Sub
+                            
+                            If Shift And 2 Then
+                                If skl >= 3 Then
+                                    .Values(.SelIndex - 1) = .Values(.SelIndex - 1) + 3
+                                    skl = skl - 3
+                                ElseIf skl >= 2 Then
+                                    .Values(.SelIndex - 1) = .Values(.SelIndex - 1) + 2
+                                    skl = skl - 2
+                                Else
+                                    .Values(.SelIndex - 1) = .Values(.SelIndex - 1) + 1
+                                    skl = skl - 1
+                                End If
+                            
+                            ElseIf Shift And 3 Then
+                                .Values(.SelIndex - 1) = .Values(.SelIndex - 1) + skl
+                                skl = 0
+                            Else
+                                .Values(.SelIndex - 1) = .Values(.SelIndex - 1) + 1
+                                skl = skl - 1
+                            End If
+                            
+                        ElseIf Button = vbRightButton Then
+                            
+                            If skl = .Limit Then Exit Sub
+                            
+                            If Shift And 2 Then
+                                If .Values(.SelIndex - 1) >= 3 Then
+                                    .Values(.SelIndex - 1) = .Values(.SelIndex - 1) - 3
+                                    skl = skl + 3
+                                    
+                                ElseIf .Values(.SelIndex - 1) >= 2 Then
+                                    .Values(.SelIndex - 1) = .Values(.SelIndex - 1) - 2
+                                    skl = skl + 2
+                                ElseIf .Values(.SelIndex - 1) = 1 Then
+                                    .Values(.SelIndex - 1) = 0
+                                    skl = skl + 1
+                                End If
+                            
+                            ElseIf Shift And 3 Then
+                                skl = skl + .Values(.SelIndex - 1)
+                                .Values(.SelIndex - 1) = 0
+                            Else
+                                If .Values(.SelIndex - 1) >= 1 Then
+                                    .Values(.SelIndex - 1) = .Values(.SelIndex - 1) - 1
+                                    skl = skl + 1
+                                End If
+                                
+                            End If
+                        End If
+
+                    End If
+                    
+                Case eComponentEvent.MouseScrollUp: Call ScrollListUp(hwnd)
+                Case eComponentEvent.MouseScrollDown: Call ScrollListDown(hwnd)
+    
+            End Select
+        End With
+    End If
+    
+    frmConnect.SkillPts = skl
+    Call EditLabel(frmConnect.lblSkillLibres, CStr(skl), White)
 End Sub
 
 'Primitive Events
@@ -1021,7 +1519,7 @@ Private Sub ListBox_EventHandler(ByVal hwnd As Long, _
         
     Call LongToIntegers(param3, X, Y)
     
-    If msg <> 0 Then
+    If msg = eComponentEvent.MouseDown Then
         
         Y = Y - (Components(hwnd).Y - CharHeight \ 2)
         Y = (Y + 2) \ CharHeight
@@ -1042,6 +1540,13 @@ Private Sub ListBox_EventHandler(ByVal hwnd As Long, _
                         If cho <> 0 Then
                             
                             Components(cho).Text = .Lines(.SelIndex).Text
+                            Components(cho).SelIndex = .SelIndex
+                            
+                            Call Execute(cho, ChildClicked)
+                            
+                            .Visible = False
+                            Components(cho).Expanded = False
+                            
                         End If
                         
                     End If
@@ -1100,3 +1605,132 @@ Public Sub TextBox_EventHandler(ByVal hwnd As Long, _
     End Select
     
 End Sub
+
+'CSEH: ErrLog
+Private Function CheckCabeza(ByVal Head As Integer) As Integer
+        '<EhHeader>
+        On Error GoTo CheckCabeza_Err
+        '</EhHeader>
+        
+        If UserSexo = 0 Or UserRaza = 0 Then Exit Function
+        
+100     Select Case UserSexo
+
+            Case eGenero.Hombre
+
+105             Select Case UserRaza
+
+                    Case eRaza.Humano
+
+110                     If Head > HUMANO_H_ULTIMA_CABEZA Then
+115                         CheckCabeza = HUMANO_H_PRIMER_CABEZA + (Head - HUMANO_H_ULTIMA_CABEZA) - 1
+120                     ElseIf Head < HUMANO_H_PRIMER_CABEZA Then
+125                         CheckCabeza = HUMANO_H_ULTIMA_CABEZA - (HUMANO_H_PRIMER_CABEZA - Head) + 1
+                        Else
+130                         CheckCabeza = Head
+                        End If
+
+135                 Case eRaza.Elfo
+
+140                     If Head > ELFO_H_ULTIMA_CABEZA Then
+145                         CheckCabeza = ELFO_H_PRIMER_CABEZA + (Head - ELFO_H_ULTIMA_CABEZA) - 1
+150                     ElseIf Head < ELFO_H_PRIMER_CABEZA Then
+155                         CheckCabeza = ELFO_H_ULTIMA_CABEZA - (ELFO_H_PRIMER_CABEZA - Head) + 1
+                        Else
+160                         CheckCabeza = Head
+                        End If
+
+165                 Case eRaza.ElfoOscuro
+
+170                     If Head > DROW_H_ULTIMA_CABEZA Then
+175                         CheckCabeza = DROW_H_PRIMER_CABEZA + (Head - DROW_H_ULTIMA_CABEZA) - 1
+180                     ElseIf Head < DROW_H_PRIMER_CABEZA Then
+185                         CheckCabeza = DROW_H_ULTIMA_CABEZA - (DROW_H_PRIMER_CABEZA - Head) + 1
+                        Else
+190                         CheckCabeza = Head
+                        End If
+
+195                 Case eRaza.Enano
+
+200                     If Head > ENANO_H_ULTIMA_CABEZA Then
+205                         CheckCabeza = ENANO_H_PRIMER_CABEZA + (Head - ENANO_H_ULTIMA_CABEZA) - 1
+210                     ElseIf Head < ENANO_H_PRIMER_CABEZA Then
+215                         CheckCabeza = ENANO_H_ULTIMA_CABEZA - (ENANO_H_PRIMER_CABEZA - Head) + 1
+                        Else
+220                         CheckCabeza = Head
+                        End If
+
+225                 Case eRaza.Gnomo
+
+230                     If Head > GNOMO_H_ULTIMA_CABEZA Then
+235                         CheckCabeza = GNOMO_H_PRIMER_CABEZA + (Head - GNOMO_H_ULTIMA_CABEZA) - 1
+240                     ElseIf Head < GNOMO_H_PRIMER_CABEZA Then
+245                         CheckCabeza = GNOMO_H_ULTIMA_CABEZA - (GNOMO_H_PRIMER_CABEZA - Head) + 1
+                        Else
+250                         CheckCabeza = Head
+                        End If
+                End Select
+
+255         Case eGenero.Mujer
+
+260             Select Case UserRaza
+
+                    Case eRaza.Humano
+
+265                     If Head > HUMANO_M_ULTIMA_CABEZA Then
+270                         CheckCabeza = HUMANO_M_PRIMER_CABEZA + (Head - HUMANO_M_ULTIMA_CABEZA) - 1
+275                     ElseIf Head < HUMANO_M_PRIMER_CABEZA Then
+280                         CheckCabeza = HUMANO_M_ULTIMA_CABEZA - (HUMANO_M_PRIMER_CABEZA - Head) + 1
+                        Else
+285                         CheckCabeza = Head
+                        End If
+
+290                 Case eRaza.Elfo
+
+295                     If Head > ELFO_M_ULTIMA_CABEZA Then
+300                         CheckCabeza = ELFO_M_PRIMER_CABEZA + (Head - ELFO_M_ULTIMA_CABEZA) - 1
+305                     ElseIf Head < ELFO_M_PRIMER_CABEZA Then
+310                         CheckCabeza = ELFO_M_ULTIMA_CABEZA - (ELFO_M_PRIMER_CABEZA - Head) + 1
+                        Else
+315                         CheckCabeza = Head
+                        End If
+
+320                 Case eRaza.ElfoOscuro
+
+325                     If Head > DROW_M_ULTIMA_CABEZA Then
+330                         CheckCabeza = DROW_M_PRIMER_CABEZA + (Head - DROW_M_ULTIMA_CABEZA) - 1
+335                     ElseIf Head < DROW_M_PRIMER_CABEZA Then
+340                         CheckCabeza = DROW_M_ULTIMA_CABEZA - (DROW_M_PRIMER_CABEZA - Head) + 1
+                        Else
+345                         CheckCabeza = Head
+                        End If
+
+350                 Case eRaza.Enano
+
+355                     If Head > ENANO_M_ULTIMA_CABEZA Then
+360                         CheckCabeza = ENANO_M_PRIMER_CABEZA + (Head - ENANO_M_ULTIMA_CABEZA) - 1
+365                     ElseIf Head < ENANO_M_PRIMER_CABEZA Then
+370                         CheckCabeza = ENANO_M_ULTIMA_CABEZA - (ENANO_M_PRIMER_CABEZA - Head) + 1
+                        Else
+375                         CheckCabeza = Head
+                        End If
+
+380                 Case eRaza.Gnomo
+
+385                     If Head > GNOMO_M_ULTIMA_CABEZA Then
+390                         CheckCabeza = GNOMO_M_PRIMER_CABEZA + (Head - GNOMO_M_ULTIMA_CABEZA) - 1
+395                     ElseIf Head < GNOMO_M_PRIMER_CABEZA Then
+400                         CheckCabeza = GNOMO_M_ULTIMA_CABEZA - (GNOMO_M_PRIMER_CABEZA - Head) + 1
+                        Else
+405                         CheckCabeza = Head
+                        End If
+                End Select
+        End Select
+        '<EhFooter>
+        Exit Function
+
+CheckCabeza_Err:
+        Call LogError("Error en CheckCabeza: " & Erl & " - " & Err.Description)
+        '</EhFooter>
+End Function
+

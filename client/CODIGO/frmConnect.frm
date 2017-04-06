@@ -55,6 +55,8 @@ Public txtPassword As Integer
 Public cmbHogar As Integer
 Public cmbRaza As Integer
 Public cmbSexo As Integer
+Public btnHeadDer As Integer
+Public btnHeadIzq As Integer
 '//details//
 
 '//info//
@@ -65,6 +67,7 @@ Public txtRepPass As Integer
 '//info//
 
 '//attrib//
+Public btnDados As Integer
 Public lblFuerza As Integer
 Public lblAgilidad As Integer
 Public lblConstitucion As Integer
@@ -74,6 +77,7 @@ Public lblCarisma As Integer
 
 '//skills
 Public lstSkills As Integer
+Public lblSkillLibres As Integer
 '//skills
 
 Public btnSiguiente As Integer
@@ -82,7 +86,7 @@ Public btnAtras As Integer
 Public MouseX As Integer
 Public MouseY As Integer
 
-Private SkillPts As Integer
+Public SkillPts As Integer
 Private uSkills(1 To NUMSKILLS) As Byte
 
 Private Declare Sub CopyMemory Lib "kernel32" Alias "RtlMoveMemory" (ByRef Destination As Any, ByRef Source As Any, ByVal Length As Long)
@@ -141,7 +145,7 @@ NextLoopC:
     Exit Sub
 
 DirectXEvent8_DXCallback_Err:
-        Call LogError("Error en DirectXEvent8_DXCallback: " & Erl & " - " & Err.Description)
+        'Call LogError("Error en DirectXEvent8_DXCallback: " & Erl & " - " & Err.Description)
     '</EhFooter>
 End Sub
 
@@ -155,6 +159,10 @@ Private Sub Form_Load()
     '[CODE 002]:MatuX
     EngineRun = True
     
+    LoadComponents
+End Sub
+
+Public Sub LoadComponents()
     txtNombre = AddTextBox(429, 357, 170, 19, Black, White)
     txtPassword = AddTextBox(429, 407, 170, 19, Black, White, , True)
     btnLogin = AddRect(406, 438, 100, 37)
@@ -167,6 +175,13 @@ Private Sub Form_Load()
     cmbHogar = AddComboBox(425, 289, 175, Black)
     cmbRaza = AddComboBox(425, 339, 175, Black)
     cmbSexo = AddComboBox(425, 389, 175, Black)
+    btnHeadDer = AddRect(586, 436, 30, 23)
+    btnHeadIzq = AddRect(416, 436, 30, 23)
+    
+    Call SetEvents(btnHeadDer, Callback(AddressOf btnHeadDer_EventHandler))
+    Call SetEvents(btnHeadIzq, Callback(AddressOf btnHeadIzq_EventHandler))
+    Call SetEvents(cmbRaza, Callback(AddressOf cmbRaza_EventHandler))
+    Call SetEvents(cmbSexo, Callback(AddressOf cmbSexo_EventHandler))
     
     'info
     txtNick = AddTextBox(425, 289, 176, 22, Black, White)
@@ -175,13 +190,20 @@ Private Sub Form_Load()
     txtRepPass = AddTextBox(425, 439, 176, 22, Black, White, , True)
     
     'attribs
-    lblFuerza = AddLabel("0", 435, 335, White)
-    lblAgilidad = AddLabel("0", 435, 385, White)
-    lblConstitucion = AddLabel("0", 435, 435, White)
-    lblInteligencia = AddLabel("0", 435, 485, White)
-    lblCarisma = AddLabel("0", 435, 535, White)
+    lblFuerza = AddLabel("0", 485, 335, White)
+    lblAgilidad = AddLabel("0", 485, 385, White)
+    lblConstitucion = AddLabel("0", 485, 435, White)
+    lblInteligencia = AddLabel("0", 485, 485, White)
+    lblCarisma = AddLabel("0", 485, 535, White)
+    btnDados = AddRect(496, 276, 32, 32)
     
-    lstSkills = AddListBox(425, 289, 152, 244, Transparent)
+    SkillPts = 10
+    
+    'sks
+    lstSkills = AddFillableListBox(425, 289, 152, 244, Transparent, 10)
+    lblSkillLibres = AddLabel("Puntos disponibles: " & SkillPts, 5, 45, White)
+    
+    Call SetEvents(lstSkills, Callback(AddressOf lstSkill_EventHandler))
     
     btnSiguiente = AddRect(520, 578, 100, 37)
     btnAtras = AddRect(408, 578, 100, 37)
@@ -191,6 +213,7 @@ Private Sub Form_Load()
     Call SetEvents(btnSiguiente, Callback(AddressOf btnSiguiente_EventHandler))
     Call SetEvents(btnAtras, Callback(AddressOf btnAtras_EventHandler))
     Call SetEvents(txtRepPass, Callback(AddressOf txtRepPass_EventHandler))
+    Call SetEvents(btnDados, Callback(AddressOf btnDados_EventHandler))
     
     Dim i As Long
     
@@ -208,13 +231,12 @@ Private Sub Form_Load()
     For i = 1 To NUMSKILLS
         Call InsertText(lstSkills, SkillsNames(i), White)
     Next
-    
-    Erase uSkills
+
+    Call DisableComponents(btnAtras, btnSiguiente, btnHeadDer, btnHeadIzq)
     
     Call HideComponents(txtNick, txtPass, txtMail, txtRepPass, lblFuerza, lblAgilidad, lblInteligencia, lblConstitucion, _
                         lblCarisma, cmbHogar, cmbSexo, cmbRaza, lstSkills)
 End Sub
-
 Private Sub Render_KeyPress(KeyAscii As Integer)
     
     If KeyAscii = vbKeyTab Then
@@ -238,7 +260,7 @@ Private Sub Render_MouseDown(Button As Integer, Shift As Integer, X As Single, Y
     c = Collision(X, Y)
     
     If c <> -1 Then
-        Call mod_Components.Execute(c, eComponentEvent.MouseDown, IntegersToLong(X, Y))
+        Call mod_Components.Execute(c, eComponentEvent.MouseDown, IntegersToLong(X, Y), IntegersToLong(Button, Shift))
     End If
 End Sub
 
@@ -265,7 +287,7 @@ Public Sub LoginNewChar()
     Dim i As Integer
     Dim CharAscii As Byte
     
-    UserName = GetComponentText(txtNombre)
+    UserName = GetComponentText(txtNick)
             
     If Right$(UserName, 1) = " " Then
         UserName = RTrim$(UserName)
@@ -276,11 +298,11 @@ Public Sub LoginNewChar()
     UserSexo = Components(cmbSexo).SelIndex
     
     
-    UserAtributos(eAtributos.Fuerza) = GetComponentText(lblFuerza)
-    UserAtributos(eAtributos.Agilidad) = GetComponentText(lblAgilidad)
-    UserAtributos(eAtributos.Constitucion) = GetComponentText(lblConstitucion)
-    UserAtributos(eAtributos.Inteligencia) = GetComponentText(lblInteligencia)
-    UserAtributos(eAtributos.Carisma) = GetComponentText(lblCarisma)
+    'UserAtributos(eAtributos.Fuerza) = Val(GetComponentText(lblFuerza))
+    'UserAtributos(eAtributos.Agilidad) = Val(GetComponentText(lblAgilidad))
+    'UserAtributos(eAtributos.Constitucion) = Val(GetComponentText(lblConstitucion))
+    'UserAtributos(eAtributos.Inteligencia) = Val(GetComponentText(lblInteligencia))
+    'UserAtributos(eAtributos.Carisma) = Val(GetComponentText(lblCarisma))
     
     UserHogar = Components(cmbHogar).SelIndex
     
@@ -303,18 +325,24 @@ Public Sub LoginNewChar()
         Exit Sub
     End If
     
-    Call CopyMemory(UserSkills(1), uSkills(1), NUMSKILLS)
+    'Call CopyMemory(UserSkills(1), uSkills(1), NUMSKILLS)
+        
+    For i = 1 To NUMSKILLS
+        UserSkills(i) = GetComponentValue(lstSkills, i)
+    Next
     
-    frmMain.Socket1.HostName = CurServerIP
-    frmMain.Socket1.RemotePort = CurServerPort
-
     EstadoLogin = E_MODO.CrearNuevoPj
     
     If Not frmMain.Socket1.Connected Then
 
-        MsgBox "Error: Se ha perdido la conexion con el server."
-        Unload Me
+        'MsgBox "Error: Se ha perdido la conexion con el server."
         
+        frmMain.Socket1.HostName = CurServerIP
+        frmMain.Socket1.RemotePort = CurServerPort
+    
+        frmMain.Socket1.Connect
+        
+        Call Login
     Else
         
         Call Login

@@ -1072,13 +1072,13 @@ Private Sub Form_KeyUp(KeyCode As Integer, Shift As Integer)
         If LenB(CustomKeys.ReadableName(KeyCode)) > 0 Then
             Select Case KeyCode
                 Case CustomKeys.BindedKey(eKeyType.mKeyToggleMusic)
-                    audio.MusicActivated = Not audio.MusicActivated
+                    Audio.MusicActivated = Not Audio.MusicActivated
                     
                 Case CustomKeys.BindedKey(eKeyType.mKeyToggleSound)
-                    audio.SoundActivated = Not audio.SoundActivated
+                    Audio.SoundActivated = Not Audio.SoundActivated
                     
                 Case CustomKeys.BindedKey(eKeyType.mKeyToggleFxs)
-                    audio.SoundEffectsActivated = Not audio.SoundEffectsActivated
+                    Audio.SoundEffectsActivated = Not Audio.SoundEffectsActivated
                 
                 Case CustomKeys.BindedKey(eKeyType.mKeyGetObject)
                     Call AgarrarItem
@@ -1092,7 +1092,7 @@ Private Sub Form_KeyUp(KeyCode As Integer, Shift As Integer)
                 Case CustomKeys.BindedKey(eKeyType.mKeyTamAnimal)
                     If UserEstado = 1 Then
                         With FontTypes(FontTypeNames.FONTTYPE_INFO)
-                            Call ShowConsoleMsg("ï¿½ï¿½Estï¿½s muerto!!", .Red, .green, .blue, .bold, .italic)
+                            Call ShowConsoleMsg("ï¿½ï¿½Estï¿½s muerto!!", .Red, .Green, .blue, .bold, .italic)
                         End With
                     Else
                         Call WriteWork(eSkill.Domar)
@@ -1101,7 +1101,7 @@ Private Sub Form_KeyUp(KeyCode As Integer, Shift As Integer)
                 Case CustomKeys.BindedKey(eKeyType.mKeySteal)
                     If UserEstado = 1 Then
                         With FontTypes(FontTypeNames.FONTTYPE_INFO)
-                            Call ShowConsoleMsg("ï¿½ï¿½Estï¿½s muerto!!", .Red, .green, .blue, .bold, .italic)
+                            Call ShowConsoleMsg("ï¿½ï¿½Estï¿½s muerto!!", .Red, .Green, .blue, .bold, .italic)
                         End With
                     Else
                         Call WriteWork(eSkill.Robar)
@@ -1110,7 +1110,7 @@ Private Sub Form_KeyUp(KeyCode As Integer, Shift As Integer)
                 Case CustomKeys.BindedKey(eKeyType.mKeyHide)
                     If UserEstado = 1 Then
                         With FontTypes(FontTypeNames.FONTTYPE_INFO)
-                            Call ShowConsoleMsg("ï¿½ï¿½Estï¿½s muerto!!", .Red, .green, .blue, .bold, .italic)
+                            Call ShowConsoleMsg("ï¿½ï¿½Estï¿½s muerto!!", .Red, .Green, .blue, .bold, .italic)
                         End With
                     Else
                         Call WriteWork(eSkill.Ocultarse)
@@ -1199,7 +1199,7 @@ Private Sub Form_KeyUp(KeyCode As Integer, Shift As Integer)
             
             If UserEstado = 1 Then
                 With FontTypes(FontTypeNames.FONTTYPE_INFO)
-                    Call ShowConsoleMsg("ï¿½ï¿½Estï¿½s muerto!!", .Red, .green, .blue, .bold, .italic)
+                    Call ShowConsoleMsg("ï¿½ï¿½Estï¿½s muerto!!", .Red, .Green, .blue, .bold, .italic)
                 End With
                 Exit Sub
             End If
@@ -1214,7 +1214,7 @@ Private Sub Form_KeyUp(KeyCode As Integer, Shift As Integer)
         Case CustomKeys.BindedKey(eKeyType.mKeyCastSpellMacro)
             If UserEstado = 1 Then
                 With FontTypes(FontTypeNames.FONTTYPE_INFO)
-                    Call ShowConsoleMsg("ï¿½ï¿½Estï¿½s muerto!!", .Red, .green, .blue, .bold, .italic)
+                    Call ShowConsoleMsg("ï¿½ï¿½Estï¿½s muerto!!", .Red, .Green, .blue, .bold, .italic)
                 End With
                 Exit Sub
             End If
@@ -1228,7 +1228,7 @@ Private Sub Form_KeyUp(KeyCode As Integer, Shift As Integer)
         Case CustomKeys.BindedKey(eKeyType.mKeyWorkMacro)
             If UserEstado = 1 Then
                 With FontTypes(FontTypeNames.FONTTYPE_INFO)
-                    Call ShowConsoleMsg("ï¿½ï¿½Estï¿½s muerto!!", .Red, .green, .blue, .bold, .italic)
+                    Call ShowConsoleMsg("ï¿½ï¿½Estï¿½s muerto!!", .Red, .Green, .blue, .bold, .italic)
                 End With
                 Exit Sub
             End If
@@ -1300,7 +1300,7 @@ Private Sub imgAsignarSkill_Click()
     LlegaronSkills = False
     
     For i = 1 To NUMSKILLS
-        frmSkills3.Text1(i).Caption = UserSkills(i)
+        frmSkills3.text1(i).Caption = UserSkills(i)
     Next i
     
     Alocados = SkillPoints
@@ -1465,7 +1465,7 @@ If Cartel Then Cartel = False
                         frmMain.MousePointer = vbDefault
                         UsingSkill = 0
                         With FontTypes(FontTypeNames.FONTTYPE_TALK)
-                            Call AddtoRichTextBox(frmMain.RecTxt, "No puedes lanzar proyectiles tan rï¿½pido.", .Red, .green, .blue, .bold, .italic)
+                            Call AddtoRichTextBox(frmMain.RecTxt, "No puedes lanzar proyectiles tan rï¿½pido.", .Red, .Green, .blue, .bold, .italic)
                         End With
                         Exit Sub
                     End If
@@ -1476,7 +1476,7 @@ If Cartel Then Cartel = False
                             frmMain.MousePointer = vbDefault
                             UsingSkill = 0
                             With FontTypes(FontTypeNames.FONTTYPE_TALK)
-                                Call AddtoRichTextBox(frmMain.RecTxt, "No puedes lanzar proyectiles tan rï¿½pido.", .Red, .green, .blue, .bold, .italic)
+                                Call AddtoRichTextBox(frmMain.RecTxt, "No puedes lanzar proyectiles tan rï¿½pido.", .Red, .Green, .blue, .bold, .italic)
                             End With
                             Exit Sub
                         End If
@@ -1489,7 +1489,7 @@ If Cartel Then Cartel = False
                                 frmMain.MousePointer = vbDefault
                                 UsingSkill = 0
                                 With FontTypes(FontTypeNames.FONTTYPE_TALK)
-                                    Call AddtoRichTextBox(frmMain.RecTxt, "No puedes lanzar hechizos tan rï¿½pido.", .Red, .green, .blue, .bold, .italic)
+                                    Call AddtoRichTextBox(frmMain.RecTxt, "No puedes lanzar hechizos tan rï¿½pido.", .Red, .Green, .blue, .bold, .italic)
                                 End With
                                 Exit Sub
                             End If
@@ -1498,7 +1498,7 @@ If Cartel Then Cartel = False
                                 frmMain.MousePointer = vbDefault
                                 UsingSkill = 0
                                 With FontTypes(FontTypeNames.FONTTYPE_TALK)
-                                    Call AddtoRichTextBox(frmMain.RecTxt, "No puedes lanzar hechizos tan rapido.", .Red, .green, .blue, .bold, .italic)
+                                    Call AddtoRichTextBox(frmMain.RecTxt, "No puedes lanzar hechizos tan rapido.", .Red, .Green, .blue, .bold, .italic)
                                 End With
                                 Exit Sub
                             End If
@@ -1586,8 +1586,8 @@ Private Sub SendTxt_KeyUp(KeyCode As Integer, Shift As Integer)
         KeyCode = 0
         SendTxt.Visible = False
         
-        If PicInv.Visible Then
-            PicInv.SetFocus
+        If picInv.Visible Then
+            picInv.SetFocus
         Else
             hlst.SetFocus
         End If
@@ -1607,7 +1607,7 @@ End Sub
 Private Sub TirarItem()
     If UserEstado = 1 Then
         With FontTypes(FontTypeNames.FONTTYPE_INFO)
-            Call ShowConsoleMsg("ï¿½ï¿½Estï¿½s muerto!!", .Red, .green, .blue, .bold, .italic)
+            Call ShowConsoleMsg("ï¿½ï¿½Estï¿½s muerto!!", .Red, .Green, .blue, .bold, .italic)
         End With
     Else
         If (Inventario.SelectedItem > 0 And Inventario.SelectedItem < MAX_INVENTORY_SLOTS + 1) Or (Inventario.SelectedItem = FLAGORO) Then
@@ -1625,7 +1625,7 @@ End Sub
 Private Sub AgarrarItem()
     If UserEstado = 1 Then
         With FontTypes(FontTypeNames.FONTTYPE_INFO)
-            Call ShowConsoleMsg("ï¿½ï¿½Estï¿½s muerto!!", .Red, .green, .blue, .bold, .italic)
+            Call ShowConsoleMsg("ï¿½ï¿½Estï¿½s muerto!!", .Red, .Green, .blue, .bold, .italic)
         End With
     Else
         Call WritePickUp
@@ -1646,7 +1646,7 @@ End Sub
 Private Sub EquiparItem()
     If UserEstado = 1 Then
         With FontTypes(FontTypeNames.FONTTYPE_INFO)
-                Call ShowConsoleMsg("ï¿½ï¿½Estï¿½s muerto!!", .Red, .green, .blue, .bold, .italic)
+                Call ShowConsoleMsg("ï¿½ï¿½Estï¿½s muerto!!", .Red, .Green, .blue, .bold, .italic)
         End With
     Else
         If Comerciando Then Exit Sub
@@ -1695,7 +1695,7 @@ Private Sub cmdLanzar_Click()
     If hlst.List(hlst.ListIndex) <> "(None)" And MainTimer.Check(TimersIndex.Work, False) Then
         If UserEstado = 1 Then
             With FontTypes(FontTypeNames.FONTTYPE_INFO)
-                Call ShowConsoleMsg("¡¡Estás muerto!!", .Red, .green, .blue, .bold, .italic)
+                Call ShowConsoleMsg("¡¡Estás muerto!!", .Red, .Green, .blue, .bold, .italic)
             End With
         Else
             Call WriteCastSpell(hlst.ListIndex + 1)
@@ -1775,16 +1775,16 @@ Private Sub lblDropGold_Click()
 End Sub
 
 Private Sub Label4_Click()
-    Call audio.PlayWave(SND_CLICK)
+    Call Audio.PlayWave(SND_CLICK)
 
     InvEqu.Picture = LoadPicture(App.path & "\Graficos\Centroinventario.jpg")
 
     ' Activo controles de inventario
-    PicInv.Visible = True
+    picInv.Visible = True
 
     ' Desactivo controles de hechizo
     hlst.Visible = False
-    cmdINFO.Visible = False
+    cmdInfo.Visible = False
     CmdLanzar.Visible = False
     
     cmdMoverHechi(0).Visible = False
@@ -1796,20 +1796,20 @@ Private Sub Label4_Click()
 End Sub
 
 Private Sub Label7_Click()
-    Call audio.PlayWave(SND_CLICK)
+    Call Audio.PlayWave(SND_CLICK)
 
     InvEqu.Picture = LoadPicture(App.path & "\Graficos\Centrohechizos.jpg")
     
     ' Activo controles de hechizos
     hlst.Visible = True
-    cmdINFO.Visible = True
+    cmdInfo.Visible = True
     CmdLanzar.Visible = True
     
     cmdMoverHechi(0).Visible = True
     cmdMoverHechi(1).Visible = True
     
     ' Desactivo controles de inventario
-    PicInv.Visible = False
+    picInv.Visible = False
     
     GldLbl.Visible = False
     lblDropGold.Visible = False
@@ -1827,7 +1827,7 @@ Private Sub picInv_DblClick()
 End Sub
 
 Private Sub picInv_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
-    Call audio.PlayWave(SND_CLICK)
+    Call Audio.PlayWave(SND_CLICK)
 End Sub
 
 Private Sub RecTxt_Change()
@@ -1842,8 +1842,8 @@ On Error Resume Next  'el .SetFocus causaba errores al salir y volver a entrar
         (Not frmMSG.Visible) And (Not MirandoForo) And _
         (Not frmEstadisticas.Visible) And (Not frmCantidad.Visible) Then
          
-        If PicInv.Visible Then
-            PicInv.SetFocus
+        If picInv.Visible Then
+            picInv.SetFocus
         ElseIf hlst.Visible Then
             hlst.SetFocus
         End If
@@ -1851,8 +1851,8 @@ On Error Resume Next  'el .SetFocus causaba errores al salir y volver a entrar
 End Sub
 
 Private Sub RecTxt_KeyDown(KeyCode As Integer, Shift As Integer)
-    If PicInv.Visible Then
-        PicInv.SetFocus
+    If picInv.Visible Then
+        picInv.SetFocus
     Else
         hlst.SetFocus
     End If
@@ -1908,8 +1908,8 @@ Private Sub SendCMSTXT_KeyUp(KeyCode As Integer, Shift As Integer)
         KeyCode = 0
         Me.SendCMSTXT.Visible = False
         
-        If PicInv.Visible Then
-            PicInv.SetFocus
+        If picInv.Visible Then
+            picInv.SetFocus
         Else
             hlst.SetFocus
         End If
@@ -1968,9 +1968,11 @@ Private Sub Socket1_Connect()
            Call Login
         
         Case E_MODO.Dados
-            Call audio.PlayMIDI("7.mid")
-            'frmCrearPersonaje.Show vbModal
+            Call Audio.PlayMIDI("7.mid")
             Call ChangeRenderState(eRenderState.eNewCharInfo)
+            
+            Call WriteThrowDices
+            Call FlushBuffer
     End Select
 End Sub
 
@@ -1987,16 +1989,16 @@ Private Sub Socket1_Disconnect()
     Do While i < Forms.Count - 1
         i = i + 1
         
-        If Forms(i).Name <> Me.Name And Forms(i).Name <> frmConnect.Name And Forms(i).Name <> frmCrearPersonaje.Name Then
+        If Forms(i).Name <> Me.Name And Forms(i).Name <> frmConnect.Name Then
             Unload Forms(i)
         End If
     Loop
     
     On Local Error GoTo 0
     
-    If Not frmCrearPersonaje.Visible Then
-        frmConnect.Visible = True
-    End If
+    Call frmConnect.LoadComponents
+    frmConnect.Visible = True
+
     
     frmMain.Visible = False
     
@@ -2043,11 +2045,7 @@ Private Sub Socket1_LastError(ErrorCode As Integer, ErrorString As String, Respo
 
     frmMain.Socket1.Disconnect
     
-    If Not frmCrearPersonaje.Visible Then
-        frmConnect.Show
-    Else
-        frmCrearPersonaje.MousePointer = 0
-    End If
+    frmConnect.Show
 End Sub
 
 Private Sub Socket1_Read(dataLength As Integer, IsUrgent As Integer)

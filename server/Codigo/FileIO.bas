@@ -1555,7 +1555,6 @@ With UserList(UserIndex)
         Exit Sub
     End If
     
-    
     If .flags.Mimetizado = 1 Then
         .Char.body = .CharMimetizado.body
         .Char.Head = .CharMimetizado.Head
@@ -1788,15 +1787,19 @@ Call LogError("Error en SaveUser")
 
 End Sub
 
-Function criminal(ByVal UserIndex As Integer) As Boolean
+Function Criminal(ByVal UserIndex As Integer) As Boolean
 '***************************************************
 'Author: Unknown
 'Last Modification: 10/1/2017 - GoDKeR
 '
 '***************************************************
 
-    criminal = (UserList(UserIndex).Faccion.Bando = eFaccion.Caos)
+    Criminal = (UserList(UserIndex).Faccion.Bando = eFaccion.Caos)
 
+End Function
+
+Function Neutro(ByVal UserIndex As Integer) As Boolean
+    Neutro = (UserList(UserIndex).Faccion.Bando = eFaccion.Neutral)
 End Function
 
 Sub BackUPnPc(NpcIndex As Integer)

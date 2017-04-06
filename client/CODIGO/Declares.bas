@@ -147,22 +147,18 @@ Public RawServersList As String
 'GoDKeR: Mucho mejor asi que la chastrinada de antes
 Public ColoresPJ(0 To 50) As Long
 
-Public Type tServerInfo
-    Ip As String
-    Puerto As Integer
-    Desc As String
-    PassRecPort As Integer
-End Type
-
-Public ServersLst() As tServerInfo
-Public ServersRecibidos As Boolean
-
-Public CurServer As Integer
-
 'Public CreandoClan As Boolean
 'Public ClanName As String
 
-Type tRecompensa
+Private Type tModRaza
+    Fuerza As Integer
+    Agilidad As Integer
+    Constitucion As Integer
+    Inteligencia As Integer
+    Carisma As Integer
+End Type
+
+Public Type tRecompensa
     Name As String
     Descripcion As String
 End Type
@@ -758,6 +754,8 @@ Public AtributosNames(1 To NUMATRIBUTOS) As String
 Public Ciudades(1 To NUMCIUDADES) As String
 
 Public ListaRazas(1 To NUMRAZAS) As String
+Public ModRaza(1 To NUMRAZAS) As tModRaza
+
 Public ListaClases(1 To NUMCLASES) As String
 
 Public SkillPoints As Integer
@@ -868,7 +866,7 @@ Public Declare Sub Sleep Lib "kernel32" (ByVal dwMilliseconds As Long)
 
 'Para ejecutar el browser y programas externos
 Public Const SW_SHOWNORMAL As Long = 1
-Public Declare Function ShellExecute Lib "shell32.dll" Alias "ShellExecuteA" (ByVal hWnd As Long, ByVal lpOperation As String, ByVal lpFile As String, ByVal lpParameters As String, ByVal lpDirectory As String, ByVal nShowCmd As Long) As Long
+Public Declare Function ShellExecute Lib "shell32.dll" Alias "ShellExecuteA" (ByVal hwnd As Long, ByVal lpOperation As String, ByVal lpFile As String, ByVal lpParameters As String, ByVal lpDirectory As String, ByVal nShowCmd As Long) As Long
 
 'Lista de cabezas
 Public Type tIndiceCabeza
