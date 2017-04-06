@@ -40,7 +40,7 @@ Public WhisperTarget As String
 'Objetos públicos
 'Public DialogosClanes As New clsGuildDlg
 Public Dialogos As New clsDialogs
-'Public Audio As New clsAudio
+Public Audio As New clsAudio
 Public Inventario As New clsGraphicalInventory
 Public InvBanco(1) As New clsGraphicalInventory
 
@@ -56,7 +56,6 @@ Public Const MAX_LIST_ITEMS As Byte = 4
 Public InvLingosHerreria(1 To MAX_LIST_ITEMS) As New clsGraphicalInventory
 Public InvMaderasCarpinteria(1 To MAX_LIST_ITEMS) As New clsGraphicalInventory
                 
-'Public SurfaceDB As New clsSurfaceManDyn   'No va new porque es una interfaz, el new se pone al decidir que clase de objeto es
 Public CustomKeys As New clsCustomKeys
 Public CustomMessages As New clsCustomMessages
 
@@ -148,22 +147,18 @@ Public RawServersList As String
 'GoDKeR: Mucho mejor asi que la chastrinada de antes
 Public ColoresPJ(0 To 50) As Long
 
-Public Type tServerInfo
-    Ip As String
-    Puerto As Integer
-    Desc As String
-    PassRecPort As Integer
-End Type
-
-Public ServersLst() As tServerInfo
-Public ServersRecibidos As Boolean
-
-Public CurServer As Integer
-
 'Public CreandoClan As Boolean
 'Public ClanName As String
 
-Type tRecompensa
+Private Type tModRaza
+    Fuerza As Integer
+    Agilidad As Integer
+    Constitucion As Integer
+    Inteligencia As Integer
+    Carisma As Integer
+End Type
+
+Public Type tRecompensa
     Name As String
     Descripcion As String
 End Type
@@ -623,7 +618,7 @@ Type Inventory
     Name As String
     GrhIndex As Integer
     '[Alejo]: tipo de datos ahora es Long
-    Amount As Long
+    amount As Long
     '[/Alejo]
     Equipped As Byte
     Valor As Single
@@ -638,7 +633,7 @@ Type NpCinV
     OBJIndex As Integer
     Name As String
     GrhIndex As Integer
-    Amount As Integer
+    amount As Integer
     Valor As Single
     OBJType As Integer
     MaxDef As Integer
@@ -759,6 +754,8 @@ Public AtributosNames(1 To NUMATRIBUTOS) As String
 Public Ciudades(1 To NUMCIUDADES) As String
 
 Public ListaRazas(1 To NUMRAZAS) As String
+Public ModRaza(1 To NUMRAZAS) As tModRaza
+
 Public ListaClases(1 To NUMCLASES) As String
 
 Public SkillPoints As Integer
@@ -869,7 +866,7 @@ Public Declare Sub Sleep Lib "kernel32" (ByVal dwMilliseconds As Long)
 
 'Para ejecutar el browser y programas externos
 Public Const SW_SHOWNORMAL As Long = 1
-Public Declare Function ShellExecute Lib "shell32.dll" Alias "ShellExecuteA" (ByVal hWnd As Long, ByVal lpOperation As String, ByVal lpFile As String, ByVal lpParameters As String, ByVal lpDirectory As String, ByVal nShowCmd As Long) As Long
+Public Declare Function ShellExecute Lib "shell32.dll" Alias "ShellExecuteA" (ByVal hwnd As Long, ByVal lpOperation As String, ByVal lpFile As String, ByVal lpParameters As String, ByVal lpDirectory As String, ByVal nShowCmd As Long) As Long
 
 'Lista de cabezas
 Public Type tIndiceCabeza

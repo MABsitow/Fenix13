@@ -1603,7 +1603,7 @@ Private Sub imgCrear_Click()
 End Sub
 
 Private Sub imgDados_Click()
-    'call 'audio.PlayWave(SND_DICE)
+    Call Audio.PlayWave(SND_DICE)
             Call TirarDados
 End Sub
 
@@ -1708,7 +1708,7 @@ Private Sub imgGenero_MouseMove(Button As Integer, Shift As Integer, X As Single
 End Sub
 
 Private Sub imgVolver_Click()
-    'call 'audio.PlayMIDI("2.mid")
+    Call Audio.PlayMIDI("2.mid")
     
     bShowTutorial = False
     
@@ -2283,17 +2283,7 @@ Private Sub LoadCharInfo()
     'Next i
     
     'Modificadores de Raza
-    For i = 1 To NroRazas
-        With ModRaza(i)
-            SearchVar = Replace(ListaRazas(i), " ", "")
-        
-            .Fuerza = Val(GetVar(IniPath & "CharInfo.dat", "MODRAZA", SearchVar + "Fuerza"))
-            .Agilidad = Val(GetVar(IniPath & "CharInfo.dat", "MODRAZA", SearchVar + "Agilidad"))
-            .Inteligencia = Val(GetVar(IniPath & "CharInfo.dat", "MODRAZA", SearchVar + "Inteligencia"))
-            .Carisma = Val(GetVar(IniPath & "CharInfo.dat", "MODRAZA", SearchVar + "Carisma"))
-            .Constitucion = Val(GetVar(IniPath & "CharInfo.dat", "MODRAZA", SearchVar + "Constitucion"))
-        End With
-    Next i
+
 
 End Sub
 

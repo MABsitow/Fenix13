@@ -22,7 +22,7 @@ Private Type TYPE_VERTEX
     X       As Single
     Y       As Single
     Z       As Single
-    
+
     Colour  As Long
     
     TX      As Single
@@ -43,6 +43,7 @@ Public Sub Begin()
     Call DirectDevice.SetTexture(0, m_Texture)
     Call DirectDevice.SetStreamSource(0, m_VBuffer, 24)
     Call DirectDevice.SetIndices(m_IBuffer, 0)
+    
 End Sub
 Public Sub SetTexture(ByRef Texture As Direct3DTexture8)
     If ObjPtr(m_Texture) <> ObjPtr(Texture) Then 'te cabe vb6
@@ -172,4 +173,3 @@ Public Sub Initialise(ByVal Capacity As Long)
     Call D3DIndexBuffer8SetData(m_IBuffer, 0, UBound(lpIndices), 0, lpIndices(0))
     
 End Sub
-

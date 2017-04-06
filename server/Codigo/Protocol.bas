@@ -1197,7 +1197,7 @@ On Error GoTo ErrHandler
         ElseIf Not VersionOK(version) Then
             Call WriteErrorMsg(UserIndex, "Esta versión del juego es obsoleta, la versión correcta es la " & ULTIMAVERSION & ". La misma se encuentra disponible en www.argentumonline.com.ar")
         Else
-            Call ConnectUser(UserIndex, UserName, Password)
+            Call ConnectUser(UserIndex, UserName, MD5String(Password))
         End If
     
     'If we got here then packet is complete, copy data back to original queue

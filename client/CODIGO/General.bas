@@ -43,7 +43,7 @@ Public bLluvia() As Byte ' Array para determinar si
 Private lFrameTimer As Long
 
 Private Type TYPE_LONG_BYTES
-        H As Integer
+        h As Integer
         L As Integer
 End Type
 
@@ -52,11 +52,11 @@ Private Type TYPE_LONG
 End Type
 
 'http://stackoverflow.com/questions/6861733/vb6-integer-to-two-bytes-c-short-to-send-over-serial
-Public Function IntegersToLong(ByVal H As Integer, ByVal L As Integer) As Long
+Public Function IntegersToLong(ByVal h As Integer, ByVal L As Integer) As Long
     Dim TempTL As TYPE_LONG
     Dim TempBL As TYPE_LONG_BYTES
     
-    TempBL.H = H
+    TempBL.h = h
     TempBL.L = L
     
     LSet TempTL = TempBL
@@ -64,7 +64,7 @@ Public Function IntegersToLong(ByVal H As Integer, ByVal L As Integer) As Long
     IntegersToLong = TempTL.Value
 End Function
 
-Public Sub LongToIntegers(ByVal Value As Long, ByRef H As Integer, ByRef L As Integer)
+Public Sub LongToIntegers(ByVal Value As Long, ByRef h As Integer, ByRef L As Integer)
     Dim TempTL As TYPE_LONG
     Dim TempBL As TYPE_LONG_BYTES
     
@@ -72,7 +72,7 @@ Public Sub LongToIntegers(ByVal Value As Long, ByRef H As Integer, ByRef L As In
     
     LSet TempBL = TempTL
     
-    H = TempBL.H
+    h = TempBL.h
     L = TempBL.L
     
 End Sub
@@ -204,7 +204,7 @@ On Error Resume Next
     Next loopC
 End Sub
 
-Sub AddtoRichTextBox(ByRef RichTextBox As RichTextBox, ByVal Text As String, Optional ByVal Red As Integer = -1, Optional ByVal green As Integer, Optional ByVal blue As Integer, Optional ByVal bold As Boolean = False, Optional ByVal italic As Boolean = False, Optional ByVal bCrLf As Boolean = True)
+Sub AddtoRichTextBox(ByRef RichTextBox As RichTextBox, ByVal Text As String, Optional ByVal Red As Integer = -1, Optional ByVal Green As Integer, Optional ByVal blue As Integer, Optional ByVal bold As Boolean = False, Optional ByVal italic As Boolean = False, Optional ByVal bCrLf As Boolean = True)
 '******************************************
 'Adds text to a Richtext box at the bottom.
 'Automatically scrolls to new text.
@@ -226,7 +226,7 @@ Sub AddtoRichTextBox(ByRef RichTextBox As RichTextBox, ByVal Text As String, Opt
         .SelBold = bold
         .SelItalic = italic
         
-        If Not Red = -1 Then .SelColor = RGB(Red, green, blue)
+        If Not Red = -1 Then .SelColor = RGB(Red, Green, blue)
         
         If bCrLf And Len(.Text) > 0 Then Text = vbCrLf & Text
         .SelText = Text
@@ -370,12 +370,12 @@ Sub SetConnected()
     
     'Unload the connect form
     Unload frmConnect
-    Unload frmCrearPersonaje
     
     frmMain.lblName = UserName
     
-    frmMain.Visible = True
+    Call mod_Components.ClearComponents
     
+    frmMain.Visible = True
         
     FPSFLAG = True
 End Sub
@@ -427,7 +427,7 @@ Sub MoveTo(ByVal Direccion As E_Heading)
     If frmMain.macrotrabajo.Enabled Then Call frmMain.DesactivarMacroTrabajo
     
     ' Update 3D sounds!
-    'call 'audio.MoveListener(UserPos.X, UserPos.Y)
+    Call Audio.MoveListener(UserPos.X, UserPos.Y)
 End Sub
 
 Sub RandomMove()
@@ -499,6 +499,8 @@ Sub SwitchMap(ByVal Map As Integer)
             End With
         Next X
     Next Y
+    
+    Set Reader = Nothing
     
     MapInfo.Name = ""
     MapInfo.Music = ""
@@ -575,81 +577,14 @@ Sub WriteClientVer()
     Close #hFile
 End Sub
 
-Public Function IsIp(ByVal Ip As String) As Boolean
-    Dim i As Long
-    
-    For i = 1 To UBound(ServersLst)
-        If ServersLst(i).Ip = Ip Then
-            IsIp = True
-            Exit Function
-        End If
-    Next i
-End Function
-
-Public Sub CargarServidores()
-'********************************
-'Author: Unknown
-'Last Modification: 07/26/07
-'Last Modified by: Rapsodius
-'Added Instruction "CloseClient" before End so the mutex is cleared
-'********************************
-On Error GoTo errorH
-    Dim f As String
-    Dim c As Integer
-    Dim i As Long
-    
-    f = App.path & "\init\sinfo.dat"
-    c = Val(GetVar(f, "INIT", "Cant"))
-    
-    ReDim ServersLst(1 To c) As tServerInfo
-    For i = 1 To c
-        ServersLst(i).Desc = GetVar(f, "S" & i, "Desc")
-        ServersLst(i).Ip = Trim$(GetVar(f, "S" & i, "Ip"))
-        ServersLst(i).PassRecPort = CInt(GetVar(f, "S" & i, "P2"))
-        ServersLst(i).Puerto = CInt(GetVar(f, "S" & i, "PJ"))
-    Next i
-    CurServer = 1
-Exit Sub
-
-errorH:
-    Call MsgBox("Error cargando los servidores, actualicelos de la web", vbCritical + vbOKOnly, "Argentum Online")
-    
-    Call CloseClient
-End Sub
-
-Public Sub InitServersList()
-On Error Resume Next
-    Dim NumServers As Integer
-    Dim i As Integer
-    Dim Cont As Integer
-    
-    i = 1
-    
-    Do While (ReadField(i, RawServersList, Asc(";")) <> "")
-        i = i + 1
-        Cont = Cont + 1
-    Loop
-    
-    ReDim ServersLst(1 To Cont) As tServerInfo
-    
-    For i = 1 To Cont
-        Dim cur$
-        cur$ = ReadField(i, RawServersList, Asc(";"))
-        ServersLst(i).Ip = ReadField(1, cur$, Asc(":"))
-        ServersLst(i).Puerto = ReadField(2, cur$, Asc(":"))
-        ServersLst(i).Desc = ReadField(4, cur$, Asc(":"))
-        ServersLst(i).PassRecPort = ReadField(3, cur$, Asc(":"))
-    Next i
-    
-    CurServer = 1
-End Sub
-
 Sub Main()
     Call WriteClientVer
     Call InitColours
         
+    IniPath = App.path & "\Init\"
+    
     'Load config file
-    If FileExist(App.path & "\init\Inicio.con", vbNormal) Then
+    If FileExist(IniPath & "Inicio.con", vbNormal) Then
         Config_Inicio = LeerGameIni()
     End If
     
@@ -685,13 +620,7 @@ Sub Main()
     frmCargando.Refresh
     
     'frmConnect.version = "v" & App.Major & "." & App.Minor & " Build: " & App.Revision
-    Call AddtoRichTextBox(frmCargando.Status, "Buscando servidores... ", 255, 255, 255, True, False, True)
 
-    Call CargarServidores
-'TODO : esto de ServerRecibidos no se podría sacar???
-    ServersRecibidos = True
-    
-    Call AddtoRichTextBox(frmCargando.Status, "Hecho", 255, 0, 0, True, False, False)
     Call AddtoRichTextBox(frmCargando.Status, "Iniciando constantes... ", 255, 255, 255, True, False, True)
     
     Call InicializarNombres
@@ -700,13 +629,29 @@ Sub Main()
     Call Protocol.InitFonts
 
     Call EstablecerRecompensas
+    
+    Dim i As Long
+    Dim SearchVar As String
+    
+    For i = 1 To NUMRAZAS
+        With ModRaza(i)
+            SearchVar = Replace(ListaRazas(i), " ", "")
+        
+            .Fuerza = Val(GetVar(IniPath & "CharInfo.dat", "MODRAZA", SearchVar + "Fuerza"))
+            .Agilidad = Val(GetVar(IniPath & "CharInfo.dat", "MODRAZA", SearchVar + "Agilidad"))
+            .Inteligencia = Val(GetVar(IniPath & "CharInfo.dat", "MODRAZA", SearchVar + "Inteligencia"))
+            .Carisma = Val(GetVar(IniPath & "CharInfo.dat", "MODRAZA", SearchVar + "Carisma"))
+            .Constitucion = Val(GetVar(IniPath & "CharInfo.dat", "MODRAZA", SearchVar + "Constitucion"))
+        End With
+    Next i
+    
     Call AddtoRichTextBox(frmCargando.Status, "Hecho", 255, 0, 0, True, False, False)
     
     Call AddtoRichTextBox(frmCargando.Status, "Iniciando motor gráfico... ", 255, 255, 255, True, False, True)
     
     prgRun = True
     
-    If Not InitTileEngine(frmMain.hWnd, 149, 13, 32, 32, 17, 23, 7, 8, 8, 0.018) Then
+    If Not InitTileEngine(frmMain.hwnd, 151, 12, 32, 32, 17, 23, 7, 8, 8, 0.018) Then
         Call CloseClient
     End If
     
@@ -728,16 +673,16 @@ UserMap = 1
     Call AddtoRichTextBox(frmCargando.Status, "Iniciando DirectSound... ", 255, 255, 255, True, False, True)
     
     'Inicializamos el sonido
-    'call 'audio.Initialize(DirectX, frmMain.hwnd, App.path & "\" & Config_Inicio.DirSonidos & "\", App.path & "\" & Config_Inicio.DirMusica & "\")
+    Call Audio.Initialize(DirectX, frmMain.hwnd, App.path & "\" & Config_Inicio.DirSonidos & "\", App.path & "\" & Config_Inicio.DirMusica & "\")
     'Enable / Disable audio
-    'audio.MusicActivated = Not ClientSetup.bNoMusic
-    'audio.SoundActivated = Not ClientSetup.bNoSound
-    'audio.SoundEffectsActivated = Not ClientSetup.bNoSoundEffects
+    Audio.MusicActivated = Not ClientSetup.bNoMusic
+    Audio.SoundActivated = Not ClientSetup.bNoSound
+    Audio.SoundEffectsActivated = Not ClientSetup.bNoSoundEffects
     
     'Inicializamos el inventario gráfico
     Call Inventario.Initialize(frmMain.picInv, MAX_INVENTORY_SLOTS)
     
-    'call 'audio.MusicMP3Play(App.path & "\MP3\" & MP3_Inicio & ".mp3")
+    Call Audio.MusicMP3Play(App.path & "\MP3\" & MP3_Inicio & ".mp3")
     
     Call AddtoRichTextBox(frmCargando.Status, "Hecho", 255, 0, 0, True, False, False)
     
@@ -790,19 +735,9 @@ UserMap = 1
     Call Load(frmScreenshots)
     
     Do While prgRun
-        
-        'Sólo dibujamos si la ventana no está minimizada
-        If frmMain.WindowState <> 1 And frmMain.Visible Then
-            
-            Call ShowNextFrame(frmMain.Top, frmMain.Left, frmMain.MouseX, frmMain.MouseY)
-            
-            'Play ambient sounds
-            Call RenderSounds
-            
-            Call CheckKeys
-            
-        End If
-        
+    
+        Call Render
+
         'FPS Counter - mostramos las FPS
         If GetTickCount - lFrameTimer >= 1000 Then
             If FPSFLAG Then frmMain.lblFPS.Caption = Mod_TileEngine.FPS
@@ -978,9 +913,9 @@ Private Sub SaveClientSetup()
     
     fHandle = FreeFile
     
-    'ClientSetup.bNoMusic = Not 'audio.MusicActivated
-    'ClientSetup.bNoSound = Not 'audio.SoundActivated
-    'ClientSetup.bNoSoundEffects = Not 'audio.SoundEffectsActivated
+    'ClientSetup.bNoMusic = Not audio.MusicActivated
+    'ClientSetup.bNoSound = Not audio.SoundActivated
+    'ClientSetup.bNoSoundEffects = Not audio.SoundEffectsActivated
    ' ClientSetup.bGuildNews = Not ClientSetup.bGuildNews
   '  ClientSetup.bGldMsgConsole = Not DialogosClanes.Activo
     'ClientSetup.bCantMsgs = DialogosClanes.CantidadDialogos
@@ -1110,7 +1045,7 @@ Public Sub CloseClient()
     'Destruimos los objetos públicos creados
     Set CustomMessages = Nothing
     Set CustomKeys = Nothing
-    'Set SurfaceDB = Nothing
+
     Set Dialogos = Nothing
   '  Set DialogosClanes = Nothing
     'Set Audio = Nothing
@@ -1231,7 +1166,7 @@ ErrHandler:
 
 End Sub
 
-Public Function ReadFile(FileName As String, Optional Size As Long = -1) As Byte()
+Public Function ReadFile(FileName As String, Optional size As Long = -1) As Byte()
 
     Dim wFile As Integer
 
@@ -1240,7 +1175,7 @@ Public Function ReadFile(FileName As String, Optional Size As Long = -1) As Byte
 
     If LOF(wFile) > 0 Then
         
-        Size = LOF(wFile)
+        size = LOF(wFile)
         ReDim ReadFile(0 To LOF(wFile) - 1)
         Get wFile, , ReadFile
 
@@ -1544,3 +1479,4 @@ Recompensas(eClass.LADRON, 3, 2).Name = "Fundido de Sombra"
 Recompensas(eClass.LADRON, 3, 2).Descripcion = "Aumenta en 10% la probabilidad de robar objetos."
 
 End Sub
+

@@ -33,8 +33,8 @@ Attribute VB_Name = "Carteles"
 
 Option Explicit
 
-Const XPosCartel = 360
-Const YPosCartel = 335
+Const XPosCartel = 120
+Const YPosCartel = 120
 Const MAXLONG = 40
 
 'Carteles
@@ -88,12 +88,12 @@ If Not Cartel Then Exit Sub
 Dim X As Integer, Y As Integer
 X = XPosCartel + 20
 Y = YPosCartel + 60
-Call DDrawTransGrhIndextoSurface(textura, XPosCartel, YPosCartel, 0, AmbientColor)
+Call Draw_GrhIndex(textura, XPosCartel, YPosCartel, 1, AmbientColor)
 Dim J As Integer, desp As Integer
 
 For J = 0 To UBound(LeyendaFormateada)
-    'Text_Draw X, Y + desp, LeyendaFormateada(J), White
-    desp = desp + (frmMain.Font.Size) + 5
+    Text_Draw X, Y + desp, LeyendaFormateada(J), White
+    desp = desp + (frmMain.Font.size) + 5
 Next
 End Sub
 

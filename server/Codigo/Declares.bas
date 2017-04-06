@@ -55,18 +55,17 @@ Public Const CHAT_COLOR_GM_YELL As Long = &HF82FF
 ' Coordinates for normal sounds (not 3D, like rain)
 Public Const NO_3D_SOUND As Byte = 0
 
+'todo
 Public Const iFragataFantasmal = 87
-Public Const iFragataReal = 190
-Public Const iFragataCaos = 189
-Public Const iBarca = 84
-Public Const iGalera = 85
-Public Const iGaleon = 86
-Public Const iBarcaCiuda = 395
-Public Const iBarcaPk = 396
-Public Const iGaleraCiuda = 397
-Public Const iGaleraPk = 398
-Public Const iGaleonCiuda = 399
-Public Const iGaleonPk = 400
+Public Const iBarca = 289
+Public Const iGalera = 290
+Public Const iGaleon = 291
+Public Const iBarcaCiuda = 84
+Public Const iBarcaPk = 85
+Public Const iGaleraCiuda = 287
+Public Const iGaleraPk = 288
+Public Const iGaleonCiuda = 86
+Public Const iGaleonPk = 286
 
 Public Enum iMinerales
     HierroCrudo = 192

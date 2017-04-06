@@ -55,9 +55,9 @@ Public Sub ActStats(ByVal VictimIndex As Integer, ByVal AttackerIndex As Integer
         
             ' Es legal matarlo si estaba en atacable
             If UserList(VictimIndex).flags.AtacablePor <> AttackerIndex Then
-                EraCriminal = criminal(AttackerIndex)
+                EraCriminal = Criminal(AttackerIndex)
                 
-                If criminal(AttackerIndex) Then
+                If Criminal(AttackerIndex) Then
                     If Not EraCriminal Then Call RefreshCharStatus(AttackerIndex)
                 Else
                     If EraCriminal Then Call RefreshCharStatus(AttackerIndex)
@@ -134,19 +134,10 @@ Public Sub ToogleBoatBody(ByVal UserIndex As Integer)
  
         .Char.Head = 0
         
-        ' Barco de armada
-        If (.Faccion.Jerarquia > 1) And Not criminal(UserIndex) Then
-            .Char.body = iFragataReal
-            
-        ' Barco de caos
-        ElseIf (.Faccion.Jerarquia > 1) And criminal(UserIndex) Then
-            .Char.body = iFragataCaos
+        Ropaje = ObjData(.Invent.BarcoObjIndex).Ropaje
         
-        'Barcos neutrales
-        Else
-            Ropaje = ObjData(.Invent.BarcoObjIndex).Ropaje
-            
-            If criminal(UserIndex) Then
+        If Not Neutro(UserIndex) Then
+            If Criminal(UserIndex) Then
                 Select Case Ropaje
                     Case iBarca
                         .Char.body = iBarcaPk
@@ -169,6 +160,8 @@ Public Sub ToogleBoatBody(ByVal UserIndex As Integer)
                         .Char.body = iGaleonCiuda
                 End Select
             End If
+        Else
+            .Char.body = Ropaje
         End If
         
         .Char.ShieldAnim = NingunEscudo
@@ -1026,7 +1019,7 @@ Private Function EsMascotaCiudadano(ByVal NpcIndex As Integer, ByVal UserIndex A
 '***************************************************
 
     If Npclist(NpcIndex).MaestroUser > 0 Then
-        EsMascotaCiudadano = Not criminal(Npclist(NpcIndex).MaestroUser)
+        EsMascotaCiudadano = Not Criminal(Npclist(NpcIndex).MaestroUser)
         If EsMascotaCiudadano Then
             Call WriteConsoleMsg(Npclist(NpcIndex).MaestroUser, "¡¡" & UserList(UserIndex).Name & " esta atacando tu mascota!!", FontTypeNames.FONTTYPE_INFO)
         End If
@@ -1350,7 +1343,7 @@ Sub ContarMuerte(ByVal Muerto As Integer, ByVal Atacante As Integer)
     With UserList(Atacante)
         If TriggerZonaPelea(Muerto, Atacante) = TRIGGER6_PERMITE Then Exit Sub
         
-        If criminal(Muerto) Then
+        If Criminal(Muerto) Then
             If .flags.LastCrimMatado <> UserList(Muerto).Name Then
                 .flags.LastCrimMatado = UserList(Muerto).Name
                 If .Faccion.Matados(eFaccion.Caos) < MAXUSERMATADOS Then _
@@ -1855,7 +1848,7 @@ Public Function BodyIsBoat(ByVal body As Integer) As Boolean
 'Checks if a given body index is a boat
 '**************************************************************
 'TODO : This should be checked somehow else. This is nasty....
-    If body = iFragataReal Or body = iFragataCaos Or body = iBarcaPk Or _
+    If body = iBarcaPk Or _
             body = iGaleraPk Or body = iGaleonPk Or body = iBarcaCiuda Or _
             body = iGaleraCiuda Or body = iGaleonCiuda Or body = iFragataFantasmal Then
         BodyIsBoat = True

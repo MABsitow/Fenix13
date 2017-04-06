@@ -369,7 +369,7 @@ End Sub
 
 Private Sub imgTab_Click(Index As Integer)
 
-    'call 'audio.PlayWave(SND_CLICK)
+    Call audio.PlayWave(SND_CLICK)
     
     If Index <> ForoActual Then
         ForoActual = Index

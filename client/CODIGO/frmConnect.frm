@@ -21,63 +21,20 @@ Begin VB.Form frmConnect
    ScaleWidth      =   1024
    StartUpPosition =   2  'CenterScreen
    Visible         =   0   'False
-   Begin VB.TextBox txtPasswd 
-      Alignment       =   2  'Center
+   Begin VB.PictureBox Render 
+      Appearance      =   0  'Flat
+      BackColor       =   &H00000040&
       BorderStyle     =   0  'None
-      BeginProperty Font 
-         Name            =   "Tahoma"
-         Size            =   8.25
-         Charset         =   0
-         Weight          =   700
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      Height          =   375
-      IMEMode         =   3  'DISABLE
-      Left            =   4560
-      PasswordChar    =   "*"
-      TabIndex        =   1
-      Top             =   3480
-      Width           =   3615
-   End
-   Begin VB.TextBox txtNombre 
-      Alignment       =   2  'Center
-      BorderStyle     =   0  'None
-      BeginProperty Font 
-         Name            =   "Tahoma"
-         Size            =   8.25
-         Charset         =   0
-         Weight          =   700
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      Height          =   375
-      Left            =   4560
+      ForeColor       =   &H80000008&
+      Height          =   11520
+      Left            =   0
+      ScaleHeight     =   768
+      ScaleMode       =   3  'Pixel
+      ScaleWidth      =   1024
       TabIndex        =   0
-      Top             =   2880
-      Width           =   3615
-   End
-   Begin VB.Image imgCrearPj 
-      Height          =   375
-      Left            =   4560
-      Top             =   4080
-      Width           =   1455
-   End
-   Begin VB.Image imgConectarse 
-      Height          =   375
-      Left            =   6720
-      Top             =   4080
-      Width           =   1455
-   End
-   Begin VB.Image imgServArgentina 
-      Height          =   795
-      Left            =   360
-      MousePointer    =   99  'Custom
-      Top             =   9240
-      Visible         =   0   'False
-      Width           =   2595
+      TabStop         =   0   'False
+      Top             =   0
+      Width           =   15360
    End
 End
 Attribute VB_Name = "frmConnect"
@@ -85,46 +42,112 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
-'Argentum Online 0.11.6
-'
-'Copyright (C) 2002 Márquez Pablo Ignacio
-'Copyright (C) 2002 Otto Perez
-'Copyright (C) 2002 Aaron Perkins
-'Copyright (C) 2002 Matías Fernando Pequeño
-'
-'This program is free software; you can redistribute it and/or modify
-'it under the terms of the Affero General Public License;
-'either version 1 of the License, or any later version.
-'
-'This program is distributed in the hope that it will be useful,
-'but WITHOUT ANY WARRANTY; without even the implied warranty of
-'MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-'Affero General Public License for more details.
-'
-'You should have received a copy of the Affero General Public License
-'along with this program; if not, you can find it at http://www.affero.org/oagpl.html
-'
-'Argentum Online is based on Baronsoft's VB6 Online RPG
-'You can contact the original creator of ORE at aaron@baronsoft.com
-'for more information about ORE please visit http://www.baronsoft.com/
-'
-'
-'You can contact me at:
-'morgolock@speedy.com.ar
-'www.geocities.com/gmorgolock
-'Calle 3 número 983 piso 7 dto A
-'La Plata - Pcia, Buenos Aires - Republica Argentina
-'Código Postal 1900
-'Pablo Ignacio Márquez
-'
-'Matías Fernando Pequeño
-'matux@fibertel.com.ar
-'www.noland-studios.com.ar
-'Acoyte 678 Piso 17 Dto B
-'Capital Federal, Buenos Aires - Republica Argentina
-'Código Postal 1405
-
 Option Explicit
+
+Implements DirectXEvent8
+
+Public btnLogin As Integer
+Public btnCrearPj As Integer
+Public txtNombre As Integer
+Public txtPassword As Integer
+
+'//details//
+Public cmbHogar As Integer
+Public cmbRaza As Integer
+Public cmbSexo As Integer
+Public btnHeadDer As Integer
+Public btnHeadIzq As Integer
+'//details//
+
+'//info//
+Public txtNick As Integer
+Public txtMail As Integer
+Public txtPass As Integer
+Public txtRepPass As Integer
+'//info//
+
+'//attrib//
+Public btnDados As Integer
+Public lblFuerza As Integer
+Public lblAgilidad As Integer
+Public lblConstitucion As Integer
+Public lblInteligencia As Integer
+Public lblCarisma As Integer
+'//attrib
+
+'//skills
+Public lstSkills As Integer
+Public lblSkillLibres As Integer
+'//skills
+
+Public btnSiguiente As Integer
+Public btnAtras As Integer
+
+Public MouseX As Integer
+Public MouseY As Integer
+
+Public SkillPts As Integer
+Private uSkills(1 To NUMSKILLS) As Byte
+
+Private Declare Sub CopyMemory Lib "kernel32" Alias "RtlMoveMemory" (ByRef Destination As Any, ByRef Source As Any, ByVal Length As Long)
+
+
+'CSEH: ErrLog
+Public Sub DirectXEvent8_DXCallback(ByVal EventID As Long)
+    '*****************************************************************
+    'Handles mouse device events (movement, clicking, mouse wheel scrolling, etc)
+    'More info: http://www.vbgore.com/GameClient.frmMain.DirectXEvent8_DXCallback
+    '*****************************************************************
+    '<EhHeader>
+    On Error GoTo DirectXEvent8_DXCallback_Err
+    '</EhHeader>
+    Dim DevData(1 To 50) As DIDEVICEOBJECTDATA
+    Dim NumEvents As Long
+    Dim loopC As Long
+    Dim Moved As Byte
+    Dim OldMousePos As Position
+    
+        'Check if message is for us
+100     If EventID <> MouseEvent Then Exit Sub
+        'If Me.WindowState <> 1 Then Exit Sub
+
+        'Retrieve data
+105     NumEvents = DIDevice.GetDeviceData(DevData, DIGDD_DEFAULT)
+
+        'Loop through data
+110     For loopC = 1 To NumEvents
+115         Select Case DevData(loopC).lOfs
+
+            'Mouse wheel is scrolled
+            Case DIMOFS_Z
+                Dim c As Integer
+            
+120             c = Collision(MouseX, MouseY)
+            
+                'Scroll the chat buffer if the cursor is over the chat buffer window
+125             If c <> -1 Then
+130                 If DevData(loopC).lData > 0 Then
+135                     Call mod_Components.Execute(c, eComponentEvent.MouseScrollUp)
+140                 ElseIf DevData(loopC).lData < 0 Then
+145                     Call mod_Components.Execute(c, eComponentEvent.MouseScrollDown)
+                    End If
+
+150                 GoTo NextLoopC
+                End If
+
+            End Select
+        
+NextLoopC:
+
+155     Next loopC
+
+    '<EhFooter>
+    Exit Sub
+
+DirectXEvent8_DXCallback_Err:
+        'Call LogError("Error en DirectXEvent8_DXCallback: " & Erl & " - " & Err.Description)
+    '</EhFooter>
+End Sub
 
 Private Sub Form_KeyDown(KeyCode As Integer, Shift As Integer)
     If KeyCode = 27 Then
@@ -134,45 +157,224 @@ End Sub
 
 Private Sub Form_Load()
     '[CODE 002]:MatuX
-    EngineRun = False
-    '[END]
-        
-     '[CODE]:MatuX
-    '
-    '  El código para mostrar la versión se genera acá para
-    ' evitar que por X razones luego desaparezca, como suele
-    ' pasar a veces :)
-     '  version.Caption = "v" & App.Major & "." & App.Minor & " Build: " & App.Revision
-    '[END]'
+    EngineRun = True
     
-    Me.Picture = LoadPicture(App.path & "\graficos\VentanaConectar.jpg")
-    
-    Call LoadButtons
-        
+    LoadComponents
 End Sub
 
-Private Sub LoadButtons()
+Public Sub LoadComponents()
+    txtNombre = AddTextBox(429, 357, 170, 19, Black, White)
+    txtPassword = AddTextBox(429, 407, 170, 19, Black, White, , True)
+    btnLogin = AddRect(406, 438, 100, 37)
+    btnCrearPj = AddRect(519, 438, 100, 37)
     
-    Dim GrhPath As String
+    Call SetEvents(btnLogin, Callback(AddressOf btnLogin_EventHandler))
+    Call SetEvents(btnCrearPj, Callback(AddressOf btnNewCharacter_EventHandler))
     
-    GrhPath = DirGraficos
-                                    
+    'details
+    cmbHogar = AddComboBox(425, 289, 175, Black)
+    cmbRaza = AddComboBox(425, 339, 175, Black)
+    cmbSexo = AddComboBox(425, 389, 175, Black)
+    btnHeadDer = AddRect(586, 436, 30, 23)
+    btnHeadIzq = AddRect(416, 436, 30, 23)
+    
+    Call SetEvents(btnHeadDer, Callback(AddressOf btnHeadDer_EventHandler))
+    Call SetEvents(btnHeadIzq, Callback(AddressOf btnHeadIzq_EventHandler))
+    Call SetEvents(cmbRaza, Callback(AddressOf cmbRaza_EventHandler))
+    Call SetEvents(cmbSexo, Callback(AddressOf cmbSexo_EventHandler))
+    
+    'info
+    txtNick = AddTextBox(425, 289, 176, 22, Black, White)
+    txtMail = AddTextBox(425, 339, 176, 22, Black, White)
+    txtPass = AddTextBox(425, 389, 176, 22, Black, White, , True)
+    txtRepPass = AddTextBox(425, 439, 176, 22, Black, White, , True)
+    
+    'attribs
+    lblFuerza = AddLabel("0", 485, 335, White)
+    lblAgilidad = AddLabel("0", 485, 385, White)
+    lblConstitucion = AddLabel("0", 485, 435, White)
+    lblInteligencia = AddLabel("0", 485, 485, White)
+    lblCarisma = AddLabel("0", 485, 535, White)
+    btnDados = AddRect(496, 276, 32, 32)
+    
+    SkillPts = 10
+    
+    'sks
+    lstSkills = AddFillableListBox(425, 289, 152, 244, Transparent, 10)
+    lblSkillLibres = AddLabel("Puntos disponibles: " & SkillPts, 5, 45, White)
+    
+    Call SetEvents(lstSkills, Callback(AddressOf lstSkill_EventHandler))
+    
+    btnSiguiente = AddRect(520, 578, 100, 37)
+    btnAtras = AddRect(408, 578, 100, 37)
+    
+    Call SetChild(txtPass, txtRepPass)
+    
+    Call SetEvents(btnSiguiente, Callback(AddressOf btnSiguiente_EventHandler))
+    Call SetEvents(btnAtras, Callback(AddressOf btnAtras_EventHandler))
+    Call SetEvents(txtRepPass, Callback(AddressOf txtRepPass_EventHandler))
+    Call SetEvents(btnDados, Callback(AddressOf btnDados_EventHandler))
+    
+    Dim i As Long
+    
+    For i = 1 To NUMCIUDADES
+        Call InsertText(cmbHogar, Ciudades(i), White) 'todo color de faccion por ciudad ;)
+    Next
+    
+    For i = 1 To NUMRAZAS
+        Call InsertText(cmbRaza, ListaRazas(i), White)
+    Next
+    
+    Call InsertText(cmbSexo, "Hombre", White)
+    Call InsertText(cmbSexo, "Mujer", White)
+    
+    For i = 1 To NUMSKILLS
+        Call InsertText(lstSkills, SkillsNames(i), White)
+    Next
+
+    Call DisableComponents(btnAtras, btnSiguiente, btnHeadDer, btnHeadIzq)
+    
+    Call HideComponents(txtNick, txtPass, txtMail, txtRepPass, lblFuerza, lblAgilidad, lblInteligencia, lblConstitucion, _
+                        lblCarisma, cmbHogar, cmbSexo, cmbRaza, lstSkills)
+End Sub
+Private Sub Render_KeyPress(KeyAscii As Integer)
+    
+    If KeyAscii = vbKeyTab Then
+        Call mod_Components.TabComponent
+    Else
+    
+        Dim c As Integer
+        
+        c = mod_Components.GetFocused()
+        
+        If c <> -1 Then
+            Call mod_Components.Execute(c, eComponentEvent.KeyPress, KeyAscii, IIf(Components(c).PasswChr, 42, 0))
+        End If
+    End If
+End Sub
+
+Private Sub Render_MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single)
+    
+    Dim c As Integer
+    
+    c = Collision(X, Y)
+    
+    If c <> -1 Then
+        Call mod_Components.Execute(c, eComponentEvent.MouseDown, IntegersToLong(X, Y), IntegersToLong(Button, Shift))
+    End If
+End Sub
+
+Private Sub Render_MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
+MouseX = X
+MouseY = Y
+End Sub
+
+Private Sub txtPasswd_KeyPress(KeyAscii As Integer)
+    If KeyAscii = vbKeyReturn Then Call LoginUser
+End Sub
+
+Private Sub Render_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
+    Dim c As Integer
+    
+    c = Collision(X, Y)
+    
+    If c <> -1 Then
+        Call mod_Components.Execute(c, eComponentEvent.MouseUp, IntegersToLong(X, Y))
+    End If
+End Sub
+
+Public Sub LoginNewChar()
+    Dim i As Integer
+    Dim CharAscii As Byte
+    
+    UserName = GetComponentText(txtNick)
+            
+    If Right$(UserName, 1) = " " Then
+        UserName = RTrim$(UserName)
+        MsgBox "Nombre invalido, se han removido los espacios al final del nombre"
+    End If
+    
+    UserRaza = Components(cmbRaza).SelIndex
+    UserSexo = Components(cmbSexo).SelIndex
+    
+    
+    'UserAtributos(eAtributos.Fuerza) = Val(GetComponentText(lblFuerza))
+    'UserAtributos(eAtributos.Agilidad) = Val(GetComponentText(lblAgilidad))
+    'UserAtributos(eAtributos.Constitucion) = Val(GetComponentText(lblConstitucion))
+    'UserAtributos(eAtributos.Inteligencia) = Val(GetComponentText(lblInteligencia))
+    'UserAtributos(eAtributos.Carisma) = Val(GetComponentText(lblCarisma))
+    
+    UserHogar = Components(cmbHogar).SelIndex
+    
+    If Not CheckData Then Exit Sub
+
+    UserPassword = GetComponentText(txtPassword)
+    
+    For i = 1 To Len(UserPassword)
+        CharAscii = Asc(mid$(UserPassword, i, 1))
+        If Not LegalCharacter(CharAscii) Then
+            MsgBox ("Password inválido. El caractér " & Chr$(CharAscii) & " no está permitido.")
+            Exit Sub
+        End If
+    Next i
+    
+    UserEmail = GetComponentText(txtMail)
+    
+    If SkillPts <> 0 Then
+        MsgBox "Debes asignar todos los puntos disponibles en los skills."
+        Exit Sub
+    End If
+    
+    'Call CopyMemory(UserSkills(1), uSkills(1), NUMSKILLS)
+        
+    For i = 1 To NUMSKILLS
+        UserSkills(i) = GetComponentValue(lstSkills, i)
+    Next
+    
+    EstadoLogin = E_MODO.CrearNuevoPj
+    
+    If Not frmMain.Socket1.Connected Then
+
+        'MsgBox "Error: Se ha perdido la conexion con el server."
+        
+        frmMain.Socket1.HostName = CurServerIP
+        frmMain.Socket1.RemotePort = CurServerPort
+    
+        frmMain.Socket1.Connect
+        
+        Call Login
+    Else
+        
+        Call Login
+        
+    End If
+    
+    bShowTutorial = True
+End Sub
+
+Public Sub CloseNewChar()
+
+frmMain.Socket1.Disconnect
+
+Call HideComponents(txtNick, txtPass, txtRepPass, txtMail)
+Call EnableComponents(btnLogin, btnCrearPj)
+Call ShowComponents(txtNombre, txtPassword)
+Call ChangeRenderState(eRenderState.eLogin)
 
 End Sub
 
-Private Sub imgConectarse_Click()
-    
+Public Sub LoginUser()
     If frmMain.Socket1.Connected Then
         frmMain.Socket1.Disconnect
         frmMain.Socket1.Cleanup
         DoEvents
     End If
-    
+        
     'update user info
-    UserName = txtNombre.Text
+    UserName = GetComponentText(frmConnect.txtNombre)
     
     Dim aux As String
-    aux = txtPasswd.Text
+    aux = GetComponentText(frmConnect.txtPassword)
 
     UserPassword = aux
 
@@ -184,24 +386,48 @@ Private Sub imgConectarse_Click()
         frmMain.Socket1.Connect
 
     End If
-    
 End Sub
 
-Private Sub imgCrearPj_Click()
-    
-    EstadoLogin = E_MODO.Dados
-
-    If frmMain.Socket1.Connected Then
-        frmMain.Socket1.Disconnect
-        frmMain.Socket1.Cleanup
-        DoEvents
+Function CheckData() As Boolean
+    If GetComponentText(txtPass) <> GetComponentText(txtRepPass) Then
+        MsgBox "Los passwords que tipeo no coinciden, por favor vuelva a ingresarlos."
+        Exit Function
     End If
-    frmMain.Socket1.HostName = CurServerIP
-    frmMain.Socket1.RemotePort = CurServerPort
-    frmMain.Socket1.Connect
+    
+    If Not CheckMailString(GetComponentText(txtMail)) Then
+        MsgBox "Direccion de mail invalida."
+        Exit Function
+    End If
 
-End Sub
+    If UserRaza = 0 Then
+        MsgBox "Seleccione la raza del personaje."
+        Exit Function
+    End If
+    
+    If UserSexo = 0 Then
+        MsgBox "Seleccione el sexo del personaje."
+        Exit Function
+    End If
+    
+    If UserHogar = 0 Then
+        MsgBox "Seleccione el hogar del personaje."
+        Exit Function
+    End If
+    
+    Dim i As Integer
+    For i = 1 To NUMATRIBUTOS
+        If UserAtributos(i) = 0 Then
+            MsgBox "Los atributos del personaje son invalidos."
+            Exit Function
+        End If
+    Next i
+    
+    If Len(UserName) > 30 Then
+        MsgBox ("El nombre debe tener menos de 30 letras.")
+        Exit Function
+    End If
+    
+    CheckData = True
 
-Private Sub txtPasswd_KeyPress(KeyAscii As Integer)
-    If KeyAscii = vbKeyReturn Then imgConectarse_Click
-End Sub
+End Function
+

@@ -44,7 +44,7 @@ Private Const SEPARATOR As String * 1 = vbNullChar
 
 Private Type tFont
     Red As Byte
-    green As Byte
+    Green As Byte
     blue As Byte
     bold As Boolean
     italic As Boolean
@@ -283,7 +283,7 @@ Public Sub InitFonts()
 '***************************************************
     With FontTypes(FontTypeNames.FONTTYPE_TALK)
         .Red = 255
-        .green = 255
+        .Green = 255
         .blue = 255
     End With
     
@@ -294,7 +294,7 @@ Public Sub InitFonts()
     
     With FontTypes(FontTypeNames.FONTTYPE_WARNING)
         .Red = 32
-        .green = 51
+        .Green = 51
         .blue = 223
         .bold = 1
         .italic = 1
@@ -302,87 +302,87 @@ Public Sub InitFonts()
     
     With FontTypes(FontTypeNames.FONTTYPE_INFO)
         .Red = 65
-        .green = 190
+        .Green = 190
         .blue = 156
     End With
     
     With FontTypes(FontTypeNames.FONTTYPE_INFOBOLD)
         .Red = 65
-        .green = 190
+        .Green = 190
         .blue = 156
         .bold = 1
     End With
     
     With FontTypes(FontTypeNames.FONTTYPE_EJECUCION)
         .Red = 130
-        .green = 130
+        .Green = 130
         .blue = 130
         .bold = 1
     End With
     
     With FontTypes(FontTypeNames.FONTTYPE_PARTY)
         .Red = 255
-        .green = 180
+        .Green = 180
         .blue = 250
     End With
     
-    FontTypes(FontTypeNames.FONTTYPE_VENENO).green = 255
+    FontTypes(FontTypeNames.FONTTYPE_VENENO).Green = 255
     
     With FontTypes(FontTypeNames.FONTTYPE_GUILD)
         .Red = 255
-        .green = 255
+        .Green = 255
         .blue = 255
         .bold = 1
     End With
     
-    FontTypes(FontTypeNames.FONTTYPE_SERVER).green = 185
+    FontTypes(FontTypeNames.FONTTYPE_SERVER).Green = 185
     
     With FontTypes(FontTypeNames.FONTTYPE_GUILDMSG)
         .Red = 228
-        .green = 199
+        .Green = 199
         .blue = 27
     End With
     
     With FontTypes(FontTypeNames.FONTTYPE_CONSEJO)
         .Red = 130
-        .green = 130
+        .Green = 130
         .blue = 255
         .bold = 1
     End With
     
     With FontTypes(FontTypeNames.FONTTYPE_CONSEJOCAOS)
         .Red = 255
-        .green = 60
+        .Green = 60
         .bold = 1
     End With
     
     With FontTypes(FontTypeNames.FONTTYPE_CONSEJOVesA)
-        .green = 200
+        .Green = 200
         .blue = 255
         .bold = 1
     End With
     
     With FontTypes(FontTypeNames.FONTTYPE_CONSEJOCAOSVesA)
         .Red = 255
-        .green = 50
+        .Green = 50
         .bold = 1
     End With
     
     With FontTypes(FontTypeNames.FONTTYPE_CENTINELA)
-        .green = 255
+        .Green = 255
         .bold = 1
     End With
     
     With FontTypes(FontTypeNames.FONTTYPE_GMMSG)
         .Red = 255
-        .green = 255
+        .Green = 255
         .blue = 255
         .italic = 1
     End With
     
     With FontTypes(FontTypeNames.FONTTYPE_GM)
         .Red = 255
-        .green = 128
+        .Green = 128
         .blue = 32
         .bold = 1
     End With
@@ -394,28 +394,28 @@ Public Sub InitFonts()
     
     With FontTypes(FontTypeNames.FONTTYPE_CONSE)
         .Red = 30
-        .green = 150
+        .Green = 150
         .blue = 30
         .bold = 1
     End With
     
     With FontTypes(FontTypeNames.FONTTYPE_DIOS)
         .Red = 250
-        .green = 250
+        .Green = 250
         .blue = 150
         .bold = 1
     End With
 
     With FontTypes(FontTypeNames.FONTTYPE_NEWBIE)
         .Red = 100
-        .green = 200
+        .Green = 200
         .blue = 100
         .bold = 1
     End With
     
     With FontTypes(FontTypeNames.FONTTYPE_NEUTRAL)
         .Red = 180
-        .green = 180
+        .Green = 180
         .blue = 180
         .bold = 1
     End With
@@ -432,7 +432,7 @@ Public Sub HandleIncomingData()
 '***************************************************
     
     Call incomingData.Mark
-        
+    
     Select Case incomingData.ReadByte
         Case ServerPacketID.Logged                  ' LOGGED
             Call HandleLogged
@@ -551,7 +551,6 @@ Public Sub HandleIncomingData()
         
         Case ServerPacketID.PlayWave                ' TW
             Call HandlePlayWave
-        
         
         Case ServerPacketID.AreaChanged             ' CA
             Call HandleAreaChanged
@@ -740,12 +739,12 @@ Public Sub HandleIncomingData()
             Exit Sub
 
     End Select
-    
+        
     'Done with this packet, move on to next one
     If incomingData.Remaining > 0 And Err.Number <> incomingData.NotEnoughDataErrCode Then
         Err.Clear
-        Call HandleIncomingData
         
+        Call HandleIncomingData
     Else
     
         Call incomingData.Reset
@@ -1000,15 +999,13 @@ Private Sub HandleLogged()
 'Last Modification: 05/17/06
 '
 '***************************************************
-
+    
     ' Variable initialization
     EngineRun = True
     Nombres = True
-    
+        
     'Set connected state
     Call SetConnected
-    
-    Call Inventario.DrawInv
     
     If bShowTutorial Then frmTutorial.Show
     
@@ -1081,7 +1078,7 @@ Private Sub HandleDisconnect()
     frmMain.Socket1.Disconnect
         
     'Stop audio
-    'call 'audio.StopWave
+    Call Audio.StopWave
     frmMain.IsPlaying = PlayLoop.plNone
     
     'Reset global vars
@@ -1114,8 +1111,7 @@ Private Sub HandleDisconnect()
     Connected = False
     
     For Each frm In Forms
-        If frm.Name <> frmMain.Name And frm.Name <> frmConnect.Name And _
-            frm.Name <> frmCrearPersonaje.Name Then
+        If frm.Name <> frmMain.Name And frm.Name <> frmConnect.Name Then
             
             Unload frm
         End If
@@ -1125,7 +1121,7 @@ Private Sub HandleDisconnect()
     
     ' Return to connection screen
     frmConnect.MousePointer = vbNormal
-    If Not frmCrearPersonaje.Visible Then frmConnect.Visible = True
+    frmConnect.Visible = True
     frmMain.Visible = False
     
     Inventario.ClearAllSlots
@@ -1148,7 +1144,7 @@ Private Sub HandleDisconnect()
     For i = 1 To NUMATRIBUTOS
         UserAtributos(i) = 0
     Next i
-    'call 'audio.PlayMIDI("2.mid")
+    Call Audio.PlayMIDI("2.mid")
 End Sub
 
 ''
@@ -1750,7 +1746,7 @@ Private Sub HandleChangeMap()
         Call SwitchMap(UserMap)
         If bLluvia(UserMap) = 0 Then
             If bRain Then
-                'call 'audio.StopWave(RainBufferIndex)
+                Call Audio.StopWave(RainBufferIndex)
                 RainBufferIndex = 0
                 frmMain.IsPlaying = PlayLoop.plNone
                 
@@ -2032,7 +2028,7 @@ On Error GoTo ErrHandler
         Call AddtoRichTextBox(frmMain.RecTxt, Left$(chat, InStr(1, chat, "~") - 1), r, g, b, Val(ReadField(5, chat, 126)) <> 0, Val(ReadField(6, chat, 126)) <> 0)
     Else
         With FontTypes(FontIndex)
-            Call AddtoRichTextBox(frmMain.RecTxt, chat, .Red, .green, .blue, .bold, .italic)
+            Call AddtoRichTextBox(frmMain.RecTxt, chat, .Red, .Green, .blue, .bold, .italic)
         End With
         
         ' Para no perder el foco cuando chatea por party
@@ -2107,7 +2103,7 @@ On Error GoTo ErrHandler
         Call AddtoRichTextBox(frmComerciarUsu.CommerceConsole, Left$(chat, InStr(1, chat, "~") - 1), r, g, b, Val(ReadField(5, chat, 126)) <> 0, Val(ReadField(6, chat, 126)) <> 0)
     Else
         With FontTypes(FontIndex)
-            Call AddtoRichTextBox(frmComerciarUsu.CommerceConsole, chat, .Red, .green, .blue, .bold, .italic)
+            Call AddtoRichTextBox(frmComerciarUsu.CommerceConsole, chat, .Red, .Green, .blue, .bold, .italic)
         End With
     End If
 
@@ -2202,65 +2198,63 @@ End Sub
 ''
 ' Handles the CharacterCreate message.
 
+'CSEH: ErrLog
 Private Sub HandleCharacterCreate()
-'***************************************************
-'Author: Juan Martín Sotuyo Dodero (Maraxus)
-'Last Modification: 05/17/06
-'
-'***************************************************
-    If incomingData.Remaining < 23 Then
-        Err.Raise incomingData.NotEnoughDataErrCode
-        Exit Sub
-    End If
+    '***************************************************
+    'Author: Juan Martín Sotuyo Dodero (Maraxus)
+    'Last Modification: 05/17/06
+    '
+    '***************************************************
+100     If incomingData.Remaining < 23 Then
+105         Err.Raise incomingData.NotEnoughDataErrCode
+            Exit Sub
+        End If
     
-On Error GoTo ErrHandler
+        On Error GoTo ErrHandler
 
-
-
+        Dim CharIndex As Integer
+        Dim Body As Integer
+        Dim Head As Integer
+        Dim Heading As E_Heading
+        Dim X As Byte
+        Dim Y As Byte
+        Dim weapon As Integer
+        Dim shield As Integer
+        Dim helmet As Integer
+        Dim privs As Integer
+        Dim NickColor As Byte
     
-    Dim CharIndex As Integer
-    Dim Body As Integer
-    Dim Head As Integer
-    Dim Heading As E_Heading
-    Dim X As Byte
-    Dim Y As Byte
-    Dim weapon As Integer
-    Dim shield As Integer
-    Dim helmet As Integer
-    Dim privs As Integer
-    Dim NickColor As Byte
-    
-    CharIndex = incomingData.ReadInteger()
-    Body = incomingData.ReadInteger()
-    Head = incomingData.ReadInteger()
-    Heading = incomingData.ReadByte()
-    X = incomingData.ReadByte()
-    Y = incomingData.ReadByte()
-    weapon = incomingData.ReadInteger()
-    shield = incomingData.ReadInteger()
-    helmet = incomingData.ReadInteger()
+110     CharIndex = incomingData.ReadInteger()
+115     Body = incomingData.ReadInteger()
+120     Head = incomingData.ReadInteger()
+125     Heading = incomingData.ReadByte()
+130     X = incomingData.ReadByte()
+135     Y = incomingData.ReadByte()
+140     weapon = incomingData.ReadInteger()
+145     shield = incomingData.ReadInteger()
+150     helmet = incomingData.ReadInteger()
     
     
-    With charlist(CharIndex)
-        Call SetCharacterFx(CharIndex, incomingData.ReadInteger(), incomingData.ReadInteger())
+155     With charlist(CharIndex)
+160         Call SetCharacterFx(CharIndex, incomingData.ReadInteger(), incomingData.ReadInteger())
         
-        .Nombre = incomingData.ReadString()
-        .NombreOffset = 0 '(Text_GetWidth(cfonts(1), .Nombre) \ 2) - cfonts(1).RowPitch
+165         .Nombre = incomingData.ReadString()
+170         .NombreOffset = (Text_GetWidth(cfonts(1), .Nombre) \ 2) - cfonts(1).RowPitch
         
-        NickColor = incomingData.ReadByte()
+175         NickColor = incomingData.ReadByte()
         
-        .Criminal = NickColor
+180         .Criminal = NickColor
                 
-        privs = incomingData.ReadByte()
+185         privs = incomingData.ReadByte()
         
-        If privs <> 0 Then
-            'If the player belongs to a council AND is an admin, only whos as an admin
-            If (privs And PlayerType.ChaosCouncil) <> 0 And (privs And PlayerType.user) = 0 Then
-                privs = privs Xor PlayerType.ChaosCouncil
-            End If
+190         If privs <> 0 Then
+                'If the player belongs to a council AND is an admin, only whos as an admin
+195             If (privs And PlayerType.ChaosCouncil) <> 0 And (privs And PlayerType.user) = 0 Then
+200                 privs = privs Xor PlayerType.ChaosCouncil
+                End If
             
-            If (privs And PlayerType.RoyalCouncil) <> 0 And (privs And PlayerType.user) = 0 Then
-                privs = privs Xor PlayerType.RoyalCouncil
+205             If (privs And PlayerType.RoyalCouncil) <> 0 And (privs And PlayerType.user) = 0 Then
+210                 privs = privs Xor PlayerType.RoyalCouncil
             End If
             
             'If the player is a RM, ignore other flags
@@ -2278,7 +2272,7 @@ On Error GoTo ErrHandler
     Call MakeChar(CharIndex, Body, Head, Heading, X, Y, weapon, shield, helmet)
     
     Call RefreshAllChars
-
+    
 ErrHandler:
     Dim error As Long
     error = Err.Number
@@ -2559,14 +2553,10 @@ Private Sub HandlePlayMIDI()
     
     Dim currentMidi As Byte
     
-
-
-    
     currentMidi = incomingData.ReadByte()
     
     If currentMidi Then
-        incomingData.ReadInteger
-        'call 'audio.PlayMIDI(CStr(currentMidi) & ".mid", incomingData.ReadInteger())
+        Call Audio.PlayMIDI(CStr(currentMidi) & ".mid", incomingData.ReadInteger())
     Else
         'Remove the bytes to prevent errors
         Call incomingData.ReadInteger
@@ -2587,9 +2577,6 @@ Private Sub HandlePlayWave()
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
-    
-
-
         
     Dim wave As Byte
     Dim srcX As Byte
@@ -2599,7 +2586,7 @@ Private Sub HandlePlayWave()
     srcX = incomingData.ReadByte()
     srcY = incomingData.ReadByte()
         
-    'call 'audio.PlayWave(CStr(wave) & ".wav", srcX, srcY)
+    Call Audio.PlayWave(CStr(wave) & ".wav", srcX, srcY)
 End Sub
 
 ''
@@ -2663,12 +2650,12 @@ Private Sub HandleRainToggle()
     If bRain Then
         If bLluvia(UserMap) Then
             'Stop playing the rain sound
-            'call 'audio.StopWave(RainBufferIndex)
+            Call Audio.StopWave(RainBufferIndex)
             RainBufferIndex = 0
             If bTecho Then
-                'call 'audio.PlayWave("lluviainend.wav", 0, 0, LoopStyle.Disabled)
+                Call Audio.PlayWave("lluviainend.wav", 0, 0, LoopStyle.Disabled)
             Else
-                'call 'audio.PlayWave("lluviaoutend.wav", 0, 0, LoopStyle.Disabled)
+                Call Audio.PlayWave("lluviaoutend.wav", 0, 0, LoopStyle.Disabled)
             End If
             frmMain.IsPlaying = PlayLoop.plNone
         End If
@@ -2719,9 +2706,6 @@ Private Sub HandleUpdateUserStats()
         Exit Sub
     End If
     
-
-
-    
     UserMaxHP = incomingData.ReadInteger()
     UserMinHP = incomingData.ReadInteger()
     UserMaxMAN = incomingData.ReadInteger()
@@ -2740,7 +2724,7 @@ Private Sub HandleUpdateUserStats()
     Else
         frmMain.lblPorcLvl.Caption = "[N/A]"
     End If
-    
+        
     frmMain.GldLbl.Caption = UserGLD
     frmMain.lblLvl.Caption = UserLvl
     
@@ -2939,7 +2923,7 @@ Private Sub HandleStopWorking()
 '***************************************************
 
     With FontTypes(FontTypeNames.FONTTYPE_INFO)
-        Call ShowConsoleMsg("¡Has terminado de trabajar!", .Red, .green, .blue, .bold, .italic)
+        Call ShowConsoleMsg("¡Has terminado de trabajar!", .Red, .Green, .blue, .bold, .italic)
     End With
     
     If frmMain.macrotrabajo.Enabled Then Call frmMain.DesactivarMacroTrabajo
@@ -3095,14 +3079,14 @@ Private Sub HandleAtributes()
     
     'Show them in character creation
     If EstadoLogin = E_MODO.Dados Then
-        With frmCrearPersonaje
-            If .Visible Then
-                For i = 1 To NUMATRIBUTES
-                    .lblAtributos(i).Caption = UserAtributos(i)
-                Next i
-                
-                .UpdateStats
-            End If
+        With frmConnect
+            If GetRenderState() = eRenderState.eLogin Then prgRun = False
+            
+            Call EditLabel(frmConnect.lblFuerza, CStr(UserAtributos(eAtributos.Fuerza)), White)
+            Call EditLabel(frmConnect.lblAgilidad, CStr(UserAtributos(eAtributos.Agilidad)), White)
+            Call EditLabel(frmConnect.lblConstitucion, CStr(UserAtributos(eAtributos.Constitucion)), White)
+            Call EditLabel(frmConnect.lblInteligencia, CStr(UserAtributos(eAtributos.Inteligencia)), White)
+            Call EditLabel(frmConnect.lblCarisma, CStr(UserAtributos(eAtributos.Carisma)), White)
         End With
     Else
         LlegaronAtrib = True
@@ -3187,9 +3171,6 @@ Private Sub HandleBlacksmithArmors()
     
 On Error GoTo ErrHandler
 
-
-
-    
     Dim Count As Integer
     Dim i As Long
     
@@ -3307,7 +3288,7 @@ On Error GoTo ErrHandler
 
     Call MsgBox(incomingData.ReadString())
     
-    If frmConnect.Visible And (Not frmCrearPersonaje.Visible) Then
+    If frmConnect.Visible Then
         frmMain.Socket1.Disconnect
         frmMain.Socket1.Cleanup
         
@@ -3648,23 +3629,19 @@ Private Sub HandleDiceRoll()
         Exit Sub
     End If
     
-
-
-    
     UserAtributos(eAtributos.Fuerza) = incomingData.ReadByte()
     UserAtributos(eAtributos.Agilidad) = incomingData.ReadByte()
     UserAtributos(eAtributos.Inteligencia) = incomingData.ReadByte()
     UserAtributos(eAtributos.Carisma) = incomingData.ReadByte()
     UserAtributos(eAtributos.Constitucion) = incomingData.ReadByte()
     
-    With frmCrearPersonaje
-        .lblAtributos(eAtributos.Fuerza) = UserAtributos(eAtributos.Fuerza)
-        .lblAtributos(eAtributos.Agilidad) = UserAtributos(eAtributos.Agilidad)
-        .lblAtributos(eAtributos.Inteligencia) = UserAtributos(eAtributos.Inteligencia)
-        .lblAtributos(eAtributos.Carisma) = UserAtributos(eAtributos.Carisma)
-        .lblAtributos(eAtributos.Constitucion) = UserAtributos(eAtributos.Constitucion)
+    With frmConnect
+        Call EditLabel(.lblFuerza, CStr(UserAtributos(eAtributos.Fuerza)), White)
+        Call EditLabel(.lblAgilidad, CStr(UserAtributos(eAtributos.Agilidad)), White)
+        Call EditLabel(.lblInteligencia, CStr(UserAtributos(eAtributos.Inteligencia)), White)
+        Call EditLabel(.lblCarisma, CStr(UserAtributos(eAtributos.Carisma)), White)
+        Call EditLabel(.lblConstitucion, CStr(UserAtributos(eAtributos.Constitucion)), White)
         
-        .UpdateStats
     End With
 End Sub
 

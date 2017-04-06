@@ -267,7 +267,7 @@ With UserList(UserIndex)
     .flags.Escondido = 0
     
     
-    .Name = Name
+    .Name = Trim$(Name)
     .Clase = eClass.Ciudadano
     .raza = UserRaza
     .Genero = UserSexo
@@ -295,7 +295,8 @@ With UserList(UserIndex)
     End If
     '.Stats.SkillPts = 0
     
-    CopyMemory .Stats.UserSkills(1), Skills(1), 22
+    CopyMemory .Stats.UserSkills(1), Skills(1), NUMSKILLS
+    '* lenb(skills(1)) 'podría servir si a alguien se le ocurre usar skills integers
     
     .Char.heading = eHeading.SOUTH
     
@@ -407,6 +408,8 @@ End With
 
 'Valores Default de facciones al Activar nuevo usuario
 Call ResetFacciones(UserIndex)
+
+Password = MD5String(Password)
 
 Call WriteVar(CharPath & UCase$(Name) & ".chr", "INIT", "Password", Password) 'grabamos el password aqui afuera, para no mantenerlo cargado en memoria
 
@@ -890,7 +893,6 @@ With UserList(UserIndex)
     
     Call WriteChangeMap(UserIndex, .Pos.map, MapInfo(.Pos.map).MapVersion) 'Carga el mapa
     Call WritePlayMidi(UserIndex, val(ReadField(1, MapInfo(.Pos.map).Music, 45)))
-    
     
     If .flags.Privilegios <> PlayerType.User And .flags.Privilegios <> (PlayerType.User Or PlayerType.ChaosCouncil) And .flags.Privilegios <> (PlayerType.User Or PlayerType.RoyalCouncil) Then
         .flags.ChatColor = RGB(255, 128, 32)
