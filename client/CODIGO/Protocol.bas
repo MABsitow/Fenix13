@@ -1121,6 +1121,12 @@ Private Sub HandleDisconnect()
     
     ' Return to connection screen
     frmConnect.MousePointer = vbNormal
+    
+    frmConnect.Loaded = False
+    
+    Call frmConnect.LoadComponents
+    Call ChangeRenderState(eRenderState.eLogin)
+    
     frmConnect.Visible = True
     frmMain.Visible = False
     

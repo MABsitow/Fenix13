@@ -374,7 +374,7 @@ Sub SetConnected()
     frmMain.lblName = UserName
     
     Call mod_Components.ClearComponents
-    
+
     frmMain.Visible = True
         
     FPSFLAG = True

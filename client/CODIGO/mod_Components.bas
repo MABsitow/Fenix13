@@ -128,6 +128,8 @@ Public Function AddListBox(ByVal X As Integer, ByVal Y As Integer, _
         .Color(0) = BackgroundColor(0): .Color(1) = BackgroundColor(1)
         .Color(2) = BackgroundColor(2): .Color(3) = BackgroundColor(3)
         
+        .IsFocusable = False
+        
         .Visible = Visible
         
         .Enable = True
@@ -159,7 +161,9 @@ Public Function AddFillableListBox(ByVal X As Integer, ByVal Y As Integer, _
         
         .Color(0) = BackgroundColor(0): .Color(1) = BackgroundColor(1)
         .Color(2) = BackgroundColor(2): .Color(3) = BackgroundColor(3)
-
+        
+        .IsFocusable = False
+        
         .Visible = True
         
         .Enable = True
