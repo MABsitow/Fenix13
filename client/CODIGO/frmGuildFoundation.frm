@@ -1,63 +1,112 @@
 VERSION 5.00
 Begin VB.Form frmGuildFoundation 
    BorderStyle     =   0  'None
-   Caption         =   "Creación de un Clan"
-   ClientHeight    =   3840
+   Caption         =   "Form1"
+   ClientHeight    =   3195
    ClientLeft      =   0
-   ClientTop       =   -75
-   ClientWidth     =   4050
-   ClipControls    =   0   'False
-   ControlBox      =   0   'False
+   ClientTop       =   0
+   ClientWidth     =   4680
    BeginProperty Font 
       Name            =   "Tahoma"
       Size            =   8.25
       Charset         =   0
-      Weight          =   700
+      Weight          =   400
       Underline       =   0   'False
       Italic          =   0   'False
       Strikethrough   =   0   'False
    EndProperty
    LinkTopic       =   "Form1"
-   MaxButton       =   0   'False
-   MinButton       =   0   'False
-   ScaleHeight     =   256
-   ScaleMode       =   3  'Pixel
-   ScaleWidth      =   270
+   ScaleHeight     =   3195
+   ScaleWidth      =   4680
    ShowInTaskbar   =   0   'False
-   StartUpPosition =   1  'CenterOwner
-   Begin VB.TextBox txtClanName 
-      BackColor       =   &H00000000&
-      BorderStyle     =   0  'None
-      ForeColor       =   &H00FFFFFF&
-      Height          =   285
-      Left            =   360
-      TabIndex        =   0
-      Top             =   1815
-      Width           =   3345
+   StartUpPosition =   3  'Windows Default
+   Begin VB.CommandButton cmdCrear 
+      Caption         =   "Crear"
+      Height          =   360
+      Left            =   1560
+      TabIndex        =   9
+      Top             =   2640
+      Width           =   990
    End
-   Begin VB.TextBox txtWeb 
-      BackColor       =   &H00000000&
-      BorderStyle     =   0  'None
-      ForeColor       =   &H00FFFFFF&
-      Height          =   285
-      Left            =   360
-      TabIndex        =   1
-      Top             =   2760
-      Width           =   3345
+   Begin VB.OptionButton optEntrance 
+      Caption         =   "Aprobación"
+      Height          =   255
+      Index           =   1
+      Left            =   2040
+      TabIndex        =   8
+      Top             =   2160
+      Width           =   1455
    End
-   Begin VB.Image imgSiguiente 
-      Height          =   375
-      Left            =   2400
-      Tag             =   "1"
-      Top             =   3240
-      Width           =   1335
-   End
-   Begin VB.Image imgCancelar 
-      Height          =   375
+   Begin VB.OptionButton optEntrance 
+      Caption         =   "Libre"
+      Height          =   255
+      Index           =   0
       Left            =   240
-      Tag             =   "1"
-      Top             =   3240
-      Width           =   1335
+      TabIndex        =   7
+      Top             =   2160
+      Width           =   1455
+   End
+   Begin VB.ComboBox cmbFaction 
+      Height          =   315
+      Left            =   1440
+      Style           =   2  'Dropdown List
+      TabIndex        =   5
+      Top             =   1200
+      Width           =   1695
+   End
+   Begin VB.TextBox txtReqLevel 
+      Height          =   285
+      Left            =   1440
+      TabIndex        =   3
+      Top             =   720
+      Width           =   1095
+   End
+   Begin VB.TextBox txtName 
+      Height          =   285
+      Left            =   1440
+      TabIndex        =   1
+      Top             =   240
+      Width           =   3015
+   End
+   Begin VB.Label lblEntrada 
+      AutoSize        =   -1  'True
+      BackStyle       =   0  'Transparent
+      Caption         =   "Entrada"
+      Height          =   195
+      Left            =   240
+      TabIndex        =   6
+      Top             =   1800
+      Width           =   570
+   End
+   Begin VB.Label lblFacción 
+      AutoSize        =   -1  'True
+      BackStyle       =   0  'Transparent
+      Caption         =   "Facción"
+      Height          =   195
+      Left            =   120
+      TabIndex        =   4
+      Top             =   1200
+      Width           =   540
+   End
+   Begin VB.Label lblNivelRequerido 
+      AutoSize        =   -1  'True
+      BackStyle       =   0  'Transparent
+      Caption         =   "Nivel Requerido"
+      Height          =   195
+      Left            =   120
+      TabIndex        =   2
+      Top             =   720
+      Width           =   1125
+   End
+   Begin VB.Label lblNombreDel 
+      AutoSize        =   -1  'True
+      BackStyle       =   0  'Transparent
+      Caption         =   "Nombre del clan"
+      Height          =   195
+      Left            =   120
+      TabIndex        =   0
+      Top             =   240
+      Width           =   1140
    End
 End
 Attribute VB_Name = "frmGuildFoundation"
@@ -65,108 +114,41 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
-'Argentum Online 0.11.6
-'
-'Copyright (C) 2002 Márquez Pablo Ignacio
-'Copyright (C) 2002 Otto Perez
-'Copyright (C) 2002 Aaron Perkins
-'Copyright (C) 2002 Matías Fernando Pequeño
-'
-'This program is free software; you can redistribute it and/or modify
-'it under the terms of the Affero General Public License;
-'either version 1 of the License, or any later version.
-'
-'This program is distributed in the hope that it will be useful,
-'but WITHOUT ANY WARRANTY; without even the implied warranty of
-'MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-'Affero General Public License for more details.
-'
-'You should have received a copy of the Affero General Public License
-'along with this program; if not, you can find it at http://www.affero.org/oagpl.html
-'
-'Argentum Online is based on Baronsoft's VB6 Online RPG
-'You can contact the original creator of ORE at aaron@baronsoft.com
-'for more information about ORE please visit http://www.baronsoft.com/
-'
-'
-'You can contact me at:
-'morgolock@speedy.com.ar
-'www.geocities.com/gmorgolock
-'Calle 3 número 983 piso 7 dto A
-'La Plata - Pcia, Buenos Aires - Republica Argentina
-'Código Postal 1900
-'Pablo Ignacio Márquez
-
-Option Explicit
-Private clsFormulario As clsFormMovementManager
-
-Private cBotonSiguiente As clsGraphicalButton
-Private cBotonCancelar As clsGraphicalButton
-
-Public LastPressed As clsGraphicalButton
-
-Private Sub Form_Deactivate()
-    Me.SetFocus
+Private Sub cmdCrear_Click()
+    Call WriteGuildConfirmFoundation(txtName.Text, Val(txtReqLevel.Text), cmbFaction.Text, IIf(optEntrance(0).Value = True, 0, 1))
+    Unload Me
 End Sub
 
 Private Sub Form_Load()
-    ' Handles Form movement (drag and drop).
-    Set clsFormulario = New clsFormMovementManager
-    clsFormulario.Initialize Me
-
-    Me.Picture = LoadPicture(App.path & "\graficos\VentanaNombreClan.jpg")
+    
+    cmbFaction.Clear
+    
+    Select Case UserFaccion
+    
+        Case eFaccion.Real
         
-    Call LoadButtons
+            cmbFaction.AddItem "Real"
+            cmbFaction.AddItem "Neutral"
+            
+        Case eFaccion.Caos
+        
+            cmbFaction.AddItem "Caos"
+            cmbFaction.AddItem "Neutral"
+        Case eFaccion.Neutral
+        
+            cmbFaction.AddItem "Caos"
+            cmbFaction.AddItem "Neutral"
+            cmbFaction.AddItem "Real"
+            
+    End Select
     
-    If Len(txtClanName.Text) <= 30 Then
-        If Not AsciiValidos(txtClanName) Then
-            MsgBox "Nombre invalido."
-            Exit Sub
-        End If
-    Else
-        MsgBox "Nombre demasiado extenso."
-        Exit Sub
+End Sub
+
+Private Sub txtReqLevel_Change()
+    If Not IsNumeric(txtReqLevel.Text) Then Exit Sub
+    
+    If Val(txtReqLevel.Text) > 50 Then
+        textreqlevel.Text = CStr(50)
     End If
-
-End Sub
-
-Private Sub LoadButtons()
-    Dim GrhPath As String
     
-    GrhPath = DirGraficos
-
-    Set cBotonSiguiente = New clsGraphicalButton
-    Set cBotonCancelar = New clsGraphicalButton
-    
-    Set LastPressed = New clsGraphicalButton
-    
-    
-    Call cBotonSiguiente.Initialize(imgSiguiente, GrhPath & "BotonSiguienteNombreClan.jpg", _
-                                    GrhPath & "BotonSiguienteRolloverNombreClan.jpg", _
-                                    GrhPath & "BotonSiguienteClickNombreClan.jpg", Me)
-
-    Call cBotonCancelar.Initialize(imgCancelar, GrhPath & "BotonCancelarNombreClan.jpg", _
-                                    GrhPath & "BotonCancelarRolloverNombreClan.jpg", _
-                                    GrhPath & "BotonCancelarClickNombreClan.jpg", Me)
-
-End Sub
-
-
-Private Sub Form_MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
-    LastPressed.ToggleToNormal
-End Sub
-
-Private Sub imgCancelar_Click()
-    Unload Me
-End Sub
-
-Private Sub imgSiguiente_Click()
-    ClanName = txtClanName.Text
-    Site = txtWeb.Text
-    Unload Me
-    frmGuildDetails.Show , frmMain
-End Sub
-
-Private Sub txtWeb_MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
-    LastPressed.ToggleToNormal
 End Sub

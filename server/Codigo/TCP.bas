@@ -399,6 +399,10 @@ With UserList(UserIndex)
     ' Total Items
     .Invent.NroItems = Slot
     
+    .GuildID = 0
+    .flags.WaitingApprovement = 0
+    .flags.IsLeader = 0
+    
     #If ConUpTime Then
         .LogOnTime = Now
         .UpTime = 0
@@ -427,7 +431,7 @@ Sub CloseSocket(ByVal UserIndex As Integer)
 '
 '***************************************************
 
-On Error GoTo ErrHandler
+On Error GoTo Errhandler
     
     If UserIndex = LastUser Then
         Do Until UserList(LastUser).flags.UserLogged
@@ -463,8 +467,10 @@ On Error GoTo ErrHandler
         End If
     End If
     
+    Call DisconnectMember(UserList(UserIndex).GuildID, UserIndex)
+    
     'Empty buffer for reuse
-    Call UserList(UserIndex).incomingData.ReadASCIIStringFixed(UserList(UserIndex).incomingData.length)
+    Call UserList(UserIndex).incomingData.ReadASCIIStringFixed(UserList(UserIndex).incomingData.Length)
     
     If UserList(UserIndex).flags.UserLogged Then
         If NumUsers > 0 Then NumUsers = NumUsers - 1
@@ -479,7 +485,7 @@ On Error GoTo ErrHandler
     
 Exit Sub
 
-ErrHandler:
+Errhandler:
     UserList(UserIndex).ConnID = -1
     UserList(UserIndex).ConnIDValida = False
     Call ResetUserSlot(UserIndex)
@@ -621,6 +627,7 @@ Sub ConnectUser(ByVal UserIndex As Integer, ByRef Name As String, ByRef Password
 '03/12/2009: Budi - Optimización del código
 '***************************************************
 Dim N As Integer
+Dim i As Long
 
 With UserList(UserIndex)
 
@@ -769,6 +776,24 @@ With UserList(UserIndex)
     'TODO : Feo, esto tiene que ser parche cliente
     If .flags.Estupidez = 0 Then
         Call WriteDumbNoMore(UserIndex)
+    End If
+    
+    .flags.IsLeader = 0
+    
+    If .GuildID <> 0 Then
+        
+        If StrComp(UCase$(Guilds(.GuildID).LeaderName), UCase$(Name)) = 0 Then
+            .flags.IsLeader = 1
+        Else
+            For i = 0 To 2
+                If StrComp(UCase$(Guilds(.GuildID).LieutenantName(i)), UCase$(Name)) = 0 Then
+                    .flags.IsLeader = 2
+                    Exit For
+                End If
+            Next
+            
+        End If
+        
     End If
     
     'Posicion de comienzo
@@ -960,7 +985,6 @@ With UserList(UserIndex)
     End If
     
     If .NroMascotas > 0 And MapInfo(.Pos.map).Pk Then
-        Dim i As Integer
         For i = 1 To MAXMASCOTAS
             If .MascotasType(i) > 0 Then
                 .MascotasIndex(i) = SpawnNpc(.MascotasType(i), .Pos, True, True)
@@ -986,6 +1010,8 @@ With UserList(UserIndex)
     '        Call WriteConsoleMsg(UserIndex, "Tu estado no te permite entrar al clan.", FontTypeNames.FONTTYPE_GUILD)
     '    End If
     'End If
+    
+    Call ConnectMember(.GuildID, UserIndex)
     
     Call SendData(SendTarget.ToPCArea, UserIndex, PrepareMessageCreateFX(.Char.CharIndex, FXIDs.FXWARP, 0))
     
@@ -1344,7 +1370,7 @@ Sub CloseUser(ByVal UserIndex As Integer)
 '
 '***************************************************
 
-On Error GoTo ErrHandler
+On Error GoTo Errhandler
 
 Dim N As Integer
 Dim map As Integer
@@ -1434,7 +1460,7 @@ Close #N
 
 Exit Sub
 
-ErrHandler:
+Errhandler:
 Call LogError("Error en CloseUser. Número " & Err.Number & " Descripción: " & Err.description)
 
 End Sub
@@ -1446,7 +1472,7 @@ Sub ReloadSokcet()
 '
 '***************************************************
 
-On Error GoTo ErrHandler
+On Error GoTo Errhandler
 
     Call LogApiSock("ReloadSokcet() " & NumUsers & " " & LastUser & " " & MaxUsers)
     
@@ -1459,7 +1485,7 @@ On Error GoTo ErrHandler
 
 
 Exit Sub
-ErrHandler:
+Errhandler:
     Call LogError("Error en CheckSocketState " & Err.Number & ": " & Err.description)
 
 End Sub

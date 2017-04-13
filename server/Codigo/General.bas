@@ -178,9 +178,8 @@ On Error Resume Next
     Minutos = Format$(Now, "Short Time")
     
     IniPath = App.path & "\"
-    DatPath = App.path & "\Dat\"
-    
-    
+    DatPath = IniPath & "Dat\"
+    GuildPath = IniPath & "Guilds\"
     
     LevelSkill(1).LevelValue = 3
     LevelSkill(2).LevelValue = 5
@@ -346,7 +345,7 @@ On Error Resume Next
     
     frmCargando.Label1(2).Caption = "Iniciando Arrays..."
     
-   ' Call LoadGuildsDB
+    Call LoadGuilds
     
     
     Call CargarSpawnList
@@ -1086,7 +1085,7 @@ Public Sub EfectoMimetismo(ByVal UserIndex As Integer)
             If .flags.Navegando Then
                 If .flags.Muerto = 0 Then
                     Barco = ObjData(UserList(UserIndex).Invent.BarcoObjIndex)
-                    If criminal(UserIndex) Then
+                    If Criminal(UserIndex) Then
                         If Barco.Ropaje = iBarca Then .Char.body = iBarcaPk
                         If Barco.Ropaje = iGalera Then .Char.body = iGaleraPk
                         If Barco.Ropaje = iGaleon Then .Char.body = iGaleonPk
@@ -1429,38 +1428,6 @@ Errhandler:
     Call LogError("Error en PasarSegundo. Err: " & Err.description & " - " & Err.Number & " - UserIndex: " & i)
     Resume Next
 End Sub
- 
-Public Function ReiniciarAutoUpdate() As Double
-'***************************************************
-'Author: Unknown
-'Last Modification: -
-'
-'***************************************************
-
-    ReiniciarAutoUpdate = Shell(App.path & "\autoupdater\aoau.exe", vbMinimizedNoFocus)
-
-End Function
- 
-Public Sub ReiniciarServidor(Optional ByVal EjecutarLauncher As Boolean = True)
-'***************************************************
-'Author: Unknown
-'Last Modification: -
-'
-'***************************************************
-
-    'WorldSave
-    Call ES.DoBackUp
-
-    'Guardar Pjs
-    Call GuardarUsuarios
-    
-    If EjecutarLauncher Then Shell (App.path & "\launcher.exe")
-
-    'Chauuu
-    Unload frmMain
-
-End Sub
-
  
 Sub GuardarUsuarios()
 '***************************************************

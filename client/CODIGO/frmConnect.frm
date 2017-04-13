@@ -146,7 +146,7 @@ NextLoopC:
     Exit Sub
 
 DirectXEvent8_DXCallback_Err:
-        'Call LogError("Error en DirectXEvent8_DXCallback: " & Erl & " - " & Err.Description)
+        Call LogError("Error en DirectXEvent8_DXCallback: " & Erl & " - " & Err.Description)
     '</EhFooter>
 End Sub
 
@@ -314,7 +314,7 @@ Public Sub LoginNewChar()
     
     If Not CheckData Then Exit Sub
 
-    UserPassword = GetComponentText(txtPassword)
+    UserPassword = GetComponentText(txtPass)
     
     For i = 1 To Len(UserPassword)
         CharAscii = Asc(mid$(UserPassword, i, 1))

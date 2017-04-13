@@ -1074,6 +1074,9 @@ Public Type UserFlags
     
     lastMap As Integer
     Traveling As Byte 'Travelin Band ¿?
+    
+    IsLeader As Byte '0 = no, 1 = leader, 2 = lieutenant
+    WaitingApprovement As Long 'guild id
 End Type
 
 Public Type UserCounters
@@ -1212,9 +1215,7 @@ Public Type User
     
     ComUsu As tCOmercioUsuario
     
-   ' GuildIndex As Integer   'puntero al array global de guilds
-   ' FundandoGuildAlineacion As ALINEACION_GUILD     'esto esta aca hasta que se parchee el cliente y se pongan cadenas de datos distintas para cada alineacion
-   ' EscucheClan As Integer
+    GuildID As Long
     
    ' PartyIndex As Integer   'index a la party q es miembro
    ' PartySolicitud As Integer   'index a la party q solicito
@@ -1457,6 +1458,8 @@ Public MapPath As String
 'Ruta base para los DATs
 Public DatPath As String
 
+Public GuildPath As String
+
 ''
 'Bordes del mapa
 Public MinXBorder As Byte
@@ -1542,7 +1545,7 @@ Public Declare Function GetTickCount Lib "kernel32" () As Long
 Public Declare Function writeprivateprofilestring Lib "kernel32" Alias "WritePrivateProfileStringA" (ByVal lpApplicationname As String, ByVal lpKeyname As Any, ByVal lpString As String, ByVal lpfilename As String) As Long
 Public Declare Function GetPrivateProfileString Lib "kernel32" Alias "GetPrivateProfileStringA" (ByVal lpApplicationname As String, ByVal lpKeyname As Any, ByVal lpdefault As String, ByVal lpreturnedstring As String, ByVal nsize As Long, ByVal lpfilename As String) As Long
 
-Public Declare Sub ZeroMemory Lib "kernel32.dll" Alias "RtlZeroMemory" (ByRef destination As Any, ByVal length As Long)
+Public Declare Sub ZeroMemory Lib "kernel32.dll" Alias "RtlZeroMemory" (ByRef Destination As Any, ByVal Length As Long)
 
 Public Enum e_ObjetosCriticos
     Manzana = 1
@@ -1583,6 +1586,7 @@ Public Enum eMessages
     KillToJoin
     LevelRequired
     FactionWelcome
+    GuildCreated
 End Enum
 
 Public Enum eGMCommands
@@ -1699,8 +1703,6 @@ Public Enum eGMCommands
     ReloadServerIni         '/RELOADSINI
     ReloadSpells            '/RELOADHECHIZOS
     ReloadObjects           '/RELOADOBJ
-    Restart                 '/REINICIAR
-    ResetAutoUpdate         '/AUTOUPDATE
     ChatColor               '/CHATCOLOR
     Ignored                 '/IGNORADO
     CheckSlot               '/SLOT

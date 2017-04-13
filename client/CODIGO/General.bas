@@ -43,7 +43,7 @@ Public bLluvia() As Byte ' Array para determinar si
 Private lFrameTimer As Long
 
 Private Type TYPE_LONG_BYTES
-        h As Integer
+        H As Integer
         L As Integer
 End Type
 
@@ -52,11 +52,11 @@ Private Type TYPE_LONG
 End Type
 
 'http://stackoverflow.com/questions/6861733/vb6-integer-to-two-bytes-c-short-to-send-over-serial
-Public Function IntegersToLong(ByVal h As Integer, ByVal L As Integer) As Long
+Public Function IntegersToLong(ByVal H As Integer, ByVal L As Integer) As Long
     Dim TempTL As TYPE_LONG
     Dim TempBL As TYPE_LONG_BYTES
     
-    TempBL.h = h
+    TempBL.H = H
     TempBL.L = L
     
     LSet TempTL = TempBL
@@ -64,7 +64,7 @@ Public Function IntegersToLong(ByVal h As Integer, ByVal L As Integer) As Long
     IntegersToLong = TempTL.Value
 End Function
 
-Public Sub LongToIntegers(ByVal Value As Long, ByRef h As Integer, ByRef L As Integer)
+Public Sub LongToIntegers(ByVal Value As Long, ByRef H As Integer, ByRef L As Integer)
     Dim TempTL As TYPE_LONG
     Dim TempBL As TYPE_LONG_BYTES
     
@@ -72,7 +72,7 @@ Public Sub LongToIntegers(ByVal Value As Long, ByRef h As Integer, ByRef L As In
     
     LSet TempBL = TempTL
     
-    h = TempBL.h
+    H = TempBL.H
     L = TempBL.L
     
 End Sub
@@ -734,6 +734,8 @@ UserMap = 1
     ' Load the form for screenshots
     Call Load(frmScreenshots)
     
+    Call Time_Update
+    
     Do While prgRun
     
         Call Render
@@ -1105,45 +1107,6 @@ For i = 1 To LastChar
 Next i
 End Function
 
-Public Function EsAnuncio(ByVal ForumType As Byte) As Boolean
-'***************************************************
-'Author: ZaMa
-'Last Modification: 22/02/2010
-'Returns true if the post is sticky.
-'***************************************************
-    Select Case ForumType
-        Case eForumMsgType.ieCAOS_STICKY
-            EsAnuncio = True
-            
-        Case eForumMsgType.ieGENERAL_STICKY
-            EsAnuncio = True
-            
-        Case eForumMsgType.ieREAL_STICKY
-            EsAnuncio = True
-            
-    End Select
-    
-End Function
-
-Public Function ForumAlignment(ByVal yForumType As Byte) As Byte
-'***************************************************
-'Author: ZaMa
-'Last Modification: 01/03/2010
-'Returns the forum alignment.
-'***************************************************
-    Select Case yForumType
-        Case eForumMsgType.ieCAOS, eForumMsgType.ieCAOS_STICKY
-            ForumAlignment = eForumType.ieCAOS
-            
-        Case eForumMsgType.ieGeneral, eForumMsgType.ieGENERAL_STICKY
-            ForumAlignment = eForumType.ieGeneral
-            
-        Case eForumMsgType.ieREAL, eForumMsgType.ieREAL_STICKY
-            ForumAlignment = eForumType.ieREAL
-            
-    End Select
-    
-End Function
 
 Public Sub LogError(Desc As String)
 '***************************************************

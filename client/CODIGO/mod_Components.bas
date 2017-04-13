@@ -36,8 +36,8 @@ End Type
 Private Type tComponent 'todo: rehacer, es terrible, OOP where are u?
         X           As Integer
         Y           As Integer
-        w           As Integer
-        h           As Integer
+        W           As Integer
+        H           As Integer
         
         Component   As eComponentType
         
@@ -108,7 +108,7 @@ Public Sub ClearComponents()
 End Sub
 
 Public Function AddListBox(ByVal X As Integer, ByVal Y As Integer, _
-                           ByVal w As Integer, ByVal h As Integer, _
+                           ByVal W As Integer, ByVal H As Integer, _
                            ByRef BackgroundColor() As Long, Optional ByVal DoRedim As Boolean = True, _
                            Optional ByVal Visible As Boolean = True, Optional ByVal ChildOf As Integer = 0) As Integer
     
@@ -120,8 +120,8 @@ Public Function AddListBox(ByVal X As Integer, ByVal Y As Integer, _
     
     With Components(LastComponent)
     
-        .X = X: .w = w
-        .Y = Y: .h = h
+        .X = X: .W = W
+        .Y = Y: .H = H
         
         .Component = eComponentType.ListBox
         
@@ -145,7 +145,7 @@ Public Function AddListBox(ByVal X As Integer, ByVal Y As Integer, _
 End Function
 
 Public Function AddFillableListBox(ByVal X As Integer, ByVal Y As Integer, _
-                           ByVal w As Integer, ByVal h As Integer, _
+                           ByVal W As Integer, ByVal H As Integer, _
                            ByRef BackgroundColor() As Long, ByVal Limit As Integer) As Integer
     
     LastComponent = LastComponent + 1
@@ -154,8 +154,8 @@ Public Function AddFillableListBox(ByVal X As Integer, ByVal Y As Integer, _
 
     With Components(LastComponent)
     
-        .X = X: .w = w
-        .Y = Y: .h = h
+        .X = X: .W = W
+        .Y = Y: .H = H
         
         .Component = eComponentType.FilleableListbox
         
@@ -181,7 +181,7 @@ End Function
 
 
 Public Function AddComboBox(ByVal X As Integer, ByVal Y As Integer, _
-                            ByVal w As Integer, _
+                            ByVal W As Integer, _
                             ByRef BackgroundColor() As Long) As Integer
                             
     LastComponent = LastComponent + 2
@@ -190,8 +190,8 @@ Public Function AddComboBox(ByVal X As Integer, ByVal Y As Integer, _
     
     With Components(LastComponent - 1)
     
-        .X = X: .w = w
-        .Y = Y: .h = CharHeight
+        .X = X: .W = W
+        .Y = Y: .H = CharHeight
         
         .Component = eComponentType.ComboBox
         
@@ -201,7 +201,7 @@ Public Function AddComboBox(ByVal X As Integer, ByVal Y As Integer, _
         .Enable = True
         .Visible = True
         
-        .ListID = AddListBox(X + w, Y, w, 0, BackgroundColor, False, False, LastComponent - 1)
+        .ListID = AddListBox(X + W, Y, W, 0, BackgroundColor, False, False, LastComponent - 1)
     End With
     
     Call SetEvents(LastComponent - 1, Callback(AddressOf ComboBox_EventHandler))
@@ -210,7 +210,7 @@ Public Function AddComboBox(ByVal X As Integer, ByVal Y As Integer, _
 End Function
 
 Public Function AddRect(ByVal X As Integer, ByVal Y As Integer, _
-                        ByVal w As Integer, ByVal h As Integer) As Integer
+                        ByVal W As Integer, ByVal H As Integer) As Integer
                             
                 
     LastComponent = LastComponent + 1
@@ -218,8 +218,8 @@ Public Function AddRect(ByVal X As Integer, ByVal Y As Integer, _
     
     With Components(LastComponent)
     
-        .X = X: .w = w
-        .Y = Y: .h = h
+        .X = X: .W = W
+        .Y = Y: .H = H
         
         .Component = eComponentType.Rect
         
@@ -232,7 +232,7 @@ Public Function AddRect(ByVal X As Integer, ByVal Y As Integer, _
 End Function
 
 Public Function AddTextArea(ByVal X As Integer, ByVal Y As Integer, _
-                            ByVal w As Integer, ByVal h As Integer, _
+                            ByVal W As Integer, ByVal H As Integer, _
                             Color() As Long) As Integer
     
     LastComponent = LastComponent + 1
@@ -241,8 +241,8 @@ Public Function AddTextArea(ByVal X As Integer, ByVal Y As Integer, _
         
     With Components(LastComponent)
     
-        .X = X: .w = w
-        .Y = Y: .h = h
+        .X = X: .W = W
+        .Y = Y: .H = H
         
         .Component = eComponentType.TextArea
         
@@ -282,7 +282,7 @@ Public Function AddLabel(Text As String, ByVal X As Integer, ByVal Y As Integer,
 End Function
 
 Public Function AddShape(ByVal X As Integer, ByVal Y As Integer, _
-                            ByVal w As Integer, ByVal h As Integer, _
+                            ByVal W As Integer, ByVal H As Integer, _
                             ByRef Color() As Long) As Integer
     
     LastComponent = LastComponent + 1
@@ -294,8 +294,8 @@ Public Function AddShape(ByVal X As Integer, ByVal Y As Integer, _
         
         .X = X
         .Y = Y
-        .w = w
-        .h = h
+        .W = W
+        .H = H
         .Component = eComponentType.Shape
         
         .Color(0) = Color(0): .Color(1) = Color(1)
@@ -310,7 +310,7 @@ Public Function AddShape(ByVal X As Integer, ByVal Y As Integer, _
 End Function
 
 Public Function AddTextBox(ByVal X As Integer, ByVal Y As Integer, _
-                            ByVal w As Integer, ByVal h As Integer, _
+                            ByVal W As Integer, ByVal H As Integer, _
                             ByRef Color() As Long, ByRef ForeColor() As Long, _
                             Optional ByVal ShowOnFocus As Boolean = False, Optional ByVal PasswChr As Boolean = False) As Integer
     
@@ -322,8 +322,8 @@ Public Function AddTextBox(ByVal X As Integer, ByVal Y As Integer, _
         
         .X = X
         .Y = Y
-        .w = w
-        .h = h
+        .W = W
+        .H = H
         .Component = eComponentType.TextBox
         
         .Color(0) = Color(0): .Color(1) = Color(1)
@@ -425,9 +425,9 @@ Public Sub InsertText(ByVal ID As Integer, Text As String, TextColor() As Long)
         
         Dim LastDrawableLine As Integer
         
-        If Components(ID).Component = eComponentType.ComboBox Then .h = .h + CharHeight + 1
+        If Components(ID).Component = eComponentType.ComboBox Then .H = .H + CharHeight + 1
         
-        LastDrawableLine = Fix(.h / CharHeight)
+        LastDrawableLine = Fix(.H / CharHeight)
         
         If .LastLine = 1 Then
             .FirstRender = 1
@@ -569,7 +569,7 @@ End Sub
 
 Public Sub EditShape(ByVal ID As Integer, Color() As Long, _
                         Optional ByVal X As Integer = -1, Optional ByVal Y As Integer = -1, _
-                        Optional ByVal w As Integer = -1, Optional ByVal h As Integer = -1)
+                        Optional ByVal W As Integer = -1, Optional ByVal H As Integer = -1)
     
     With Components(ID)
         
@@ -577,8 +577,8 @@ Public Sub EditShape(ByVal ID As Integer, Color() As Long, _
         
         If X <> -1 Then .X = X
         If Y <> -1 Then .Y = Y
-        If w <> -1 Then .w = w
-        If h <> -1 Then .h = h
+        If W <> -1 Then .W = W
+        If H <> -1 Then .H = H
         
         .Color(0) = Color(0): .Color(1) = Color(1)
         .Color(2) = Color(2): .Color(3) = Color(3)
@@ -588,7 +588,7 @@ End Sub
 
 Public Sub EditTextBox(ByVal ID As Integer, Color() As Long, ForeColor() As Long, _
                         Optional ByVal X As Integer = -1, Optional ByVal Y As Integer = -1, _
-                        Optional ByVal w As Integer = -1, Optional ByVal h As Integer = -1, _
+                        Optional ByVal W As Integer = -1, Optional ByVal H As Integer = -1, _
                         Optional ByVal ShowOnFocus As Boolean = False)
     
     With Components(ID)
@@ -597,8 +597,8 @@ Public Sub EditTextBox(ByVal ID As Integer, Color() As Long, ForeColor() As Long
         
         If X <> -1 Then .X = X
         If Y <> -1 Then .Y = Y
-        If w <> -1 Then .w = w
-        If h <> -1 Then .h = h
+        If W <> -1 Then .W = W
+        If H <> -1 Then .H = H
         
         .Color(0) = Color(0): .Color(1) = Color(1)
         .Color(2) = Color(2): .Color(3) = Color(3)
@@ -644,32 +644,32 @@ Public Sub RenderComponents()
                     Call Text_Draw(.X, .Y, .Text, .Color)
                 
                 Case eComponentType.Shape
-                    Call Draw_Box(.X, .Y, .w, .h, .Color)
+                    Call Draw_Box(.X, .Y, .W, .H, .Color)
                     
                 Case eComponentType.TextBox
                     If .ShowOnFocus Then
                         If Focused = i Then
-                            Call Draw_Box(.X, .Y, .w, .h, .Color)
+                            Call Draw_Box(.X, .Y, .W, .H, .Color)
                             Call UpdateTextBoxBuffer(i)
                         End If
                     Else
-                        Call Draw_Box(.X, .Y, .w, .h, .Color)
+                        Call Draw_Box(.X, .Y, .W, .H, .Color)
                         Call UpdateTextBoxBuffer(i)
                     End If
                 
                 Case eComponentType.TextArea
-                    Call Draw_Box(.X, .Y, .w, .h, .Color)
+                    Call Draw_Box(.X, .Y, .W, .H, .Color)
                     Call UpdateTextArea(i)
                 
                 Case eComponentType.ComboBox
-                    Call Draw_Box(.X, .Y, .w, .h, .Color)
+                    Call Draw_Box(.X, .Y, .W, .H, .Color)
                     Call Text_Draw(.X + 3, .Y - 1, .Text, White)
-                    Call Draw_Box(.X + .w - 10, .Y, .h, .h, Gray)
+                    Call Draw_Box(.X + .W - 10, .Y, .H, .H, Gray)
                     
                     If .Expanded Then
-                        Call Text_Draw(.X + .w - 8, .Y - 1, "<", Black)
+                        Call Text_Draw(.X + .W - 8, .Y - 1, "<", Black)
                     Else
-                        Call Text_Draw(.X + .w - 8, .Y - 1, ">", Black)
+                        Call Text_Draw(.X + .W - 8, .Y - 1, ">", Black)
                     End If
                     
                 Case eComponentType.ListBox
@@ -693,13 +693,13 @@ Private Sub DrawListBox(ByVal ID As Integer)
         Dim i As Long
         Dim yOffset As Integer
         
-        Call Draw_Box(.X, .Y, .w, .h, .Color)
+        Call Draw_Box(.X, .Y, .W, .H, .Color)
         
         If .FirstRender = 0 Then Exit Sub
         
         For i = .FirstRender To .LastRender
             If i = .SelIndex Then
-                Call Draw_Box(.X, .Y + 1 + yOffset, .w, CharHeight, Gray)
+                Call Draw_Box(.X, .Y + 1 + yOffset, .W, CharHeight, Gray)
                 Call Text_Draw(.X + 3, .Y + 1 + yOffset, .Lines(i).Text, .Lines(i).Color)
             Else
                 Call Text_Draw(.X + 3, .Y + 1 + yOffset, .Lines(i).Text, .Lines(i).Color)
@@ -717,13 +717,13 @@ Private Sub DrawFilleableListBox(ByVal ID As Integer)
         Dim i As Long
         Dim yOffset As Integer
         
-        Call Draw_Box(.X, .Y, .w, .h, .Color)
+        Call Draw_Box(.X, .Y, .W, .H, .Color)
         
         If .FirstRender = 0 Then Exit Sub
         
         For i = .FirstRender To .LastRender
             
-            Call Draw_Box(.X, .Y + 1 + yOffset, (.Values(i - 1) * (.w / .Limit)), CharHeight, Gray)
+            Call Draw_Box(.X, .Y + 1 + yOffset, (.Values(i - 1) * (.W / .Limit)), CharHeight, Gray)
             If .Values(i - 1) <> 0 Then
                 Call Text_Draw(.X + 3, .Y + 1 + yOffset, .Lines(i).Text & " (" & .Values(i - 1) & ")", .Lines(i).Color)
             Else
@@ -794,7 +794,7 @@ Private Sub ScrollListDown(ByVal ID As Integer)
         
         Dim LastDrawableLine As Integer
         
-        LastDrawableLine = Fix(.h / CharHeight)
+        LastDrawableLine = Fix(.H / CharHeight)
         
         If .LastLine = (LastDrawableLine + .FirstRender) - 1 Then Exit Sub
         
@@ -877,8 +877,8 @@ Dim i                                   As Long
 For i = 1 To LastComponent
     With Components(i)
         'comprobamos X e Y
-        If X > .X And X < .X + .w Then
-            If Y > .Y And Y < .Y + .h Then
+        If X > .X And X < .X + .W Then
+            If Y > .Y And Y < .Y + .H Then
                 If .Visible And .Enable Then
                     Collision = i
                     Exit Function
@@ -1439,7 +1439,7 @@ Public Sub lstSkill_EventHandler(ByVal hwnd As Long, _
             Select Case msg
                 
                 Case eComponentEvent.MouseDown
-                    LastDrawableLine = Fix(.h / CharHeight)
+                    LastDrawableLine = Fix(.H / CharHeight)
                     
                     If Y > 0 And Y <= LastDrawableLine Then
                         .SelIndex = (.FirstRender - 1) + Y
@@ -1533,7 +1533,7 @@ Private Sub ListBox_EventHandler(ByVal hwnd As Long, _
             Select Case msg
                 
                 Case eComponentEvent.MouseDown
-                    LastDrawableLine = Fix(.h / CharHeight)
+                    LastDrawableLine = Fix(.H / CharHeight)
                     
                     If Y > 0 And Y <= LastDrawableLine Then
                         .SelIndex = (.FirstRender - 1) + Y
