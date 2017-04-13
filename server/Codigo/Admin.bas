@@ -111,7 +111,7 @@ On Error Resume Next
        'OJO
        If Npclist(i).flags.NPCActive Then
             
-            If InMapBounds(Npclist(i).Orig.Map, Npclist(i).Orig.X, Npclist(i).Orig.Y) And Npclist(i).Numero = Guardias Then
+            If InMapBounds(Npclist(i).Orig.map, Npclist(i).Orig.X, Npclist(i).Orig.Y) And Npclist(i).Numero = Guardias Then
                     MiNPC = Npclist(i)
                     Call QuitarNPC(i)
                     Call ReSpawnNpc(MiNPC)
@@ -150,7 +150,7 @@ On Error Resume Next
     
     FrmStat.ProgressBar1.min = 0
     FrmStat.ProgressBar1.max = k
-    FrmStat.ProgressBar1.value = 0
+    FrmStat.ProgressBar1.Value = 0
     
     For loopX = 1 To NumMaps
         'DoEvents
@@ -158,7 +158,7 @@ On Error Resume Next
         If MapInfo(loopX).BackUp = 1 Then
         
                 Call GrabarMapa(loopX, App.path & "\WorldBackUp\Mapa" & loopX)
-                FrmStat.ProgressBar1.value = FrmStat.ProgressBar1.value + 1
+                FrmStat.ProgressBar1.Value = FrmStat.ProgressBar1.Value + 1
         End If
     
     Next loopX
@@ -175,6 +175,7 @@ On Error Resume Next
     Next
     
     Call SaveForums
+    
     
     Call SendData(SendTarget.ToAll, 0, PrepareMessageConsoleMsg("Servidor> WorldSave ha concluído.", FontTypeNames.FONTTYPE_SERVER))
 
@@ -196,7 +197,7 @@ Public Sub PurgarPenas()
                 
                 If UserList(i).Counters.Pena < 1 Then
                     UserList(i).Counters.Pena = 0
-                    Call WarpUserChar(i, Libertad.Map, Libertad.X, Libertad.Y, True)
+                    Call WarpUserChar(i, Libertad.map, Libertad.X, Libertad.Y, True)
                     Call WriteConsoleMsg(i, "¡Has sido liberado!", FontTypeNames.FONTTYPE_INFO)
                     
                     Call FlushBuffer(i)
@@ -217,7 +218,7 @@ Public Sub Encarcelar(ByVal UserIndex As Integer, ByVal Minutos As Long, Optiona
     UserList(UserIndex).Counters.Pena = Minutos
     
     
-    Call WarpUserChar(UserIndex, Prision.Map, Prision.X, Prision.Y, True)
+    Call WarpUserChar(UserIndex, Prision.map, Prision.X, Prision.Y, True)
     
     If LenB(GmName) = 0 Then
         Call WriteConsoleMsg(UserIndex, "Has sido encarcelado, deberás permanecer en la cárcel " & Minutos & " minutos.", FontTypeNames.FONTTYPE_INFO)
@@ -336,7 +337,7 @@ Public Function BanIpBuscar(ByVal ip As String) As Long
     
     Dale = True
     LoopC = 1
-    Do While LoopC <= BanIps.Count And Dale
+    Do While LoopC <= BanIps.count And Dale
         Dale = (BanIps.Item(LoopC) <> ip)
         LoopC = LoopC + 1
     Loop
@@ -386,7 +387,7 @@ Public Sub BanIpGuardar()
     ArchN = FreeFile()
     Open ArchivoBanIp For Output As #ArchN
     
-    For LoopC = 1 To BanIps.Count
+    For LoopC = 1 To BanIps.count
         Print #ArchN, BanIps.Item(LoopC)
     Next LoopC
     
@@ -407,7 +408,7 @@ Public Sub BanIpCargar()
     
     ArchivoBanIp = App.path & "\Dat\BanIps.dat"
     
-    Do While BanIps.Count > 0
+    Do While BanIps.count > 0
         BanIps.Remove 1
     Loop
     

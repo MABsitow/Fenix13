@@ -1310,9 +1310,10 @@ Private Sub imgAsignarSkill_Click()
 End Sub
 
 Private Sub imgClanes_Click()
-Call MsgBox("Sistema deshabilitado.", vbInformation, "Argentum Online")
-'If frmGuildLeader.Visible Then Unload frmGuildLeader
- '   Call WriteRequestGuildLeaderInfo
+    
+    Call WriteRequestGuildWindow
+    Call FlushBuffer
+    
 End Sub
 
 Private Sub imgEstadisticas_Click()
@@ -1996,7 +1997,6 @@ Private Sub Socket1_Disconnect()
     
     On Local Error GoTo 0
     
-    Call frmConnect.LoadComponents
     frmConnect.Visible = True
 
     

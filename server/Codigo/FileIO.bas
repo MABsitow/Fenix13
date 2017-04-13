@@ -246,7 +246,7 @@ On Error GoTo ErrHandler
     
     frmCargando.cargar.min = 0
     frmCargando.cargar.max = NumeroHechizos
-    frmCargando.cargar.value = 0
+    frmCargando.cargar.Value = 0
     
     'Llena la lista
     For Hechizo = 1 To NumeroHechizos
@@ -340,7 +340,7 @@ On Error GoTo ErrHandler
             .Target = val(Leer.GetValue("Hechizo" & Hechizo, "Target"))
             .Flecha = val(Leer.GetValue("Hechizo" & Hechizo, "Flecha"))
             
-            frmCargando.cargar.value = frmCargando.cargar.value + 1
+            frmCargando.cargar.Value = frmCargando.cargar.Value + 1
             
         End With
     Next Hechizo
@@ -403,6 +403,13 @@ Public Sub DoBackUp()
     
     Call LimpiarMundo
     Call WorldSave
+    
+    Call SendData(SendTarget.ToAll, 0, PrepareMessageConsoleMsg("Servidor> Guardando Clanes.", FontTypeNames.FONTTYPE_SERVER))
+    
+    Call DumpGuilds
+    
+    Call SendData(SendTarget.ToAll, 0, PrepareMessageConsoleMsg("Servidor> Clanes Guardados.", FontTypeNames.FONTTYPE_SERVER))
+    
   '  Call modGuilds.v_RutinaElecciones
     Call ResetCentinelaInfo     'Reseteamos al centinela
     
@@ -630,7 +637,7 @@ Sub LoadOBJData()
     
     frmCargando.cargar.min = 0
     frmCargando.cargar.max = NumObjDatas
-    frmCargando.cargar.value = 0
+    frmCargando.cargar.Value = 0
     
     
     ReDim Preserve ObjData(1 To NumObjDatas) As ObjData
@@ -820,7 +827,7 @@ Sub LoadOBJData()
             
             .NoSeCae = val(Leer.GetValue("OBJ" & Object, "NoSeCae"))
             
-            frmCargando.cargar.value = frmCargando.cargar.value + 1
+            frmCargando.cargar.Value = frmCargando.cargar.Value + 1
         End With
     Next Object
     
@@ -937,6 +944,7 @@ Sub LoadUserInit(ByVal UserIndex As Integer, ByRef UserFile As clsIniReader)
             .Navegando = CByte(UserFile.GetValue("FLAGS", "Navegando"))
             .Envenenado = CByte(UserFile.GetValue("FLAGS", "Envenenado"))
             .Paralizado = CByte(UserFile.GetValue("FLAGS", "Paralizado"))
+            .IsLeader = CByte(UserFile.GetValue("FLAGS", "IsLeader"))
             
             'Matrix
             .lastMap = CInt(UserFile.GetValue("FLAGS", "LastMap"))
@@ -1076,7 +1084,22 @@ Sub LoadUserInit(ByVal UserIndex As Integer, ByRef UserFile As clsIniReader)
         For LoopC = 1 To 3
             .Recompensas(LoopC) = val(UserFile.GetValue("RECOMPENSAS", "Recompensa" & LoopC))
         Next
-
+        
+        ln = UserFile.GetValue("Guild", "GUILDID")
+        
+        If IsNumeric(ln) Then
+            If CLng(ln) > LastGuild Then
+                .GuildID = 0
+                Call LogError("Usuario: " & .Name & " con guild id incorrecto.")
+            Else
+                .GuildID = CLng(ln)
+            End If
+        Else
+            .GuildID = 0
+        End If
+        
+        .flags.WaitingApprovement = CLng(UserFile.GetValue("Guild", "RequestedTo"))
+        
       '  ln = UserFile.GetValue("Guild", "GUILDINDEX")
        ' If IsNumeric(ln) Then
        '     .GuildIndex = CInt(ln)
@@ -1130,7 +1153,7 @@ Sub CargarBackUp()
         
 115         frmCargando.cargar.min = 0
 120         frmCargando.cargar.max = NumMaps
-125         frmCargando.cargar.value = 0
+125         frmCargando.cargar.Value = 0
         
 130         MapPath = GetVar(DatPath & "Map.dat", "INIT", "MapPath")
         
@@ -1153,7 +1176,7 @@ Sub CargarBackUp()
             
 180             Call CargarMapa(map, tFileName)
             
-185             frmCargando.cargar.value = frmCargando.cargar.value + 1
+185             frmCargando.cargar.Value = frmCargando.cargar.Value + 1
 190             DoEvents
 195         Next map
     '<EhFooter>
@@ -1185,7 +1208,7 @@ Sub LoadMapData()
         
 115         frmCargando.cargar.min = 0
 120         frmCargando.cargar.max = NumMaps
-125         frmCargando.cargar.value = 0
+125         frmCargando.cargar.Value = 0
         
 130         MapPath = GetVar(DatPath & "Map.dat", "INIT", "MapPath")
         
@@ -1200,7 +1223,7 @@ Sub LoadMapData()
 155             tFileName = App.path & MapPath & "Mapa" & map
 160             Call CargarMapa(map, tFileName)
             
-165             frmCargando.cargar.value = frmCargando.cargar.value + 1
+165             frmCargando.cargar.Value = frmCargando.cargar.Value + 1
 170             DoEvents
 175         Next map
 
@@ -1522,14 +1545,14 @@ Sub LoadSini()
 
 End Sub
 
-Sub WriteVar(ByVal File As String, ByVal Main As String, ByVal Var As String, ByVal value As String)
+Sub WriteVar(ByVal File As String, ByVal Main As String, ByVal Var As String, ByVal Value As String)
 '***************************************************
 'Author: Unknown
 'Last Modification: -
 'Escribe VAR en un archivo
 '***************************************************
 
-writeprivateprofilestring Main, Var, value, File
+writeprivateprofilestring Main, Var, Value, File
     
 End Sub
 
@@ -1587,6 +1610,8 @@ With UserList(UserIndex)
     Call WriteVar(UserFile, "FLAGS", "Navegando", CStr(.flags.Navegando))
     Call WriteVar(UserFile, "FLAGS", "Envenenado", CStr(.flags.Envenenado))
     Call WriteVar(UserFile, "FLAGS", "Paralizado", CStr(.flags.Paralizado))
+    Call WriteVar(UserFile, "FLAGS", "IsLeader", CStr(.flags.IsLeader))
+    
     'Matrix
     Call WriteVar(UserFile, "FLAGS", "LastMap", CStr(.flags.lastMap))
     
@@ -1773,7 +1798,10 @@ With UserList(UserIndex)
     For LoopC = 1 To 3
         Call WriteVar(UserFile, "RECOMPENSAS", "Recompensa" & LoopC, val(.Recompensas(LoopC)))
     Next LoopC
-
+    
+    Call WriteVar(UserFile, "Guild", "GUILDID", .GuildID)
+    Call WriteVar(UserFile, "Guild", "RequestedTo", .flags.WaitingApprovement)
+    
     'Devuelve el head de muerto
     If .flags.Muerto = 1 Then
         .Char.Head = iCabezaMuerto

@@ -3684,7 +3684,7 @@ Obj28=0-0
 Obj29=0-0
 Obj30=0-0
 [NPC120]
-Name=Herrero                                                             
+Name=Herrero                                                              
 Desc=Tan solo las armaduras que yo vendo te protegerán contra las fuerzas del mal.
 Head=0
 Body=16
@@ -4344,7 +4344,7 @@ Obj28=0-0
 Obj29=0-0
 Obj30=0-0
 [NPC167]
-Name=Herrero                                                             
+Name=Herrero                                                              
 Desc=Los escudos y los cascos son de gran ayuda para todos los guerreros.
 Head=0
 Body=16
@@ -4564,7 +4564,7 @@ Obj28=0-0
 Obj29=0-0
 Obj30=0-0
 [NPC166]
-Name=Herrero                                                             
+Name=Herrero                                                              
 Desc=Mis escudos y cascos son los mejores del continente.
 Head=0
 Body=16
@@ -4729,7 +4729,7 @@ Obj28=0-0
 Obj29=0-0
 Obj30=0-0
 [NPC165]
-Name=Herrero                                                             
+Name=Herrero                                                              
 Desc=Cubrete con mis escudos y mis cascos, pueden salvarte la vida.
 Head=0
 Body=16
@@ -4949,7 +4949,7 @@ Obj28=0-0
 Obj29=0-0
 Obj30=0-0
 [NPC164]
-Name=Herrero                                                             
+Name=Herrero                                                              
 Desc=Cubrete con mis escudos y mis cascos, pueden salvarte la vida.
 Head=0
 Body=16
@@ -5279,7 +5279,7 @@ Obj28=0-0
 Obj29=0-0
 Obj30=0-0
 [NPC161]
-Name=Herrero                                                             
+Name=Herrero                                                              
 Desc=Las piezas que yo vendo, pueden salvarte la vida.
 Head=0
 Body=16
@@ -5609,7 +5609,7 @@ Obj28=0-0
 Obj29=0-0
 Obj30=0-0
 [NPC162]
-Name=Herrero                                                             
+Name=Herrero                                                              
 Desc=Los cascos y escudos son fundamentales a la hora de la batalla.
 Head=0
 Body=16
@@ -5884,7 +5884,7 @@ Obj28=0-0
 Obj29=0-0
 Obj30=0-0
 [NPC163]
-Name=Herrero                                                             
+Name=Herrero                                                              
 Desc=Puedes necesitar cubrirte con escudos o cascos.
 Head=0
 Body=16

@@ -38,7 +38,7 @@ Public Enum SendTarget
     ToMapButIndex
     ToGM
     ToNPCArea
-   ' ToGuildMembers
+    ToGuildMembers
     ToAdmins
     ToPCAreaButIndex
     ToAdminsAreaButConsejeros

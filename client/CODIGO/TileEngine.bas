@@ -33,6 +33,8 @@ Attribute VB_Name = "Mod_TileEngine"
 
 Option Explicit
 
+Public delta As Long
+
 Public Enum eRenderState 'Ojo con cambiar esto, tener en cuenta que esta hardcodeado en el mod_Components
             eLogin = 0
             eNewCharInfo
@@ -44,6 +46,8 @@ End Enum
 Private RenderState As eRenderState
 Private BodyExample As Grh
 Private FadeOff As Boolean
+Private FadeOn As Boolean
+Private ConnectAlpha As Byte
 
 Private Type tHelpWindow
             Active As Boolean
@@ -68,8 +72,8 @@ End Type
 Private Type CharVA
     X As Integer
     Y As Integer
-    w As Integer
-    h As Integer
+    W As Integer
+    H As Integer
     
     Tx1 As Single
     Tx2 As Single
@@ -339,15 +343,14 @@ Public TilePixelWidth As Integer
 Public ScrollPixelsPerFrameX As Integer
 Public ScrollPixelsPerFrameY As Integer
 
-Dim timerElapsedTime As Single
-Dim timerTicksPerFrame As Single
-Dim engineBaseSpeed As Single
+Private timerElapsedTime As Single
+Private timerTicksPerFrame As Single
+Private engineBaseSpeed As Single
 
 Public NumChars As Integer
 Public LastChar As Integer
 Public NumWeaponAnims As Integer
 
-Private MainView        As Long 'ID
 Private MainViewWidth   As Integer
 Private MainViewHeight  As Integer
 
@@ -1428,7 +1431,6 @@ Public Function InitTileEngine(ByVal setDisplayFormhWnd As Long, ByVal setMainVi
 'Last modified by: Juan Martín Sotuyo Dodero (Maraxus)
 'Creates all DX objects and configures the engine to start running.
 '***************************************************
-    
     'Fill startup variables
     MainViewTop = setMainViewTop
     MainViewLeft = setMainViewLeft
@@ -1486,6 +1488,8 @@ Public Function InitTileEngine(ByVal setDisplayFormhWnd As Long, ByVal setMainVi
     
     RenderState = eRenderState.eLogin
     
+    FadeOn = True
+    ConnectAlpha = 0
     InitTileEngine = True
 End Function
 
@@ -1620,6 +1624,7 @@ End Sub
 Public Sub Render()
     If EngineRun Then
         
+        Call Time_Update
         Call DirectDevice.Clear(0, ByVal 0, D3DCLEAR_TARGET, 0, 1#, 0)
 
         Call SpriteBatch.Begin
@@ -1650,29 +1655,40 @@ Public Sub Render()
         End If
 
         Call SpriteBatch.Finish
-        
-        'Get timing info
-        timerElapsedTime = GetElapsedTime()
-        timerTicksPerFrame = timerElapsedTime * engineBaseSpeed
-
+    
     End If
 End Sub
 
 Private Sub Render_Connect()
     
     Dim Color(3) As Long
-    Dim alpha As Byte
     
-    alpha = 255
+    If FadeOff Then
+        If ConnectAlpha > 20 Then
+            ConnectAlpha = ConnectAlpha - timerTicksPerFrame
+        Else
+            ConnectAlpha = 0
+            FadeOff = False
+        End If
+    End If
     
-    Color(0) = D3DColorARGB(alpha, 255, 255, 255)
+    If FadeOn Then
+        If ConnectAlpha < 250 Then
+            ConnectAlpha = ConnectAlpha + (30 * timerTicksPerFrame)
+        Else
+            ConnectAlpha = 255
+            FadeOn = False
+        End If
+    End If
+    
+    Color(0) = D3DColorARGB(ConnectAlpha, 255, 255, 255)
     Color(1) = Color(0)
     Color(2) = Color(0)
     Color(3) = Color(0)
     
     Call DirectDevice.BeginScene
     
-    Call Device_Textured_Render(0, 0, 1024, 768, 0, 0, 999999, Color)
+    Call Device_Textured_Render(0, 0, 1024, 768, 0, 0, 999999, White)
     
     Select Case RenderState
     
@@ -2194,7 +2210,7 @@ Private Sub Engine_Render_Text(ByRef Batch As clsBatch, ByRef UseFont As CustomF
                 TempVA.X = X + Count
                 TempVA.Y = Y + yOffset
             
-                Batch.Draw TempVA.X, TempVA.Y, TempVA.w, TempVA.h, Color, _
+                Batch.Draw TempVA.X, TempVA.Y, TempVA.W, TempVA.H, Color, _
                             TempVA.Tx1, TempVA.Ty1, TempVA.Tx2, TempVA.Ty2
 
                 'Shift over the the position to render the next character
@@ -2288,8 +2304,8 @@ Sub Engine_Init_FontSettings()
         With cfonts(1).HeaderInfo.CharVA(LoopChar)
             .X = 0
             .Y = 0
-            .w = cfonts(1).HeaderInfo.CellWidth
-            .h = cfonts(1).HeaderInfo.CellHeight
+            .W = cfonts(1).HeaderInfo.CellWidth
+            .H = cfonts(1).HeaderInfo.CellHeight
             .Tx1 = u
             .Ty1 = v
             .Tx2 = u + cfonts(1).ColFactor
@@ -2300,10 +2316,10 @@ Sub Engine_Init_FontSettings()
     
 End Sub
 
-Public Sub Draw_Box(ByVal X As Integer, ByVal Y As Integer, ByVal w As Integer, ByVal h As Integer, BackgroundColor() As Long)
+Public Sub Draw_Box(ByVal X As Integer, ByVal Y As Integer, ByVal W As Integer, ByVal H As Integer, BackgroundColor() As Long)
     
     Call SpriteBatch.SetTexture(Nothing)
-    Call SpriteBatch.Draw(X, Y, w, h, BackgroundColor)
+    Call SpriteBatch.Draw(X, Y, W, H, BackgroundColor)
 End Sub
 
 Public Sub ChangeRenderState(ByRef State As eRenderState)
@@ -2363,4 +2379,10 @@ Public Sub SetBodyExample(ByVal UserBody As Integer)
     BodyExample = BodyData(UserBody).Walk(3)
     BodyExample.Started = 1
     BodyExample.Loops = INFINITE_LOOPS
+End Sub
+
+Public Sub Time_Update()
+    'Get timing info
+    timerElapsedTime = GetElapsedTime()
+    timerTicksPerFrame = timerElapsedTime * engineBaseSpeed
 End Sub

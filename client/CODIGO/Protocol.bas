@@ -148,6 +148,8 @@ Private Enum ServerPacketID
     ShowFaccionForm
     EligeRecompensa
     ShowRecompensaForm
+    SendGuildForm
+    GuildFoundation
 End Enum
 
 Private Enum ClientPacketID
@@ -242,6 +244,10 @@ Private Enum ClientPacketID
     RequestFaccionForm
     RequestRecompensaForm
     EligioRecompensa
+    RequestGuildWindow
+    GuildFoundate
+    GuildConfirmFoundation
+    GuildRequest
 End Enum
 
 Public Enum FontTypeNames
@@ -268,9 +274,11 @@ Public Enum FontTypeNames
     FONTTYPE_DIOS
     FONTTYPE_NEWBIE
     FONTTYPE_NEUTRAL
+    FONTTYPE_GUILDWELCOME
+    FONTTYPE_GUILDLOGIN
 End Enum
 
-Public FontTypes(22) As tFont
+Public FontTypes(24) As tFont
 
 ''
 ' Initializes the fonts array
@@ -418,6 +426,24 @@ Public Sub InitFonts()
         .Green = 180
         .blue = 180
         .bold = 1
+    End With
+    
+    With FontTypes(FontTypeNames.FONTTYPE_GUILDWELCOME)
+    
+        .Red = 255
+        .Green = 201
+        .blue = 14
+        .bold = True
+        
+    End With
+    
+    With FontTypes(FontTypeNames.FONTTYPE_GUILDLOGIN)
+    
+        .Red = 255
+        .Green = 255
+        .blue = 128
+        .italic = True
+        
     End With
 End Sub
 
@@ -733,6 +759,12 @@ Public Sub HandleIncomingData()
         
         Case ServerPacketID.ShowRecompensaForm
             Call HandleShowRecompensaForm
+        
+        Case ServerPacketID.SendGuildForm
+            Call HandleSendGuildForm
+        
+        Case ServerPacketID.GuildFoundation
+            Call HandleGuildFoundation
             
         Case Else
             'ERROR : Abort!
@@ -758,234 +790,241 @@ Public Sub HandleMultiMessage()
     Dim BodyPart As Byte
     Dim Daño As Integer
     
-    'ultra todo
-With incomingData
-
-    Select Case .ReadByte
-        Case eMessages.DontSeeAnything
-            Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_NO_VES_NADA_INTERESANTE, 65, 190, 156, False, False)
-        
-        Case eMessages.NPCSwing
-            Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_CRIATURA_FALLA_GOLPE, 255, 0, 0, True, False)
-        
-        Case eMessages.NPCKillUser
-            Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_CRIATURA_MATADO, 255, 0, 0, True, False)
-        
-        Case eMessages.BlockedWithShieldUser
-            Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_RECHAZO_ATAQUE_ESCUDO, 255, 0, 0, True, False)
-        
-        Case eMessages.BlockedWithShieldOther
-            Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_USUARIO_RECHAZO_ATAQUE_ESCUDO, 255, 0, 0, True, False)
-        
-        Case eMessages.UserSwing
-            Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_FALLADO_GOLPE, 255, 0, 0, True, False)
-        
-        Case eMessages.NobilityLost
-            Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_PIERDE_NOBLEZA, 255, 0, 0, False, False)
-        
-        Case eMessages.CantUseWhileMeditating
-            Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_USAR_MEDITANDO, 255, 0, 0, False, False)
-        
-        Case eMessages.NPCHitUser
-            Select Case incomingData.ReadByte()
-                Case bCabeza
-                    Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_GOLPE_CABEZA & CStr(incomingData.ReadInteger()) & "!!", 255, 0, 0, True, False)
-                
-                Case bBrazoIzquierdo
-                    Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_GOLPE_BRAZO_IZQ & CStr(incomingData.ReadInteger()) & "!!", 255, 0, 0, True, False)
-                
-                Case bBrazoDerecho
-                    Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_GOLPE_BRAZO_DER & CStr(incomingData.ReadInteger()) & "!!", 255, 0, 0, True, False)
-                
-                Case bPiernaIzquierda
-                    Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_GOLPE_PIERNA_IZQ & CStr(incomingData.ReadInteger()) & "!!", 255, 0, 0, True, False)
-                
-                Case bPiernaDerecha
-                    Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_GOLPE_PIERNA_DER & CStr(incomingData.ReadInteger()) & "!!", 255, 0, 0, True, False)
-                
-                Case bTorso
-                    Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_GOLPE_TORSO & CStr(incomingData.ReadInteger() & "!!"), 255, 0, 0, True, False)
-            End Select
-        
-        Case eMessages.UserHitNPC
-            Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_GOLPE_CRIATURA_1 & CStr(incomingData.ReadLong()) & MENSAJE_2, 255, 0, 0, True, False)
-        
-        Case eMessages.UserAttackedSwing
-            Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_1 & charlist(incomingData.ReadInteger()).Nombre & MENSAJE_ATAQUE_FALLO, 255, 0, 0, True, False)
-        
-        Case eMessages.UserHittedByUser
-            Dim AttackerName As String
+    With incomingData
+    
+        Select Case .ReadByte
+            Case eMessages.DontSeeAnything
+                Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_NO_VES_NADA_INTERESANTE, 65, 190, 156, False, False)
             
-            AttackerName = GetRawName(charlist(incomingData.ReadInteger()).Nombre)
-            BodyPart = incomingData.ReadByte()
-            Daño = incomingData.ReadInteger()
+            Case eMessages.NPCSwing
+                Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_CRIATURA_FALLA_GOLPE, 255, 0, 0, True, False)
             
-            Select Case BodyPart
-                Case bCabeza
-                    Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_1 & AttackerName & MENSAJE_RECIVE_IMPACTO_CABEZA & Daño & MENSAJE_2, 255, 0, 0, True, False)
-                
-                Case bBrazoIzquierdo
-                    Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_1 & AttackerName & MENSAJE_RECIVE_IMPACTO_BRAZO_IZQ & Daño & MENSAJE_2, 255, 0, 0, True, False, True)
-                
-                Case bBrazoDerecho
-                    Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_1 & AttackerName & MENSAJE_RECIVE_IMPACTO_BRAZO_DER & Daño & MENSAJE_2, 255, 0, 0, True, False, True)
-                
-                Case bPiernaIzquierda
-                    Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_1 & AttackerName & MENSAJE_RECIVE_IMPACTO_PIERNA_IZQ & Daño & MENSAJE_2, 255, 0, 0, True, False, True)
-                
-                Case bPiernaDerecha
-                    Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_1 & AttackerName & MENSAJE_RECIVE_IMPACTO_PIERNA_DER & Daño & MENSAJE_2, 255, 0, 0, True, False, True)
-                
-                Case bTorso
-                    Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_1 & AttackerName & MENSAJE_RECIVE_IMPACTO_TORSO & Daño & MENSAJE_2, 255, 0, 0, True, False, True)
-            End Select
-        
-        Case eMessages.UserHittedUser
-
-            Dim VictimName As String
+            Case eMessages.NPCKillUser
+                Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_CRIATURA_MATADO, 255, 0, 0, True, False)
             
-            VictimName = GetRawName(charlist(incomingData.ReadInteger()).Nombre)
-            BodyPart = incomingData.ReadByte()
-            Daño = incomingData.ReadInteger()
+            Case eMessages.BlockedWithShieldUser
+                Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_RECHAZO_ATAQUE_ESCUDO, 255, 0, 0, True, False)
             
-            Select Case BodyPart
-                Case bCabeza
-                    Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_PRODUCE_IMPACTO_1 & VictimName & MENSAJE_PRODUCE_IMPACTO_CABEZA & Daño & MENSAJE_2, 255, 0, 0, True, False, True)
-                
-                Case bBrazoIzquierdo
-                    Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_PRODUCE_IMPACTO_1 & VictimName & MENSAJE_PRODUCE_IMPACTO_BRAZO_IZQ & Daño & MENSAJE_2, 255, 0, 0, True, False, True)
-                
-                Case bBrazoDerecho
-                    Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_PRODUCE_IMPACTO_1 & VictimName & MENSAJE_PRODUCE_IMPACTO_BRAZO_DER & Daño & MENSAJE_2, 255, 0, 0, True, False, True)
-                
-                Case bPiernaIzquierda
-                    Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_PRODUCE_IMPACTO_1 & VictimName & MENSAJE_PRODUCE_IMPACTO_PIERNA_IZQ & Daño & MENSAJE_2, 255, 0, 0, True, False, True)
-                
-                Case bPiernaDerecha
-                    Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_PRODUCE_IMPACTO_1 & VictimName & MENSAJE_PRODUCE_IMPACTO_PIERNA_DER & Daño & MENSAJE_2, 255, 0, 0, True, False, True)
-                
-                Case bTorso
-                    Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_PRODUCE_IMPACTO_1 & VictimName & MENSAJE_PRODUCE_IMPACTO_TORSO & Daño & MENSAJE_2, 255, 0, 0, True, False, True)
-            End Select
-        
-        Case eMessages.WorkRequestTarget
-            UsingSkill = incomingData.ReadByte()
+            Case eMessages.BlockedWithShieldOther
+                Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_USUARIO_RECHAZO_ATAQUE_ESCUDO, 255, 0, 0, True, False)
             
-            frmMain.MousePointer = 2
+            Case eMessages.UserSwing
+                Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_FALLADO_GOLPE, 255, 0, 0, True, False)
             
-            Select Case UsingSkill
-                Case Magia
-                    Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_TRABAJO_MAGIA, 100, 100, 120, 0, 0)
-                
-                Case Pesca
-                    Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_TRABAJO_PESCA, 100, 100, 120, 0, 0)
-                
-                Case Robar
-                    Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_TRABAJO_ROBAR, 100, 100, 120, 0, 0)
-                
-                Case Talar
-                    Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_TRABAJO_TALAR, 100, 100, 120, 0, 0)
-                
-                Case Mineria
-                    Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_TRABAJO_MINERIA, 100, 100, 120, 0, 0)
-                
-                Case FundirMetal
-                    Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_TRABAJO_FUNDIRMETAL, 100, 100, 120, 0, 0)
-                
-                Case Proyectiles
-                    Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_TRABAJO_PROYECTILES, 100, 100, 120, 0, 0)
-            End Select
-
-        Case eMessages.HaveKilledUser
-            Dim level As Long
-            Call ShowConsoleMsg(MENSAJE_HAS_MATADO_A & charlist(.ReadInteger).Nombre & MENSAJE_22, 255, 0, 0, True, False)
-            level = .ReadLong
-            Call ShowConsoleMsg(MENSAJE_HAS_GANADO_EXPE_1 & level & MENSAJE_HAS_GANADO_EXPE_2, 255, 0, 0, True, False)
-        Case eMessages.UserKill
-            Call ShowConsoleMsg(charlist(.ReadInteger).Nombre & MENSAJE_TE_HA_MATADO, 255, 0, 0, True, False)
-        Case eMessages.EarnExp
-            Call ShowConsoleMsg(MENSAJE_HAS_GANADO_EXPE_1 & .ReadLong & MENSAJE_HAS_GANADO_EXPE_2, 255, 0, 0, True, False)
-        Case eMessages.GoHome
-            Dim Distance As Byte
-            Dim Hogar As String
-            Dim tiempo As Integer
-            Distance = .ReadByte
-            tiempo = .ReadInteger
-            Hogar = .ReadString
-            Call ShowConsoleMsg("Estás a " & Distance & " mapas de distancia de " & Hogar & ", este viaje durará " & tiempo & " segundos.", 255, 0, 0, True)
-            Traveling = True
-        Case eMessages.FinishHome
-            Call ShowConsoleMsg(MENSAJE_HOGAR, 255, 255, 255)
-            Traveling = False
-        Case eMessages.CancelGoHome
-            Call ShowConsoleMsg(MENSAJE_HOGAR_CANCEL, 255, 0, 0, True)
-            Traveling = False
-        Case eMessages.WrongFaction
-            Call ShowConsoleMsg("¡No pertenecés a la facción!", 0, 128, 255, True)
-        Case eMessages.NeedToKill
-            If UserFaccion = eFaccion.Real Then
-                Call ShowConsoleMsg("¡Necesitas matar a " & Val(.ReadInteger) - Val(.ReadInteger) & " seguidores de Lord Thek!", 0, 128, 255, True)
-            Else
-                Call ShowConsoleMsg("¡Necesitas matar a " & Val(.ReadInteger) - Val(.ReadInteger) & " seguidores de la Alianza!", 255, 0, 0, True)
-            End If
-        Case eMessages.NeedTournaments
-            If UserFaccion = eFaccion.Real Then
-                Call ShowConsoleMsg("No ganaste suficientes torneos. Tenés que haber ganado " & .ReadByte & ", tienes: " & .ReadByte & ".", 0, 128, 255, True)
-            Else
-                Call ShowConsoleMsg("No ganaste suficientes torneos. Tenés que haber ganado " & .ReadByte & ", tienes: " & .ReadByte & ".", 255, 0, 0, True)
-            End If
-        Case eMessages.HierarchyUpgrade
-            If UserFaccion = eFaccion.Real Then
-                Call ShowConsoleMsg("¡Has ascendido de jerarquía! Ahora eres " & .ReadString & ".", 0, 128, 255, True)
-            Else
-                Call ShowConsoleMsg("¡Has ascendido de jerarquía! Ahora eres " & .ReadString & ".", 255, 0, 0, True)
-            End If
-        Case eMessages.LastHierarchy
-            If UserFaccion = eFaccion.Real Then
-                Call Dialogos.CreateDialog("¡Ya has alcanzado la máxima jerarquia de la Alianza del Fénix!", .ReadInteger, -1)
-            Else
-                Call Dialogos.CreateDialog("¡Ya has alcanzado la máxima jerarquia en el Ejército de Lord Thek!", .ReadInteger, -1)
-            End If
+            Case eMessages.NobilityLost
+                Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_PIERDE_NOBLEZA, 255, 0, 0, False, False)
             
-        Case eMessages.HierarchyExpelled
-            If UserFaccion = eFaccion.Real Then
-                Call ShowConsoleMsg("¡¡Has sido expulsado de la Alianza del Fénix!!", 0, 128, 255, True)
-            Else
-                Call ShowConsoleMsg("¡¡Has sido expulsado del Ejército de Lord Thek!!", 255, 0, 0, True)
-            End If
-        
-        Case eMessages.Neutral
-            If UserFaccion = eFaccion.Real Then
-                'Call ShowConsoleMsg("¡¡No eres fiel al rey!!", 0, 128, 255, True)
-                Call Dialogos.CreateDialog("¡¡No eres fiel al rey!!", .ReadInteger, -1)
-            Else
-                Call Dialogos.CreateDialog("¡¡No eres fiel a Lord Thek!!", .ReadInteger, -1)
-            End If
+            Case eMessages.CantUseWhileMeditating
+                Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_USAR_MEDITANDO, 255, 0, 0, False, False)
             
-        Case eMessages.OppositeSide
-            If UserFaccion = eFaccion.Real Then
-                Call Dialogos.CreateDialog("¡¡Maldito insolente!! ¡Los seguidores de Lord Thek no tienen lugar en nuestro ejército!", .ReadInteger, -1)
-            Else
-                Call Dialogos.CreateDialog("¡¡Maldito insolente!! ¡Los seguidores del rey no tienen lugar en nuestro ejército!", .ReadInteger, -1)
-            End If
+            Case eMessages.NPCHitUser
+                Select Case incomingData.ReadByte()
+                    Case bCabeza
+                        Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_GOLPE_CABEZA & CStr(incomingData.ReadInteger()) & "!!", 255, 0, 0, True, False)
+                    
+                    Case bBrazoIzquierdo
+                        Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_GOLPE_BRAZO_IZQ & CStr(incomingData.ReadInteger()) & "!!", 255, 0, 0, True, False)
+                    
+                    Case bBrazoDerecho
+                        Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_GOLPE_BRAZO_DER & CStr(incomingData.ReadInteger()) & "!!", 255, 0, 0, True, False)
+                    
+                    Case bPiernaIzquierda
+                        Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_GOLPE_PIERNA_IZQ & CStr(incomingData.ReadInteger()) & "!!", 255, 0, 0, True, False)
+                    
+                    Case bPiernaDerecha
+                        Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_GOLPE_PIERNA_DER & CStr(incomingData.ReadInteger()) & "!!", 255, 0, 0, True, False)
+                    
+                    Case bTorso
+                        Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_GOLPE_TORSO & CStr(incomingData.ReadInteger() & "!!"), 255, 0, 0, True, False)
+                End Select
             
-        Case eMessages.AlreadyBelong
-            If UserFaccion = eFaccion.Real Then
-                Call Dialogos.CreateDialog("¡Ya perteneces a las tropas reales! ¡Ve a combatir criminales!", .ReadInteger, -1)
-            Else
-                Call Dialogos.CreateDialog("¡Ya perteneces a las tropas del mal! ¡Ve a combatir ciudadanos!", .ReadInteger, -1)
-            End If
-        Case eMessages.LevelRequired
-            Call Dialogos.CreateDialog("Necesitas ser al menos nivel " & .ReadByte & " para poder ingresar.", .ReadInteger, -1)
-        
-        Case eMessages.FactionWelcome
-            If UserFaccion = eFaccion.Real Then
-                Call Dialogos.CreateDialog("¡Bienvenido a al Ejército Imperial! Si demuestras fidelidad y destreza en las peleas, podrás aumentar de jerarquía.", .ReadInteger, -1)
-            Else
-                Call Dialogos.CreateDialog("¡Bienvenido al Ejército de Lord Thek! Si demuestras tu fidelidad y destreza en las peleas, podrás aumentar de jerarquía.", .ReadInteger, -1)
-            End If
-    End Select
-End With
+            Case eMessages.UserHitNPC
+                Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_GOLPE_CRIATURA_1 & CStr(incomingData.ReadLong()) & MENSAJE_2, 255, 0, 0, True, False)
+            
+            Case eMessages.UserAttackedSwing
+                Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_1 & charlist(incomingData.ReadInteger()).Nombre & MENSAJE_ATAQUE_FALLO, 255, 0, 0, True, False)
+            
+            Case eMessages.UserHittedByUser
+                Dim AttackerName As String
+                
+                AttackerName = GetRawName(charlist(incomingData.ReadInteger()).Nombre)
+                BodyPart = incomingData.ReadByte()
+                Daño = incomingData.ReadInteger()
+                
+                Select Case BodyPart
+                    Case bCabeza
+                        Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_1 & AttackerName & MENSAJE_RECIVE_IMPACTO_CABEZA & Daño & MENSAJE_2, 255, 0, 0, True, False)
+                    
+                    Case bBrazoIzquierdo
+                        Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_1 & AttackerName & MENSAJE_RECIVE_IMPACTO_BRAZO_IZQ & Daño & MENSAJE_2, 255, 0, 0, True, False, True)
+                    
+                    Case bBrazoDerecho
+                        Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_1 & AttackerName & MENSAJE_RECIVE_IMPACTO_BRAZO_DER & Daño & MENSAJE_2, 255, 0, 0, True, False, True)
+                    
+                    Case bPiernaIzquierda
+                        Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_1 & AttackerName & MENSAJE_RECIVE_IMPACTO_PIERNA_IZQ & Daño & MENSAJE_2, 255, 0, 0, True, False, True)
+                    
+                    Case bPiernaDerecha
+                        Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_1 & AttackerName & MENSAJE_RECIVE_IMPACTO_PIERNA_DER & Daño & MENSAJE_2, 255, 0, 0, True, False, True)
+                    
+                    Case bTorso
+                        Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_1 & AttackerName & MENSAJE_RECIVE_IMPACTO_TORSO & Daño & MENSAJE_2, 255, 0, 0, True, False, True)
+                End Select
+            
+            Case eMessages.UserHittedUser
+    
+                Dim VictimName As String
+                
+                VictimName = GetRawName(charlist(incomingData.ReadInteger()).Nombre)
+                BodyPart = incomingData.ReadByte()
+                Daño = incomingData.ReadInteger()
+                
+                Select Case BodyPart
+                    Case bCabeza
+                        Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_PRODUCE_IMPACTO_1 & VictimName & MENSAJE_PRODUCE_IMPACTO_CABEZA & Daño & MENSAJE_2, 255, 0, 0, True, False, True)
+                    
+                    Case bBrazoIzquierdo
+                        Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_PRODUCE_IMPACTO_1 & VictimName & MENSAJE_PRODUCE_IMPACTO_BRAZO_IZQ & Daño & MENSAJE_2, 255, 0, 0, True, False, True)
+                    
+                    Case bBrazoDerecho
+                        Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_PRODUCE_IMPACTO_1 & VictimName & MENSAJE_PRODUCE_IMPACTO_BRAZO_DER & Daño & MENSAJE_2, 255, 0, 0, True, False, True)
+                    
+                    Case bPiernaIzquierda
+                        Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_PRODUCE_IMPACTO_1 & VictimName & MENSAJE_PRODUCE_IMPACTO_PIERNA_IZQ & Daño & MENSAJE_2, 255, 0, 0, True, False, True)
+                    
+                    Case bPiernaDerecha
+                        Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_PRODUCE_IMPACTO_1 & VictimName & MENSAJE_PRODUCE_IMPACTO_PIERNA_DER & Daño & MENSAJE_2, 255, 0, 0, True, False, True)
+                    
+                    Case bTorso
+                        Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_PRODUCE_IMPACTO_1 & VictimName & MENSAJE_PRODUCE_IMPACTO_TORSO & Daño & MENSAJE_2, 255, 0, 0, True, False, True)
+                End Select
+            
+            Case eMessages.WorkRequestTarget
+                UsingSkill = incomingData.ReadByte()
+                
+                frmMain.MousePointer = 2
+                
+                Select Case UsingSkill
+                    Case Magia
+                        Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_TRABAJO_MAGIA, 100, 100, 120, 0, 0)
+                    
+                    Case Pesca
+                        Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_TRABAJO_PESCA, 100, 100, 120, 0, 0)
+                    
+                    Case Robar
+                        Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_TRABAJO_ROBAR, 100, 100, 120, 0, 0)
+                    
+                    Case Talar
+                        Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_TRABAJO_TALAR, 100, 100, 120, 0, 0)
+                    
+                    Case Mineria
+                        Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_TRABAJO_MINERIA, 100, 100, 120, 0, 0)
+                    
+                    Case FundirMetal
+                        Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_TRABAJO_FUNDIRMETAL, 100, 100, 120, 0, 0)
+                    
+                    Case Proyectiles
+                        Call AddtoRichTextBox(frmMain.RecTxt, MENSAJE_TRABAJO_PROYECTILES, 100, 100, 120, 0, 0)
+                End Select
+    
+            Case eMessages.HaveKilledUser
+                Dim Level As Long
+                Call ShowConsoleMsg(MENSAJE_HAS_MATADO_A & charlist(.ReadInteger).Nombre & MENSAJE_22, 255, 0, 0, True, False)
+                Level = .ReadLong
+                Call ShowConsoleMsg(MENSAJE_HAS_GANADO_EXPE_1 & Level & MENSAJE_HAS_GANADO_EXPE_2, 255, 0, 0, True, False)
+            Case eMessages.UserKill
+                Call ShowConsoleMsg(charlist(.ReadInteger).Nombre & MENSAJE_TE_HA_MATADO, 255, 0, 0, True, False)
+            Case eMessages.EarnExp
+                Call ShowConsoleMsg(MENSAJE_HAS_GANADO_EXPE_1 & .ReadLong & MENSAJE_HAS_GANADO_EXPE_2, 255, 0, 0, True, False)
+            Case eMessages.GoHome
+                Dim Distance As Byte
+                Dim Hogar As String
+                Dim tiempo As Integer
+                Distance = .ReadByte
+                tiempo = .ReadInteger
+                Hogar = .ReadString
+                Call ShowConsoleMsg("Estás a " & Distance & " mapas de distancia de " & Hogar & ", este viaje durará " & tiempo & " segundos.", 255, 0, 0, True)
+                Traveling = True
+            Case eMessages.FinishHome
+                Call ShowConsoleMsg(MENSAJE_HOGAR, 255, 255, 255)
+                Traveling = False
+            Case eMessages.CancelGoHome
+                Call ShowConsoleMsg(MENSAJE_HOGAR_CANCEL, 255, 0, 0, True)
+                Traveling = False
+            Case eMessages.WrongFaction
+                Call ShowConsoleMsg("¡No pertenecés a la facción!", 0, 128, 255, True)
+            Case eMessages.NeedToKill
+                If UserFaccion = eFaccion.Real Then
+                    Call ShowConsoleMsg("¡Necesitas matar a " & Val(.ReadInteger) - Val(.ReadInteger) & " seguidores de Lord Thek!", 0, 128, 255, True)
+                Else
+                    Call ShowConsoleMsg("¡Necesitas matar a " & Val(.ReadInteger) - Val(.ReadInteger) & " seguidores de la Alianza!", 255, 0, 0, True)
+                End If
+            Case eMessages.NeedTournaments
+                If UserFaccion = eFaccion.Real Then
+                    Call ShowConsoleMsg("No ganaste suficientes torneos. Tenés que haber ganado " & .ReadByte & ", tienes: " & .ReadByte & ".", 0, 128, 255, True)
+                Else
+                    Call ShowConsoleMsg("No ganaste suficientes torneos. Tenés que haber ganado " & .ReadByte & ", tienes: " & .ReadByte & ".", 255, 0, 0, True)
+                End If
+            Case eMessages.HierarchyUpgrade
+                If UserFaccion = eFaccion.Real Then
+                    Call ShowConsoleMsg("¡Has ascendido de jerarquía! Ahora eres " & .ReadString & ".", 0, 128, 255, True)
+                Else
+                    Call ShowConsoleMsg("¡Has ascendido de jerarquía! Ahora eres " & .ReadString & ".", 255, 0, 0, True)
+                End If
+            Case eMessages.LastHierarchy
+                If UserFaccion = eFaccion.Real Then
+                    Call Dialogos.CreateDialog("¡Ya has alcanzado la máxima jerarquia de la Alianza del Fénix!", .ReadInteger, -1)
+                Else
+                    Call Dialogos.CreateDialog("¡Ya has alcanzado la máxima jerarquia en el Ejército de Lord Thek!", .ReadInteger, -1)
+                End If
+                
+            Case eMessages.HierarchyExpelled
+                If UserFaccion = eFaccion.Real Then
+                    Call ShowConsoleMsg("¡¡Has sido expulsado de la Alianza del Fénix!!", 0, 128, 255, True)
+                Else
+                    Call ShowConsoleMsg("¡¡Has sido expulsado del Ejército de Lord Thek!!", 255, 0, 0, True)
+                End If
+            
+            Case eMessages.Neutral
+                If UserFaccion = eFaccion.Real Then
+                    'Call ShowConsoleMsg("¡¡No eres fiel al rey!!", 0, 128, 255, True)
+                    Call Dialogos.CreateDialog("¡¡No eres fiel al rey!!", .ReadInteger, -1)
+                Else
+                    Call Dialogos.CreateDialog("¡¡No eres fiel a Lord Thek!!", .ReadInteger, -1)
+                End If
+                
+            Case eMessages.OppositeSide
+                If UserFaccion = eFaccion.Real Then
+                    Call Dialogos.CreateDialog("¡¡Maldito insolente!! ¡Los seguidores de Lord Thek no tienen lugar en nuestro ejército!", .ReadInteger, -1)
+                Else
+                    Call Dialogos.CreateDialog("¡¡Maldito insolente!! ¡Los seguidores del rey no tienen lugar en nuestro ejército!", .ReadInteger, -1)
+                End If
+                
+            Case eMessages.AlreadyBelong
+                If UserFaccion = eFaccion.Real Then
+                    Call Dialogos.CreateDialog("¡Ya perteneces a las tropas reales! ¡Ve a combatir criminales!", .ReadInteger, -1)
+                Else
+                    Call Dialogos.CreateDialog("¡Ya perteneces a las tropas del mal! ¡Ve a combatir ciudadanos!", .ReadInteger, -1)
+                End If
+            Case eMessages.LevelRequired
+                Call Dialogos.CreateDialog("Necesitas ser al menos nivel " & .ReadByte & " para poder ingresar.", .ReadInteger, -1)
+            
+            Case eMessages.FactionWelcome
+                If UserFaccion = eFaccion.Real Then
+                    Call Dialogos.CreateDialog("¡Bienvenido a al Ejército Imperial! Si demuestras fidelidad y destreza en las peleas, podrás aumentar de jerarquía.", .ReadInteger, -1)
+                Else
+                    Call Dialogos.CreateDialog("¡Bienvenido al Ejército de Lord Thek! Si demuestras tu fidelidad y destreza en las peleas, podrás aumentar de jerarquía.", .ReadInteger, -1)
+                End If
+            
+            Case eMessages.GuildCreated
+                Dim tmpstr() As String
+                
+                tmpstr = Split(.ReadString(), ",")
+                
+                Call ShowConsoleMsg(tmpstr(0) & " ha fundado el clan " & tmpstr(1) & ".", , , , True)
+                Call Audio.PlayWave("44.wav")
+        End Select
+    End With
 
 End Sub
 
@@ -1121,6 +1160,12 @@ Private Sub HandleDisconnect()
     
     ' Return to connection screen
     frmConnect.MousePointer = vbNormal
+    
+    frmConnect.Loaded = False
+    
+    Call frmConnect.LoadComponents
+    Call ChangeRenderState(eRenderState.eLogin)
+    
     frmConnect.Visible = True
     frmMain.Visible = False
     
@@ -3469,9 +3514,6 @@ Private Sub HandleFame()
         Exit Sub
     End If
     
-
-
-    
     LlegoFama = True
 End Sub
 
@@ -3540,11 +3582,8 @@ Private Sub HandleAddForumMessage()
     End If
     
 On Error GoTo ErrHandler
-
-
-
     
-    Dim ForumType As eForumMsgType
+    Dim ForumType As Byte 'eForumMsgType
     Dim Title As String
     Dim Message As String
     Dim Author As String
@@ -3555,12 +3594,12 @@ On Error GoTo ErrHandler
     Author = incomingData.ReadString()
     Message = incomingData.ReadString()
     
-    If Not frmForo.ForoLimpio Then
-        clsForos.ClearForums
-        frmForo.ForoLimpio = True
-    End If
+    'If Not frmForo.ForoLimpio Then
+    '    clsForos.ClearForums
+    '    frmForo.ForoLimpio = True
+    'End If
 
-    Call clsForos.AddPost(ForumAlignment(ForumType), Title, Author, Message, EsAnuncio(ForumType))
+    'Call clsForos.AddPost(ForumAlignment(ForumType), Title, Author, Message, EsAnuncio(ForumType))
 
 ErrHandler:
     Dim error As Long
@@ -3582,13 +3621,15 @@ Private Sub HandleShowForumForm()
 '***************************************************
 
 
+    incomingData.ReadByte
+    incomingData.ReadByte
     
-    frmForo.Privilegios = incomingData.ReadByte
-    frmForo.CanPostSticky = incomingData.ReadByte
+    'frmForo.Privilegios = incomingData.ReadByte
+    'frmForo.CanPostSticky = incomingData.ReadByte
     
-    If Not MirandoForo Then
-        frmForo.Show , frmMain
-    End If
+    'If Not MirandoForo Then
+    '    frmForo.Show , frmMain
+    'End If
 End Sub
 
 ''
@@ -4664,7 +4705,7 @@ End Sub
 ' @param    item Index of the item to craft in the list sent by the server.
 ' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
-Public Sub WriteCraftBlacksmith(ByVal Item As Integer)
+Public Sub WriteCraftBlacksmith(ByVal item As Integer)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
@@ -4673,7 +4714,7 @@ Public Sub WriteCraftBlacksmith(ByVal Item As Integer)
     With outgoingData
         Call .WriteByte(ClientPacketID.CraftBlacksmith)
         
-        Call .WriteInteger(Item)
+        Call .WriteInteger(item)
     End With
 End Sub
 
@@ -4683,7 +4724,7 @@ End Sub
 ' @param    item Index of the item to craft in the list sent by the server.
 ' @remarks  The data is not actually sent until the incomingData is properly flushed.
 
-Public Sub WriteCraftCarpenter(ByVal Item As Integer)
+Public Sub WriteCraftCarpenter(ByVal item As Integer)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
@@ -4692,7 +4733,7 @@ Public Sub WriteCraftCarpenter(ByVal Item As Integer)
     With outgoingData
         Call .WriteByte(ClientPacketID.CraftCarpenter)
         
-        Call .WriteInteger(Item)
+        Call .WriteInteger(item)
     End With
 End Sub
 
@@ -7722,36 +7763,6 @@ Public Sub WriteReloadObjects()
 End Sub
 
 ''
-' Writes the "Restart" message to the outgoing data incomingData.
-'
-' @remarks  The data is not actually sent until the incomingData is properly flushed.
-
-Public Sub WriteRestart()
-'***************************************************
-'Author: Juan Martín Sotuyo Dodero (Maraxus)
-'Last Modification: 05/17/06
-'Writes the "Restart" message to the outgoing data incomingData
-'***************************************************
-    Call outgoingData.WriteByte(ClientPacketID.GMCommands)
-    Call outgoingData.WriteByte(eGMCommands.Restart)
-End Sub
-
-''
-' Writes the "ResetAutoUpdate" message to the outgoing data incomingData.
-'
-' @remarks  The data is not actually sent until the incomingData is properly flushed.
-
-Public Sub WriteResetAutoUpdate()
-'***************************************************
-'Author: Juan Martín Sotuyo Dodero (Maraxus)
-'Last Modification: 05/17/06
-'Writes the "ResetAutoUpdate" message to the outgoing data incomingData
-'***************************************************
-    Call outgoingData.WriteByte(ClientPacketID.GMCommands)
-    Call outgoingData.WriteByte(eGMCommands.ResetAutoUpdate)
-End Sub
-
-''
 ' Writes the "ChatColor" message to the outgoing data incomingData.
 '
 ' @param    r The red component of the new chat color.
@@ -8052,7 +8063,7 @@ Private Sub HandleSubeClase()
     With incomingData
         
         
-        .ReadBoolean
+'        .ReadBoolean
         
         frmMain.lblClase.Visible = .ReadBoolean
     
@@ -8118,8 +8129,6 @@ Private Sub HandleEligeRecompensa()
     
     With incomingData
     
-        .ReadBoolean
-        
         frmMain.lblRecompensa.Visible = .ReadBoolean
     End With
 End Sub
@@ -8164,6 +8173,96 @@ Public Sub WriteEligioFaccion(ByVal Faccion As eFaccion)
         .WriteByte Faccion
     
     End With
+End Sub
+
+Public Sub WriteRequestGuildWindow()
+    
+    Call outgoingData.WriteByte(ClientPacketID.RequestGuildWindow)
+End Sub
+
+Private Sub HandleSendGuildForm()
+    
+    With incomingData
+    
+        Dim frm As Byte
+        
+        frm = .ReadByte
+        
+        Dim i As Long
+        Dim LastGuild As Long
+        Dim item As ListItem
+        
+        Select Case frm
+        
+            Case 0 'list
+                frmGuildList.Cls
+                LastGuild = .ReadLong
+                
+                For i = 1 To LastGuild
+                    Set item = frmGuildList.lstGuilds.ListItems.Add(, , .ReadString)
+                    item.SubItems(1) = .ReadByte
+                    
+                Next
+                
+        End Select
+        
+        frmGuildList.Show
+    End With
+End Sub
+
+Public Sub WriteGuildFoundate()
+    
+    Call outgoingData.WriteByte(ClientPacketID.GuildFoundate)
+    
+End Sub
+
+Private Sub HandleGuildFoundation()
+    
+    With incomingData
+        
+        Dim action As Byte
+        
+        action = .ReadByte
+        
+        Select Case action
+        
+            Case 0 'show window
+                If frmGuildList.Visible Then Unload frmGuildList
+                
+                frmGuildFoundation.Show
+                
+        End Select
+        
+    
+    End With
+End Sub
+
+Public Sub WriteGuildConfirmFoundation(ByVal GuildName As String, ByVal Level As Byte, ByVal Faction As String, ByVal Entrance As Byte)
+    
+    With outgoingData
+    
+        .WriteByte ClientPacketID.GuildConfirmFoundation
+        
+        .WriteString GuildName
+
+        If StrComp(UCase$(Faction), UCase$("Real")) = 0 Then
+            .WriteByte 1
+        ElseIf StrComp(UCase$(Faction), UCase$("Caos")) = 0 Then
+            .WriteByte 2
+        Else
+            .WriteByte 0
+        End If
+        
+        .WriteByte Entrance
+        .WriteByte Level
+        
+    End With
+End Sub
+
+Public Sub WriteGuildRequest(ByVal GuildName As String)
+    
+    Call outgoingData.WriteByte(ClientPacketID.GuildRequest)
+    Call outgoingData.WriteString(GuildName)
 End Sub
 
 ''

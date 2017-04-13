@@ -86,11 +86,12 @@ Public btnAtras As Integer
 Public MouseX As Integer
 Public MouseY As Integer
 
+Public Loaded As Boolean
+
 Public SkillPts As Integer
 Private uSkills(1 To NUMSKILLS) As Byte
 
 Private Declare Sub CopyMemory Lib "kernel32" Alias "RtlMoveMemory" (ByRef Destination As Any, ByRef Source As Any, ByVal Length As Long)
-
 
 'CSEH: ErrLog
 Public Sub DirectXEvent8_DXCallback(ByVal EventID As Long)
@@ -145,7 +146,7 @@ NextLoopC:
     Exit Sub
 
 DirectXEvent8_DXCallback_Err:
-        'Call LogError("Error en DirectXEvent8_DXCallback: " & Erl & " - " & Err.Description)
+        Call LogError("Error en DirectXEvent8_DXCallback: " & Erl & " - " & Err.Description)
     '</EhFooter>
 End Sub
 
@@ -163,6 +164,9 @@ Private Sub Form_Load()
 End Sub
 
 Public Sub LoadComponents()
+    
+    If Loaded Then Exit Sub
+    
     txtNombre = AddTextBox(429, 357, 170, 19, Black, White)
     txtPassword = AddTextBox(429, 407, 170, 19, Black, White, , True)
     btnLogin = AddRect(406, 438, 100, 37)
@@ -236,6 +240,8 @@ Public Sub LoadComponents()
     
     Call HideComponents(txtNick, txtPass, txtMail, txtRepPass, lblFuerza, lblAgilidad, lblInteligencia, lblConstitucion, _
                         lblCarisma, cmbHogar, cmbSexo, cmbRaza, lstSkills)
+                        
+    Loaded = True
 End Sub
 Private Sub Render_KeyPress(KeyAscii As Integer)
     
@@ -308,7 +314,7 @@ Public Sub LoginNewChar()
     
     If Not CheckData Then Exit Sub
 
-    UserPassword = GetComponentText(txtPassword)
+    UserPassword = GetComponentText(txtPass)
     
     For i = 1 To Len(UserPassword)
         CharAscii = Asc(mid$(UserPassword, i, 1))

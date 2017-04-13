@@ -488,8 +488,6 @@ Public Enum eGMCommands
     ReloadServerIni         '/RELOADSINI
     ReloadSpells            '/RELOADHECHIZOS
     ReloadObjects           '/RELOADOBJ
-    Restart                 '/REINICIAR
-    ResetAutoUpdate         '/AUTOUPDATE
     ChatColor               '/CHATCOLOR
     Ignored                 '/IGNORADO
     CheckSlot               '/SLOT
@@ -610,6 +608,7 @@ Public Enum eMessages
     KillToJoin
     LevelRequired
     FactionWelcome
+    GuildCreated
 End Enum
 
 'Inventario
@@ -886,51 +885,6 @@ Public Type tIndiceFx
 End Type
 
 Public EsperandoLevel As Boolean
-
-' Tipos de mensajes
-Public Enum eForumMsgType
-    ieGeneral
-    ieGENERAL_STICKY
-    ieREAL
-    ieREAL_STICKY
-    ieCAOS
-    ieCAOS_STICKY
-End Enum
-
-' Indica los privilegios para visualizar los diferentes foros
-Public Enum eForumVisibility
-    ieGENERAL_MEMBER = &H1
-    ieREAL_MEMBER = &H2
-    ieCAOS_MEMBER = &H4
-End Enum
-
-' Indica el tipo de foro
-Public Enum eForumType
-    ieGeneral
-    ieREAL
-    ieCAOS
-End Enum
-
-' Limite de posts
-Public Const MAX_STICKY_POST As Byte = 5
-Public Const MAX_GENERAL_POST As Byte = 30
-Public Const STICKY_FORUM_OFFSET As Byte = 50
-
-' Estructura contenedora de mensajes
-Public Type tForo
-    StickyTitle(1 To MAX_STICKY_POST) As String
-    StickyPost(1 To MAX_STICKY_POST) As String
-    StickyAuthor(1 To MAX_STICKY_POST) As String
-    GeneralTitle(1 To MAX_GENERAL_POST) As String
-    GeneralPost(1 To MAX_GENERAL_POST) As String
-    GeneralAuthor(1 To MAX_GENERAL_POST) As String
-End Type
-
-' 1 foro general y 2 faccionarios
-Public Foros(0 To 2) As tForo
-
-' Forum info handler
-Public clsForos As New clsForum
 
 Public Traveling As Boolean
 
