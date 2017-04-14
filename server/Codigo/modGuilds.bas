@@ -462,7 +462,6 @@ With UserList(UserIndex)
             End If
             
             Call Guilds(UserList(UserIndex).GuildID).Requests.Remove(uID)
-            Call SendData(SendTarget.ToAll, 0, PrepareMessagePlayWave(FX_GUILD_ACEPTEDMEM, NO_3D_SOUND, NO_3D_SOUND))
             'todo: refresh acceptance window
         End If
         
@@ -596,10 +595,12 @@ Private Sub AddMember(ByVal GuildID As Long, ByVal UserName As String)
 100     With Guilds(GuildID)
         
 105         Call .Members.Add(UserName)
-        
+            
+            Call WriteVar(CharPath & UserName & ".chr", "Guild", "GuildID", GuildID)
+            
+            Call SendData(SendTarget.ToGuildMembers, GuildID, PrepareMessageMultiMessage(eMessages.GuildAccepted, , , , UserName))
         End With
     
-110     Call SendData(SendTarget.ToGuildMembers, 0, PrepareMessageConsoleMsg(UserName & " se ha unido al clan.", FontTypeNames.FONTTYPE_GUILDWELCOME))
     '<EhFooter>
     Exit Sub
 
@@ -684,7 +685,7 @@ Private Sub RemovingLeader(ByVal GuildID As Long, ByVal UserName As String)
                 
                 End If
             
-140             Call SendData(SendTarget.ToGuildMembers, 0, PrepareMessageConsoleMsg(.LeaderName & " es ahora el líder del clan.", FontTypeNames.FONTTYPE_SERVER))
+140             Call SendData(SendTarget.ToGuildMembers, GuildID, PrepareMessageConsoleMsg(.LeaderName & " es ahora el líder del clan.", FontTypeNames.FONTTYPE_SERVER))
         
             Else 'There's no lieutenants, search for normal members
             
@@ -707,7 +708,7 @@ Private Sub RemovingLeader(ByVal GuildID As Long, ByVal UserName As String)
                         
                             End If
                         
-185                         Call SendData(SendTarget.ToGuildMembers, 0, PrepareMessageConsoleMsg(.LeaderName & " es ahora el líder del clan.", FontTypeNames.FONTTYPE_SERVER))
+185                         Call SendData(SendTarget.ToGuildMembers, GuildID, PrepareMessageConsoleMsg(.LeaderName & " es ahora el líder del clan.", FontTypeNames.FONTTYPE_SERVER))
                         End If
                     Next
                 
@@ -735,7 +736,7 @@ Public Sub ConnectMember(ByVal GuildID As Long, ByVal UserIndex As Integer)
     
 105         Call Guilds(GuildID).OnlineMembers.Add(UserIndex)
         
-110         Call SendData(SendTarget.ToGuildMembers, 0, PrepareMessageConsoleMsg(UserList(UserIndex).Name & " se ha conectado.", FontTypeNames.FONTTYPE_GUILDLOGIN))
+110         Call SendData(SendTarget.ToGuildMembers, GuildID, PrepareMessageConsoleMsg(UserList(UserIndex).Name & " se ha conectado.", FontTypeNames.FONTTYPE_GUILDLOGIN))
         End If
     
     '<EhFooter>
@@ -756,7 +757,7 @@ Public Sub DisconnectMember(ByVal GuildID As Long, ByVal UserIndex As Integer)
 105         Call Guilds(GuildID).OnlineMembers.Remove(UserIndex)
         
 110         If UserList(UserIndex).flags.IsLeader > 0 Then
-115             Call SendData(SendTarget.ToGuildMembers, 0, PrepareMessageConsoleMsg(UserList(UserIndex).Name & " se ha desconectado.", FontTypeNames.FONTTYPE_GUILDLOGIN))
+115             Call SendData(SendTarget.ToGuildMembers, GuildID, PrepareMessageConsoleMsg(UserList(UserIndex).Name & " se ha desconectado.", FontTypeNames.FONTTYPE_GUILDLOGIN))
             End If
         End If
     
@@ -908,4 +909,8 @@ Public Function GuildIndex(ByVal GuildName As String) As Long
         
     Next
     
+End Function
+
+Public Function SameGuild(ByVal UserA As Integer, ByVal UserB As Integer) As Boolean
+    SameGuild = (UserList(UserA).GuildID = UserList(UserB).GuildID)
 End Function

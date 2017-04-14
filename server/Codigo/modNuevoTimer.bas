@@ -270,33 +270,6 @@ Public Function IntervaloPermiteSerAtacado(ByVal UserIndex As Integer, Optional 
 
 End Function
 
-Public Function IntervaloPerdioNpc(ByVal UserIndex As Integer, Optional ByVal Actualizar As Boolean = False) As Boolean
-'**************************************************************
-'Author: ZaMa
-'Last Modify by: ZaMa
-'Last Modify Date: 13/11/2009
-'13/11/2009: ZaMa - Add the Timer which determines wether the user still owns a Npc or not
-'**************************************************************
-    Dim TActual As Long
-    
-    TActual = GetTickCount() And &H7FFFFFFF
-    
-    With UserList(UserIndex)
-        ' Inicializa el timer
-        If Actualizar Then
-            .Counters.TimerPerteneceNpc = TActual
-            IntervaloPerdioNpc = False
-        Else
-            If TActual - .Counters.TimerPerteneceNpc >= IntervaloOwnedNpc Then
-                IntervaloPerdioNpc = True
-            Else
-                IntervaloPerdioNpc = False
-            End If
-        End If
-    End With
-
-End Function
-
 Public Function IntervaloEstadoAtacable(ByVal UserIndex As Integer, Optional ByVal Actualizar As Boolean = False) As Boolean
 '**************************************************************
 'Author: ZaMa

@@ -609,6 +609,7 @@ Public Enum eMessages
     LevelRequired
     FactionWelcome
     GuildCreated
+    GuildAccepted
 End Enum
 
 'Inventario

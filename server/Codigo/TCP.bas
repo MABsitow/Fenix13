@@ -1003,14 +1003,6 @@ With UserList(UserIndex)
         Call WriteNavigateToggle(UserIndex)
     End If
     
-    
-   ' If .GuildIndex > 0 Then
-   '     'welcome to the show baby...
-    '    If Not modGuilds.m_ConectarMiembroAClan(UserIndex, .GuildIndex) Then
-    '        Call WriteConsoleMsg(UserIndex, "Tu estado no te permite entrar al clan.", FontTypeNames.FONTTYPE_GUILD)
-    '    End If
-    'End If
-    
     Call ConnectMember(.GuildID, UserIndex)
     
     Call SendData(SendTarget.ToPCArea, UserIndex, PrepareMessageCreateFX(.Char.CharIndex, FXIDs.FXWARP, 0))

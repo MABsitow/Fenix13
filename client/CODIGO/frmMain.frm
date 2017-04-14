@@ -1300,7 +1300,7 @@ Private Sub imgAsignarSkill_Click()
     LlegaronSkills = False
     
     For i = 1 To NUMSKILLS
-        frmSkills3.text1(i).Caption = UserSkills(i)
+        frmSkills3.Text1(i).Caption = UserSkills(i)
     Next i
     
     Alocados = SkillPoints
@@ -1776,8 +1776,11 @@ Private Sub lblDropGold_Click()
 End Sub
 
 Private Sub Label4_Click()
+    
     Call Audio.PlayWave(SND_CLICK)
-
+    
+    If picInv.Visible Then Exit Sub
+    
     InvEqu.Picture = LoadPicture(App.path & "\Graficos\Centroinventario.jpg")
 
     ' Activo controles de inventario
@@ -1797,8 +1800,11 @@ Private Sub Label4_Click()
 End Sub
 
 Private Sub Label7_Click()
+    
     Call Audio.PlayWave(SND_CLICK)
-
+    
+    If hlst.Visible Then Exit Sub
+    
     InvEqu.Picture = LoadPicture(App.path & "\Graficos\Centrohechizos.jpg")
     
     ' Activo controles de hechizos

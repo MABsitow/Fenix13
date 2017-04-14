@@ -119,7 +119,9 @@ Private LoginTex  As Direct3DTexture8
 Private Viewport As D3DVIEWPORT8
 Private Projection As D3DMATRIX
 Private View As D3DMATRIX
-'Private Camera As D3DVECTOR
+
+Private OffsetCounterX As Single
+Private OffsetCounterY As Single
 
 Private MainViewRect As D3DRECT
 Private ConnectRect As D3DRECT
@@ -246,6 +248,9 @@ Public Type Char
     
     Nombre As String
     NombreOffset As Integer
+    
+    GuildName As String
+    GuildOffset As Integer
     
     scrollDirectionX As Integer
     scrollDirectionY As Integer
@@ -628,8 +633,12 @@ Sub ResetCharInfo(ByVal CharIndex As Integer)
         
         .Moving = 0
         .muerto = False
-        .Nombre = ""
+        .Nombre = vbNullString
         .NombreOffset = 0
+        
+        .GuildName = vbNullString
+        .GuildOffset = 0
+        
         .pie = False
         .Pos.X = 0
         .Pos.Y = 0
@@ -1204,7 +1213,7 @@ error:
     End If
 End Sub
 
-Sub Render_Screen(ByVal PixelOffsetX As Integer, ByVal PixelOffsetY As Integer)
+Sub Render_Screen()
 '**************************************************************
 'Author: Aaron Perkins
 'Last Modify Date: 8/14/2007
@@ -1227,6 +1236,26 @@ Sub Render_Screen(ByVal PixelOffsetX As Integer, ByVal PixelOffsetY As Integer)
     Dim minYOffset  As Integer
     Dim PixelOffsetXTemp As Integer 'For centering grhs
     Dim PixelOffsetYTemp As Integer 'For centering grhs
+    
+    If UserMoving = 1 Then
+        If AddtoUserPos.X <> 0 Then
+            OffsetCounterX = OffsetCounterX - ScrollPixelsPerFrameX * AddtoUserPos.X * timerTicksPerFrame
+            If Abs(OffsetCounterX) >= Abs(TilePixelWidth * AddtoUserPos.X) Then
+                OffsetCounterX = 0
+                AddtoUserPos.X = 0
+                UserMoving = 0
+            End If
+        End If
+
+        If AddtoUserPos.Y <> 0 Then
+            OffsetCounterY = OffsetCounterY - ScrollPixelsPerFrameY * AddtoUserPos.Y * timerTicksPerFrame
+            If Abs(OffsetCounterY) >= Abs(TilePixelHeight * AddtoUserPos.Y) Then
+                OffsetCounterY = 0
+                AddtoUserPos.Y = 0
+                UserMoving = 0
+            End If
+        End If
+    End If
     
     'Figure out Ends and Starts of screen
     ScreenMinY = (UserPos.Y - AddtoUserPos.Y) - HalfWindowTileHeight
@@ -1276,12 +1305,12 @@ Sub Render_Screen(ByVal PixelOffsetX As Integer, ByVal PixelOffsetY As Integer)
     screenX = screenX - 1
     screenY = screenY - 1
     
-    PixelOffsetXTemp = screenX * TilePixelWidth + PixelOffsetX
+    PixelOffsetYTemp = screenY * TilePixelHeight + OffsetCounterY
     'Draw floor layer
-    For X = ScreenMinX To ScreenMaxX
-        For Y = ScreenMinY To ScreenMaxY
-        
-            PixelOffsetYTemp = screenY * TilePixelHeight + PixelOffsetY
+    For Y = ScreenMinY To ScreenMaxY
+        For X = ScreenMinX To ScreenMaxX
+            
+            PixelOffsetXTemp = screenX * TilePixelWidth + OffsetCounterX
             
             'Layer 1 **********************************
             Call Draw_Grh(MapData(X, Y).Graphic(1), _
@@ -1299,25 +1328,25 @@ Sub Render_Screen(ByVal PixelOffsetX As Integer, ByVal PixelOffsetY As Integer)
             End If
             '******************************************
             
-            screenY = screenY + 1
-        Next Y
+            screenX = screenX + 1
+        Next
     
         'Reset ScreenX to original value and increment ScreenY
-        screenY = screenY - Y + ScreenMinY
-        screenX = screenX + 1
-        PixelOffsetXTemp = screenX * TilePixelWidth + PixelOffsetX
-    Next X
+        screenX = screenX - X + ScreenMinX
+        screenY = screenY + 1
+        PixelOffsetYTemp = screenY * TilePixelHeight + OffsetCounterY
+    Next
     
     'Draw Transparent Layers
     screenY = (minYOffset - TileBufferSize)
     screenX = (minXOffset - TileBufferSize)
    
-    PixelOffsetXTemp = screenX * TilePixelWidth + PixelOffsetX
+    PixelOffsetYTemp = screenY * TilePixelHeight + OffsetCounterY
    
-    For X = minX To maxX
-        For Y = minY To maxY
+    For Y = minY To maxY
+        For X = minX To maxX
         
-            PixelOffsetYTemp = screenY * TilePixelHeight + PixelOffsetY
+            PixelOffsetXTemp = screenX * TilePixelWidth + OffsetCounterX
     
             With MapData(X, Y)
                 'Object Layer **********************************
@@ -1345,24 +1374,25 @@ Sub Render_Screen(ByVal PixelOffsetX As Integer, ByVal PixelOffsetY As Integer)
                 
             End With
     
-            screenY = screenY + 1
-        Next Y
-        screenY = screenY - Y + minY
-        screenX = screenX + 1
-        PixelOffsetXTemp = screenX * TilePixelWidth + PixelOffsetX
-    Next X
+            screenX = screenX + 1
+        Next
+        
+        screenX = screenX - X + minX
+        screenY = screenY + 1
+        PixelOffsetYTemp = screenY * TilePixelHeight + OffsetCounterY
+    Next
     
     If Not bTecho Then
         'Draw blocked tiles and grid
         screenY = (minYOffset - TileBufferSize)
         screenX = (minXOffset - TileBufferSize)
         
-        PixelOffsetXTemp = screenX * TilePixelWidth + PixelOffsetX
+        PixelOffsetYTemp = screenY * TilePixelHeight + OffsetCounterY
         
-        For X = minX To maxX
-            For Y = minY To maxY
-               
-               PixelOffsetYTemp = screenY * TilePixelHeight + PixelOffsetY
+        For Y = minY To maxY
+            For X = minX To maxX
+        
+               PixelOffsetXTemp = screenX * TilePixelWidth + OffsetCounterX
                
                 'Layer 4 **********************************
                 If MapData(X, Y).Graphic(4).GrhIndex Then
@@ -1374,13 +1404,13 @@ Sub Render_Screen(ByVal PixelOffsetX As Integer, ByVal PixelOffsetY As Integer)
                 End If
                 '**********************************
                
-                screenY = screenY + 1
-            Next Y
-            screenY = screenY - Y + minY
-            screenX = screenX + 1
-            PixelOffsetXTemp = screenX * TilePixelWidth + PixelOffsetX
+                screenX = screenX + 1
+            Next
+            screenX = screenX - X + minX
+            screenY = screenY + 1
+            PixelOffsetYTemp = screenY * TilePixelHeight + OffsetCounterY
         
-        Next X
+        Next
     End If
         
 End Sub
@@ -1771,30 +1801,6 @@ Private Sub ShowNextFrame(ByVal MouseViewX As Integer, ByVal MouseViewY As Integ
 'Last modified by: Juan Martín Sotuyo Dodero (Maraxus)
 'Updates the game's model and renders everything.
 '***************************************************
-    Static OffsetCounterX As Single
-    Static OffsetCounterY As Single
-
-    If UserMoving Then
-        '****** Move screen Left and Right if needed ******
-        If AddtoUserPos.X <> 0 Then
-            OffsetCounterX = OffsetCounterX - ScrollPixelsPerFrameX * AddtoUserPos.X * timerTicksPerFrame
-            If Abs(OffsetCounterX) >= Abs(TilePixelWidth * AddtoUserPos.X) Then
-                OffsetCounterX = 0
-                AddtoUserPos.X = 0
-                UserMoving = False
-            End If
-        End If
-        
-        '****** Move screen Up and Down if needed ******
-        If AddtoUserPos.Y <> 0 Then
-            OffsetCounterY = OffsetCounterY - ScrollPixelsPerFrameY * AddtoUserPos.Y * timerTicksPerFrame
-            If Abs(OffsetCounterY) >= Abs(TilePixelHeight * AddtoUserPos.Y) Then
-                OffsetCounterY = 0
-                AddtoUserPos.Y = 0
-                UserMoving = False
-            End If
-        End If
-    End If
 
     'Update mouse position within view area
     Call ConvertCPtoTP(MouseViewX, MouseViewY, MouseTileX, MouseTileY)
@@ -1805,7 +1811,7 @@ Private Sub ShowNextFrame(ByVal MouseViewX As Integer, ByVal MouseViewY As Integ
     If UserCiego Then
         Call CleanViewPort
     Else
-        Call Render_Screen(OffsetCounterX, OffsetCounterY)
+        Call Render_Screen
     End If
     
     Call Dialogos.Render
@@ -1848,7 +1854,7 @@ Private Function GetElapsedTime() As Single
     Call QueryPerformanceCounter(end_time)
 End Function
 
-Private Sub CharRender(ByVal CharIndex As Long, ByVal PixelOffsetX As Integer, ByVal PixelOffsetY As Integer)
+Private Sub CharRender(ByVal CharIndex As Long, ByVal OffsetCounterX As Integer, ByVal OffsetCounterY As Integer)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modify Date: 12/03/04
@@ -1919,26 +1925,26 @@ With charlist(CharIndex)
             .Moving = False
         End If
         
-        PixelOffsetX = PixelOffsetX + .MoveOffsetX
-        PixelOffsetY = PixelOffsetY + .MoveOffsetY
+        OffsetCounterX = OffsetCounterX + .MoveOffsetX
+        OffsetCounterY = OffsetCounterY + .MoveOffsetY
         
         If .Head.Head(.Heading).GrhIndex Then
             If Not .invisible Then
                 'Draw Body
-                If .Body.Walk(.Heading).GrhIndex Then Call Draw_Grh(.Body.Walk(.Heading), PixelOffsetX, PixelOffsetY, 1, 1, AmbientColor)
+                If .Body.Walk(.Heading).GrhIndex Then Call Draw_Grh(.Body.Walk(.Heading), OffsetCounterX, OffsetCounterY, 1, 1, AmbientColor)
             
                 'Draw Head
-                If .Head.Head(.Heading).GrhIndex Then Call Draw_Grh(.Head.Head(.Heading), PixelOffsetX + .Body.HeadOffset.X, PixelOffsetY + .Body.HeadOffset.Y, 1, 0, AmbientColor)
+                If .Head.Head(.Heading).GrhIndex Then Call Draw_Grh(.Head.Head(.Heading), OffsetCounterX + .Body.HeadOffset.X, OffsetCounterY + .Body.HeadOffset.Y, 1, 0, AmbientColor)
                     
                 'Draw Helmet
-                If .Casco.Head(.Heading).GrhIndex Then Call Draw_Grh(.Casco.Head(.Heading), PixelOffsetX + .Body.HeadOffset.X, PixelOffsetY + .Body.HeadOffset.Y, 1, 0, AmbientColor)
-                    ' Call Draw_Grh(.Casco.Head(.Heading), PixelOffsetX + .Body.HeadOffset.X, PixelOffsetY + .Body.HeadOffset.Y + OFFSET_HEAD, 1, 0)
+                If .Casco.Head(.Heading).GrhIndex Then Call Draw_Grh(.Casco.Head(.Heading), OffsetCounterX + .Body.HeadOffset.X, OffsetCounterY + .Body.HeadOffset.Y, 1, 0, AmbientColor)
+                    ' Call Draw_Grh(.Casco.Head(.Heading), OffsetCounterX + .Body.HeadOffset.X, Offsetcountery + .Body.HeadOffset.Y + OFFSET_HEAD, 1, 0)
                 
                 'Draw Weapon
-                If .Arma.WeaponWalk(.Heading).GrhIndex Then Call Draw_Grh(.Arma.WeaponWalk(.Heading), PixelOffsetX, PixelOffsetY, 1, 1, AmbientColor)
+                If .Arma.WeaponWalk(.Heading).GrhIndex Then Call Draw_Grh(.Arma.WeaponWalk(.Heading), OffsetCounterX, OffsetCounterY, 1, 1, AmbientColor)
                     
                 'Draw Shield
-                If .Escudo.ShieldWalk(.Heading).GrhIndex Then Call Draw_Grh(.Escudo.ShieldWalk(.Heading), PixelOffsetX, PixelOffsetY, 1, 1, AmbientColor)
+                If .Escudo.ShieldWalk(.Heading).GrhIndex Then Call Draw_Grh(.Escudo.ShieldWalk(.Heading), OffsetCounterX, OffsetCounterY, 1, 1, AmbientColor)
                 
                 If LenB(.Nombre) > 0 Then
                     If Nombres Then
@@ -1977,25 +1983,24 @@ With charlist(CharIndex)
                             Color(3) = ColoresPJ(.priv)
                         End If
                             
-                            'Nick
-                            line = Left$(.Nombre, Pos - 2)
-                            Call Text_Draw(PixelOffsetX - .NombreOffset, PixelOffsetY + 30, line, Color)
-                                    
-                            'Clan
-                         '   line = mid$(.Nombre, Pos)
-                           ' Call RenderTextCentered(PixelOffsetX + TilePixelWidth \ 2 + 5, PixelOffsetY + 45, line, color, frmMain.font)
+                        'Nick
+                        Call Text_Draw(OffsetCounterX - .NombreOffset, OffsetCounterY + 30, .Nombre, Color)
+                               
+                        'Guild
+                        Call Text_Draw(OffsetCounterX - .GuildOffset, OffsetCounterY + 45, .GuildName, Color)
+                           
                     End If
                 End If
             End If
         Else
             'Draw Body
             If .Body.Walk(.Heading).GrhIndex Then _
-                Call Draw_Grh(.Body.Walk(.Heading), PixelOffsetX, PixelOffsetY, 1, 1, AmbientColor)
+                Call Draw_Grh(.Body.Walk(.Heading), OffsetCounterX, OffsetCounterY, 1, 1, AmbientColor)
         End If
         
         'Update dialogs
-        'Call Dialogos.UpdateDialogPos(PixelOffsetX + .Body.HeadOffset.X, PixelOffsetY + .Body.HeadOffset.Y + OFFSET_HEAD, CharIndex) '34 son los pixeles del grh de la cabeza que quedan superpuestos al cuerpo
-        Call Dialogos.UpdateDialogPos(PixelOffsetX + .Body.HeadOffset.X, PixelOffsetY + .Body.HeadOffset.Y, CharIndex)
+        'Call Dialogos.UpdateDialogPos(OffsetCounterX + .Body.HeadOffset.X, Offsetcountery + .Body.HeadOffset.Y + OFFSET_HEAD, CharIndex) '34 son los pixeles del grh de la cabeza que quedan superpuestos al cuerpo
+        Call Dialogos.UpdateDialogPos(OffsetCounterX + .Body.HeadOffset.X, OffsetCounterY + .Body.HeadOffset.Y, CharIndex)
         
         'Draw FX
         If .FxIndex <> 0 Then
@@ -2055,23 +2060,6 @@ Public Sub Device_Textured_Render(ByVal X As Integer, ByVal Y As Integer, _
                     Call .Draw(X, Y, TexWidth, TexHeight, Color)
                 End If
         End With
-End Sub
-
-Public Sub SetCamera(ByVal X As Single, ByVal Y As Single)
-    
-    'Camera.X = X
-    'Camera.Y = Y
-    
-    'With At
-    
-    '    .X = Camera.X
-    '    .Y = Camera.Y
-    '    .Z = 0
-        
-    'End With
-    
-    'Call D3DXMATH_MATRIX.D3DXMatrixLookAtLH(View, Camera, At, Up)
-    'Call DirectDevice.SetTransform(D3DTS_VIEW, View)
 End Sub
 
 Public Sub CheckKeys()

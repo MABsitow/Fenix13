@@ -247,6 +247,8 @@ Private Sub Render_KeyPress(KeyAscii As Integer)
     
     If KeyAscii = vbKeyTab Then
         Call mod_Components.TabComponent
+    ElseIf KeyAscii = vbKeyReturn Then
+        Call LoginUser
     Else
     
         Dim c As Integer

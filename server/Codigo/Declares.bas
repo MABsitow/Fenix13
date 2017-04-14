@@ -1119,7 +1119,6 @@ Public Type UserCounters
     TimerGolpeMagia As Long
     TimerGolpeUsar As Long
     TimerPuedeSerAtacado As Long
-    TimerPerteneceNpc As Long
     TimerEstadoAtacable As Long
     
     Trabajando As Long  ' Para el centinela
@@ -1587,6 +1586,7 @@ Public Enum eMessages
     LevelRequired
     FactionWelcome
     GuildCreated
+    GuildAccepted
 End Enum
 
 Public Enum eGMCommands

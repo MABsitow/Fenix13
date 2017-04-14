@@ -250,7 +250,7 @@ Private Enum ClientPacketID
     GuildRequest
 End Enum
 
-Public Enum FontTypeNames
+Enum FontTypeNames
     FONTTYPE_TALK
     FONTTYPE_FIGHT
     FONTTYPE_WARNING
@@ -1023,11 +1023,15 @@ Public Sub HandleMultiMessage()
                 
                 Call ShowConsoleMsg(tmpstr(0) & " ha fundado el clan " & tmpstr(1) & ".", , , , True)
                 Call Audio.PlayWave("44.wav")
+            
+            Case eMessages.GuildAccepted
+                Call ShowConsoleMsg(.ReadString() & " ha ingresado al clan.", 150, 255, 150)
+                Call Audio.PlayWave("43.wav")
+                
         End Select
     End With
 
 End Sub
-
 
 ''
 ' Handles the Logged message.
@@ -1332,6 +1336,7 @@ Private Sub HandleUserCommerceInit()
 
     TradingUserName = incomingData.ReadString
     
+    'todo
     ' Initialize commerce inventories
     'Call InvComUsu.Initialize(frmComerciarUsu.picInvComercio, Inventario.MaxObjs)
     'Call InvOfferComUsu(0).Initialize(frmComerciarUsu.picInvOfertaProp, INV_OFFER_SLOTS)
@@ -1828,9 +1833,7 @@ Private Sub HandlePosUpdate()
     'Set new pos
     UserPos.X = incomingData.ReadByte()
     UserPos.Y = incomingData.ReadByte()
-    
-    'Call SetCamera(UserPos.X, UserPos.Y)
-    
+        
     'Set char
     MapData(UserPos.X, UserPos.Y).CharIndex = UserCharIndex
     charlist(UserCharIndex).Pos = UserPos
@@ -2245,86 +2248,89 @@ End Sub
 
 'CSEH: ErrLog
 Private Sub HandleCharacterCreate()
-    '***************************************************
-    'Author: Juan Martín Sotuyo Dodero (Maraxus)
-    'Last Modification: 05/17/06
-    '
-    '***************************************************
-100     If incomingData.Remaining < 23 Then
-105         Err.Raise incomingData.NotEnoughDataErrCode
-            Exit Sub
-        End If
+'***************************************************
+'Author: Juan Martín Sotuyo Dodero (Maraxus)
+'Last Modification: 05/17/06
+'
+'***************************************************
+    If incomingData.Remaining < 23 Then
+        Err.Raise incomingData.NotEnoughDataErrCode
+        Exit Sub
+    End If
     
-        On Error GoTo ErrHandler
+    On Error GoTo ErrHandler
 
-        Dim CharIndex As Integer
-        Dim Body As Integer
-        Dim Head As Integer
-        Dim Heading As E_Heading
-        Dim X As Byte
-        Dim Y As Byte
-        Dim weapon As Integer
-        Dim shield As Integer
-        Dim helmet As Integer
-        Dim privs As Integer
-        Dim NickColor As Byte
+    Dim CharIndex As Integer
+    Dim Body As Integer
+    Dim Head As Integer
+    Dim Heading As E_Heading
+    Dim X As Byte
+    Dim Y As Byte
+    Dim weapon As Integer
+    Dim shield As Integer
+    Dim helmet As Integer
+    Dim privs As Integer
+    Dim NickColor As Byte
     
-110     CharIndex = incomingData.ReadInteger()
-115     Body = incomingData.ReadInteger()
-120     Head = incomingData.ReadInteger()
-125     Heading = incomingData.ReadByte()
-130     X = incomingData.ReadByte()
-135     Y = incomingData.ReadByte()
-140     weapon = incomingData.ReadInteger()
-145     shield = incomingData.ReadInteger()
-150     helmet = incomingData.ReadInteger()
+    CharIndex = incomingData.ReadInteger()
+    Body = incomingData.ReadInteger()
+    Head = incomingData.ReadInteger()
+    Heading = incomingData.ReadByte()
+    X = incomingData.ReadByte()
+    Y = incomingData.ReadByte()
+    weapon = incomingData.ReadInteger()
+    shield = incomingData.ReadInteger()
+    helmet = incomingData.ReadInteger()
     
     
-155     With charlist(CharIndex)
-160         Call SetCharacterFx(CharIndex, incomingData.ReadInteger(), incomingData.ReadInteger())
+    With charlist(CharIndex)
+        Call SetCharacterFx(CharIndex, incomingData.ReadInteger(), incomingData.ReadInteger())
         
-165         .Nombre = incomingData.ReadString()
-170         .NombreOffset = (Text_GetWidth(cfonts(1), .Nombre) \ 2) - cfonts(1).RowPitch
+        .Nombre = incomingData.ReadString()
+        .NombreOffset = (Text_GetWidth(cfonts(1), .Nombre) \ 2) - cfonts(1).RowPitch
         
-175         NickColor = incomingData.ReadByte()
+        .GuildName = incomingData.ReadString()
+        .GuildOffset = (Text_GetWidth(cfonts(1), .GuildName) \ 2) - cfonts(1).RowPitch
         
-180         .Criminal = NickColor
+        NickColor = incomingData.ReadByte()
+        
+        .Criminal = NickColor
                 
-185         privs = incomingData.ReadByte()
+        privs = incomingData.ReadByte()
         
-190         If privs <> 0 Then
-                'If the player belongs to a council AND is an admin, only whos as an admin
-195             If (privs And PlayerType.ChaosCouncil) <> 0 And (privs And PlayerType.user) = 0 Then
-200                 privs = privs Xor PlayerType.ChaosCouncil
-                End If
-            
-205             If (privs And PlayerType.RoyalCouncil) <> 0 And (privs And PlayerType.user) = 0 Then
-210                 privs = privs Xor PlayerType.RoyalCouncil
+        If privs <> 0 Then
+            'If the player belongs to a council AND is an admin, only whos as an admin
+            If (privs And PlayerType.ChaosCouncil) <> 0 And (privs And PlayerType.user) = 0 Then
+                privs = privs Xor PlayerType.ChaosCouncil
             End If
             
-            'If the player is a RM, ignore other flags
-            If privs And PlayerType.RoleMaster Then
-                privs = PlayerType.RoleMaster
-            End If
-            
-            'Log2 of the bit flags sent by the server gives our numbers ^^
-            .priv = Log(privs) / Log(2)
-        Else
-            .priv = 0
+            If (privs And PlayerType.RoyalCouncil) <> 0 And (privs And PlayerType.user) = 0 Then
+                privs = privs Xor PlayerType.RoyalCouncil
         End If
-    End With
+            
+        'If the player is a RM, ignore other flags
+        If privs And PlayerType.RoleMaster Then
+            privs = PlayerType.RoleMaster
+        End If
+            
+        'Log2 of the bit flags sent by the server gives our numbers ^^
+        .priv = Log(privs) / Log(2)
+    Else
+        .priv = 0
+    End If
+End With
     
-    Call MakeChar(CharIndex, Body, Head, Heading, X, Y, weapon, shield, helmet)
+Call MakeChar(CharIndex, Body, Head, Heading, X, Y, weapon, shield, helmet)
     
-    Call RefreshAllChars
+Call RefreshAllChars
     
 ErrHandler:
-    Dim error As Long
-    error = Err.Number
+Dim error As Long
+error = Err.Number
 On Error GoTo 0
 
-    If error <> 0 Then _
-        Err.Raise error
+If error <> 0 Then _
+    Err.Raise error
 End Sub
 
 Private Sub HandleCharacterChangeNick()
@@ -8195,7 +8201,7 @@ Private Sub HandleSendGuildForm()
         Select Case frm
         
             Case 0 'list
-                frmGuildList.Cls
+                frmGuildList.lstGuilds.ListItems.Clear
                 LastGuild = .ReadLong
                 
                 For i = 1 To LastGuild

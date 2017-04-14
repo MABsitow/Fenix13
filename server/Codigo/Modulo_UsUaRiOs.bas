@@ -308,10 +308,10 @@ Public Sub MakeUserChar(ByVal toMap As Boolean, ByVal sndIndex As Integer, ByVal
 '15/01/2010: ZaMa - Ahora se envia el color del nick.
 '*************************************************
 
-On Error GoTo ErrHandler
+On Error GoTo Errhandler
 
     Dim CharIndex As Integer
-  '  Dim ClanTag As String
+    Dim ClanTag As String
     Dim NickColor As Byte
     Dim UserName As String
     Dim Privileges As Byte
@@ -331,9 +331,9 @@ On Error GoTo ErrHandler
             
             'Send make character command to clients
             If Not toMap Then
-              '  If .GuildIndex > 0 Then
-               '     ClanTag = modGuilds.GuildName(.GuildIndex)
-               ' End If
+                If .GuildID > 0 Then
+                    ClanTag = Guilds(.GuildID).GuildName
+                End If
                 
                 NickColor = GetNickColor(UserIndex)
                 Privileges = .flags.Privilegios
@@ -346,14 +346,9 @@ On Error GoTo ErrHandler
                         UserName = UserName & " " & TAG_CONSULT_MODE
                     Else
                         If UserList(sndIndex).flags.Privilegios And (PlayerType.User Or PlayerType.Consejero Or PlayerType.RoleMaster) Then
-                            'If LenB(ClanTag) <> 0 Then
-                                UserName = UserName ' & " <" & ClanTag & ">"
                         Else
                             If (.flags.invisible Or .flags.Oculto) And (Not .flags.AdminInvisible = 1) Then
                                 UserName = UserName & " " & TAG_USER_INVISIBLE
-                            'Else
-                             '   If LenB(ClanTag) <> 0 Then _
-                                    UserName = UserName & " <" & ClanTag & ">"
                             End If
                         End If
                     End If
@@ -362,7 +357,7 @@ On Error GoTo ErrHandler
                 Call WriteCharacterCreate(sndIndex, .Char.body, .Char.Head, .Char.heading, _
                             .Char.CharIndex, X, Y, _
                             .Char.WeaponAnim, .Char.ShieldAnim, .Char.FX, 999, .Char.CascoAnim, _
-                            UserName, NickColor, Privileges)
+                            UserName, "<" & ClanTag & ">", NickColor, Privileges)
             Else
                 'Hide the name and clan - set privs as normal user
                  Call AgregarUser(UserIndex, .Pos.map, ButIndex)
@@ -371,7 +366,7 @@ On Error GoTo ErrHandler
     End With
 Exit Sub
 
-ErrHandler:
+Errhandler:
     LogError ("MakeUserChar: num: " & Err.Number & " desc: " & Err.description)
     'Resume Next
     Call CloseSocket(UserIndex)
@@ -796,7 +791,7 @@ Public Sub SendUserStatsTxt(ByVal sendIndex As Integer, ByVal UserIndex As Integ
 '
 '***************************************************
 
-   ' Dim GuildI As Integer
+    Dim GuildI As Integer
     
     With UserList(UserIndex)
         Call WriteConsoleMsg(sendIndex, "Estadísticas de: " & .Name, FontTypeNames.FONTTYPE_INFO)
@@ -825,14 +820,17 @@ Public Sub SendUserStatsTxt(ByVal sendIndex As Integer, ByVal UserIndex As Integ
             Call WriteConsoleMsg(sendIndex, "(CABEZA) Mín Def/Máx Def: 0", FontTypeNames.FONTTYPE_INFO)
         End If
         
-      '  GuildI = .GuildIndex
-      '  If GuildI > 0 Then
-      '      Call WriteConsoleMsg(sendIndex, "Clan: " & modGuilds.GuildName(GuildI), FontTypeNames.FONTTYPE_INFO)
-      '      If UCase$(modGuilds.GuildLeader(GuildI)) = UCase$(.name) Then
-      '          Call WriteConsoleMsg(sendIndex, "Status: Líder", FontTypeNames.FONTTYPE_INFO)
-      '      End If
-      '      'guildpts no tienen objeto
-       ' End If
+        GuildI = .GuildID
+        If GuildI > 0 Then
+            Call WriteConsoleMsg(sendIndex, "Clan: " & Guilds(GuildI).GuildName, FontTypeNames.FONTTYPE_INFO)
+            If .flags.IsLeader = 1 Then
+                Call WriteConsoleMsg(sendIndex, "Status: Líder", FontTypeNames.FONTTYPE_INFO)
+            ElseIf .flags.IsLeader = 2 Then
+                Call WriteConsoleMsg(sendIndex, "Status: Teniente", FontTypeNames.FONTTYPE_INFO)
+            End If
+            
+            'guildpts no tienen objeto
+        End If
         
 #If ConUpTime Then
         Dim TempDate As Date
@@ -872,9 +870,9 @@ Sub SendUserMiniStatsTxt(ByVal sendIndex As Integer, ByVal UserIndex As Integer)
         Call WriteConsoleMsg(sendIndex, "Torneos ganados: " & .Events.Torneos, FontTypeNames.FONTTYPE_INFO)
         Call WriteConsoleMsg(sendIndex, "Quests ganadas: " & .Events.Quests, FontTypeNames.FONTTYPE_INFO)
         
-       ' If .GuildIndex > 0 Then
-       '     Call WriteConsoleMsg(sendIndex, "Clan: " & GuildName(.GuildIndex), FontTypeNames.FONTTYPE_INFO)
-       ' End If
+        If .GuildID > 0 Then
+            Call WriteConsoleMsg(sendIndex, "Clan: " & Guilds(.GuildID).GuildName, FontTypeNames.FONTTYPE_INFO)
+        End If
     End With
 End Sub
 
@@ -922,9 +920,9 @@ Sub SendUserMiniStatsTxtFromChar(ByVal sendIndex As Integer, ByVal charName As S
         Call WriteConsoleMsg(sendIndex, "Asesino: " & CLng(GetVar(CharFile, "REP", "Asesino")), FontTypeNames.FONTTYPE_INFO)
         Call WriteConsoleMsg(sendIndex, "Noble: " & CLng(GetVar(CharFile, "REP", "Nobles")), FontTypeNames.FONTTYPE_INFO)
         
-       ' If IsNumeric(GetVar(CharFile, "Guild", "GUILDINDEX")) Then
-        '    Call WriteConsoleMsg(sendIndex, "Clan: " & modGuilds.GuildName(CInt(GetVar(CharFile, "Guild", "GUILDINDEX"))), FontTypeNames.FONTTYPE_INFO)
-       ' End If
+        If IsNumeric(GetVar(CharFile, "Guild", "GuildID")) Then
+            Call WriteConsoleMsg(sendIndex, "Clan: " & Guilds(CInt(GetVar(CharFile, "Guild", "GuildID"))).GuildName, FontTypeNames.FONTTYPE_INFO)
+        End If
         
         Ban = GetVar(CharFile, "FLAGS", "Ban")
         Call WriteConsoleMsg(sendIndex, "Ban: " & Ban, FontTypeNames.FONTTYPE_INFO)
@@ -1196,9 +1194,9 @@ On Error GoTo ErrorHandler
                 Npclist(aN).flags.AttackedFirstBy = vbNullString
             End If
         End If
+        
         .flags.AtacadoPorNpc = 0
         .flags.NPCAtacado = 0
-        Call PerdioNpc(UserIndex)
         
         '<<<< Atacable >>>>
         If .flags.AtacablePor > 0 Then
@@ -1371,7 +1369,7 @@ Sub Tilelibre(ByRef Pos As WorldPos, ByRef nPos As WorldPos, ByRef Obj As Obj, _
 '23/01/2007 -> Pablo (ToxicWaste): El agua es ahora un TileLibre agregando las condiciones necesarias.
 '18/09/2010: ZaMa - Aplico optimizacion de busqueda de tile libre en forma de rombo.
 '**************************************************************
-On Error GoTo ErrHandler
+On Error GoTo Errhandler
 
     Dim Found As Boolean
     Dim LoopC As Integer
@@ -1414,7 +1412,7 @@ On Error GoTo ErrHandler
     
     Exit Sub
     
-ErrHandler:
+Errhandler:
     Call LogError("Error en Tilelibre. Error: " & Err.Number & " - " & Err.description)
 End Sub
 
@@ -1506,9 +1504,6 @@ Sub WarpUserChar(ByVal UserIndex As Integer, ByVal map As Integer, ByVal X As In
         
         ' No puede ser atacado cuando cambia de mapa, por cierto tiempo
         Call IntervaloPermiteSerAtacado(UserIndex, True)
-        
-        ' Perdes el npc al cambiar de mapa
-        Call PerdioNpc(UserIndex)
         
         ' Automatic toogle navigate
         If (.flags.Privilegios And (PlayerType.User Or PlayerType.Consejero)) = 0 Then
@@ -1914,59 +1909,6 @@ Public Function IsArena(ByVal UserIndex As Integer) As Boolean
     IsArena = (TriggerZonaPelea(UserIndex, UserIndex) = TRIGGER6_PERMITE)
 End Function
 
-Public Sub PerdioNpc(ByVal UserIndex As Integer)
-'**************************************************************
-'Author: ZaMa
-'Last Modify Date: 18/01/2010 (ZaMa)
-'The user loses his owned npc
-'18/01/2010: ZaMa - Las mascotas dejan de atacar al npc que se perdió.
-'**************************************************************
-
-    Dim PetIndex As Long
-    
-    With UserList(UserIndex)
-        If .flags.OwnedNpc > 0 Then
-            Npclist(.flags.OwnedNpc).Owner = 0
-            .flags.OwnedNpc = 0
-            
-            ' Dejan de atacar las mascotas
-            If .NroMascotas > 0 Then
-                For PetIndex = 1 To MAXMASCOTAS
-                    If .MascotasType(PetIndex) > 0 Then Call FollowAmo(PetIndex)
-                Next PetIndex
-            End If
-        End If
-    End With
-End Sub
-
-Public Sub ApropioNpc(ByVal UserIndex As Integer, ByVal NpcIndex As Integer)
-'**************************************************************
-'Author: ZaMa
-'Last Modify Date: 18/01/2010 (zaMa)
-'The user owns a new npc
-'18/01/2010: ZaMa - El sistema no aplica a zonas seguras.
-'19/04/2010: ZaMa - Ahora los admins no se pueden apropiar de npcs.
-'**************************************************************
-
-    With UserList(UserIndex)
-        ' Los admins no se pueden apropiar de npcs
-        If EsGM(UserIndex) Then Exit Sub
-        
-        'No aplica a zonas seguras
-        If MapData(.Pos.map, .Pos.X, .Pos.Y).trigger = eTrigger.ZONASEGURA Then Exit Sub
-
-        ' Pierde el npc anterior
-        If .flags.OwnedNpc > 0 Then Npclist(.flags.OwnedNpc).Owner = 0
-        
-        ' Si tenia otro dueño, lo perdio aca
-        Npclist(NpcIndex).Owner = UserIndex
-        .flags.OwnedNpc = NpcIndex
-    End With
-    
-    ' Inicializo o actualizo el timer de pertenencia
-    Call IntervaloPerdioNpc(UserIndex, True)
-End Sub
-
 Public Function GetDireccion(ByVal UserIndex As Integer, ByVal OtherUserIndex As Integer) As String
 '**************************************************************
 'Author: ZaMa
@@ -2015,7 +1957,7 @@ Public Function FarthestPet(ByVal UserIndex As Integer) As Integer
 'Last Modify Date: 18/11/2009
 'Devuelve el indice de la mascota mas lejana.
 '**************************************************************
-On Error GoTo ErrHandler
+On Error GoTo Errhandler
     
     Dim PetIndex As Integer
     Dim Distancia As Integer
@@ -2051,7 +1993,7 @@ On Error GoTo ErrHandler
 
     Exit Function
     
-ErrHandler:
+Errhandler:
     Call LogError("Error en FarthestPet")
 End Function
 

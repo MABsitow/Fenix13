@@ -295,6 +295,11 @@ On Error Resume Next
         Case SendTarget.ToUsersAndRmsAndCounselorsAreaButGMs
             Call SendToUsersAndRmsAndCounselorsAreaButGMs(sndIndex, sndData)
             Exit Sub
+            
+        Case SendTarget.ToGuildMembers
+            Call SendToGuild(sndIndex, sndData)
+            Exit Sub
+            
     End Select
 End Sub
 

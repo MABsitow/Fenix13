@@ -1,5 +1,5 @@
 VERSION 5.00
-Begin VB.Form FrmElegirCamino 
+Begin VB.Form frmElegirCamino 
    BackColor       =   &H80000002&
    BorderStyle     =   0  'None
    Caption         =   "Form1"
@@ -234,11 +234,11 @@ Unload Me
 End Sub
 Private Sub Fidelidad_Click(Index As Integer)
 
-Unload frmfidelidad
+Unload frmFidelidad
 
-Call frmfidelidad.SetFide(Index)
+Call frmFidelidad.SetFide(Index)
 
-frmfidelidad.Show
+frmFidelidad.Show
 
 End Sub
 

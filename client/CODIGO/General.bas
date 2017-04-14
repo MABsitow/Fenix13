@@ -416,7 +416,6 @@ Sub MoveTo(ByVal Direccion As E_Heading)
         If Not UserDescansar And Not UserMeditar Then
             MoveCharbyHead UserCharIndex, Direccion
             MoveScreen Direccion
-            'MoveCamera Direccion
         End If
     Else
         If charlist(UserCharIndex).Heading <> Direccion Then
