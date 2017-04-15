@@ -250,7 +250,7 @@ Private Enum ClientPacketID
     GuildRequest
 End Enum
 
-Enum FontTypeNames
+Public Enum FontTypeNames
     FONTTYPE_TALK
     FONTTYPE_FIGHT
     FONTTYPE_WARNING
@@ -1027,7 +1027,22 @@ Public Sub HandleMultiMessage()
             Case eMessages.GuildAccepted
                 Call ShowConsoleMsg(.ReadString() & " ha ingresado al clan.", 150, 255, 150)
                 Call Audio.PlayWave("43.wav")
+            
+            
+            Case eMessages.AlreadyInGuild
+                With FontTypes(FontTypeNames.FONTTYPE_WARNING)
+                    Call ShowConsoleMsg("Ya te encuentras en un clan, primero debes salir.", .Red, .Green, .blue, .bold, .italic)
+                End With
                 
+            Case eMessages.EnemyGuild
+                With FontTypes(FontTypeNames.FONTTYPE_WARNING)
+                    Call ShowConsoleMsg("No puedes enviar solicitud a un clan de alineación enemiga.", .Red, .Green, .blue, .bold, .italic)
+                End With
+
+            Case eMessages.PreviousRequest
+                With FontTypes(FontTypeNames.FONTTYPE_INFOBOLD)
+                    Call ShowConsoleMsg("Se eliminará la petición al clan anterior.", .Red, .Green, .blue, .bold, .italic)
+                End With
         End Select
     End With
 
@@ -1826,25 +1841,26 @@ Private Sub HandlePosUpdate()
     
 
     'Remove char from old position
-    If MapData(UserPos.X, UserPos.Y).CharIndex = UserCharIndex Then
-        MapData(UserPos.X, UserPos.Y).CharIndex = 0
+    If MapData(ViewPositionX, ViewPositionY).CharIndex = UserCharIndex Then
+        MapData(ViewPositionX, ViewPositionY).CharIndex = 0
     End If
     
     'Set new pos
-    UserPos.X = incomingData.ReadByte()
-    UserPos.Y = incomingData.ReadByte()
+    ViewPositionX = incomingData.ReadByte()
+    ViewPositionY = incomingData.ReadByte()
         
     'Set char
-    MapData(UserPos.X, UserPos.Y).CharIndex = UserCharIndex
-    charlist(UserCharIndex).Pos = UserPos
+    MapData(ViewPositionX, ViewPositionY).CharIndex = UserCharIndex
+    charlist(UserCharIndex).Pos.X = ViewPositionX
+    charlist(UserCharIndex).Pos.Y = ViewPositionY
     
     'Are we under a roof?
-    bTecho = IIf(MapData(UserPos.X, UserPos.Y).Trigger = 1 Or _
-            MapData(UserPos.X, UserPos.Y).Trigger = 2 Or _
-            MapData(UserPos.X, UserPos.Y).Trigger = 4, True, False)
+    bTecho = IIf(MapData(ViewPositionX, ViewPositionY).Trigger = 1 Or _
+            MapData(ViewPositionX, ViewPositionY).Trigger = 2 Or _
+            MapData(ViewPositionX, ViewPositionY).Trigger = 4, True, False)
                 
     'Update pos label
-    frmMain.Coord.Caption = UserMap & " X: " & UserPos.X & " Y: " & UserPos.Y
+    frmMain.Coord.Caption = UserMap & " X: " & ViewPositionX & " Y: " & ViewPositionY
 End Sub
 
 ''
@@ -2218,29 +2234,37 @@ End Sub
 ''
 ' Handles the UserCharIndexInServer message.
 
+'CSEH: ErrLog
 Private Sub HandleUserCharIndexInServer()
-'***************************************************
-'Author: Juan Martín Sotuyo Dodero (Maraxus)
-'Last Modification: 05/17/06
-'
-'***************************************************
-    If incomingData.Remaining < 2 Then
-        Err.Raise incomingData.NotEnoughDataErrCode
-        Exit Sub
-    End If
+    '***************************************************
+    'Author: Juan Martín Sotuyo Dodero (Maraxus)
+    'Last Modification: 05/17/06
+    '
+    '***************************************************
+    '<EhHeader>
+    On Error GoTo HandleUserCharIndexInServer_Err
+    '</EhHeader>
+100     If incomingData.Remaining < 2 Then
+105         Err.Raise incomingData.NotEnoughDataErrCode
+            Exit Sub
+        End If
     
-
-
+110     UserCharIndex = incomingData.ReadInteger()
+115     ViewPositionX = charlist(UserCharIndex).Pos.X
+120     ViewPositionY = charlist(UserCharIndex).Pos.Y
     
-    UserCharIndex = incomingData.ReadInteger()
-    UserPos = charlist(UserCharIndex).Pos
-    
-    'Are we under a roof?
-    bTecho = IIf(MapData(UserPos.X, UserPos.Y).Trigger = 1 Or _
-            MapData(UserPos.X, UserPos.Y).Trigger = 2 Or _
-            MapData(UserPos.X, UserPos.Y).Trigger = 4, True, False)
+        'Are we under a roof?
+125     bTecho = IIf(MapData(ViewPositionX, ViewPositionY).Trigger = 1 Or _
+                MapData(ViewPositionX, ViewPositionY).Trigger = 2 Or _
+                MapData(ViewPositionX, ViewPositionY).Trigger = 4, True, False)
 
-    frmMain.Coord.Caption = UserMap & " X: " & UserPos.X & " Y: " & UserPos.Y
+130     frmMain.Coord.Caption = UserMap & " X: " & ViewPositionX & " Y: " & ViewPositionY
+    '<EhFooter>
+    Exit Sub
+
+HandleUserCharIndexInServer_Err:
+        Call LogError("Error en HandleUserCharIndexInServer: " & Erl & " - " & Err.Description)
+    '</EhFooter>
 End Sub
 
 ''
@@ -2693,11 +2717,11 @@ Private Sub HandleRainToggle()
 
 
     
-    If Not InMapBounds(UserPos.X, UserPos.Y) Then Exit Sub
+    If Not InMapBounds(ViewPositionX, ViewPositionY) Then Exit Sub
     
-    bTecho = (MapData(UserPos.X, UserPos.Y).Trigger = 1 Or _
-            MapData(UserPos.X, UserPos.Y).Trigger = 2 Or _
-            MapData(UserPos.X, UserPos.Y).Trigger = 4)
+    bTecho = (MapData(ViewPositionX, ViewPositionY).Trigger = 1 Or _
+            MapData(ViewPositionX, ViewPositionY).Trigger = 2 Or _
+            MapData(ViewPositionX, ViewPositionY).Trigger = 4)
     If bRain Then
         If bLluvia(UserMap) Then
             'Stop playing the rain sound
@@ -8118,7 +8142,7 @@ Private Sub HandleShowFormClase()
 End Sub
 
 Private Sub HandleShowFaccionForm()
-        FrmElegirCamino.Show
+        frmElegirCamino.Show
 End Sub
 
 Private Sub HandleEligeFaccion()
@@ -8206,7 +8230,14 @@ Private Sub HandleSendGuildForm()
                 
                 For i = 1 To LastGuild
                     Set item = frmGuildList.lstGuilds.ListItems.Add(, , .ReadString)
-                    item.SubItems(1) = .ReadByte
+                    
+                    Select Case .ReadByte
+                    
+                        Case 0: item.SubItems(1) = "Neutral"
+                        Case 1: item.SubItems(1) = "Real"
+                        Case 2: item.SubItems(1) = "Caos"
+                        
+                    End Select
                     
                 Next
                 
@@ -8226,21 +8257,12 @@ Private Sub HandleGuildFoundation()
     
     With incomingData
         
-        Dim action As Byte
+        If frmGuildList.Visible Then Unload frmGuildList
         
-        action = .ReadByte
-        
-        Select Case action
-        
-            Case 0 'show window
-                If frmGuildList.Visible Then Unload frmGuildList
-                
-                frmGuildFoundation.Show
-                
-        End Select
-        
+        frmGuildFoundation.Show
     
     End With
+
 End Sub
 
 Public Sub WriteGuildConfirmFoundation(ByVal GuildName As String, ByVal Level As Byte, ByVal Faction As String, ByVal Entrance As Byte)

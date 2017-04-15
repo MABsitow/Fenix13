@@ -18,7 +18,7 @@ Begin VB.Form frmElegirCamino
       ForeColor       =   &H00FFFFFF&
       Height          =   255
       Left            =   4700
-      MouseIcon       =   "FrmElegirCamino.frx":0000
+      MouseIcon       =   "frmElegirCamino.frx":0000
       MousePointer    =   99  'Custom
       TabIndex        =   9
       Top             =   3600
@@ -30,7 +30,7 @@ Begin VB.Form frmElegirCamino
       ForeColor       =   &H00FFFFFF&
       Height          =   255
       Left            =   3120
-      MouseIcon       =   "FrmElegirCamino.frx":030A
+      MouseIcon       =   "frmElegirCamino.frx":030A
       MousePointer    =   99  'Custom
       TabIndex        =   8
       Top             =   6360
@@ -42,7 +42,7 @@ Begin VB.Form frmElegirCamino
       ForeColor       =   &H00FFFFFF&
       Height          =   255
       Left            =   1530
-      MouseIcon       =   "FrmElegirCamino.frx":0614
+      MouseIcon       =   "frmElegirCamino.frx":0614
       MousePointer    =   99  'Custom
       TabIndex        =   7
       Top             =   3650
@@ -51,7 +51,7 @@ Begin VB.Form frmElegirCamino
    Begin VB.Image Image1 
       Height          =   375
       Left            =   0
-      MouseIcon       =   "FrmElegirCamino.frx":091E
+      MouseIcon       =   "frmElegirCamino.frx":091E
       MousePointer    =   99  'Custom
       Top             =   7080
       Width           =   735
@@ -60,7 +60,7 @@ Begin VB.Form frmElegirCamino
       Height          =   255
       Index           =   2
       Left            =   4800
-      MouseIcon       =   "FrmElegirCamino.frx":0C28
+      MouseIcon       =   "frmElegirCamino.frx":0C28
       MousePointer    =   99  'Custom
       Top             =   4080
       Width           =   1095
@@ -69,7 +69,7 @@ Begin VB.Form frmElegirCamino
       Height          =   255
       Index           =   1
       Left            =   1560
-      MouseIcon       =   "FrmElegirCamino.frx":0F32
+      MouseIcon       =   "frmElegirCamino.frx":0F32
       MousePointer    =   99  'Custom
       Top             =   4080
       Width           =   1095
@@ -77,7 +77,7 @@ Begin VB.Form frmElegirCamino
    Begin VB.Image command3 
       Height          =   375
       Left            =   3120
-      MouseIcon       =   "FrmElegirCamino.frx":123C
+      MouseIcon       =   "frmElegirCamino.frx":123C
       MousePointer    =   99  'Custom
       Top             =   6720
       Width           =   1095
@@ -106,7 +106,7 @@ Begin VB.Form frmElegirCamino
    Begin VB.Label Label7 
       Alignment       =   2  'Center
       BackStyle       =   0  'Transparent
-      Caption         =   $"FrmElegirCamino.frx":1546
+      Caption         =   $"frmElegirCamino.frx":1546
       ForeColor       =   &H00FFFFFF&
       Height          =   1455
       Left            =   900
@@ -117,7 +117,7 @@ Begin VB.Form frmElegirCamino
    Begin VB.Label Label5 
       Alignment       =   2  'Center
       BackStyle       =   0  'Transparent
-      Caption         =   $"FrmElegirCamino.frx":16FC
+      Caption         =   $"frmElegirCamino.frx":16FC
       ForeColor       =   &H00FFFFFF&
       Height          =   2175
       Left            =   3810
@@ -128,7 +128,7 @@ Begin VB.Form frmElegirCamino
    Begin VB.Label Label4 
       Alignment       =   2  'Center
       BackStyle       =   0  'Transparent
-      Caption         =   $"FrmElegirCamino.frx":1802
+      Caption         =   $"frmElegirCamino.frx":1802
       ForeColor       =   &H00FFFFFF&
       Height          =   1935
       Left            =   600
@@ -139,7 +139,7 @@ Begin VB.Form frmElegirCamino
    Begin VB.Label Label3 
       Alignment       =   2  'Center
       BackStyle       =   0  'Transparent
-      Caption         =   $"FrmElegirCamino.frx":18FC
+      Caption         =   $"frmElegirCamino.frx":18FC
       ForeColor       =   &H00FFFFFF&
       Height          =   615
       Left            =   1080
@@ -188,7 +188,7 @@ Begin VB.Form frmElegirCamino
       Width           =   2295
    End
 End
-Attribute VB_Name = "FrmElegirCamino"
+Attribute VB_Name = "frmElegirCamino"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True

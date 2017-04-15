@@ -1587,6 +1587,9 @@ Public Enum eMessages
     FactionWelcome
     GuildCreated
     GuildAccepted
+    AlreadyInGuild
+    PreviousRequest
+    EnemyGuild
 End Enum
 
 Public Enum eGMCommands
