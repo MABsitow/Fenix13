@@ -626,7 +626,7 @@ Public Function SetComponentFocus(ByVal ID As Integer) As Integer
     
 End Function
 
-Public Sub RenderComponents()
+Public Sub RenderComponents(ByVal Alpha As Byte)
     
     Dim i As Long
     Dim Component As tComponent
@@ -637,6 +637,9 @@ Public Sub RenderComponents()
         With Component
             
             If .Visible = False Then GoTo NextLoop
+            
+            If Alpha <> 255 Then _
+                InjectAlphaToColor Alpha, .Color
             
             Select Case .Component
             

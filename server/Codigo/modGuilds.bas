@@ -28,7 +28,7 @@ Private Type TYPE_GUILD
         
         LeaderName              As String
         
-        LieutenantName(0 To 2)  As String
+        RecruiterName(0 To 2)  As String
         
         Faction                 As Byte
         
@@ -99,7 +99,7 @@ Public Sub LoadGuilds()
 175             .LeaderName = buf.ReadString
             
 180             For j = 0 To 2
-185                 .LieutenantName(j) = buf.ReadString
+185                 .RecruiterName(j) = buf.ReadString
                 Next
             
 190             .Faction = buf.ReadByte
@@ -190,9 +190,9 @@ Public Sub DumpGuilds(Optional ByVal ShutDown As Boolean = False)
         Call buf.WriteString(c.FoundationDate)
         Call buf.WriteString(c.LeaderName)
         
-        Call buf.WriteString(c.LieutenantName(0))
-        Call buf.WriteString(c.LieutenantName(1))
-        Call buf.WriteString(c.LieutenantName(2))
+        Call buf.WriteString(c.RecruiterName(0))
+        Call buf.WriteString(c.RecruiterName(1))
+        Call buf.WriteString(c.RecruiterName(2))
         
         Call buf.WriteByte(c.Faction)
         Call buf.WriteByte(c.Entrance)
@@ -340,28 +340,30 @@ Public Sub SendRequest(ByVal UserIndex As Integer, ByVal ToGuildID As Integer)
     With UserList(UserIndex)
     
         If .GuildID <> 0 Then
-            Call WriteConsoleMsg(UserIndex, "Ya te encuentras en un clan, debes salir.", FontTypeNames.FONTTYPE_WARNING)
+            'Call WriteConsoleMsg(UserIndex, "Ya te encuentras en un clan, debes salir.", FontTypeNames.FONTTYPE_WARNING)
+            Call WriteMultiMessage(UserIndex, eMessages.AlreadyInGuild)
             Exit Sub
         End If
         
         If .flags.WaitingApprovement > 0 Then
-            Call WriteConsoleMsg(UserIndex, "Se eliminará la petición al clan anterior.", FontTypeNames.FONTTYPE_INFOBOLD)
+            'Call WriteConsoleMsg(UserIndex, "Se eliminará la petición al clan anterior.", FontTypeNames.FONTTYPE_INFOBOLD)
+            Call WriteMultiMessage(UserIndex, eMessages.PreviousRequest)
             Call DeleteRequest(.flags.WaitingApprovement, .Name)
         End If
         
         If Guilds(ToGuildID).Faction = eFaccion.Caos Then
             
             If .Faccion.Bando = eFaccion.Real Then
-                Call WriteConsoleMsg(UserIndex, "No puedes enviar solicitud a un clan de alineación enemiga.", FontTypeNames.FONTTYPE_WARNING)
-                
+                'Call WriteConsoleMsg(UserIndex, "No puedes enviar solicitud a un clan de alineación enemiga.", FontTypeNames.FONTTYPE_WARNING)
+                Call WriteMultiMessage(UserIndex, eMessages.EnemyGuild)
                 Exit Sub
             End If
             
         ElseIf Guilds(ToGuildID).Faction = eFaccion.Real Then
             
             If .Faccion.Bando = eFaccion.Caos Then
-                Call WriteConsoleMsg(UserIndex, "No puedes enviar solicitud a un clan de alineación enemiga.", FontTypeNames.FONTTYPE_WARNING)
-                
+                'Call WriteConsoleMsg(UserIndex, "No puedes enviar solicitud a un clan de alineación enemiga.", FontTypeNames.FONTTYPE_WARNING)
+                Call WriteMultiMessage(UserIndex, eMessages.EnemyGuild)
                 Exit Sub
             End If
             
@@ -371,7 +373,15 @@ Public Sub SendRequest(ByVal UserIndex As Integer, ByVal ToGuildID As Integer)
             Call WriteConsoleMsg(UserIndex, "Se ha encontrado un error, refresca la lista de clanes, por favor.", FontTypeNames.FONTTYPE_WARNING)
             Exit Sub
         End If
-            
+        
+        Dim i As Long
+        
+        For i = 1 To Guilds(ToGuildID).BlockedUsers.Count
+            If StrComp(UCase$(.Name), UCase$(Guilds(ToGuildID).BlockedUsers.Item(i))) = 0 Then
+                Call WriteConsoleMsg(UserIndex, "Tienes prohibido el ingreso a este clan.", FontTypeNames.FONTTYPE_WARNING)
+            End If
+        Next
+        
         'todo capacity
             
         If Guilds(ToGuildID).Entrance = eGuildType.ePublic Then
@@ -462,7 +472,6 @@ With UserList(UserIndex)
             End If
             
             Call Guilds(UserList(UserIndex).GuildID).Requests.Remove(uID)
-            Call SendData(SendTarget.ToAll, 0, PrepareMessagePlayWave(FX_GUILD_ACEPTEDMEM, NO_3D_SOUND, NO_3D_SOUND))
             'todo: refresh acceptance window
         End If
         
@@ -596,10 +605,12 @@ Private Sub AddMember(ByVal GuildID As Long, ByVal UserName As String)
 100     With Guilds(GuildID)
         
 105         Call .Members.Add(UserName)
-        
+            
+            Call WriteVar(CharPath & UserName & ".chr", "Guild", "GuildID", GuildID)
+            
+            Call SendData(SendTarget.ToGuildMembers, GuildID, PrepareMessageMultiMessage(eMessages.GuildAccepted, , , , UserName))
         End With
     
-110     Call SendData(SendTarget.ToGuildMembers, 0, PrepareMessageConsoleMsg(UserName & " se ha unido al clan.", FontTypeNames.FONTTYPE_GUILDWELCOME))
     '<EhFooter>
     Exit Sub
 
@@ -664,11 +675,11 @@ Private Sub RemovingLeader(ByVal GuildID As Long, ByVal UserName As String)
         Dim subsID As Integer
         Dim i As Long
     
-100     substitute = GetNextLieutenant(GuildID, True)
+100     substitute = GetNextRecruiter(GuildID, True)
     
 105     With Guilds(GuildID)
     
-110         If LenB(substitute) <> 0 Then 'Exist a lieutenant that could take the leaders position
+110         If LenB(substitute) <> 0 Then 'Exist a Recruiter that could take the leaders position
             
 115             subsID = NameIndex(substitute)
             
@@ -684,9 +695,9 @@ Private Sub RemovingLeader(ByVal GuildID As Long, ByVal UserName As String)
                 
                 End If
             
-140             Call SendData(SendTarget.ToGuildMembers, 0, PrepareMessageConsoleMsg(.LeaderName & " es ahora el líder del clan.", FontTypeNames.FONTTYPE_SERVER))
+140             Call SendData(SendTarget.ToGuildMembers, GuildID, PrepareMessageConsoleMsg(.LeaderName & " es ahora el líder del clan.", FontTypeNames.FONTTYPE_SERVER))
         
-            Else 'There's no lieutenants, search for normal members
+            Else 'There's no Recruiters, search for normal members
             
 145             If .Members.Count > 1 Then
                 
@@ -707,11 +718,11 @@ Private Sub RemovingLeader(ByVal GuildID As Long, ByVal UserName As String)
                         
                             End If
                         
-185                         Call SendData(SendTarget.ToGuildMembers, 0, PrepareMessageConsoleMsg(.LeaderName & " es ahora el líder del clan.", FontTypeNames.FONTTYPE_SERVER))
+185                         Call SendData(SendTarget.ToGuildMembers, GuildID, PrepareMessageConsoleMsg(.LeaderName & " es ahora el líder del clan.", FontTypeNames.FONTTYPE_SERVER))
                         End If
                     Next
                 
-                Else 'No lieutenants, and not even more members
+                Else 'No Recruiters, and not even more members
 190                 .Deleted = 1
                 End If
             
@@ -735,7 +746,7 @@ Public Sub ConnectMember(ByVal GuildID As Long, ByVal UserIndex As Integer)
     
 105         Call Guilds(GuildID).OnlineMembers.Add(UserIndex)
         
-110         Call SendData(SendTarget.ToGuildMembers, 0, PrepareMessageConsoleMsg(UserList(UserIndex).Name & " se ha conectado.", FontTypeNames.FONTTYPE_GUILDLOGIN))
+110         Call SendData(SendTarget.ToGuildMembers, GuildID, PrepareMessageConsoleMsg(UserList(UserIndex).Name & " se ha conectado.", FontTypeNames.FONTTYPE_GUILDLOGIN))
         End If
     
     '<EhFooter>
@@ -756,7 +767,7 @@ Public Sub DisconnectMember(ByVal GuildID As Long, ByVal UserIndex As Integer)
 105         Call Guilds(GuildID).OnlineMembers.Remove(UserIndex)
         
 110         If UserList(UserIndex).flags.IsLeader > 0 Then
-115             Call SendData(SendTarget.ToGuildMembers, 0, PrepareMessageConsoleMsg(UserList(UserIndex).Name & " se ha desconectado.", FontTypeNames.FONTTYPE_GUILDLOGIN))
+115             Call SendData(SendTarget.ToGuildMembers, GuildID, PrepareMessageConsoleMsg(UserList(UserIndex).Name & " se ha desconectado.", FontTypeNames.FONTTYPE_GUILDLOGIN))
             End If
         End If
     
@@ -769,9 +780,9 @@ DisconnectMember_Err:
 End Sub
 
 'CSEH: ErrLog
-Private Function GetNextLieutenant(ByVal GuildID As Long, Optional ByVal RemoveLieutenant As Boolean = False) As String
+Private Function GetNextRecruiter(ByVal GuildID As Long, Optional ByVal RemoveRecruiter As Boolean = False) As String
     '<EhHeader>
-    On Error GoTo GetNextLieutenant_Err
+    On Error GoTo GetNextRecruiter_Err
     '</EhHeader>
     
         Dim i As Long
@@ -780,28 +791,28 @@ Private Function GetNextLieutenant(ByVal GuildID As Long, Optional ByVal RemoveL
     
 105         For i = 0 To 2
         
-110             If LenB(.LieutenantName(i)) <> 0 Then
-115                 GetNextLieutenant = .LieutenantName(i)
+110             If LenB(.RecruiterName(i)) <> 0 Then
+115                 GetNextRecruiter = .RecruiterName(i)
                 
-120                 If RemoveLieutenant Then
+120                 If RemoveRecruiter Then
                     
 125                     If i = 0 Then 'If the promoted its in the first index
                         
-130                         .LieutenantName(0) = .LieutenantName(1)
-135                         .LieutenantName(1) = .LieutenantName(2)
-140                         .LieutenantName(2) = vbNullString
+130                         .RecruiterName(0) = .RecruiterName(1)
+135                         .RecruiterName(1) = .RecruiterName(2)
+140                         .RecruiterName(2) = vbNullString
                         
 145                     ElseIf i = 1 Then 'If its in the index 1, its 'cause theres nothing in the first index
                         
-150                         .LieutenantName(0) = .LieutenantName(2)
-155                         .LieutenantName(1) = vbNullString
-160                         .LieutenantName(2) = vbNullString
+150                         .RecruiterName(0) = .RecruiterName(2)
+155                         .RecruiterName(1) = vbNullString
+160                         .RecruiterName(2) = vbNullString
                     
-                        Else 'The lieutenant its in the last index (there is only one lieutenant).
+                        Else 'The Recruiter its in the last index (there is only one Recruiter).
                         
-165                         .LieutenantName(0) = vbNullString
-170                         .LieutenantName(1) = vbNullString
-175                         .LieutenantName(2) = vbNullString
+165                         .RecruiterName(0) = vbNullString
+170                         .RecruiterName(1) = vbNullString
+175                         .RecruiterName(2) = vbNullString
                         
                         End If
                     End If
@@ -813,13 +824,13 @@ Private Function GetNextLieutenant(ByVal GuildID As Long, Optional ByVal RemoveL
         
         End With
     
-180     GetNextLieutenant = vbNullString
+180     GetNextRecruiter = vbNullString
     
     '<EhFooter>
     Exit Function
 
-GetNextLieutenant_Err:
-        Call LogError("Error en GetNextLieutenant: " & Erl & " - " & Err.description)
+GetNextRecruiter_Err:
+        Call LogError("Error en GetNextRecruiter: " & Erl & " - " & Err.description)
     '</EhFooter>
 End Function
 
@@ -875,17 +886,22 @@ Private Function CanFoundate(ByVal UserIndex As Integer, ByVal GuildName As Stri
             
             End If
         
+            'Delete a previous request
+205         If .flags.WaitingApprovement > 0 Then
+210             Call DeleteRequest(.flags.WaitingApprovement, .Name)
+            End If
+        
             Dim i As Long
         
-205         For i = 1 To LastGuild
-210             If StrComp(UCase$(Guilds(i).GuildName), UCase$(GuildName)) = 0 Then
-215                 CanFoundate = False
-220                 ErrorMessage = "Ya existe un clan con el mismo nombre."
+215         For i = 1 To LastGuild
+220             If StrComp(UCase$(Guilds(i).GuildName), UCase$(GuildName)) = 0 Then
+225                 CanFoundate = False
+230                 ErrorMessage = "Ya existe un clan con el mismo nombre."
                     Exit Function
                 End If
             Next
         
-225         CanFoundate = True
+235         CanFoundate = True
         End With
     '<EhFooter>
     Exit Function
@@ -908,4 +924,8 @@ Public Function GuildIndex(ByVal GuildName As String) As Long
         
     Next
     
+End Function
+
+Public Function SameGuild(ByVal UserA As Integer, ByVal UserB As Integer) As Boolean
+    SameGuild = (UserList(UserA).GuildID = UserList(UserB).GuildID)
 End Function

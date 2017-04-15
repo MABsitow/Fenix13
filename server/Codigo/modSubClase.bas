@@ -138,12 +138,14 @@ UserList(UserIndex).Recompensas(Recompensa) = Eleccion
 
 If Recompensas(UserList(UserIndex).Clase, Recompensa, Eleccion).SubeHP Then
     Call AddtoVar(UserList(UserIndex).Stats.MaxHp, Recompensas(UserList(UserIndex).Clase, Recompensa, Eleccion).SubeHP, STAT_MAXHP)
-    Call WriteUpdateHP(UserIndex)
+    'Call WriteUpdateHP(UserIndex)
+    Call WriteUpdateUserStats(UserIndex)
 End If
 
 If Recompensas(UserList(UserIndex).Clase, Recompensa, Eleccion).SubeMP Then
     Call AddtoVar(UserList(UserIndex).Stats.MaxMAN, Recompensas(UserList(UserIndex).Clase, Recompensa, Eleccion).SubeMP, 2000 + 200 * Buleano(UserList(UserIndex).Clase = Mago) * 200 + 300 * Buleano(UserList(UserIndex).Clase = Mago And UserList(UserIndex).Recompensas(2) = 2))
-    Call WriteUpdateMana(UserIndex)
+    'Call WriteUpdateMana(UserIndex)
+    Call WriteUpdateUserStats(UserIndex)
 End If
 
 For i = 1 To 2

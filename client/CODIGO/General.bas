@@ -402,13 +402,13 @@ Sub MoveTo(ByVal Direccion As E_Heading)
     
     Select Case Direccion
         Case E_Heading.NORTH
-            LegalOk = MoveToLegalPos(UserPos.X, UserPos.Y - 1)
+            LegalOk = MoveToLegalPos(ViewPositionX, ViewPositionY - 1)
         Case E_Heading.EAST
-            LegalOk = MoveToLegalPos(UserPos.X + 1, UserPos.Y)
+            LegalOk = MoveToLegalPos(ViewPositionX + 1, ViewPositionY)
         Case E_Heading.SOUTH
-            LegalOk = MoveToLegalPos(UserPos.X, UserPos.Y + 1)
+            LegalOk = MoveToLegalPos(ViewPositionX, ViewPositionY + 1)
         Case E_Heading.WEST
-            LegalOk = MoveToLegalPos(UserPos.X - 1, UserPos.Y)
+            LegalOk = MoveToLegalPos(ViewPositionX - 1, ViewPositionY)
     End Select
     
     If LegalOk And Not UserParalizado Then
@@ -416,7 +416,6 @@ Sub MoveTo(ByVal Direccion As E_Heading)
         If Not UserDescansar And Not UserMeditar Then
             MoveCharbyHead UserCharIndex, Direccion
             MoveScreen Direccion
-            'MoveCamera Direccion
         End If
     Else
         If charlist(UserCharIndex).Heading <> Direccion Then
@@ -427,7 +426,7 @@ Sub MoveTo(ByVal Direccion As E_Heading)
     If frmMain.macrotrabajo.Enabled Then Call frmMain.DesactivarMacroTrabajo
     
     ' Update 3D sounds!
-    Call Audio.MoveListener(UserPos.X, UserPos.Y)
+    Call Audio.MoveListener(ViewPositionX, ViewPositionY)
 End Sub
 
 Sub RandomMove()
@@ -437,75 +436,6 @@ Sub RandomMove()
 ' 06/03/2006: AlejoLp - Ahora utiliza la funcion MoveTo
 '***************************************************
     Call MoveTo(RandomNumber(NORTH, WEST))
-End Sub
-
-'CSEH: ErrLog
-Sub SwitchMap(ByVal Map As Integer)
-    Dim Y As Long
-    Dim X As Long
-    Dim handle As Integer
-    Dim Reader As New CsBuffer
-    Dim data() As Byte
-    Dim ByFlags As Byte
-        
-    handle = FreeFile()
-    
-    Open DirMapas & "Mapa" & Map & ".mcl" For Binary As handle
-        Seek handle, 1
-        ReDim data(0 To LOF(handle) - 1) As Byte
-        
-        Get handle, , data
-    Close handle
-    
-    Call Reader.Wrap(data)
-    
-    'map :poop: Header
-    MapInfo.MapVersion = Reader.ReadInteger
-    Dim i As Long
-    
-    'Load arrays
-    For Y = YMinMapSize To YMaxMapSize
-        For X = XMinMapSize To XMaxMapSize
-        
-            With MapData(X, Y)
-                ByFlags = Reader.ReadByte
-                    
-                .Blocked = ByFlags And 1
-                    
-                .Graphic(1).GrhIndex = Reader.ReadInteger
-                Call InitGrh(.Graphic(1), .Graphic(1).GrhIndex)
-                
-                For i = 2 To 4
-                    If ByFlags And (2 ^ (i - 1)) Then
-                        .Graphic(i).GrhIndex = Reader.ReadInteger
-                        Call InitGrh(.Graphic(i), .Graphic(i).GrhIndex)
-                    Else
-                        .Graphic(i).GrhIndex = 0
-                    End If
-                Next
-                
-                For i = 4 To 6
-                    If (ByFlags And 2 ^ i) Then .Trigger = .Trigger Or 2 ^ (i - 4)
-                Next
-                
-                'Erase NPCs
-                If MapData(X, Y).CharIndex > 0 Then
-                    Call EraseChar(MapData(X, Y).CharIndex)
-                End If
-                
-                'Erase OBJs
-                MapData(X, Y).ObjGrh.GrhIndex = 0
-                
-            End With
-        Next X
-    Next Y
-    
-    Set Reader = Nothing
-    
-    MapInfo.Name = ""
-    MapInfo.Music = ""
-    
-    CurMap = Map
 End Sub
 
 Function ReadField(ByVal Pos As Integer, ByRef Text As String, ByVal SepASCII As Byte) As String
@@ -651,7 +581,7 @@ Sub Main()
     
     prgRun = True
     
-    If Not InitTileEngine(frmMain.hwnd, 151, 12, 32, 32, 17, 23, 7, 8, 8, 0.018) Then
+    If Not InitTileEngine(frmMain.hwnd, 32, 32, 17, 23, 7, 8, 8, 0.018, 0.03) Then
         Call CloseClient
     End If
     
@@ -733,6 +663,8 @@ UserMap = 1
     
     ' Load the form for screenshots
     Call Load(frmScreenshots)
+    
+    Call SwitchMap(1)
     
     Call Time_Update
     
@@ -1443,3 +1375,6 @@ Recompensas(eClass.LADRON, 3, 2).Descripcion = "Aumenta en 10% la probabilidad d
 
 End Sub
 
+Public Function Ceiling(ByVal X As Double) As Long
+   Ceiling = -Int(X * (-1))
+End Function

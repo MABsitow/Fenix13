@@ -61,8 +61,8 @@ Public Sub SetTexture(ByRef Texture As Direct3DTexture8)
     End If
 End Sub
  
-Public Sub Draw(ByVal X As Long, _
-                ByVal Y As Long, _
+Public Sub Draw(ByVal X As Single, _
+                ByVal Y As Single, _
                 ByVal Width As Long, _
                 ByVal Height As Long, _
                 ByRef Color() As Long, _

@@ -1221,15 +1221,15 @@ On Error GoTo Errhandler
     Call UserList(UserIndex).incomingData.CopyBuffer(Buffer)
     
 Errhandler:
-    Dim error As Long
-    error = Err.Number
+    Dim Error As Long
+    Error = Err.Number
 On Error GoTo 0
     
     'Destroy auxiliar buffer
     Set Buffer = Nothing
     
-    If error <> 0 Then _
-        Err.Raise error
+    If Error <> 0 Then _
+        Err.Raise Error
 End Sub
 
 ''
@@ -1346,15 +1346,15 @@ On Error GoTo Errhandler
     Call UserList(UserIndex).incomingData.CopyBuffer(Buffer)
     
 Errhandler:
-    Dim error As Long
-    error = Err.Number
+    Dim Error As Long
+    Error = Err.Number
 On Error GoTo 0
     
     'Destroy auxiliar buffer
     Set Buffer = Nothing
     
-    If error <> 0 Then _
-        Err.Raise error
+    If Error <> 0 Then _
+        Err.Raise Error
 End Sub
 
 ''
@@ -1435,15 +1435,15 @@ On Error GoTo Errhandler
     End With
     
 Errhandler:
-    Dim error As Long
-    error = Err.Number
+    Dim Error As Long
+    Error = Err.Number
 On Error GoTo 0
     
     'Destroy auxiliar buffer
     Set Buffer = Nothing
     
-    If error <> 0 Then _
-        Err.Raise error
+    If Error <> 0 Then _
+        Err.Raise Error
 End Sub
 
 ''
@@ -1527,15 +1527,15 @@ On Error GoTo Errhandler
     End With
     
 Errhandler:
-    Dim error As Long
-    error = Err.Number
+    Dim Error As Long
+    Error = Err.Number
 On Error GoTo 0
     
     'Destroy auxiliar buffer
     Set Buffer = Nothing
     
-    If error <> 0 Then _
-        Err.Raise error
+    If Error <> 0 Then _
+        Err.Raise Error
 End Sub
 
 ''
@@ -1631,15 +1631,15 @@ On Error GoTo Errhandler
     End With
     
 Errhandler:
-    Dim error As Long
-    error = Err.Number
+    Dim Error As Long
+    Error = Err.Number
 On Error GoTo 0
     
     'Destroy auxiliar buffer
     Set Buffer = Nothing
     
-    If error <> 0 Then _
-        Err.Raise error
+    If Error <> 0 Then _
+        Err.Raise Error
 End Sub
 
 ''
@@ -2065,15 +2065,15 @@ On Error GoTo Errhandler
     End With
     
 Errhandler:
-    Dim error As Long
-    error = Err.Number
+    Dim Error As Long
+    Error = Err.Number
 On Error GoTo 0
     
     'Destroy auxiliar buffer
     Set Buffer = Nothing
     
-    If error <> 0 Then _
-        Err.Raise error
+    If Error <> 0 Then _
+        Err.Raise Error
 End Sub
 
 
@@ -3159,7 +3159,7 @@ Private Sub HandleModifySkills(ByVal UserIndex As Integer)
         Call .incomingData.ReadByte
         
         Dim i As Long
-        Dim count As Integer
+        Dim Count As Integer
         Dim points(1 To NUMSKILLS) As Byte
         
         'Codigo para prevenir el hackeo de los skills
@@ -3174,17 +3174,17 @@ Private Sub HandleModifySkills(ByVal UserIndex As Integer)
                 Exit Sub
             End If
             
-            count = count + points(i)
+            Count = Count + points(i)
         Next i
         
-        If count > .Stats.SkillPts Then
+        If Count > .Stats.SkillPts Then
             Call LogHackAttemp(.Name & " IP:" & .ip & " trató de hackear los skills.")
             Call CloseSocket(UserIndex)
             Exit Sub
         End If
         '<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
         
-        .Counters.AsignedSkills = MinimoInt(10, .Counters.AsignedSkills + count)
+        .Counters.AsignedSkills = MinimoInt(10, .Counters.AsignedSkills + Count)
         
         With .Stats
             For i = 1 To NUMSKILLS
@@ -3497,15 +3497,15 @@ On Error GoTo Errhandler
     End With
     
 Errhandler:
-    Dim error As Long
-    error = Err.Number
+    Dim Error As Long
+    Error = Err.Number
 On Error GoTo 0
     
     'Destroy auxiliar buffer
     Set Buffer = Nothing
     
-    If error <> 0 Then _
-        Err.Raise error
+    If Error <> 0 Then _
+        Err.Raise Error
 End Sub
 
 ''
@@ -3711,7 +3711,7 @@ Private Sub HandleOnline(ByVal UserIndex As Integer)
 '
 '***************************************************
     Dim i As Long
-    Dim count As Long
+    Dim Count As Long
     
     With UserList(UserIndex)
         'Remove packet ID
@@ -3720,11 +3720,11 @@ Private Sub HandleOnline(ByVal UserIndex As Integer)
         For i = 1 To LastUser
             If LenB(UserList(i).Name) <> 0 Then
                 If UserList(i).flags.Privilegios And (PlayerType.User Or PlayerType.Consejero) Then _
-                    count = count + 1
+                    Count = Count + 1
             End If
         Next i
         
-        Call WriteConsoleMsg(UserIndex, "Número de usuarios: " & CStr(count), FontTypeNames.FONTTYPE_INFO)
+        Call WriteConsoleMsg(UserIndex, "Número de usuarios: " & CStr(Count), FontTypeNames.FONTTYPE_INFO)
     End With
 End Sub
 
@@ -4391,7 +4391,7 @@ Private Sub HandleCommerceStart(ByVal UserIndex As Integer)
             .ComUsu.DestUsu = .flags.TargetUser
             .ComUsu.DestNick = UserList(.flags.TargetUser).Name
             For i = 1 To MAX_OFFER_SLOTS
-                .ComUsu.cant(i) = 0
+                .ComUsu.Cant(i) = 0
                 .ComUsu.Objeto(i) = 0
             Next i
             .ComUsu.GoldAmount = 0
@@ -4840,15 +4840,15 @@ On Error GoTo Errhandler
     End With
     
 Errhandler:
-    Dim error As Long
-    error = Err.Number
+    Dim Error As Long
+    Error = Err.Number
 On Error GoTo 0
     
     'Destroy auxiliar buffer
     Set Buffer = Nothing
     
-    If error <> 0 Then _
-        Err.Raise error
+    If Error <> 0 Then _
+        Err.Raise Error
 End Sub
 
 ''
@@ -4890,15 +4890,15 @@ On Error GoTo Errhandler
     End With
     
 Errhandler:
-    Dim error As Long
-    error = Err.Number
+    Dim Error As Long
+    Error = Err.Number
 On Error GoTo 0
     
     'Destroy auxiliar buffer
     Set Buffer = Nothing
     
-    If error <> 0 Then _
-        Err.Raise error
+    If Error <> 0 Then _
+        Err.Raise Error
 End Sub
 
 ''
@@ -4971,15 +4971,15 @@ On Error GoTo Errhandler
     End With
     
 Errhandler:
-    Dim error As Long
-    error = Err.Number
+    Dim Error As Long
+    Error = Err.Number
 On Error GoTo 0
     
     'Destroy auxiliar buffer
     Set Buffer = Nothing
     
-    If error <> 0 Then _
-        Err.Raise error
+    If Error <> 0 Then _
+        Err.Raise Error
 End Sub
 
 ''
@@ -5027,15 +5027,15 @@ On Error GoTo Errhandler
     End With
     
 Errhandler:
-    Dim error As Long
-    error = Err.Number
+    Dim Error As Long
+    Error = Err.Number
 On Error GoTo 0
     
     'Destroy auxiliar buffer
     Set Buffer = Nothing
     
-    If error <> 0 Then _
-        Err.Raise error
+    If Error <> 0 Then _
+        Err.Raise Error
 End Sub
 
 ''
@@ -5064,7 +5064,7 @@ On Error GoTo Errhandler
         Call Buffer.ReadByte
         
         Dim Name As String
-        Dim count As Integer
+        Dim Count As Integer
         
         Name = Buffer.ReadASCIIString()
         
@@ -5086,13 +5086,13 @@ On Error GoTo Errhandler
                 Call WriteConsoleMsg(UserIndex, "No puedes ver las penas de los administradores.", FontTypeNames.FONTTYPE_INFO)
             Else
                 If FileExist(CharPath & Name & ".chr", vbNormal) Then
-                    count = val(GetVar(CharPath & Name & ".chr", "PENAS", "Cant"))
-                    If count = 0 Then
+                    Count = val(GetVar(CharPath & Name & ".chr", "PENAS", "Cant"))
+                    If Count = 0 Then
                         Call WriteConsoleMsg(UserIndex, "Sin prontuario..", FontTypeNames.FONTTYPE_INFO)
                     Else
-                        While count > 0
-                            Call WriteConsoleMsg(UserIndex, count & " - " & GetVar(CharPath & Name & ".chr", "PENAS", "P" & count), FontTypeNames.FONTTYPE_INFO)
-                            count = count - 1
+                        While Count > 0
+                            Call WriteConsoleMsg(UserIndex, Count & " - " & GetVar(CharPath & Name & ".chr", "PENAS", "P" & Count), FontTypeNames.FONTTYPE_INFO)
+                            Count = Count - 1
                         Wend
                     End If
                 Else
@@ -5106,15 +5106,15 @@ On Error GoTo Errhandler
     End With
     
 Errhandler:
-    Dim error As Long
-    error = Err.Number
+    Dim Error As Long
+    Error = Err.Number
 On Error GoTo 0
     
     'Destroy auxiliar buffer
     Set Buffer = Nothing
     
-    If error <> 0 Then _
-        Err.Raise error
+    If Error <> 0 Then _
+        Err.Raise Error
 End Sub
 
 ''
@@ -5169,15 +5169,15 @@ On Error GoTo Errhandler
     End With
     
 Errhandler:
-    Dim error As Long
-    error = Err.Number
+    Dim Error As Long
+    Error = Err.Number
 On Error GoTo 0
     
     'Destroy auxiliar buffer
     Set Buffer = Nothing
     
-    If error <> 0 Then _
-        Err.Raise error
+    If Error <> 0 Then _
+        Err.Raise Error
 End Sub
 
 
@@ -5515,15 +5515,15 @@ On Error GoTo Errhandler
     End With
     
 Errhandler:
-    Dim error As Long
-    error = Err.Number
+    Dim Error As Long
+    Error = Err.Number
 On Error GoTo 0
     
     'Destroy auxiliar buffer
     Set Buffer = Nothing
     
-    If error <> 0 Then _
-        Err.Raise error
+    If Error <> 0 Then _
+        Err.Raise Error
 End Sub
 
 ''
@@ -5569,15 +5569,15 @@ On Error GoTo Errhandler
     End With
     
 Errhandler:
-    Dim error As Long
-    error = Err.Number
+    Dim Error As Long
+    Error = Err.Number
 On Error GoTo 0
     
     'Destroy auxiliar buffer
     Set Buffer = Nothing
     
-    If error <> 0 Then _
-        Err.Raise error
+    If Error <> 0 Then _
+        Err.Raise Error
 End Sub
 
 ''
@@ -5623,7 +5623,7 @@ Private Sub HandleOnlineRoyalArmy(ByVal UserIndex As Integer)
         Dim i As Long
         Dim list As String
 
-        For i = 1 To MiembrosAlianza.count
+        For i = 1 To MiembrosAlianza.Count
             If UserList(MiembrosAlianza.Item(i)).ConnID <> -1 Then
                 If EsArmada(MiembrosAlianza.Item(i)) Then
                     If UserList(MiembrosAlianza.Item(i)).flags.Privilegios And (PlayerType.User Or PlayerType.Consejero Or PlayerType.SemiDios) Or _
@@ -5662,7 +5662,7 @@ Private Sub HandleOnlineChaosLegion(ByVal UserIndex As Integer)
         Dim i As Long
         Dim list As String
 
-        For i = 1 To MiembrosCaos.count
+        For i = 1 To MiembrosCaos.Count
             If UserList(MiembrosCaos.Item(i)).ConnID <> -1 Then
                 If EsCaos(MiembrosCaos.Item(i)) Then
                     If UserList(MiembrosCaos.Item(i)).flags.Privilegios And (PlayerType.User Or PlayerType.Consejero Or PlayerType.SemiDios) Or _
@@ -5757,15 +5757,15 @@ On Error GoTo Errhandler
     End With
     
 Errhandler:
-    Dim error As Long
-    error = Err.Number
+    Dim Error As Long
+    Error = Err.Number
 On Error GoTo 0
     
     'Destroy auxiliar buffer
     Set Buffer = Nothing
     
-    If error <> 0 Then _
-        Err.Raise error
+    If Error <> 0 Then _
+        Err.Raise Error
 End Sub
 
 ''
@@ -5806,15 +5806,15 @@ On Error GoTo Errhandler
     End With
     
 Errhandler:
-    Dim error As Long
-    error = Err.Number
+    Dim Error As Long
+    Error = Err.Number
 On Error GoTo 0
     
     'Destroy auxiliar buffer
     Set Buffer = Nothing
     
-    If error <> 0 Then _
-        Err.Raise error
+    If Error <> 0 Then _
+        Err.Raise Error
 End Sub
 
 ''
@@ -5887,15 +5887,15 @@ On Error GoTo Errhandler
     End With
     
 Errhandler:
-    Dim error As Long
-    error = Err.Number
+    Dim Error As Long
+    Error = Err.Number
 On Error GoTo 0
     
     'Destroy auxiliar buffer
     Set Buffer = Nothing
     
-    If error <> 0 Then _
-        Err.Raise error
+    If Error <> 0 Then _
+        Err.Raise Error
 End Sub
 
 ''
@@ -6097,15 +6097,15 @@ On Error GoTo Errhandler
     End With
     
 Errhandler:
-    Dim error As Long
-    error = Err.Number
+    Dim Error As Long
+    Error = Err.Number
 On Error GoTo 0
     
     'Destroy auxiliar buffer
     Set Buffer = Nothing
     
-    If error <> 0 Then _
-        Err.Raise error
+    If Error <> 0 Then _
+        Err.Raise Error
         
     Call LogError("Handle WarpChar: " & Err.description)
 End Sub
@@ -6167,15 +6167,15 @@ On Error GoTo Errhandler
     End With
     
 Errhandler:
-    Dim error As Long
-    error = Err.Number
+    Dim Error As Long
+    Error = Err.Number
 On Error GoTo 0
     
     'Destroy auxiliar buffer
     Set Buffer = Nothing
     
-    If error <> 0 Then _
-        Err.Raise error
+    If Error <> 0 Then _
+        Err.Raise Error
 End Sub
 
 ''
@@ -6234,15 +6234,15 @@ On Error GoTo Errhandler
     End With
     
 Errhandler:
-    Dim error As Long
-    error = Err.Number
+    Dim Error As Long
+    Error = Err.Number
 On Error GoTo 0
     
     'Destroy auxiliar buffer
     Set Buffer = Nothing
     
-    If error <> 0 Then _
-        Err.Raise error
+    If Error <> 0 Then _
+        Err.Raise Error
 End Sub
 
 ''
@@ -6305,15 +6305,15 @@ On Error GoTo Errhandler
     End With
     
 Errhandler:
-    Dim error As Long
-    error = Err.Number
+    Dim Error As Long
+    Error = Err.Number
 On Error GoTo 0
     
     'Destroy auxiliar buffer
     Set Buffer = Nothing
     
-    If error <> 0 Then _
-        Err.Raise error
+    If Error <> 0 Then _
+        Err.Raise Error
 End Sub
 
 ''
@@ -6373,7 +6373,7 @@ Private Sub HandleRequestUserList(ByVal UserIndex As Integer)
 '***************************************************
     Dim i As Long
     Dim names() As String
-    Dim count As Long
+    Dim Count As Long
     
     With UserList(UserIndex)
         'Remove packet ID
@@ -6382,18 +6382,18 @@ Private Sub HandleRequestUserList(ByVal UserIndex As Integer)
         If .flags.Privilegios And (PlayerType.User Or PlayerType.RoleMaster) Then Exit Sub
         
         ReDim names(1 To LastUser) As String
-        count = 1
+        Count = 1
         
         For i = 1 To LastUser
             If (LenB(UserList(i).Name) <> 0) Then
                 If UserList(i).flags.Privilegios And PlayerType.User Then
-                    names(count) = UserList(i).Name
-                    count = count + 1
+                    names(Count) = UserList(i).Name
+                    Count = Count + 1
                 End If
             End If
         Next i
         
-        If count > 1 Then Call WriteUserNameList(UserIndex, names(), count - 1)
+        If Count > 1 Then Call WriteUserNameList(UserIndex, names(), Count - 1)
     End With
 End Sub
 
@@ -6499,7 +6499,7 @@ On Error GoTo Errhandler
         Dim UserName As String
         Dim reason As String
         Dim jailTime As Byte
-        Dim count As Byte
+        Dim Count As Byte
         Dim tUser As Integer
         
         UserName = Buffer.ReadASCIIString()
@@ -6533,9 +6533,9 @@ On Error GoTo Errhandler
                         End If
                         
                         If FileExist(CharPath & UserName & ".chr", vbNormal) Then
-                            count = val(GetVar(CharPath & UserName & ".chr", "PENAS", "Cant"))
-                            Call WriteVar(CharPath & UserName & ".chr", "PENAS", "Cant", count + 1)
-                            Call WriteVar(CharPath & UserName & ".chr", "PENAS", "P" & count + 1, LCase$(.Name) & ": CARCEL " & jailTime & "m, MOTIVO: " & LCase$(reason) & " " & Date & " " & time)
+                            Count = val(GetVar(CharPath & UserName & ".chr", "PENAS", "Cant"))
+                            Call WriteVar(CharPath & UserName & ".chr", "PENAS", "Cant", Count + 1)
+                            Call WriteVar(CharPath & UserName & ".chr", "PENAS", "P" & Count + 1, LCase$(.Name) & ": CARCEL " & jailTime & "m, MOTIVO: " & LCase$(reason) & " " & Date & " " & time)
                         End If
                         
                         Call Encarcelar(tUser, jailTime, .Name)
@@ -6550,15 +6550,15 @@ On Error GoTo Errhandler
     End With
     
 Errhandler:
-    Dim error As Long
-    error = Err.Number
+    Dim Error As Long
+    Error = Err.Number
 On Error GoTo 0
     
     'Destroy auxiliar buffer
     Set Buffer = Nothing
     
-    If error <> 0 Then _
-        Err.Raise error
+    If Error <> 0 Then _
+        Err.Raise Error
 End Sub
 
 ''
@@ -6633,7 +6633,7 @@ On Error GoTo Errhandler
         Dim UserName As String
         Dim reason As String
         Dim privs As PlayerType
-        Dim count As Byte
+        Dim Count As Byte
         
         UserName = Buffer.ReadASCIIString()
         reason = Buffer.ReadASCIIString()
@@ -6655,9 +6655,9 @@ On Error GoTo Errhandler
                     End If
                     
                     If FileExist(CharPath & UserName & ".chr", vbNormal) Then
-                        count = val(GetVar(CharPath & UserName & ".chr", "PENAS", "Cant"))
-                        Call WriteVar(CharPath & UserName & ".chr", "PENAS", "Cant", count + 1)
-                        Call WriteVar(CharPath & UserName & ".chr", "PENAS", "P" & count + 1, LCase$(.Name) & ": ADVERTENCIA por: " & LCase$(reason) & " " & Date & " " & time)
+                        Count = val(GetVar(CharPath & UserName & ".chr", "PENAS", "Cant"))
+                        Call WriteVar(CharPath & UserName & ".chr", "PENAS", "Cant", Count + 1)
+                        Call WriteVar(CharPath & UserName & ".chr", "PENAS", "P" & Count + 1, LCase$(.Name) & ": ADVERTENCIA por: " & LCase$(reason) & " " & Date & " " & time)
                         
                         Call WriteConsoleMsg(UserIndex, "Has advertido a " & UCase$(UserName) & ".", FontTypeNames.FONTTYPE_INFO)
                         Call LogGM(.Name, " advirtio a " & UserName)
@@ -6671,15 +6671,15 @@ On Error GoTo Errhandler
     End With
     
 Errhandler:
-    Dim error As Long
-    error = Err.Number
+    Dim Error As Long
+    Error = Err.Number
 On Error GoTo 0
     
     'Destroy auxiliar buffer
     Set Buffer = Nothing
     
-    If error <> 0 Then _
-        Err.Raise error
+    If Error <> 0 Then _
+        Err.Raise Error
 End Sub
 
 ''
@@ -7035,15 +7035,15 @@ On Error GoTo Errhandler
     End With
 
 Errhandler:
-    Dim error As Long
-    error = Err.Number
+    Dim Error As Long
+    Error = Err.Number
 On Error GoTo 0
     
     'Destroy auxiliar buffer
     Set Buffer = Nothing
     
-    If error <> 0 Then _
-        Err.Raise error
+    If Error <> 0 Then _
+        Err.Raise Error
 End Sub
 
 
@@ -7100,15 +7100,15 @@ On Error GoTo Errhandler
     End With
     
 Errhandler:
-    Dim error As Long
-    error = Err.Number
+    Dim Error As Long
+    Error = Err.Number
 On Error GoTo 0
     
     'Destroy auxiliar buffer
     Set Buffer = Nothing
     
-    If error <> 0 Then _
-        Err.Raise error
+    If Error <> 0 Then _
+        Err.Raise Error
 End Sub
 
 ''
@@ -7159,15 +7159,15 @@ On Error GoTo Errhandler
     End With
 
 Errhandler:
-    Dim error As Long
-    error = Err.Number
+    Dim Error As Long
+    Error = Err.Number
 On Error GoTo 0
     
     'Destroy auxiliar buffer
     Set Buffer = Nothing
     
-    If error <> 0 Then _
-        Err.Raise error
+    If Error <> 0 Then _
+        Err.Raise Error
 End Sub
 
 ''
@@ -7218,15 +7218,15 @@ On Error GoTo Errhandler
     End With
 
 Errhandler:
-    Dim error As Long
-    error = Err.Number
+    Dim Error As Long
+    Error = Err.Number
 On Error GoTo 0
     
     'Destroy auxiliar buffer
     Set Buffer = Nothing
     
-    If error <> 0 Then _
-        Err.Raise error
+    If Error <> 0 Then _
+        Err.Raise Error
 End Sub
 
 ''
@@ -7278,15 +7278,15 @@ On Error GoTo Errhandler
     End With
 
 Errhandler:
-    Dim error As Long
-    error = Err.Number
+    Dim Error As Long
+    Error = Err.Number
 On Error GoTo 0
     
     'Destroy auxiliar buffer
     Set Buffer = Nothing
     
-    If error <> 0 Then _
-        Err.Raise error
+    If Error <> 0 Then _
+        Err.Raise Error
 End Sub
 
 ''
@@ -7338,15 +7338,15 @@ On Error GoTo Errhandler
     End With
 
 Errhandler:
-    Dim error As Long
-    error = Err.Number
+    Dim Error As Long
+    Error = Err.Number
 On Error GoTo 0
     
     'Destroy auxiliar buffer
     Set Buffer = Nothing
     
-    If error <> 0 Then _
-        Err.Raise error
+    If Error <> 0 Then _
+        Err.Raise Error
 End Sub
 
 ''
@@ -7409,15 +7409,15 @@ On Error GoTo Errhandler
     End With
 
 Errhandler:
-    Dim error As Long
-    error = Err.Number
+    Dim Error As Long
+    Error = Err.Number
 On Error GoTo 0
     
     'Destroy auxiliar buffer
     Set Buffer = Nothing
     
-    If error <> 0 Then _
-        Err.Raise error
+    If Error <> 0 Then _
+        Err.Raise Error
 End Sub
 
 ''
@@ -7508,15 +7508,15 @@ On Error GoTo Errhandler
     End With
 
 Errhandler:
-    Dim error As Long
-    error = Err.Number
+    Dim Error As Long
+    Error = Err.Number
 On Error GoTo 0
     
     'Destroy auxiliar buffer
     Set Buffer = Nothing
     
-    If error <> 0 Then _
-        Err.Raise error
+    If Error <> 0 Then _
+        Err.Raise Error
 End Sub
 
 ''
@@ -7653,15 +7653,15 @@ On Error GoTo Errhandler
     End With
 
 Errhandler:
-    Dim error As Long
-    error = Err.Number
+    Dim Error As Long
+    Error = Err.Number
 On Error GoTo 0
     
     'Destroy auxiliar buffer
     Set Buffer = Nothing
     
-    If error <> 0 Then _
-        Err.Raise error
+    If Error <> 0 Then _
+        Err.Raise Error
 End Sub
 
 ''
@@ -7715,15 +7715,15 @@ On Error GoTo Errhandler
     End With
 
 Errhandler:
-    Dim error As Long
-    error = Err.Number
+    Dim Error As Long
+    Error = Err.Number
 On Error GoTo 0
     
     'Destroy auxiliar buffer
     Set Buffer = Nothing
     
-    If error <> 0 Then _
-        Err.Raise error
+    If Error <> 0 Then _
+        Err.Raise Error
 End Sub
 
 ''
@@ -7766,15 +7766,15 @@ On Error GoTo Errhandler
     End With
 
 Errhandler:
-    Dim error As Long
-    error = Err.Number
+    Dim Error As Long
+    Error = Err.Number
 On Error GoTo 0
     
     'Destroy auxiliar buffer
     Set Buffer = Nothing
     
-    If error <> 0 Then _
-        Err.Raise error
+    If Error <> 0 Then _
+        Err.Raise Error
 End Sub
 
 ''
@@ -7839,15 +7839,15 @@ On Error GoTo Errhandler
     End With
 
 Errhandler:
-    Dim error As Long
-    error = Err.Number
+    Dim Error As Long
+    Error = Err.Number
 On Error GoTo 0
     
     'Destroy auxiliar buffer
     Set Buffer = Nothing
     
-    If error <> 0 Then _
-        Err.Raise error
+    If Error <> 0 Then _
+        Err.Raise Error
 End Sub
 
 ''
@@ -7933,15 +7933,15 @@ On Error GoTo Errhandler
     End With
 
 Errhandler:
-    Dim error As Long
-    error = Err.Number
+    Dim Error As Long
+    Error = Err.Number
 On Error GoTo 0
     
     'Destroy auxiliar buffer
     Set Buffer = Nothing
     
-    If error <> 0 Then _
-        Err.Raise error
+    If Error <> 0 Then _
+        Err.Raise Error
 End Sub
 
 ''
@@ -8084,15 +8084,15 @@ On Error GoTo Errhandler
     End With
 
 Errhandler:
-    Dim error As Long
-    error = Err.Number
+    Dim Error As Long
+    Error = Err.Number
 On Error GoTo 0
     
     'Destroy auxiliar buffer
     Set Buffer = Nothing
     
-    If error <> 0 Then _
-        Err.Raise error
+    If Error <> 0 Then _
+        Err.Raise Error
 End Sub
 
 ''
@@ -8165,15 +8165,15 @@ On Error GoTo Errhandler
     End With
 
 Errhandler:
-    Dim error As Long
-    error = Err.Number
+    Dim Error As Long
+    Error = Err.Number
 On Error GoTo 0
     
     'Destroy auxiliar buffer
     Set Buffer = Nothing
     
-    If error <> 0 Then _
-        Err.Raise error
+    If Error <> 0 Then _
+        Err.Raise Error
 End Sub
 
 ''
@@ -8418,15 +8418,15 @@ On Error GoTo Errhandler
     End With
 
 Errhandler:
-    Dim error As Long
-    error = Err.Number
+    Dim Error As Long
+    Error = Err.Number
 On Error GoTo 0
     
     'Destroy auxiliar buffer
     Set Buffer = Nothing
     
-    If error <> 0 Then _
-        Err.Raise error
+    If Error <> 0 Then _
+        Err.Raise Error
 End Sub
 
 ''
@@ -8556,15 +8556,15 @@ On Error GoTo Errhandler
     End With
 
 Errhandler:
-    Dim error As Long
-    error = Err.Number
+    Dim Error As Long
+    Error = Err.Number
 On Error GoTo 0
     
     'Destroy auxiliar buffer
     Set Buffer = Nothing
     
-    If error <> 0 Then _
-        Err.Raise error
+    If Error <> 0 Then _
+        Err.Raise Error
 End Sub
 
 ''
@@ -8605,15 +8605,15 @@ On Error GoTo Errhandler
     End With
 
 Errhandler:
-    Dim error As Long
-    error = Err.Number
+    Dim Error As Long
+    Error = Err.Number
 On Error GoTo 0
     
     'Destroy auxiliar buffer
     Set Buffer = Nothing
     
-    If error <> 0 Then _
-        Err.Raise error
+    If Error <> 0 Then _
+        Err.Raise Error
 End Sub
 
 ''
@@ -8654,15 +8654,15 @@ On Error GoTo Errhandler
     End With
 
 Errhandler:
-    Dim error As Long
-    error = Err.Number
+    Dim Error As Long
+    Error = Err.Number
 On Error GoTo 0
     
     'Destroy auxiliar buffer
     Set Buffer = Nothing
     
-    If error <> 0 Then _
-        Err.Raise error
+    If Error <> 0 Then _
+        Err.Raise Error
 End Sub
 
 ''
@@ -8703,15 +8703,15 @@ On Error GoTo Errhandler
     End With
 
 Errhandler:
-    Dim error As Long
-    error = Err.Number
+    Dim Error As Long
+    Error = Err.Number
 On Error GoTo 0
     
     'Destroy auxiliar buffer
     Set Buffer = Nothing
     
-    If error <> 0 Then _
-        Err.Raise error
+    If Error <> 0 Then _
+        Err.Raise Error
 End Sub
 
 ''
@@ -8757,15 +8757,15 @@ On Error GoTo Errhandler
     End With
 
 Errhandler:
-    Dim error As Long
-    error = Err.Number
+    Dim Error As Long
+    Error = Err.Number
 On Error GoTo 0
     
     'Destroy auxiliar buffer
     Set Buffer = Nothing
     
-    If error <> 0 Then _
-        Err.Raise error
+    If Error <> 0 Then _
+        Err.Raise Error
 End Sub
 
 ''
@@ -8856,15 +8856,15 @@ On Error GoTo Errhandler
     End With
 
 Errhandler:
-    Dim error As Long
-    error = Err.Number
+    Dim Error As Long
+    Error = Err.Number
 On Error GoTo 0
     
     'Destroy auxiliar buffer
     Set Buffer = Nothing
     
-    If error <> 0 Then _
-        Err.Raise error
+    If Error <> 0 Then _
+        Err.Raise Error
 End Sub
 
 ''
@@ -8918,15 +8918,15 @@ On Error GoTo Errhandler
     End With
 
 Errhandler:
-    Dim error As Long
-    error = Err.Number
+    Dim Error As Long
+    Error = Err.Number
 On Error GoTo 0
     
     'Destroy auxiliar buffer
     Set Buffer = Nothing
     
-    If error <> 0 Then _
-        Err.Raise error
+    If Error <> 0 Then _
+        Err.Raise Error
 End Sub
 
 ''
@@ -9008,15 +9008,15 @@ On Error GoTo Errhandler
     End With
 
 Errhandler:
-    Dim error As Long
-    error = Err.Number
+    Dim Error As Long
+    Error = Err.Number
 On Error GoTo 0
     
     'Destroy auxiliar buffer
     Set Buffer = Nothing
     
-    If error <> 0 Then _
-        Err.Raise error
+    If Error <> 0 Then _
+        Err.Raise Error
 End Sub
 
 ''
@@ -9065,15 +9065,15 @@ On Error GoTo Errhandler
     End With
 
 Errhandler:
-    Dim error As Long
-    error = Err.Number
+    Dim Error As Long
+    Error = Err.Number
 On Error GoTo 0
     
     'Destroy auxiliar buffer
     Set Buffer = Nothing
     
-    If error <> 0 Then _
-        Err.Raise error
+    If Error <> 0 Then _
+        Err.Raise Error
 End Sub
 
 ''
@@ -9163,15 +9163,15 @@ On Error GoTo Errhandler
     End With
 
 Errhandler:
-    Dim error As Long
-    error = Err.Number
+    Dim Error As Long
+    Error = Err.Number
 On Error GoTo 0
     
     'Destroy auxiliar buffer
     Set Buffer = Nothing
     
-    If error <> 0 Then _
-        Err.Raise error
+    If Error <> 0 Then _
+        Err.Raise Error
 End Sub
 
 ''
@@ -9262,7 +9262,7 @@ Private Sub HandleBannedIPList(ByVal UserIndex As Integer)
         
         Call LogGM(.Name, "/BANIPLIST")
         
-        For LoopC = 1 To BanIps.count
+        For LoopC = 1 To BanIps.Count
             lista = lista & BanIps.Item(LoopC) & ", "
         Next LoopC
         
@@ -9371,15 +9371,15 @@ On Error GoTo Errhandler
     End With
 
 Errhandler:
-    Dim error As Long
-    error = Err.Number
+    Dim Error As Long
+    Error = Err.Number
 On Error GoTo 0
     
     'Destroy auxiliar buffer
     Set Buffer = Nothing
     
-    If error <> 0 Then _
-        Err.Raise error
+    If Error <> 0 Then _
+        Err.Raise Error
 End Sub
 
 ''
@@ -9562,15 +9562,15 @@ On Error GoTo Errhandler
     End With
 
 Errhandler:
-    Dim error As Long
-    error = Err.Number
+    Dim Error As Long
+    Error = Err.Number
 On Error GoTo 0
     
     'Destroy auxiliar buffer
     Set Buffer = Nothing
     
-    If error <> 0 Then _
-        Err.Raise error
+    If Error <> 0 Then _
+        Err.Raise Error
 End Sub
 
 ''
@@ -9635,15 +9635,15 @@ On Error GoTo Errhandler
     End With
 
 Errhandler:
-    Dim error As Long
-    error = Err.Number
+    Dim Error As Long
+    Error = Err.Number
 On Error GoTo 0
     
     'Destroy auxiliar buffer
     Set Buffer = Nothing
     
-    If error <> 0 Then _
-        Err.Raise error
+    If Error <> 0 Then _
+        Err.Raise Error
 End Sub
 
 ''
@@ -9767,15 +9767,15 @@ On Error GoTo Errhandler
     End With
 
 Errhandler:
-    Dim error As Long
-    error = Err.Number
+    Dim Error As Long
+    Error = Err.Number
 On Error GoTo 0
     
     'Destroy auxiliar buffer
     Set Buffer = Nothing
     
-    If error <> 0 Then _
-        Err.Raise error
+    If Error <> 0 Then _
+        Err.Raise Error
 End Sub
 
 ''
@@ -9937,15 +9937,15 @@ On Error GoTo Errhandler
     End With
 
 Errhandler:
-    Dim error As Long
-    error = Err.Number
+    Dim Error As Long
+    Error = Err.Number
 On Error GoTo 0
     
     'Destroy auxiliar buffer
     Set Buffer = Nothing
     
-    If error <> 0 Then _
-        Err.Raise error
+    If Error <> 0 Then _
+        Err.Raise Error
 End Sub
 
 ''
@@ -10058,15 +10058,15 @@ On Error GoTo Errhandler
     End With
     
 Errhandler:
-    Dim error As Long
-    error = Err.Number
+    Dim Error As Long
+    Error = Err.Number
 On Error GoTo 0
     
     'Destroy auxiliar buffer
     Set Buffer = Nothing
     
-    If error <> 0 Then _
-        Err.Raise error
+    If Error <> 0 Then _
+        Err.Raise Error
 End Sub
 
 ''
@@ -10411,15 +10411,15 @@ On Error GoTo Errhandler
     End With
 
 Errhandler:
-    Dim error As Long
-    error = Err.Number
+    Dim Error As Long
+    Error = Err.Number
 On Error GoTo 0
     
     'Destroy auxiliar buffer
     Set Buffer = Nothing
     
-    If error <> 0 Then _
-        Err.Raise error
+    If Error <> 0 Then _
+        Err.Raise Error
 End Sub
 
 ''
@@ -10501,15 +10501,15 @@ On Error GoTo Errhandler
     End With
 
 Errhandler:
-    Dim error As Long
-    error = Err.Number
+    Dim Error As Long
+    Error = Err.Number
 On Error GoTo 0
     
     'Destroy auxiliar buffer
     Set Buffer = Nothing
     
-    If error <> 0 Then _
-        Err.Raise error
+    If Error <> 0 Then _
+        Err.Raise Error
 End Sub
 
 ''
@@ -10558,15 +10558,15 @@ On Error GoTo Errhandler
     End With
 
 Errhandler:
-    Dim error As Long
-    error = Err.Number
+    Dim Error As Long
+    Error = Err.Number
 On Error GoTo 0
     
     'Destroy auxiliar buffer
     Set Buffer = Nothing
     
-    If error <> 0 Then _
-        Err.Raise error
+    If Error <> 0 Then _
+        Err.Raise Error
 End Sub
 
 ''
@@ -10737,15 +10737,15 @@ On Error GoTo Errhandler
     End With
 
 Errhandler:
-    Dim error As Long
-    error = Err.Number
+    Dim Error As Long
+    Error = Err.Number
 On Error GoTo 0
     
     'Destroy auxiliar buffer
     Set Buffer = Nothing
     
-    If error <> 0 Then _
-        Err.Raise error
+    If Error <> 0 Then _
+        Err.Raise Error
 End Sub
 
 ''
@@ -10799,15 +10799,15 @@ On Error GoTo Errhandler
     End With
 
 Errhandler:
-    Dim error As Long
-    error = Err.Number
+    Dim Error As Long
+    Error = Err.Number
 On Error GoTo 0
     
     'Destroy auxiliar buffer
     Set Buffer = Nothing
     
-    If error <> 0 Then _
-        Err.Raise error
+    If Error <> 0 Then _
+        Err.Raise Error
 End Sub
 
 ''
@@ -10864,15 +10864,15 @@ On Error GoTo Errhandler
     End With
 
 Errhandler:
-    Dim error As Long
-    error = Err.Number
+    Dim Error As Long
+    Error = Err.Number
 On Error GoTo 0
     
     'Destroy auxiliar buffer
     Set Buffer = Nothing
     
-    If error <> 0 Then _
-        Err.Raise error
+    If Error <> 0 Then _
+        Err.Raise Error
 End Sub
 
 ''
@@ -11101,15 +11101,15 @@ On Error GoTo Errhandler
     End With
 
 Errhandler:
-    Dim error As Long
-    error = Err.Number
+    Dim Error As Long
+    Error = Err.Number
 On Error GoTo 0
     
     'Destroy auxiliar buffer
     Set Buffer = Nothing
     
-    If error <> 0 Then _
-        Err.Raise error
+    If Error <> 0 Then _
+        Err.Raise Error
 End Sub
 
 ''
@@ -11155,15 +11155,15 @@ On Error GoTo Errhandler
     End With
 
 Errhandler:
-    Dim error As Long
-    error = Err.Number
+    Dim Error As Long
+    Error = Err.Number
 On Error GoTo 0
     
     'Destroy auxiliar buffer
     Set Buffer = Nothing
     
-    If error <> 0 Then _
-        Err.Raise error
+    If Error <> 0 Then _
+        Err.Raise Error
 End Sub
 
 ''
@@ -11205,15 +11205,15 @@ On Error GoTo Errhandler
     End With
 
 Errhandler:
-    Dim error As Long
-    error = Err.Number
+    Dim Error As Long
+    Error = Err.Number
 On Error GoTo 0
     
     'Destroy auxiliar buffer
     Set Buffer = Nothing
     
-    If error <> 0 Then _
-        Err.Raise error
+    If Error <> 0 Then _
+        Err.Raise Error
 End Sub
 
 ''
@@ -11274,15 +11274,15 @@ On Error GoTo Errhandler
     End With
 
 Errhandler:
-    Dim error As Long
-    error = Err.Number
+    Dim Error As Long
+    Error = Err.Number
 On Error GoTo 0
     
     'Destroy auxiliar buffer
     Set Buffer = Nothing
     
-    If error <> 0 Then _
-        Err.Raise error
+    If Error <> 0 Then _
+        Err.Raise Error
 End Sub
 
 ''
@@ -11402,16 +11402,16 @@ On Error GoTo Errhandler
     End With
 
 Errhandler:
-    Dim error As Long
+    Dim Error As Long
 
-    error = Err.Number
+    Error = Err.Number
 
 On Error GoTo 0
     'Destroy auxiliar buffer
     Set Buffer = Nothing
 
-    If error <> 0 Then _
-        Err.Raise error
+    If Error <> 0 Then _
+        Err.Raise Error
 End Sub
 
 ''
@@ -11446,12 +11446,12 @@ On Error GoTo Errhandler
     End With
     
 Errhandler:
-    Dim error As Long
-    error = Err.Number
+    Dim Error As Long
+    Error = Err.Number
 On Error GoTo 0
     
-    If error <> 0 Then _
-        Err.Raise error
+    If Error <> 0 Then _
+        Err.Raise Error
 End Sub
 
 ''
@@ -11493,15 +11493,15 @@ On Error GoTo Errhandler
     End With
 
 Errhandler:
-    Dim error As Long
-    error = Err.Number
+    Dim Error As Long
+    Error = Err.Number
 On Error GoTo 0
     
     'Destroy auxiliar buffer
     Set Buffer = Nothing
     
-    If error <> 0 Then _
-        Err.Raise error
+    If Error <> 0 Then _
+        Err.Raise Error
 End Sub
 
 ''
@@ -11558,15 +11558,15 @@ On Error GoTo Errhandler
     End With
 
 Errhandler:
-    Dim error As Long
-    error = Err.Number
+    Dim Error As Long
+    Error = Err.Number
 On Error GoTo 0
     
     'Destroy auxiliar buffer
     Set Buffer = Nothing
     
-    If error <> 0 Then _
-        Err.Raise error
+    If Error <> 0 Then _
+        Err.Raise Error
 End Sub
 
 ''
@@ -11589,9 +11589,9 @@ On Error GoTo Errhandler
         'Remove packet ID
         Call .incomingData.ReadByte
 
-        Dim count As Byte
+        Dim Count As Byte
 
-        count = .incomingData.ReadByte()
+        Count = .incomingData.ReadByte()
         
         If .flags.Privilegios And (PlayerType.User Or PlayerType.RoleMaster And PlayerType.Consejero) Then Exit Sub
         
@@ -11607,12 +11607,12 @@ On Error GoTo Errhandler
     End With
     
 Errhandler:
-    Dim error As Long
-    error = Err.Number
+    Dim Error As Long
+    Error = Err.Number
 On Error GoTo 0
     
-    If error <> 0 Then _
-        Err.Raise error
+    If Error <> 0 Then _
+        Err.Raise Error
 End Sub
 
 ''
@@ -12424,8 +12424,8 @@ End Sub
 
 Public Sub WriteCharacterCreate(ByVal UserIndex As Integer, ByVal body As Integer, ByVal Head As Integer, ByVal heading As eHeading, _
                                 ByVal CharIndex As Integer, ByVal X As Byte, ByVal Y As Byte, ByVal weapon As Integer, ByVal shield As Integer, _
-                                ByVal FX As Integer, ByVal FXLoops As Integer, ByVal helmet As Integer, ByVal Name As String, ByVal NickColor As Byte, _
-                                ByVal Privileges As Byte)
+                                ByVal FX As Integer, ByVal FXLoops As Integer, ByVal helmet As Integer, ByVal Name As String, ByVal Guild As String, _
+                                ByVal NickColor As Byte, ByVal Privileges As Byte)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
@@ -12433,7 +12433,7 @@ Public Sub WriteCharacterCreate(ByVal UserIndex As Integer, ByVal body As Intege
 '***************************************************
 On Error GoTo Errhandler
     Call UserList(UserIndex).outgoingData.WriteASCIIStringFixed(PrepareMessageCharacterCreate(body, Head, heading, CharIndex, X, Y, weapon, shield, FX, FXLoops, _
-                                                            helmet, Name, NickColor, Privileges))
+                                                            helmet, Name, Guild, NickColor, Privileges))
 Exit Sub
 
 Errhandler:
@@ -13031,7 +13031,7 @@ On Error GoTo Errhandler
     Dim i As Long
     Dim Obj As ObjData
     Dim validIndexes() As Integer
-    Dim count As Integer
+    Dim Count As Integer
     
     ReDim validIndexes(1 To UBound(ArmasHerrero()))
     
@@ -13041,16 +13041,16 @@ On Error GoTo Errhandler
         For i = 1 To UBound(ArmasHerrero())
             ' Can the user create this object? If so add it to the list....
             If ObjData(ArmasHerrero(i)).SkHerreria <= Round(UserList(UserIndex).Stats.UserSkills(eSkill.Herreria) / ModHerreria(UserList(UserIndex).Clase), 0) Then
-                count = count + 1
-                validIndexes(count) = i
+                Count = Count + 1
+                validIndexes(Count) = i
             End If
         Next i
         
         ' Write the number of objects in the list
-        Call .WriteInteger(count)
+        Call .WriteInteger(Count)
         
         ' Write the needed data of each object
-        For i = 1 To count
+        For i = 1 To Count
             Obj = ObjData(ArmasHerrero(validIndexes(i)))
             Call .WriteASCIIString(Obj.Name)
             Call .WriteInteger(Obj.GrhIndex)
@@ -13085,7 +13085,7 @@ On Error GoTo Errhandler
     Dim i As Long
     Dim Obj As ObjData
     Dim validIndexes() As Integer
-    Dim count As Integer
+    Dim Count As Integer
     
     ReDim validIndexes(1 To UBound(ArmadurasHerrero()))
     
@@ -13095,16 +13095,16 @@ On Error GoTo Errhandler
         For i = 1 To UBound(ArmadurasHerrero())
             ' Can the user create this object? If so add it to the list....
             If ObjData(ArmadurasHerrero(i)).SkHerreria <= Round(UserList(UserIndex).Stats.UserSkills(eSkill.Herreria) / ModHerreria(UserList(UserIndex).Clase), 0) Then
-                count = count + 1
-                validIndexes(count) = i
+                Count = Count + 1
+                validIndexes(Count) = i
             End If
         Next i
         
         ' Write the number of objects in the list
-        Call .WriteInteger(count)
+        Call .WriteInteger(Count)
         
         ' Write the needed data of each object
-        For i = 1 To count
+        For i = 1 To Count
             Obj = ObjData(ArmadurasHerrero(validIndexes(i)))
             Call .WriteASCIIString(Obj.Name)
             Call .WriteInteger(Obj.GrhIndex)
@@ -13139,7 +13139,7 @@ On Error GoTo Errhandler
     Dim i As Long
     Dim Obj As ObjData
     Dim validIndexes() As Integer
-    Dim count As Integer
+    Dim Count As Integer
     
     ReDim validIndexes(1 To UBound(ObjCarpintero()))
     
@@ -13149,16 +13149,16 @@ On Error GoTo Errhandler
         For i = 1 To UBound(ObjCarpintero())
             ' Can the user create this object? If so add it to the list....
             If ObjData(ObjCarpintero(i)).SkCarpinteria <= UserList(UserIndex).Stats.UserSkills(eSkill.Carpinteria) \ ModCarpinteria(UserList(UserIndex).Clase) Then
-                count = count + 1
-                validIndexes(count) = i
+                Count = Count + 1
+                validIndexes(Count) = i
             End If
         Next i
         
         ' Write the number of objects in the list
-        Call .WriteInteger(count)
+        Call .WriteInteger(Count)
         
         ' Write the needed data of each object
-        For i = 1 To count
+        For i = 1 To Count
             Obj = ObjData(ObjCarpintero(validIndexes(i)))
             Call .WriteASCIIString(Obj.Name)
             Call .WriteInteger(Obj.GrhIndex)
@@ -14057,7 +14057,7 @@ End Sub
 ' @param    Cant Number of names to send.
 ' @remarks  The data is not actually sent until the buffer is properly flushed.
 
-Public Sub WriteUserNameList(ByVal UserIndex As Integer, ByRef userNamesList() As String, ByVal cant As Integer)
+Public Sub WriteUserNameList(ByVal UserIndex As Integer, ByRef userNamesList() As String, ByVal Cant As Integer)
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06 NIGO:
@@ -14071,7 +14071,7 @@ On Error GoTo Errhandler
         Call .WriteByte(ServerPacketID.UserNameList)
         
         ' Prepare user's names list
-        For i = 1 To cant
+        For i = 1 To Cant
             Tmp = Tmp & userNamesList(i) & SEPARATOR
         Next i
         
@@ -14574,8 +14574,8 @@ End Function
 
 Public Function PrepareMessageCharacterCreate(ByVal body As Integer, ByVal Head As Integer, ByVal heading As eHeading, _
                                 ByVal CharIndex As Integer, ByVal X As Byte, ByVal Y As Byte, ByVal weapon As Integer, ByVal shield As Integer, _
-                                ByVal FX As Integer, ByVal FXLoops As Integer, ByVal helmet As Integer, ByVal Name As String, ByVal NickColor As Byte, _
-                                ByVal Privileges As Byte) As String
+                                ByVal FX As Integer, ByVal FXLoops As Integer, ByVal helmet As Integer, ByVal Name As String, ByVal Guild As String, _
+                                ByVal NickColor As Byte, ByVal Privileges As Byte) As String
 '***************************************************
 'Author: Juan Martín Sotuyo Dodero (Maraxus)
 'Last Modification: 05/17/06
@@ -14596,6 +14596,7 @@ Public Function PrepareMessageCharacterCreate(ByVal body As Integer, ByVal Head 
         Call .WriteInteger(FX)
         Call .WriteInteger(FXLoops)
         Call .WriteASCIIString(Name)
+        Call .WriteASCIIString(Guild)
         Call .WriteByte(NickColor)
         Call .WriteByte(Privileges)
         
@@ -14923,15 +14924,15 @@ Private Sub HandleWinTournament(ByVal UserIndex As Integer)
     End With
 
 Errhandler:
-    Dim error As Long
-    error = Err.Number
+    Dim Error As Long
+    Error = Err.Number
 On Error GoTo 0
     
     'Destroy auxiliar buffer
     Set Buffer = Nothing
     
-    If error <> 0 Then _
-        Err.Raise error
+    If Error <> 0 Then _
+        Err.Raise Error
 
 End Sub
 
@@ -14956,15 +14957,15 @@ Private Sub HandleLoseTournament(ByVal UserIndex As Integer)
     End With
 
 Errhandler:
-    Dim error As Long
-    error = Err.Number
+    Dim Error As Long
+    Error = Err.Number
 On Error GoTo 0
     
     'Destroy auxiliar buffer
     Set Buffer = Nothing
     
-    If error <> 0 Then _
-        Err.Raise error
+    If Error <> 0 Then _
+        Err.Raise Error
 End Sub
 
 Private Sub HandleWinQuest(ByVal UserIndex As Integer)
@@ -14991,15 +14992,15 @@ Private Sub HandleWinQuest(ByVal UserIndex As Integer)
     End With
 
 Errhandler:
-    Dim error As Long
-    error = Err.Number
+    Dim Error As Long
+    Error = Err.Number
 On Error GoTo 0
     
     'Destroy auxiliar buffer
     Set Buffer = Nothing
     
-    If error <> 0 Then _
-        Err.Raise error
+    If Error <> 0 Then _
+        Err.Raise Error
 
 End Sub
 
@@ -15024,15 +15025,15 @@ Private Sub HandleLoseQuest(ByVal UserIndex As Integer)
     End With
 
 Errhandler:
-    Dim error As Long
-    error = Err.Number
+    Dim Error As Long
+    Error = Err.Number
 On Error GoTo 0
     
     'Destroy auxiliar buffer
     Set Buffer = Nothing
     
-    If error <> 0 Then _
-        Err.Raise error
+    If Error <> 0 Then _
+        Err.Raise Error
 End Sub
 
 Private Sub HandleEligioFaccion(ByVal UserIndex As Integer)
@@ -15046,6 +15047,7 @@ Private Sub HandleEligioFaccion(ByVal UserIndex As Integer)
         
         If .Faccion.BandoOriginal > 0 Then Exit Sub
         
+        'todo
         If Faccion = eFaccion.Neutral Then
             If .Faccion.Bando <> eFaccion.Neutral Then
                 'No podés declararte neutral perteneciendo ya a una facción. 32 51 223 N C
@@ -15125,6 +15127,9 @@ Private Sub WriteSendGuildForm(ByVal UserIndex As Integer, ByVal GForm As eGuild
                 End If
             Next
             
+            Case eGuildForms.eGFLeaders
+            
+            
         End Select
     End With
 End Sub
@@ -15135,18 +15140,17 @@ Private Sub HandleGuildFoundate(ByVal UserIndex As Integer)
         
         .ReadByte
 
-        Call WriteSendGuildFoundateWindow(UserIndex, 0)
+        Call WriteSendGuildFoundateWindow(UserIndex)
 
     End With
 End Sub
 
-Private Sub WriteSendGuildFoundateWindow(ByVal UserIndex As Integer, ByVal Action As Byte)
+Private Sub WriteSendGuildFoundateWindow(ByVal UserIndex As Integer)
     
     With UserList(UserIndex).outgoingData
         
         .WriteByte ServerPacketID.GuildFoundation
-        .WriteByte Action
-    
+        
     End With
 End Sub
 
@@ -15167,10 +15171,10 @@ Private Sub HandleGuildRequest(ByVal UserIndex As Integer)
         
         .ReadByte
         
-        Dim guild As String
-        guild = .ReadASCIIString
+        Dim Guild As String
+        Guild = .ReadASCIIString
         
-        Call SendRequest(UserIndex, GuildIndex(guild))
+        Call SendRequest(UserIndex, GuildIndex(Guild))
     
     End With
 End Sub

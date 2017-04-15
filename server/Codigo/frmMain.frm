@@ -368,7 +368,7 @@ End Sub
 
 Private Sub AutoSave_Timer()
 
-On Error GoTo ErrHandler
+On Error GoTo Errhandler
 'fired every minute
 Static Minutos As Long
 Static MinutosLatsClean As Long
@@ -412,7 +412,7 @@ Close #N
 '<<<<<-------- Log the number of users online ------>>>
 
 Exit Sub
-ErrHandler:
+Errhandler:
     Call LogError("Error en TimerAutoSave " & Err.Number & ": " & Err.description)
     Resume Next
 End Sub
@@ -767,7 +767,7 @@ Private Sub packetResend_Timer()
 'Last Modification: 04/01/07
 'Attempts to resend to the user all data that may be enqueued.
 '***************************************************
-On Error GoTo ErrHandler:
+On Error GoTo Errhandler:
     Dim i As Long
     
     For i = 1 To MaxUsers
@@ -780,7 +780,7 @@ On Error GoTo ErrHandler:
 
 Exit Sub
 
-ErrHandler:
+Errhandler:
     LogError ("Error en packetResend - Error: " & Err.Number & " - Desc: " & Err.description)
     Resume Next
 End Sub
@@ -799,9 +799,6 @@ If Not haciendoBK And Not EnPausa Then
         
         With Npclist(NpcIndex)
             If .flags.NPCActive Then 'Nos aseguramos que sea INTELIGENTE!
-            
-                ' Chequea si contiua teniendo dueño
-                If .Owner > 0 Then Call ValidarPermanenciaNpc(NpcIndex)
             
                 If .flags.Paralizado = 1 Then
                     Call EfectoParalisisNpc(NpcIndex)
@@ -850,7 +847,7 @@ ErrorHandler:
 End Sub
 
 Private Sub tLluvia_Timer()
-On Error GoTo ErrHandler
+On Error GoTo Errhandler
 
 Dim iCount As Long
 If Lloviendo Then
@@ -860,7 +857,7 @@ If Lloviendo Then
 End If
 
 Exit Sub
-ErrHandler:
+Errhandler:
 Call LogError("tLluvia " & Err.Number & ": " & Err.description)
 End Sub
 
@@ -909,7 +906,7 @@ Private Sub tPiqueteC_Timer()
     
     Dim i As Long
     
-On Error GoTo ErrHandler
+On Error GoTo Errhandler
     For i = 1 To LastUser
         With UserList(i)
             If .flags.UserLogged Then
@@ -951,6 +948,6 @@ On Error GoTo ErrHandler
     Next i
 Exit Sub
 
-ErrHandler:
+Errhandler:
     Call LogError("Error en tPiqueteC_Timer " & Err.Number & ": " & Err.description)
 End Sub

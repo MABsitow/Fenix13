@@ -706,7 +706,7 @@ Public Function UsuarioAtacaNpc(ByVal UserIndex As Integer, ByVal NpcIndex As In
 '14/01/2010: ZaMa - Lo transformo en función, para que no se pierdan municiones al atacar targets inválidos.
 '***************************************************
 
-On Error GoTo ErrHandler
+On Error GoTo Errhandler
 
     If Not PuedeAtacarNPC(UserIndex, NpcIndex) Then Exit Function
     
@@ -732,7 +732,7 @@ On Error GoTo ErrHandler
     
     Exit Function
     
-ErrHandler:
+Errhandler:
     Call LogError("Error en UsuarioAtacaNpc. Error " & Err.Number & " : " & Err.description)
     
 End Function
@@ -826,7 +826,7 @@ Public Function UsuarioImpacto(ByVal AtacanteIndex As Integer, ByVal VictimaInde
 '
 '***************************************************
 
-On Error GoTo ErrHandler
+On Error GoTo Errhandler
 
     Dim ProbRechazo As Long
     Dim Rechazo As Boolean
@@ -915,7 +915,7 @@ On Error GoTo ErrHandler
     
     Exit Function
     
-ErrHandler:
+Errhandler:
     Dim AtacanteNick As String
     Dim VictimaNick As String
     
@@ -934,7 +934,7 @@ Public Function UsuarioAtacaUsuario(ByVal AtacanteIndex As Integer, ByVal Victim
 '                    inválidos, y evitar un doble chequeo innecesario
 '***************************************************
 
-On Error GoTo ErrHandler
+On Error GoTo Errhandler
 
     If Not PuedeAtacar(AtacanteIndex, VictimaIndex) Then Exit Function
     
@@ -984,7 +984,7 @@ On Error GoTo ErrHandler
     
     Exit Function
     
-ErrHandler:
+Errhandler:
     Call LogError("Error en UsuarioAtacaUsuario. Error " & Err.Number & " : " & Err.description)
 End Function
 
@@ -996,7 +996,7 @@ Public Sub UserDañoUser(ByVal AtacanteIndex As Integer, ByVal VictimaIndex As In
 '11/03/2010: ZaMa - Ahora no cuenta la muerte si estaba en estado atacable, y no se vuelve criminal
 '***************************************************
     
-On Error GoTo ErrHandler
+On Error GoTo Errhandler
 
     Dim daño As Long
     Dim Lugar As Byte
@@ -1112,7 +1112,7 @@ On Error GoTo ErrHandler
     
     Exit Sub
     
-ErrHandler:
+Errhandler:
     Dim AtacanteNick As String
     Dim VictimaNick As String
     
@@ -1183,7 +1183,7 @@ Public Function PuedeAtacar(ByVal AttackerIndex As Integer, ByVal VictimIndex As
 '24/02/2009: ZaMa - Los usuarios pueden atacarse entre si.
 '02/04/2010: ZaMa - Los armadas no pueden atacar nunca a los ciudas, salvo que esten atacables.
 '***************************************************
-On Error GoTo ErrHandler
+On Error GoTo Errhandler
 
     'MUY importante el orden de estos "IF"...
     
@@ -1233,9 +1233,9 @@ On Error GoTo ErrHandler
     End Select
     
     'Ataca un ciudadano?
-    If Not criminal(VictimIndex) Then
+    If Not Criminal(VictimIndex) Then
         ' El atacante es ciuda?
-        If Not criminal(AttackerIndex) Then
+        If Not Criminal(AttackerIndex) Then
             ' El atacante es armada?
             If EsArmada(AttackerIndex) Then
                 ' La victima es armada?
@@ -1267,7 +1267,7 @@ On Error GoTo ErrHandler
     End If
     
     ' Un ciuda es atacado
-    If Not criminal(VictimIndex) Then
+    If Not Criminal(VictimIndex) Then
         ' Por un armada sin seguro
         If EsArmada(AttackerIndex) Then
             ' No puede
@@ -1295,7 +1295,7 @@ On Error GoTo ErrHandler
     PuedeAtacar = True
 Exit Function
 
-ErrHandler:
+Errhandler:
     Call LogError("Error en PuedeAtacar. Error " & Err.Number & " : " & Err.description)
 End Function
 
@@ -1365,7 +1365,7 @@ Public Function PuedeAtacarNPC(ByVal AttackerIndex As Integer, ByVal NpcIndex As
         'Para asegurarnos que no sea una Mascota:
         ElseIf Npclist(NpcIndex).MaestroUser = 0 Then
             'Si sos ciudadano tenes que quitar el seguro para atacarla.
-            If Not criminal(AttackerIndex) Then
+            If Not Criminal(AttackerIndex) Then
                 
                 ' Si sos armada no podes atacarlo directamente
                 If EsArmada(AttackerIndex) Then
@@ -1381,7 +1381,7 @@ Public Function PuedeAtacarNPC(ByVal AttackerIndex As Integer, ByVal NpcIndex As
     
     'Es el NPC mascota de alguien?
     If Npclist(NpcIndex).MaestroUser > 0 Then
-        If Not criminal(Npclist(NpcIndex).MaestroUser) Then
+        If Not Criminal(Npclist(NpcIndex).MaestroUser) Then
         
             'Es mascota de un Ciudadano.
             If EsArmada(AttackerIndex) Then
@@ -1402,187 +1402,6 @@ Public Function PuedeAtacarNPC(ByVal AttackerIndex As Integer, ByVal NpcIndex As
             End If
         End If
     End If
-    
-    With Npclist(NpcIndex)
-        ' El npc le pertenece a alguien?
-        OwnerUserIndex = .Owner
-        
-        If OwnerUserIndex > 0 Then
-            
-            ' Puede atacar a su propia criatura!
-            If OwnerUserIndex = AttackerIndex Then
-                PuedeAtacarNPC = True
-                Call IntervaloPerdioNpc(OwnerUserIndex, True) ' Renuevo el timer
-                Exit Function
-            End If
-            
-            ' Esta compartiendo el npc con el atacante? => Puede atacar!
-            If UserList(OwnerUserIndex).flags.ShareNpcWith = AttackerIndex Then
-                PuedeAtacarNPC = True
-                Exit Function
-            End If
-            
-            ' Si son del mismo clan o party, pueden atacar (No renueva el timer)
-           ' If Not SameClan(OwnerUserIndex, AttackerIndex) And Not SameParty(OwnerUserIndex, AttackerIndex) Then
-            
-                ' Si se le agoto el tiempo
-                If IntervaloPerdioNpc(OwnerUserIndex) Then ' Se lo roba :P
-                    Call PerdioNpc(OwnerUserIndex)
-                    Call ApropioNpc(AttackerIndex, NpcIndex)
-                    PuedeAtacarNPC = True
-                    Exit Function
-                    
-                ' Si lanzo un hechizo de para o inmo
-                ElseIf Paraliza Then
-                
-                    ' Si ya esta paralizado o inmobilizado, no puedo inmobilizarlo de nuevo
-                    If .flags.Inmovilizado = 1 Or .flags.Paralizado = 1 Then
-                        
-                        'TODO_ZAMA: Si dejo esto asi, los pks con seguro peusto van a poder inmobilizar criaturas con dueño
-                        ' Si es pk neutral, puede hacer lo que quiera :P.
-                        If Not criminal(AttackerIndex) And Not criminal(OwnerUserIndex) Then
-                        
-                             'El atacante es Armada
-                            If EsArmada(AttackerIndex) Then
-                                
-                                 'Intententa paralizar un npc de un armada?
-                                If EsArmada(OwnerUserIndex) Then
-                                    'El atacante es Armada y esta intentando paralizar un npc de un armada: No puede
-                                    Call WriteConsoleMsg(AttackerIndex, "Los miembros del Ejército Real no pueden paralizar criaturas ya paralizadas pertenecientes a otros miembros del Ejército Real", FontTypeNames.FONTTYPE_INFO)
-                                    Exit Function
-                                
-                                'El atacante es Armada y esta intentando paralizar un npc de un ciuda
-                                Else
-                                    ' Si ya estaba atacable, no podrá atacar a un npc perteneciente a otro ciuda
-                                    If ToogleToAtackable(AttackerIndex, OwnerUserIndex) Then
-                                        Call WriteConsoleMsg(AttackerIndex, "Has paralizado la criatura de un ciudadano, ahora eres atacable por él.", FontTypeNames.FONTTYPE_INFO)
-                                        PuedeAtacarNPC = True
-                                    End If
-                                    
-                                    Exit Function
-                                        
-                                End If
-                                
-                            ' El atacante es ciuda
-                            Else
-
-                                ' Si ya estaba atacable, no podrá atacar a un npc perteneciente a otro ciuda
-                                If ToogleToAtackable(AttackerIndex, OwnerUserIndex) Then
-                                    Call WriteConsoleMsg(AttackerIndex, "Has paralizado la criatura de un ciudadano, ahora eres atacable por él.", FontTypeNames.FONTTYPE_INFO)
-                                    PuedeAtacarNPC = True
-                                End If
-                                
-                                Exit Function
-                            End If
-                            
-                        ' Al menos uno de los dos es criminal
-                        Else
-                            ' Si ambos son caos
-                            If EsCaos(AttackerIndex) And EsCaos(OwnerUserIndex) Then
-                                'El atacante es Caos y esta intentando paralizar un npc de un Caos
-                                Call WriteConsoleMsg(AttackerIndex, "Los miembros de la legión oscura no pueden paralizar criaturas ya paralizadas por otros legionarios.", FontTypeNames.FONTTYPE_INFO)
-                                Exit Function
-                            End If
-                        End If
-                    
-                    ' El npc no esta inmobilizado ni paralizado
-                    Else
-                        ' Si no tiene dueño, puede apropiarselo
-                        If OwnerUserIndex = 0 Then
-                            ' Siempre que no posea uno ya (el inmo/para no cambia pertenencia de npcs).
-                            If UserList(AttackerIndex).flags.OwnedNpc = 0 Then
-                                Call ApropioNpc(AttackerIndex, NpcIndex)
-                            End If
-                        End If
-                        
-                        ' Siempre se pueden paralizar/inmobilizar npcs con o sin dueño
-                        ' que no tengan ese estado
-                        PuedeAtacarNPC = True
-                        Exit Function
-
-                    End If
-                    
-                ' No lanzó hechizos inmobilizantes
-                Else
-                    
-                    ' El npc le pertenece a un ciudadano
-                    If Not criminal(OwnerUserIndex) Then
-                        
-                        'El atacante es Armada y esta intentando atacar un npc de un Ciudadano
-                        If EsArmada(AttackerIndex) Then
-                        
-                            'Intententa atacar un npc de un armada?
-                            If EsArmada(OwnerUserIndex) Then
-                                'El atacante es Armada y esta intentando atacar el npc de un armada: No puede
-                                Call WriteConsoleMsg(AttackerIndex, "Los miembros del Ejército Real no pueden atacar criaturas pertenecientes a otros miembros del Ejército Real", FontTypeNames.FONTTYPE_INFO)
-                                Exit Function
-                            
-                            'El atacante es Armada y esta intentando atacar un npc de un ciuda
-                            Else
-                                ' Si ya estaba atacable, no podrá atacar a un npc perteneciente a otro ciuda
-                                If ToogleToAtackable(AttackerIndex, OwnerUserIndex) Then
-                                    Call WriteConsoleMsg(AttackerIndex, "Has atacado a la criatura de un ciudadano, ahora eres atacable por él.", FontTypeNames.FONTTYPE_INFO)
-                                    PuedeAtacarNPC = True
-                                End If
-                                
-                                Exit Function
-                            End If
-                            
-                        ' No es aramda, puede ser criminal o ciuda
-                        Else
-                            
-                            'El atacante es Ciudadano y esta intentando atacar un npc de un Ciudadano.
-                            If Not criminal(AttackerIndex) Then
-                                
-                                If ToogleToAtackable(AttackerIndex, OwnerUserIndex) Then
-                                    Call WriteConsoleMsg(AttackerIndex, "Has atacado a la criatura de un ciudadano, ahora eres atacable por él.", FontTypeNames.FONTTYPE_INFO)
-                                    PuedeAtacarNPC = True
-                                End If
-                                
-                                Exit Function
-                                
-                            'El atacante es criminal y esta intentando atacar un npc de un Ciudadano.
-                            Else
-                                
-                                PuedeAtacarNPC = True
-                            End If
-                        End If
-                        
-                    ' Es npc de un criminal
-                    Else
-                        If EsCaos(OwnerUserIndex) Then
-                            'Es Caos el Dueño.
-                            If EsCaos(AttackerIndex) Then
-                                'Un Caos intenta atacar una npc de un Caos. No puede atacar.
-                                Call WriteConsoleMsg(AttackerIndex, "Los miembros de la Legión Oscura no pueden atacar criaturas de otros legionarios. ", FontTypeNames.FONTTYPE_INFO)
-                                Exit Function
-                            End If
-                        End If
-                    End If
-                End If
-           ' End If
-            
-        ' Si no tiene dueño el npc, se lo apropia
-        Else
-            ' Solo pueden apropiarse de npcs los caos, armadas o ciudas.
-            If Not criminal(AttackerIndex) Or EsCaos(AttackerIndex) Then
-                ' No puede apropiarse de los pretos!
-                If Not (esPretoriano(NpcIndex) <> 0) Then
-                    ' Si es una mascota atacando, no se apropia del npc
-                    If Not IsPet Then
-                        ' No es dueño de ningun npc => Se lo apropia.
-                        If UserList(AttackerIndex).flags.OwnedNpc = 0 Then
-                            Call ApropioNpc(AttackerIndex, NpcIndex)
-                        ' Es dueño de un npc, pero no puede ser de este porque no tiene propietario.
-                        Else
-                            ' Se va a adueñar del npc (y perder el otro) solo si no inmobiliza/paraliza
-                            If Not Paraliza Then Call ApropioNpc(AttackerIndex, NpcIndex)
-                        End If
-                    End If
-                End If
-            End If
-        End If
-    End With
     
     'Es el Rey Preatoriano?
     If esPretoriano(NpcIndex) = 4 Then
@@ -1645,7 +1464,7 @@ Public Function TriggerZonaPelea(ByVal Origen As Integer, ByVal Destino As Integ
 
 'TODO: Pero que rebuscado!!
 'Nigo:  Te lo rediseñe, pero no te borro el TODO para que lo revises.
-On Error GoTo ErrHandler
+On Error GoTo Errhandler
     Dim tOrg As eTrigger
     Dim tDst As eTrigger
     
@@ -1663,7 +1482,7 @@ On Error GoTo ErrHandler
     End If
 
 Exit Function
-ErrHandler:
+Errhandler:
     TriggerZonaPelea = TRIGGER6_AUSENTE
     LogError ("Error en TriggerZonaPelea - " & Err.description)
 End Function

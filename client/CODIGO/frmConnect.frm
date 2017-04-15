@@ -23,7 +23,7 @@ Begin VB.Form frmConnect
    Visible         =   0   'False
    Begin VB.PictureBox Render 
       Appearance      =   0  'Flat
-      BackColor       =   &H00000040&
+      BackColor       =   &H00000000&
       BorderStyle     =   0  'None
       ForeColor       =   &H80000008&
       Height          =   11520
@@ -100,7 +100,8 @@ Public Sub DirectXEvent8_DXCallback(ByVal EventID As Long)
     'More info: http://www.vbgore.com/GameClient.frmMain.DirectXEvent8_DXCallback
     '*****************************************************************
     '<EhHeader>
-    On Error GoTo DirectXEvent8_DXCallback_Err
+    'On Error GoTo DirectXEvent8_DXCallback_Err
+    On Error Resume Next
     '</EhHeader>
     Dim DevData(1 To 50) As DIDEVICEOBJECTDATA
     Dim NumEvents As Long
@@ -239,7 +240,7 @@ Public Sub LoadComponents()
     Call DisableComponents(btnAtras, btnSiguiente, btnHeadDer, btnHeadIzq)
     
     Call HideComponents(txtNick, txtPass, txtMail, txtRepPass, lblFuerza, lblAgilidad, lblInteligencia, lblConstitucion, _
-                        lblCarisma, cmbHogar, cmbSexo, cmbRaza, lstSkills)
+                        lblCarisma, cmbHogar, cmbSexo, cmbRaza, lstSkills, lblSkillLibres)
                         
     Loaded = True
 End Sub
@@ -247,6 +248,8 @@ Private Sub Render_KeyPress(KeyAscii As Integer)
     
     If KeyAscii = vbKeyTab Then
         Call mod_Components.TabComponent
+    ElseIf KeyAscii = vbKeyReturn Then
+        Call LoginUser
     Else
     
         Dim c As Integer
@@ -295,10 +298,10 @@ Public Sub LoginNewChar()
     
     UserName = GetComponentText(txtNick)
             
-    If Right$(UserName, 1) = " " Then
-        UserName = RTrim$(UserName)
-        MsgBox "Nombre invalido, se han removido los espacios al final del nombre"
-    End If
+    'If Right$(UserName, 1) = " " Then
+    '    UserName = RTrim$(UserName)
+    '    MsgBox "Nombre invalido, se han removido los espacios al final del nombre"
+    'End If
     
     UserRaza = Components(cmbRaza).SelIndex
     UserSexo = Components(cmbSexo).SelIndex
