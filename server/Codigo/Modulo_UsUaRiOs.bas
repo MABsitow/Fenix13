@@ -826,7 +826,7 @@ Public Sub SendUserStatsTxt(ByVal sendIndex As Integer, ByVal UserIndex As Integ
             If .flags.IsLeader = 1 Then
                 Call WriteConsoleMsg(sendIndex, "Status: Líder", FontTypeNames.FONTTYPE_INFO)
             ElseIf .flags.IsLeader = 2 Then
-                Call WriteConsoleMsg(sendIndex, "Status: Teniente", FontTypeNames.FONTTYPE_INFO)
+                Call WriteConsoleMsg(sendIndex, "Status: Reclutador", FontTypeNames.FONTTYPE_INFO)
             End If
             
             'guildpts no tienen objeto
@@ -2030,7 +2030,7 @@ Public Function TotalOfferItems(ByVal OBJIndex As Integer, ByVal UserIndex As In
             ' Si es el item que busco
         If UserList(UserIndex).ComUsu.Objeto(Slot) = OBJIndex Then
             ' Lo sumo a la cantidad total
-            TotalOfferItems = TotalOfferItems + UserList(UserIndex).ComUsu.cant(Slot)
+            TotalOfferItems = TotalOfferItems + UserList(UserIndex).ComUsu.Cant(Slot)
         End If
     Next Slot
 

@@ -786,7 +786,7 @@ With UserList(UserIndex)
             .flags.IsLeader = 1
         Else
             For i = 0 To 2
-                If StrComp(UCase$(Guilds(.GuildID).LieutenantName(i)), UCase$(Name)) = 0 Then
+                If StrComp(UCase$(Guilds(.GuildID).RecruiterName(i)), UCase$(Name)) = 0 Then
                     .flags.IsLeader = 2
                     Exit For
                 End If
@@ -1344,7 +1344,7 @@ With UserList(UserIndex).ComUsu
     .Acepto = False
     
     For i = 1 To MAX_OFFER_SLOTS
-        .cant(i) = 0
+        .Cant(i) = 0
         .Objeto(i) = 0
     Next i
     
