@@ -181,7 +181,7 @@ End Function
 
 
 Public Function AddComboBox(ByVal X As Integer, ByVal Y As Integer, _
-                            ByVal W As Integer, _
+                            ByVal W As Integer, ByVal H As Integer, _
                             ByRef BackgroundColor() As Long) As Integer
                             
     LastComponent = LastComponent + 2
@@ -191,7 +191,7 @@ Public Function AddComboBox(ByVal X As Integer, ByVal Y As Integer, _
     With Components(LastComponent - 1)
     
         .X = X: .W = W
-        .Y = Y: .H = CharHeight
+        .Y = Y: .H = H
         
         .Component = eComponentType.ComboBox
         
@@ -432,7 +432,7 @@ Public Sub InsertText(ByVal ID As Integer, Text As String, TextColor() As Long)
         If .LastLine = 1 Then
             .FirstRender = 1
             .LastRender = 1
-            If Components(ID).Component = eComponentType.ComboBox Then Components(ID).Text = Text
+            'If Components(ID).Component = eComponentType.ComboBox Then Components(ID).Text = Text
         Else
             .LastRender = .LastLine
             
@@ -666,13 +666,15 @@ Public Sub RenderComponents(ByVal Alpha As Byte)
                 
                 Case eComponentType.ComboBox
                     Call Draw_Box(.X, .Y, .W, .H, .Color)
-                    Call Text_Draw(.X + 3, .Y - 1, .Text, White)
-                    Call Draw_Box(.X + .W - 10, .Y, .H, .H, Gray)
+                    Call Text_Draw(.X + 3, .Y + (.H \ 2) - (CharHeight \ 2) - 1, .Text, White)
+                    'Call Draw_Box(.X + .W - 10, .Y, .H, .H, Gray)
                     
                     If .Expanded Then
-                        Call Text_Draw(.X + .W - 8, .Y - 1, "<", Black)
+                        'Call Text_Draw(.X + .W - 8, .Y - 1, "<", Black)
+                        Call Device_Textured_Render(.X + .W - 27, .Y - 1, 27, 23, 0, 0, 1000003, White)
                     Else
-                        Call Text_Draw(.X + .W - 8, .Y - 1, ">", Black)
+                        'Call Text_Draw(.X + .W - 8, .Y - 1, ">", Black)
+                        Call Device_Textured_Render(.X + .W - 27, .Y - 1, 27, 23, 27, 0, 1000003, White)
                     End If
                     
                 Case eComponentType.ListBox

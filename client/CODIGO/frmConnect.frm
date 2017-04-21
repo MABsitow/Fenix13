@@ -177,9 +177,9 @@ Public Sub LoadComponents()
     Call SetEvents(btnCrearPj, Callback(AddressOf btnNewCharacter_EventHandler))
     
     'details
-    cmbHogar = AddComboBox(425, 289, 175, Black)
-    cmbRaza = AddComboBox(425, 339, 175, Black)
-    cmbSexo = AddComboBox(425, 389, 175, Black)
+    cmbHogar = AddComboBox(424, 289, 176, 22, Black)
+    cmbRaza = AddComboBox(424, 339, 176, 22, Black)
+    cmbSexo = AddComboBox(424, 389, 176, 22, Black)
     btnHeadDer = AddRect(586, 436, 30, 23)
     btnHeadIzq = AddRect(416, 436, 30, 23)
     
