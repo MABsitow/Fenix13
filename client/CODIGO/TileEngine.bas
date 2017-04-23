@@ -1464,7 +1464,7 @@ Public Function InitTileEngine(ByVal setDisplayFormhWnd As Long, ByVal setTilePi
     TilePixelHeight = setTilePixelHeight
     WindowTileHeight = setWindowTileHeight
     WindowTileWidth = setWindowTileWidth
-    'TileBufferSize = setTileBufferSize
+    TileBufferSize = setTileBufferSize
     
     HalfWindowTileHeight = setWindowTileHeight \ 2
     HalfWindowTileWidth = setWindowTileWidth \ 2
@@ -2064,7 +2064,8 @@ With charlist(CharIndex)
                         Call Text_Draw(OffsetCounterX - .NombreOffset, OffsetCounterY + 30, .Nombre, Color)
                                
                         'Guild
-                        Call Text_Draw(OffsetCounterX - .GuildOffset, OffsetCounterY + 45, .GuildName, Color)
+                        If LenB(.GuildName) > 0 Then _
+                            Call Text_Draw(OffsetCounterX - .GuildOffset, OffsetCounterY + 45, .GuildName, Color)
                            
                     End If
                 End If

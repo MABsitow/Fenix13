@@ -230,7 +230,7 @@ Public Sub CargarHechizos()
 '
 '###################################################
 
-On Error GoTo ErrHandler
+On Error GoTo Errhandler
 
     If frmMain.Visible Then frmMain.txStatus.Caption = "Cargando Hechizos."
     
@@ -322,7 +322,7 @@ On Error GoTo ErrHandler
             
             .Invoca = val(Leer.GetValue("Hechizo" & Hechizo, "Invoca"))
             .NumNpc = val(Leer.GetValue("Hechizo" & Hechizo, "NumNpc"))
-            .cant = val(Leer.GetValue("Hechizo" & Hechizo, "Cant"))
+            .Cant = val(Leer.GetValue("Hechizo" & Hechizo, "Cant"))
             .Mimetiza = val(Leer.GetValue("hechizo" & Hechizo, "Mimetiza"))
             
         '    .Materializa = val(Leer.GetValue("Hechizo" & Hechizo, "Materializa"))
@@ -349,7 +349,7 @@ On Error GoTo ErrHandler
     
     Exit Sub
 
-ErrHandler:
+Errhandler:
     MsgBox "Error cargando hechizos.dat " & Err.Number & ": " & Err.description
  
 End Sub
@@ -840,7 +840,7 @@ Sub LoadOBJData()
     
     Exit Sub
 
-ErrHandler:
+Errhandler:
     MsgBox "error cargando objetos " & Err.Number & ": " & Err.description
 
 
@@ -1450,7 +1450,6 @@ Sub LoadSini()
     
     IntervaloPuedeSerAtacado = 5000 ' Cargar desde balance.dat
     IntervaloAtacable = 60000 ' Cargar desde balance.dat
-    IntervaloOwnedNpc = 18000 ' Cargar desde balance.dat
     
     IntervaloUserPuedeCastear = val(GetVar(IniPath & "Server.ini", "INTERVALOS", "IntervaloLanzaHechizo"))
     FrmInterv.txtIntervaloLanzaHechizo.Text = IntervaloUserPuedeCastear
@@ -1565,7 +1564,7 @@ Sub SaveUser(ByVal UserIndex As Integer, ByVal UserFile As String)
 '12/01/2010: ZaMa - Los druidas pierden la inmunidad de ser atacados cuando pierden el efecto del mimetismo.
 '*************************************************
 
-On Error GoTo ErrHandler
+On Error GoTo Errhandler
 
 Dim OldUserHead As Long
 
@@ -1810,7 +1809,7 @@ End With
 
 Exit Sub
 
-ErrHandler:
+Errhandler:
 Call LogError("Error en SaveUser")
 
 End Sub

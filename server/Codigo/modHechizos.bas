@@ -180,7 +180,7 @@ Function TieneHechizo(ByVal i As Integer, ByVal UserIndex As Integer) As Boolean
 '
 '***************************************************
 
-On Error GoTo ErrHandler
+On Error GoTo Errhandler
     
     Dim j As Integer
     For j = 1 To MAXUSERHECHIZOS
@@ -191,7 +191,7 @@ On Error GoTo ErrHandler
     Next
 
 Exit Function
-ErrHandler:
+Errhandler:
 
 End Function
 
@@ -393,7 +393,7 @@ Sub HechizoInvocacion(ByVal UserIndex As Integer, ByRef HechizoCasteado As Boole
 '18/11/2009: Optimizacion de codigo.
 '***************************************************
 
-On Error GoTo error
+On Error GoTo Error
 
 With UserList(UserIndex)
     'No permitimos se invoquen criaturas en zonas seguras
@@ -425,7 +425,7 @@ With UserList(UserIndex)
     Else
         If .NroMascotas >= MAXMASCOTAS Then Exit Sub
         
-        For NroNpcs = 1 To Hechizos(SpellIndex).cant
+        For NroNpcs = 1 To Hechizos(SpellIndex).Cant
             
             If .NroMascotas < MAXMASCOTAS Then
                 NpcIndex = SpawnNpc(Hechizos(SpellIndex).NumNpc, TargetPos, True, False)
@@ -470,7 +470,7 @@ HechizoCasteado = True
 
 Exit Sub
 
-error:
+Error:
     With UserList(UserIndex)
         LogError ("[" & Err.Number & "] " & Err.description & " por el usuario " & .Name & "(" & UserIndex & _
                 ") en (" & .Pos.map & ", " & .Pos.X & ", " & .Pos.Y & "). Tratando de tirar el hechizo " & _
@@ -656,7 +656,7 @@ Sub LanzarHechizo(ByVal SpellIndex As Integer, ByVal UserIndex As Integer)
 '24/01/2007 ZaMa - Optimizacion de codigo.
 '02/16/2010: Marco - Now .flags.hechizo makes reference to global spell index instead of user's spell index
 '***************************************************
-On Error GoTo ErrHandler
+On Error GoTo Errhandler
 
 With UserList(UserIndex)
     
@@ -722,7 +722,7 @@ End With
 
 Exit Sub
 
-ErrHandler:
+Errhandler:
     Call LogError("Error en LanzarHechizo. Error " & Err.Number & " : " & Err.description & _
         " Hechizo: " & Hechizos(SpellIndex).Nombre & "(" & SpellIndex & _
         "). Casteado por: " & UserList(UserIndex).Name & "(" & UserIndex & ").")
@@ -1673,11 +1673,6 @@ With UserList(TargetIndex)
         
         'Muere
         If .Stats.MinHp < 1 Then
-        
-            If .flags.AtacablePor <> UserIndex Then
-                Call ContarMuerte(TargetIndex, UserIndex)
-            End If
-            
             .Stats.MinHp = 0
             Call ActStats(TargetIndex, UserIndex)
             Call UserDie(TargetIndex)
@@ -1825,7 +1820,7 @@ Public Function CanSupportUser(ByVal CasterIndex As Integer, ByVal TargetIndex A
 'Checks if caster can cast support magic on target user.
 '***************************************************
      
- On Error GoTo ErrHandler
+ On Error GoTo Errhandler
  
     With UserList(CasterIndex)
         
@@ -1848,10 +1843,10 @@ Public Function CanSupportUser(ByVal CasterIndex As Integer, ByVal TargetIndex A
         End If
      
         ' Victima criminal?
-        If criminal(TargetIndex) Then
+        If Criminal(TargetIndex) Then
         
             ' Casteador Ciuda?
-            If Not criminal(CasterIndex) Then
+            If Not Criminal(CasterIndex) Then
             
                 ' Armadas no pueden ayudar
                 If EsArmada(CasterIndex) Then
@@ -1868,23 +1863,6 @@ Public Function CanSupportUser(ByVal CasterIndex As Integer, ByVal TargetIndex A
                 Call WriteConsoleMsg(CasterIndex, "Los miembros de la legión oscura no pueden ayudar a los ciudadanos.", FontTypeNames.FONTTYPE_INFO)
                 Exit Function
                 
-            ' Casteador ciuda/army?
-            ElseIf Not criminal(CasterIndex) Then
-                
-                ' Esta en estado atacable?
-                If UserList(TargetIndex).flags.AtacablePor > 0 Then
-                    
-                    ' No esta atacable por el casteador?
-                    If UserList(TargetIndex).flags.AtacablePor <> CasterIndex Then
-                    
-                        ' Si es armada no puede ayudar
-                        If EsArmada(CasterIndex) Then
-                            Call WriteConsoleMsg(CasterIndex, "Los miembros del ejército real no pueden ayudar a ciudadanos en estado atacable.", FontTypeNames.FONTTYPE_INFO)
-                            Exit Function
-                        End If
-                    End If
-                End If
-    
             End If
         End If
     End With
@@ -1893,7 +1871,7 @@ Public Function CanSupportUser(ByVal CasterIndex As Integer, ByVal TargetIndex A
 
     Exit Function
     
-ErrHandler:
+Errhandler:
     Call LogError("Error en CanSupportUser, Error: " & Err.Number & " - " & Err.description & _
                   " CasterIndex: " & CasterIndex & ", TargetIndex: " & TargetIndex)
 

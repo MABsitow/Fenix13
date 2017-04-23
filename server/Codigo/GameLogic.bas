@@ -45,7 +45,7 @@ Public Function EsArmada(ByVal UserIndex As Integer) As Boolean
 'Last Modification: 23/01/2007
 '***************************************************
 
-    EsArmada = (Not criminal(UserIndex) And UserList(UserIndex).Faccion.Jerarquia > 1)
+    EsArmada = (Not Criminal(UserIndex) And UserList(UserIndex).Faccion.Jerarquia > 1)
 End Function
 
 Public Function EsCaos(ByVal UserIndex As Integer) As Boolean
@@ -54,7 +54,7 @@ Public Function EsCaos(ByVal UserIndex As Integer) As Boolean
 'Last Modification: 23/01/2007
 '***************************************************
 
-    EsCaos = (criminal(UserIndex) And UserList(UserIndex).Faccion.Jerarquia > 1)
+    EsCaos = (Criminal(UserIndex) And UserList(UserIndex).Faccion.Jerarquia > 1)
 End Function
 
 Public Function EsGM(ByVal UserIndex As Integer) As Boolean
@@ -82,7 +82,7 @@ Public Sub DoTileEvents(ByVal UserIndex As Integer, ByVal map As Integer, ByVal 
     Dim TelepRadio As Integer
     Dim DestPos As WorldPos
     
-On Error GoTo ErrHandler
+On Error GoTo Errhandler
     'Controla las salidas
     If InMapBounds(map, X, Y) Then
         With MapData(map, X, Y)
@@ -166,12 +166,6 @@ On Error GoTo ErrHandler
                    Npclist(aN).flags.AttackedBy = vbNullString
                 End If
             
-                aN = UserList(UserIndex).flags.NPCAtacado
-                If aN > 0 Then
-                    If Npclist(aN).flags.AttackedFirstBy = UserList(UserIndex).Name Then
-                        Npclist(aN).flags.AttackedFirstBy = vbNullString
-                    End If
-                End If
                 UserList(UserIndex).flags.AtacadoPorNpc = 0
                 UserList(UserIndex).flags.NPCAtacado = 0
             End If
@@ -179,7 +173,7 @@ On Error GoTo ErrHandler
     End If
 Exit Sub
 
-ErrHandler:
+Errhandler:
     Call LogError("Error en DotileEvents. Error: " & Err.Number & " - Desc: " & Err.description)
 End Sub
 
@@ -641,7 +635,7 @@ Sub LookatTile(ByVal UserIndex As Integer, ByVal map As Integer, ByVal X As Inte
 '13/02/2009: ZaMa - EL nombre del gm que aparece por consola al clickearlo, tiene el color correspondiente a su rango
 '***************************************************
 
-On Error GoTo ErrHandler
+On Error GoTo Errhandler
 
 'Responde al click del usuario sobre el mapa
 Dim FoundChar As Byte
@@ -890,15 +884,10 @@ With UserList(UserIndex)
                     If Npclist(TempCharIndex).MaestroUser > 0 Then
                         Call WriteConsoleMsg(UserIndex, estatus & Npclist(TempCharIndex).Name & " es mascota de " & UserList(Npclist(TempCharIndex).MaestroUser).Name & ".", FontTypeNames.FONTTYPE_INFO)
                     Else
-                        sDesc = estatus & Npclist(TempCharIndex).Name
-                        If Npclist(TempCharIndex).Owner > 0 Then sDesc = sDesc & " le pertenece a " & UserList(Npclist(TempCharIndex).Owner).Name
-                        sDesc = sDesc & "."
+                        sDesc = estatus & Npclist(TempCharIndex).Name & "."
                         
                         Call WriteConsoleMsg(UserIndex, sDesc, FontTypeNames.FONTTYPE_INFO)
                         
-                        If .Privilegios And (PlayerType.Dios Or PlayerType.Admin) Then
-                            Call WriteConsoleMsg(UserIndex, "Le pegó primero: " & Npclist(TempCharIndex).flags.AttackedFirstBy & ".", FontTypeNames.FONTTYPE_INFO)
-                        End If
                     End If
                 End If
                 
@@ -946,7 +935,7 @@ End With
 
 Exit Sub
 
-ErrHandler:
+Errhandler:
     Call LogError("Error en LookAtTile. Error " & Err.Number & " : " & Err.description)
 
 End Sub
@@ -1154,7 +1143,7 @@ Public Function RhombLegalTilePos(ByRef Pos As WorldPos, ByRef vX As Long, ByRef
 ' which starts at Pos.x - Distance and Pos.y
 ' and searchs for a valid position to drop items
 '***************************************************
-On Error GoTo ErrHandler
+On Error GoTo Errhandler
 
     Dim i As Long
     Dim HayObj As Boolean
@@ -1251,7 +1240,7 @@ On Error GoTo ErrHandler
     
     Exit Function
     
-ErrHandler:
+Errhandler:
     Call LogError("Error en RhombLegalTilePos. Error: " & Err.Number & " - " & Err.description)
 End Function
 

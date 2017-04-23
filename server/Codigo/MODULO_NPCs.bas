@@ -196,7 +196,6 @@ Private Sub ResetNpcFlags(ByVal NpcIndex As Integer)
         .AfectaParalisis = 0
         .AguaValida = 0
         .AttackedBy = vbNullString
-        .AttackedFirstBy = vbNullString
         .BackUp = 0
         .Bendicion = 0
         .Domable = 0
@@ -353,8 +352,6 @@ On Error GoTo Errhandler
 
     With Npclist(NpcIndex)
         .flags.NPCActive = False
-        
-        .Owner = 0 ' Murio, no necesita mas dueños :P.
         
         If InMapBounds(.Pos.map, .Pos.X, .Pos.Y) Then
             Call EraseNPCChar(NpcIndex)
