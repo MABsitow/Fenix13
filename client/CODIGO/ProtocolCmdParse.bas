@@ -257,27 +257,7 @@ Public Sub ParseUserCommand(ByVal RawCommand As String)
                    
             Case "/UPTIME"
                 Call WriteUpTime
-         
-            Case "/COMPARTIRNPC"
-                If UserEstado = 1 Then 'Muerto
-                    With FontTypes(FontTypeNames.FONTTYPE_INFO)
-                        Call ShowConsoleMsg("¡¡Estás muerto!!", .Red, .Green, .blue, .bold, .italic)
-                    End With
-                    Exit Sub
-                End If
-                
-                Call WriteShareNpc
-                
-            Case "/NOCOMPARTIRNPC"
-                If UserEstado = 1 Then 'Muerto
-                    With FontTypes(FontTypeNames.FONTTYPE_INFO)
-                        Call ShowConsoleMsg("¡¡Estás muerto!!", .Red, .Green, .blue, .bold, .italic)
-                    End With
-                    Exit Sub
-                End If
-                
-                Call WriteStopSharingNpc
-                
+                         
             Case "/ENCUESTA"
                 If CantidadArgumentos = 0 Then
                     ' Version sin argumentos: Inquiry

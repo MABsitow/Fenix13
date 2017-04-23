@@ -629,7 +629,7 @@ Public Type tHechizo
     Warp As Byte
     Invoca As Byte
     NumNpc As Integer
-    cant As Integer
+    Cant As Integer
 
 '    Materializa As Byte
 '    ItemIndex As Byte
@@ -1001,8 +1001,6 @@ Public Type UserFlags
     TipoPocion As Byte
     
     NoPuedeSerAtacado As Boolean
-    AtacablePor As Integer
-    ShareNpcWith As Integer
     
     Vuela As Byte
     Navegando As Byte
@@ -1010,7 +1008,6 @@ Public Type UserFlags
     DuracionEfecto As Long
     TargetNPC As Integer ' Npc señalado por el usuario
     TargetNpcTipo As eNPCType ' Tipo del npc señalado
-    OwnedNpc As Integer ' Npc que le pertenece (no puede ser atacado)
     NpcInv As Integer
     
     Ban As Byte
@@ -1279,7 +1276,6 @@ Public Type NPCFlags
     
     Sound As Integer
     AttackedBy As String
-    AttackedFirstBy As String
     BackUp As Byte
     RespawnOrigPos As Byte
     
@@ -1350,8 +1346,6 @@ Public Type npc
     PoderEvasion As Long
     
     level As Integer
-    
-    Owner As Integer
 
     GiveEXP As Long
     GiveGLD As Long

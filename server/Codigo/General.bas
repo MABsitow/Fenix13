@@ -116,7 +116,7 @@ On Error GoTo Errhandler
     Dim i As Integer
     Dim d As New cGarbage
     
-    For i = TrashCollector.count To 1 Step -1
+    For i = TrashCollector.Count To 1 Step -1
         Set d = TrashCollector(i)
         Call EraseObj(1, d.map, d.X, d.Y)
         Call TrashCollector.Remove(i)
@@ -1038,27 +1038,6 @@ Public Sub EfectoFrio(ByVal UserIndex As Integer)
             .Counters.Frio = 0
         End If
     End With
-End Sub
-
-''
-' Maneja  el efecto del estado atacable
-'
-' @param UserIndex  El index del usuario a ser afectado por el estado atacable
-'
-
-Public Sub EfectoEstadoAtacable(ByVal UserIndex As Integer)
-'******************************************************
-'Author: ZaMa
-'Last Update: 13/01/2010 (ZaMa)
-'******************************************************
-
-    ' Si ya paso el tiempo de penalizacion
-    If Not IntervaloEstadoAtacable(UserIndex) Then
-        ' Deja de poder ser atacado
-        UserList(UserIndex).flags.AtacablePor = 0
-        ' Send nick normal
-        Call RefreshCharStatus(UserIndex)
-    End If
 End Sub
 
 ''

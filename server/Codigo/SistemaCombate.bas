@@ -1079,12 +1079,6 @@ On Error GoTo Errhandler
         
         If UserList(VictimaIndex).Stats.MinHp <= 0 Then
             
-            ' No cuenta la muerte si estaba en estado atacable
-            If UserList(VictimaIndex).flags.AtacablePor <> AtacanteIndex Then
-                
-                Call ContarMuerte(VictimaIndex, AtacanteIndex)
-            End If
-            
             ' Para que las mascotas no sigan intentando luchar y
             ' comiencen a seguir al amo
             Dim j As Integer
@@ -1246,14 +1240,6 @@ On Error GoTo Errhandler
                 End If
             End If
             
-            ' Ciuda (o army) atacando a otro ciuda (o army)
-            If UserList(VictimIndex).flags.AtacablePor = AttackerIndex Then
-                ' Se vuelve atacable.
-                If ToogleToAtackable(AttackerIndex, VictimIndex, False) Then
-                    PuedeAtacar = True
-                    Exit Function
-                End If
-            End If
         End If
     ' Ataca a un criminal
     Else

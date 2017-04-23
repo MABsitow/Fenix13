@@ -578,7 +578,6 @@ Private Sub GameTimer_Timer()
                         
 175                         If .flags.Mimetizado = 1 Then Call EfectoMimetismo(iUserIndex)
                         
-180                         If .flags.AtacablePor > 0 Then Call EfectoEstadoAtacable(iUserIndex)
                         
 185                         If .flags.BonusFlecha Then Call EfectoBonusFlecha(iUserIndex)
                         

@@ -1244,12 +1244,9 @@ Sub ResetUserFlags(ByVal UserIndex As Integer)
         .AdminPerseguible = False
         .lastMap = 0
         .Traveling = 0
-        .AtacablePor = 0
         .AtacadoPorNpc = 0
         .AtacadoPorUser = 0
         .NoPuedeSerAtacado = False
-        .OwnedNpc = 0
-        .ShareNpcWith = 0
         .EnConsulta = False
         .Ignorado = False
     End With
@@ -1377,12 +1374,7 @@ If aN > 0 Then
       Npclist(aN).Hostile = Npclist(aN).flags.OldHostil
       Npclist(aN).flags.AttackedBy = vbNullString
 End If
-aN = UserList(UserIndex).flags.NPCAtacado
-If aN > 0 Then
-    If Npclist(aN).flags.AttackedFirstBy = UserList(UserIndex).Name Then
-        Npclist(aN).flags.AttackedFirstBy = vbNullString
-    End If
-End If
+
 UserList(UserIndex).flags.AtacadoPorNpc = 0
 UserList(UserIndex).flags.NPCAtacado = 0
 

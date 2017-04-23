@@ -100,8 +100,7 @@ Public Sub DirectXEvent8_DXCallback(ByVal EventID As Long)
     'More info: http://www.vbgore.com/GameClient.frmMain.DirectXEvent8_DXCallback
     '*****************************************************************
     '<EhHeader>
-    'On Error GoTo DirectXEvent8_DXCallback_Err
-    On Error Resume Next
+    On Error GoTo DirectXEvent8_DXCallback_Err
     '</EhHeader>
     Dim DevData(1 To 50) As DIDEVICEOBJECTDATA
     Dim NumEvents As Long
@@ -111,7 +110,7 @@ Public Sub DirectXEvent8_DXCallback(ByVal EventID As Long)
     
         'Check if message is for us
 100     If EventID <> MouseEvent Then Exit Sub
-        'If Me.WindowState <> 1 Then Exit Sub
+        If Me.WindowState <> 0 Then Exit Sub
 
         'Retrieve data
 105     NumEvents = DIDevice.GetDeviceData(DevData, DIGDD_DEFAULT)

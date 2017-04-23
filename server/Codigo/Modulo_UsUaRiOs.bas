@@ -51,20 +51,6 @@ Public Sub ActStats(ByVal VictimIndex As Integer, ByVal AttackerIndex As Integer
         .Stats.Exp = .Stats.Exp + DaExp
         If .Stats.Exp > MAXEXP Then .Stats.Exp = MAXEXP
         
-        If TriggerZonaPelea(VictimIndex, AttackerIndex) <> TRIGGER6_PERMITE Then
-        
-            ' Es legal matarlo si estaba en atacable
-            If UserList(VictimIndex).flags.AtacablePor <> AttackerIndex Then
-                EraCriminal = Criminal(AttackerIndex)
-                
-                If Criminal(AttackerIndex) Then
-                    If Not EraCriminal Then Call RefreshCharStatus(AttackerIndex)
-                Else
-                    If EraCriminal Then Call RefreshCharStatus(AttackerIndex)
-                End If
-            End If
-        End If
-        
         'Lo mata
         'Call WriteConsoleMsg(attackerIndex, "Has matado a " & UserList(VictimIndex).name & "!", FontTypeNames.FONTTYPE_FIGHT)
         'Call WriteConsoleMsg(attackerIndex, "Has ganado " & DaExp & " puntos de experiencia.", FontTypeNames.FONTTYPE_FIGHT)
@@ -332,7 +318,7 @@ On Error GoTo Errhandler
             'Send make character command to clients
             If Not toMap Then
                 If .GuildID > 0 Then
-                    ClanTag = Guilds(.GuildID).GuildName
+                    ClanTag = "<" & Guilds(.GuildID).GuildName & ">"
                 End If
                 
                 NickColor = GetNickColor(UserIndex)
@@ -357,7 +343,7 @@ On Error GoTo Errhandler
                 Call WriteCharacterCreate(sndIndex, .Char.body, .Char.Head, .Char.heading, _
                             .Char.CharIndex, X, Y, _
                             .Char.WeaponAnim, .Char.ShieldAnim, .Char.FX, 999, .Char.CascoAnim, _
-                            UserName, "<" & ClanTag & ">", NickColor, Privileges)
+                            UserName, ClanTag, NickColor, Privileges)
             Else
                 'Hide the name and clan - set privs as normal user
                  Call AgregarUser(UserIndex, .Pos.map, ButIndex)
@@ -1044,25 +1030,6 @@ Sub NPCAtacado(ByVal NpcIndex As Integer, ByVal UserIndex As Integer)
     'Guarda el NPC que estas atacando ahora.
     UserList(UserIndex).flags.NPCAtacado = NpcIndex
     
-    'Revisamos robo de npc.
-    'Guarda el primer nick que lo ataca.
-    If Npclist(NpcIndex).flags.AttackedFirstBy = vbNullString Then
-        'El que le pegabas antes ya no es tuyo
-        If LastNpcHit <> 0 Then
-            If Npclist(LastNpcHit).flags.AttackedFirstBy = UserList(UserIndex).Name Then
-                Npclist(LastNpcHit).flags.AttackedFirstBy = vbNullString
-            End If
-        End If
-        Npclist(NpcIndex).flags.AttackedFirstBy = UserList(UserIndex).Name
-    ElseIf Npclist(NpcIndex).flags.AttackedFirstBy <> UserList(UserIndex).Name Then
-        'Estas robando NPC
-        'El que le pegabas antes ya no es tuyo
-        If LastNpcHit <> 0 Then
-            If Npclist(LastNpcHit).flags.AttackedFirstBy = UserList(UserIndex).Name Then
-                Npclist(LastNpcHit).flags.AttackedFirstBy = vbNullString
-            End If
-        End If
-    End If
     
     If Npclist(NpcIndex).MaestroUser > 0 Then
         If Npclist(NpcIndex).MaestroUser <> UserIndex Then
@@ -1188,21 +1155,8 @@ On Error GoTo ErrorHandler
             Npclist(aN).flags.AttackedBy = vbNullString
         End If
         
-        aN = .flags.NPCAtacado
-        If aN > 0 Then
-            If Npclist(aN).flags.AttackedFirstBy = .Name Then
-                Npclist(aN).flags.AttackedFirstBy = vbNullString
-            End If
-        End If
-        
         .flags.AtacadoPorNpc = 0
         .flags.NPCAtacado = 0
-        
-        '<<<< Atacable >>>>
-        If .flags.AtacablePor > 0 Then
-            .flags.AtacablePor = 0
-            Call RefreshCharStatus(UserIndex)
-        End If
         
         '<<<< Paralisis >>>>
         If .flags.Paralizado = 1 Then
@@ -1690,7 +1644,11 @@ Sub Cerrar_Usuario(ByVal UserIndex As Integer)
                 If (.Clase = eClass.Pirata) And (.Recompensas(3) = 2) Then
                     .Counters.Salir = 2
                 Else
-                    .Counters.Salir = IntervaloCerrarConexion
+                    If MapInfo(.Pos.map).Pk Then
+                        .Counters.Salir = IntervaloCerrarConexion
+                    Else
+                        .Counters.Salir = 0
+                    End If
                 End If
             Else
                 .Counters.Salir = 0
@@ -2075,50 +2033,6 @@ With UserList(UserIndex)
 End With
 End Sub
 
-Public Function ToogleToAtackable(ByVal UserIndex As Integer, ByVal OwnerIndex As Integer, Optional ByVal StealingNpc As Boolean = True) As Boolean
-'***************************************************
-'Author: ZaMa
-'Last Modification: 15/01/2010
-'Change to Atackable mode.
-'***************************************************
-    
-    Dim AtacablePor As Integer
-    
-    With UserList(UserIndex)
-    
-        AtacablePor = .flags.AtacablePor
-            
-        If AtacablePor > 0 Then
-            ' Intenta robar un npc
-            If StealingNpc Then
-                ' Puede atacar el mismo npc que ya estaba robando, pero no una nuevo.
-                If AtacablePor <> OwnerIndex Then
-                    Call WriteConsoleMsg(UserIndex, "No puedes atacar otra criatura con dueño hasta que haya terminado tu castigo.", FontTypeNames.FONTTYPE_INFO)
-                    Exit Function
-                End If
-            ' Esta atacando a alguien en estado atacable => Se renueva el timer de atacable
-            Else
-                ' Renovar el timer
-                Call IntervaloEstadoAtacable(UserIndex, True)
-                ToogleToAtackable = True
-                Exit Function
-            End If
-        End If
-        
-        .flags.AtacablePor = OwnerIndex
-    
-        ' Actualizar clientes
-        Call RefreshCharStatus(UserIndex)
-        
-        ' Inicializar el timer
-        Call IntervaloEstadoAtacable(UserIndex, True)
-        
-        ToogleToAtackable = True
-        
-    End With
-    
-End Function
-
 Public Sub setHome(ByVal UserIndex As Integer, ByVal newHome As eCiudad, ByVal NpcIndex As Integer)
 '***************************************************
 'Author: Budi
@@ -2157,37 +2071,47 @@ Dim HitReal As Integer
         .Stats.MinHp = .Stats.MaxHp
         
     End With
+    
+    Call WriteUpdateUserStats(UserIndex)
 End Sub
 
+'CSEH: ErrLog
 Private Sub CalcularMana(ByVal UserIndex As Integer)
-Dim ManaReal As Integer
+    '<EhHeader>
+    On Error GoTo CalcularMana_Err
+    '</EhHeader>
+    Dim ManaReal As Integer
 
-With UserList(UserIndex)
+100 With UserList(UserIndex)
     
-    Select Case .Clase
+105     Select Case .Clase
     
-        Case eClass.Hechicero
-            ManaReal = 100 + 2.2 * .Stats.UserAtributos(eAtributos.Inteligencia) * (.Stats.ELV - 1)
-        Case eClass.Mago
-            ManaReal = 100 + 3 * .Stats.UserAtributos(eAtributos.Inteligencia) * (.Stats.ELV - 1)
-        Case eClass.Orden_Sagrada
-            ManaReal = .Stats.UserAtributos(eAtributos.Inteligencia) * (.Stats.ELV - 1)
-        Case eClass.Clerigo, eClass.Naturalista
-            ManaReal = 50 + 2 * .Stats.UserAtributos(eAtributos.Inteligencia) * (.Stats.ELV - 1)
-        Case eClass.Druida
-            ManaReal = 50 + 2.1 * .Stats.UserAtributos(eAtributos.Inteligencia) * (.Stats.ELV - 1)
-        Case eClass.Sigiloso
-            ManaReal = 50 + .Stats.UserAtributos(eAtributos.Inteligencia) * (.Stats.ELV - 1)
-    End Select
+            Case eClass.Hechicero
+110             ManaReal = 100 + 2.2 * .Stats.UserAtributos(eAtributos.Inteligencia) * (.Stats.ELV - 1)
+115         Case eClass.Mago
+120             ManaReal = 100 + 3 * .Stats.UserAtributos(eAtributos.Inteligencia) * (.Stats.ELV - 1)
+125         Case eClass.Orden_Sagrada
+130             ManaReal = .Stats.UserAtributos(eAtributos.Inteligencia) * (.Stats.ELV - 1)
+135         Case eClass.Clerigo, eClass.Naturalista
+140             ManaReal = 50 + 2 * .Stats.UserAtributos(eAtributos.Inteligencia) * (.Stats.ELV - 1)
+145         Case eClass.Druida
+150             ManaReal = 50 + 2.1 * .Stats.UserAtributos(eAtributos.Inteligencia) * (.Stats.ELV - 1)
+155         Case eClass.Sigiloso
+160             ManaReal = 50 + .Stats.UserAtributos(eAtributos.Inteligencia) * (.Stats.ELV - 1)
+        End Select
 
-    If ManaReal > 0 Then
-        .Stats.MaxMAN = ManaReal
-        .Stats.MinMAN = .Stats.MaxMAN
-        
-        Call WriteUpdateMana(UserIndex)
-    End If
+165     If ManaReal > 0 Then
+170         .Stats.MaxMAN = ManaReal
+175         .Stats.MinMAN = .Stats.MaxMAN
+        End If
 
-End With
+    End With
+    '<EhFooter>
+    Exit Sub
+
+CalcularMana_Err:
+        Call LogError("Error en CalcularMana: " & Erl & " - " & Err.description)
+    '</EhFooter>
 End Sub
 
 Public Function PuedeRecompensa(ByVal UserIndex As Integer) As Byte

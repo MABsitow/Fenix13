@@ -235,8 +235,6 @@ Private Enum ClientPacketID
     GMCommands
     InitCrafting
     Home
-    ShareNpc                '/COMPARTIRNPC
-    StopSharingNpc          '/NOCOMPARTIRNPC
     Consulta
     RequestClaseForm
     EligioClase
@@ -1560,9 +1558,6 @@ Private Sub HandleUpdateSta()
         Exit Sub
     End If
     
-
-
-    
     'Get data and update form
     UserMinSTA = incomingData.ReadInteger()
     
@@ -1573,7 +1568,7 @@ Private Sub HandleUpdateSta()
     bWidth = (((UserMinSTA / 100) / (UserMaxSTA / 100)) * 75)
     
     frmMain.shpEnergia.Width = 75 - bWidth
-    frmMain.shpEnergia.Left = 584 + (75 - frmMain.shpEnergia.Width)
+    frmMain.shpEnergia.Left = frmMain.shpEnergia.Left + (75 - frmMain.shpEnergia.Width)
     
     frmMain.shpEnergia.Visible = (bWidth <> 75)
     
@@ -1606,7 +1601,7 @@ Private Sub HandleUpdateMana()
         bWidth = (((UserMinMAN / 100) / (UserMaxMAN / 100)) * 75)
         
     frmMain.shpMana.Width = 75 - bWidth
-    frmMain.shpMana.Left = 584 + (75 - frmMain.shpMana.Width)
+    frmMain.shpMana.Left = frmMain.shpMana.Left + (75 - frmMain.shpMana.Width)
     
     frmMain.shpMana.Visible = (bWidth <> 75)
 End Sub
@@ -1636,7 +1631,7 @@ Private Sub HandleUpdateHP()
     bWidth = (((UserMinHP / 100) / (UserMaxHP / 100)) * 75)
     
     frmMain.shpVida.Width = 75 - bWidth
-    frmMain.shpVida.Left = 584 + (75 - frmMain.shpVida.Width)
+    frmMain.shpVida.Left = frmMain.shpVida.Left + (75 - frmMain.shpVida.Width)
     
     frmMain.shpVida.Visible = (bWidth <> 75)
     
@@ -2314,7 +2309,7 @@ Private Sub HandleCharacterCreate()
         .NombreOffset = (Text_GetWidth(cfonts(1), .Nombre) \ 2) - cfonts(1).RowPitch
         
         .GuildName = incomingData.ReadString()
-        .GuildOffset = (Text_GetWidth(cfonts(1), .GuildName) \ 2) - cfonts(1).RowPitch
+        If Len(.GuildName) > 0 Then .GuildOffset = (Text_GetWidth(cfonts(1), .GuildName) \ 2) - cfonts(1).RowPitch
         
         NickColor = incomingData.ReadByte()
         
@@ -2815,7 +2810,7 @@ Private Sub HandleUpdateUserStats()
         bWidth = (((UserMinMAN / 100) / (UserMaxMAN / 100)) * 75)
         
     frmMain.shpMana.Width = 75 - bWidth
-    frmMain.shpMana.Left = 584 + (75 - frmMain.shpMana.Width)
+    frmMain.shpMana.Left = frmMain.shpMana.Left + (75 - frmMain.shpMana.Width)
     
     frmMain.shpMana.Visible = (bWidth <> 75)
     '***************************
@@ -2823,7 +2818,7 @@ Private Sub HandleUpdateUserStats()
     bWidth = (((UserMinHP / 100) / (UserMaxHP / 100)) * 75)
     
     frmMain.shpVida.Width = 75 - bWidth
-    frmMain.shpVida.Left = 584 + (75 - frmMain.shpVida.Width)
+    frmMain.shpVida.Left = frmMain.shpVida.Left + (75 - frmMain.shpVida.Width)
     
     frmMain.shpVida.Visible = (bWidth <> 75)
     '***************************
@@ -2831,7 +2826,7 @@ Private Sub HandleUpdateUserStats()
     bWidth = (((UserMinSTA / 100) / (UserMaxSTA / 100)) * 75)
     
     frmMain.shpEnergia.Width = 75 - bWidth
-    frmMain.shpEnergia.Left = 584 + (75 - frmMain.shpEnergia.Width)
+    frmMain.shpEnergia.Left = frmMain.shpEnergia.Left + (75 - frmMain.shpEnergia.Width)
     
     frmMain.shpEnergia.Visible = (bWidth <> 75)
     '***************************
@@ -3499,8 +3494,6 @@ Private Sub HandleUpdateHungerAndThirst()
         Err.Raise incomingData.NotEnoughDataErrCode
         Exit Sub
     End If
-    
-
 
     
     UserMaxAGU = incomingData.ReadByte()
@@ -3516,7 +3509,7 @@ Private Sub HandleUpdateHungerAndThirst()
     bWidth = (((UserMinHAM / 100) / (UserMaxHAM / 100)) * 75)
     
     frmMain.shpHambre.Width = 75 - bWidth
-    frmMain.shpHambre.Left = 584 + (75 - frmMain.shpHambre.Width)
+    frmMain.shpHambre.Left = frmMain.shpHambre.Left + (75 - frmMain.shpHambre.Width)
     
     frmMain.shpHambre.Visible = (bWidth <> 75)
     '*********************************
@@ -3524,7 +3517,7 @@ Private Sub HandleUpdateHungerAndThirst()
     bWidth = (((UserMinAGU / 100) / (UserMaxAGU / 100)) * 75)
     
     frmMain.shpSed.Width = 75 - bWidth
-    frmMain.shpSed.Left = 584 + (75 - frmMain.shpSed.Width)
+    frmMain.shpSed.Left = frmMain.shpSed.Left + (75 - frmMain.shpSed.Width)
     
     frmMain.shpSed.Visible = (bWidth <> 75)
     
@@ -7873,34 +7866,6 @@ Public Sub WritePing()
     DoEvents
     
     pingTime = GetTickCount
-End Sub
-
-''
-' Writes the "ShareNpc" message to the outgoing data incomingData.
-'
-' @remarks  The data is not actually sent until the incomingData is properly flushed.
-
-Public Sub WriteShareNpc()
-'***************************************************
-'Author: ZaMa
-'Last Modification: 15/04/2010
-'Writes the "ShareNpc" message to the outgoing data incomingData
-'***************************************************
-    Call outgoingData.WriteByte(ClientPacketID.ShareNpc)
-End Sub
-
-''
-' Writes the "StopSharingNpc" message to the outgoing data incomingData.
-'
-' @remarks  The data is not actually sent until the incomingData is properly flushed.
-
-Public Sub WriteStopSharingNpc()
-'***************************************************
-'Author: ZaMa
-'Last Modification: 15/04/2010
-'Writes the "StopSharingNpc" message to the outgoing data incomingData
-'***************************************************
-    Call outgoingData.WriteByte(ClientPacketID.StopSharingNpc)
 End Sub
 
 ''

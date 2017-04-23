@@ -168,7 +168,10 @@ End Sub
 
 'CSEH: ErrLog
 Public Sub DumpGuilds(Optional ByVal ShutDown As Boolean = False)
-
+    
+    'There's nothing to write
+    If LastGuild = 0 Then Exit Sub
+    
     Dim handle As Integer
     Dim i As Long
     Dim j As Long

@@ -234,8 +234,6 @@ Private Enum ClientPacketID
     GMCommands
     InitCrafting
     Home
-    ShareNpc                '/COMPARTIRNPC
-    StopSharingNpc          '/NOCOMPARTIRNPC
     Consulta
     RequestClaseForm
     EligioClase
@@ -588,12 +586,6 @@ On Error Resume Next
         
         Case ClientPacketID.Home
             Call HandleHome(UserIndex)
-            
-        Case ClientPacketID.ShareNpc
-            Call HandleShareNpc(UserIndex)
-            
-        Case ClientPacketID.StopSharingNpc
-            Call HandleStopSharingNpc(UserIndex)
             
         Case ClientPacketID.Consulta
             Call HandleConsulta(UserIndex)
@@ -4648,111 +4640,6 @@ Private Sub HandleUpTime(ByVal UserIndex As Integer)
     End If
     
     Call WriteConsoleMsg(UserIndex, "Server Online: " & UpTimeStr, FontTypeNames.FONTTYPE_INFO)
-End Sub
-
-
-''
-' Handles the "ShareNpc" message.
-'
-' @param    userIndex The index of the user sending the message.
-
-Private Sub HandleShareNpc(ByVal UserIndex As Integer)
-'***************************************************
-'Author: ZaMa
-'Last Modification: 15/04/2010
-'Shares owned npcs with other user
-'***************************************************
-    
-    Dim TargetUserIndex As Integer
-    Dim SharingUserIndex As Integer
-    
-    With UserList(UserIndex)
-        'Remove packet ID
-        Call .incomingData.ReadByte
-        
-        ' Didn't target any user
-        TargetUserIndex = .flags.TargetUser
-        If TargetUserIndex = 0 Then Exit Sub
-        
-        ' Can't share with admins
-        If EsGM(TargetUserIndex) Then
-            Call WriteConsoleMsg(UserIndex, "No puedes compartir npcs con administradores!!", FontTypeNames.FONTTYPE_INFO)
-            Exit Sub
-        End If
-        
-        ' Pk or Caos?
-        If Criminal(UserIndex) Then
-            ' Caos can only share with other caos
-            If EsCaos(UserIndex) Then
-                If Not EsCaos(TargetUserIndex) Then
-                    Call WriteConsoleMsg(UserIndex, "Solo puedes compartir npcs con miembros de tu misma facción!!", FontTypeNames.FONTTYPE_INFO)
-                    Exit Sub
-                End If
-                
-            ' Pks don't need to share with anyone
-            Else
-                Exit Sub
-            End If
-        
-        ' Ciuda or Army?
-        Else
-            ' Can't share
-            If Criminal(TargetUserIndex) Then
-                Call WriteConsoleMsg(UserIndex, "No puedes compartir npcs con criminales!!", FontTypeNames.FONTTYPE_INFO)
-                Exit Sub
-            End If
-        End If
-        
-        ' Already sharing with target
-        SharingUserIndex = .flags.ShareNpcWith
-        If SharingUserIndex = TargetUserIndex Then Exit Sub
-        
-        ' Aviso al usuario anterior que dejo de compartir
-        If SharingUserIndex <> 0 Then
-            Call WriteConsoleMsg(SharingUserIndex, .Name & " ha dejado de compartir sus npcs contigo.", FontTypeNames.FONTTYPE_INFO)
-            Call WriteConsoleMsg(UserIndex, "Has dejado de compartir tus npcs con " & UserList(SharingUserIndex).Name & ".", FontTypeNames.FONTTYPE_INFO)
-        End If
-        
-        .flags.ShareNpcWith = TargetUserIndex
-        
-        Call WriteConsoleMsg(TargetUserIndex, .Name & " ahora comparte sus npcs contigo.", FontTypeNames.FONTTYPE_INFO)
-        Call WriteConsoleMsg(UserIndex, "Ahora compartes tus npcs con " & UserList(TargetUserIndex).Name & ".", FontTypeNames.FONTTYPE_INFO)
-        
-    End With
-    
-End Sub
-
-''
-' Handles the "StopSharingNpc" message.
-'
-' @param    userIndex The index of the user sending the message.
-
-Private Sub HandleStopSharingNpc(ByVal UserIndex As Integer)
-'***************************************************
-'Author: ZaMa
-'Last Modification: 15/04/2010
-'Stop Sharing owned npcs with other user
-'***************************************************
-    
-    Dim SharingUserIndex As Integer
-    
-    With UserList(UserIndex)
-        'Remove packet ID
-        Call .incomingData.ReadByte
-        
-        SharingUserIndex = .flags.ShareNpcWith
-        
-        If SharingUserIndex <> 0 Then
-            
-            ' Aviso al que compartia y al que le compartia.
-            Call WriteConsoleMsg(SharingUserIndex, .Name & " ha dejado de compartir sus npcs contigo.", FontTypeNames.FONTTYPE_INFO)
-            Call WriteConsoleMsg(SharingUserIndex, "Has dejado de compartir tus npcs con " & UserList(SharingUserIndex).Name & ".", FontTypeNames.FONTTYPE_INFO)
-            
-            .flags.ShareNpcWith = 0
-        End If
-        
-    End With
-
 End Sub
 
 ''
